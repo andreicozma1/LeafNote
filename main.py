@@ -4,3 +4,6 @@ import matplotlib
 
 def main():
     print("Hello World")
+
+
+main()
