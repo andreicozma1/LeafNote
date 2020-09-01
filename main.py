@@ -22,10 +22,12 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left,self.top,self.width,self.height)
 
+        titleBox = QPlainTextEdit(self)
+        titleBox.setMaximumHeight(30)
         textbox = QPlainTextEdit(self)
-        textbox.resize(self.width,self.height)
 
         self.layout = QVBoxLayout()
+        self.layout.addWidget(titleBox)
         self.layout.addWidget(textbox)
 
         widget = QWidget()
