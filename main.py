@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QPlainTextEdit
 from PyQt5.QtGui import QIcon
 import matplotlib
 
@@ -17,6 +17,9 @@ class App(QWidget):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left,self.top,self.width,self.height)
+
+        self.textbox = QPlainTextEdit(self)
+        self.textbox.resize(self.width,self.height)
         self.show()
 
 if __name__ == '__main__':
