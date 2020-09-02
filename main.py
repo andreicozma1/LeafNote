@@ -1,12 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPlainTextEdit, QMainWindow, QVBoxLayout, QHBoxLayout
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtGui import QIcon
-import matplotlib
+from Textbox import PlainTextEdit
 
 
 class Color(QWidget):
-
     def __init__(self, color, *args, **kwargs):
         super(Color, self).__init__(*args, **kwargs)
         self.setAutoFillBackground(True)
@@ -30,8 +30,9 @@ class App(QMainWindow):
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
-        # TODO - Middle block (text box) is the area where you can type in
-        self.textBox = Color('orange')  # TODO - use QPlainTextEdit(self)
+        # Middle block (text box) is the area where you can type in
+        self.textBox = PlainTextEdit()
+        self.textBox.setBackgroundColor('orange')
         # TODO - right menu is for document context actions like customizations, reminders, properties, etc.
         self.rightMenu = Color('red')  # TODO - Rightmenu is a VBoxLayout
         # TODO - Make bottom bar slimmer. This is for certain actions and information
@@ -45,14 +46,16 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.verticalLayout = QVBoxLayout()
+        # Create the Central Widget and return it
+        centralWidget = QWidget()
+        self.verticalLayout = QVBoxLayout(centralWidget)
+
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
         self.verticalLayout.addWidget(self.topBar)
-
         # Create the horizontal layout which contains the left menu, text box, and right menu
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.addWidget(self.leftMenu)
-        self.horizontalLayout.addWidget(self.textBox)  #
+        self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
         self.horizontalLayout.addWidget(self.rightMenu)
 
         # add the horizontal layout to the middle
@@ -60,9 +63,6 @@ class App(QMainWindow):
         # add the bottom bar
         self.verticalLayout.addWidget(self.bottomBar)
 
-        # Create the Central Widget and return it
-        centralWidget = QWidget()
-        centralWidget.setLayout(self.verticalLayout)
         return centralWidget
 
 
