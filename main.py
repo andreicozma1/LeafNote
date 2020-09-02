@@ -1,8 +1,8 @@
 import sys
 
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout
-from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QSplitter
 from Textbox import PlainTextEdit
 
 
@@ -12,7 +12,7 @@ class Color(QWidget):
         self.setAutoFillBackground(True)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(color))
+        palette.setColor(QtGui.QPalette.Window, QtGui.QColor(color))
         self.setPalette(palette)
 
 
@@ -53,13 +53,21 @@ class App(QMainWindow):
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
         self.verticalLayout.addWidget(self.topBar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.addWidget(self.leftMenu)
-        self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
-        self.horizontalLayout.addWidget(self.rightMenu)
+        self.horizontalLayout = QHBoxLayout(self)
+        # self.horizontalLayout.addWidget(self.leftMenu)
+        # self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
+        # self.horizontalLayout.addWidget(self.rightMenu)
+
+        splitter = QSplitter(QtCore.Qt.Horizontal)
+        splitter.addWidget(self.leftMenu)
+        splitter.addWidget(self.textBox)
+        splitter.addWidget(self.rightMenu)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([50, 150, 50])
+        self.horizontalLayout.addWidget(splitter)
 
         # add the horizontal layout to the middle
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.addWidget(splitter)
         # add the bottom bar
         self.verticalLayout.addWidget(self.bottomBar)
 
