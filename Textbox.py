@@ -17,7 +17,11 @@ class TextBox(QTextEdit):
     # Set the background color of the QPlainTextEdit Widget
     def setBackgroundColor(self, color):
         palette = self.palette()
+        # Set color for window focused
         palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
+        # Set color for window out of focus
+        palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color))
+
         self.setPalette(palette)
         # self.setBackgroundVisible(False)
 
