@@ -15,7 +15,6 @@ class Color(QWidget):
         palette.setColor(QtGui.QPalette.Window, QtGui.QColor(color))
         self.setPalette(palette)
 
-
 class App(QMainWindow):
     def __init__(self):
         super(QMainWindow, self).__init__()
@@ -25,18 +24,28 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
+        self.barSize = 20
+        self.minDocWidthRatio = .4 # of width of viewport
+        self.minMenuWidthRatio = .3 # of width of viewport
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
         # TODO - Make top bar slimmer. This is for main actions like saving, undo, etc.
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
+        self.topBar.setMaximumHeight(self.barSize)
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
+        self.leftMenu.setMaximumWidth(int(self.minMenuWidthRatio * self.width))
         # Middle block (text box) is the area where you can type in
         self.textBox = PlainTextEdit()
         self.textBox.setBackgroundColor('orange')
+        self.textBox.setMinimumWidth(int(self.minDocWidthRatio * self.width))
         # TODO - right menu is for document context actions like customizations, reminders, properties, etc.
         self.rightMenu = Color('red')  # TODO - Rightmenu is a VBoxLayout
+        self.rightMenu.setMaximumWidth(int(self.minMenuWidthRatio * self.width))
+
         # TODO - Make bottom bar slimmer. This is for certain actions and information
         self.bottomBar = Color("purple")  # TODO - Bottombar is a HBoxLayout
+        self.bottomBar.setMaximumHeight(self.barSize)
+
 
         self.setCentralWidget(self.initWindow())
         self.show()
@@ -63,7 +72,7 @@ class App(QMainWindow):
         splitter.addWidget(self.textBox)
         splitter.addWidget(self.rightMenu)
         splitter.setStretchFactor(1, 1)
-        splitter.setSizes([50, 150, 50])
+        splitter.setSizes([50, self.textBox.minimumWidth(), 50])
         self.horizontalLayout.addWidget(splitter)
 
         # add the horizontal layout to the middle
