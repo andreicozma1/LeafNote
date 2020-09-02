@@ -1,8 +1,8 @@
 import sys
 
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout
-from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QSplitter
 from Textbox import PlainTextEdit
 
 
@@ -12,9 +12,8 @@ class Color(QWidget):
         self.setAutoFillBackground(True)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(color))
+        palette.setColor(QtGui.QPalette.Window, QtGui.QColor(color))
         self.setPalette(palette)
-
 
 class App(QMainWindow):
     def __init__(self):
@@ -25,18 +24,28 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
+        self.barSize = 20
+        self.minDocWidthRatio = .4 # of width of viewport
+        self.maxMenuWidthRatio = .3 # of width of viewport
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
         # TODO - Make top bar slimmer. This is for main actions like saving, undo, etc.
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
+        self.topBar.setMaximumHeight(self.barSize)
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
+        self.leftMenu.setMaximumWidth(int(self.maxMenuWidthRatio * self.width))
         # Middle block (text box) is the area where you can type in
         self.textBox = PlainTextEdit()
         self.textBox.setBackgroundColor('orange')
+        self.textBox.setMinimumWidth(int(self.minDocWidthRatio * self.width))
         # TODO - right menu is for document context actions like customizations, reminders, properties, etc.
         self.rightMenu = Color('red')  # TODO - Rightmenu is a VBoxLayout
+        self.rightMenu.setMaximumWidth(int(self.maxMenuWidthRatio * self.width))
+
         # TODO - Make bottom bar slimmer. This is for certain actions and information
         self.bottomBar = Color("purple")  # TODO - Bottombar is a HBoxLayout
+        self.bottomBar.setMaximumHeight(self.barSize)
+
 
         self.setCentralWidget(self.initWindow())
         self.show()
@@ -54,12 +63,20 @@ class App(QMainWindow):
         self.verticalLayout.addWidget(self.topBar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
         self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.addWidget(self.leftMenu)
-        self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
-        self.horizontalLayout.addWidget(self.rightMenu)
+        # self.horizontalLayout.addWidget(self.leftMenu)
+        # self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
+        # self.horizontalLayout.addWidget(self.rightMenu)
+
+        splitter = QSplitter(QtCore.Qt.Horizontal)
+        splitter.addWidget(self.leftMenu)
+        splitter.addWidget(self.textBox)
+        splitter.addWidget(self.rightMenu)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([50, self.textBox.minimumWidth(), 50])
+        self.horizontalLayout.addWidget(splitter)
 
         # add the horizontal layout to the middle
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.addWidget(splitter)
         # add the bottom bar
         self.verticalLayout.addWidget(self.bottomBar)
 
