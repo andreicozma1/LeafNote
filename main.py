@@ -4,6 +4,7 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QSplitter
 from Textbox import PlainTextEdit
+from MenuBar import MenuBar
 
 
 class Color(QWidget):
@@ -14,6 +15,7 @@ class Color(QWidget):
         palette = self.palette()
         palette.setColor(QtGui.QPalette.Window, QtGui.QColor(color))
         self.setPalette(palette)
+
 
 class App(QMainWindow):
     def __init__(self):
@@ -28,9 +30,10 @@ class App(QMainWindow):
         self.minDocWidthRatio = .4 # of width of viewport
         self.maxMenuWidthRatio = .3 # of width of viewport
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
-        # TODO - Make top bar slimmer. This is for main actions like saving, undo, etc.
-        self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
-        self.topBar.setMaximumHeight(self.barSize)
+        # Top bar. This is for main actions like saving, undo, etc.
+        self.topBar = MenuBar().initTopBar()
+        self.setMenuBar(self.topBar)
+
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
         self.leftMenu.setMaximumWidth(int(self.maxMenuWidthRatio * self.width))
@@ -60,7 +63,7 @@ class App(QMainWindow):
         self.verticalLayout = QVBoxLayout(centralWidget)
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
-        self.verticalLayout.addWidget(self.topBar)
+        # self.verticalLayout.addWidget(self.topBar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
         self.horizontalLayout = QHBoxLayout()
         # self.horizontalLayout.addWidget(self.leftMenu)
@@ -82,9 +85,11 @@ class App(QMainWindow):
 
         return centralWidget
 
-
-# Starting point of the program
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
+
+# Starting point of the program
+if __name__ == '__main__':
+    main()
