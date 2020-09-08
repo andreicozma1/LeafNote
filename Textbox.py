@@ -15,6 +15,7 @@ class PlainTextEdit(QPlainTextEdit):
     def setBackgroundColor(self, color):
         palette = self.palette()
         palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
+        palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color))
         self.setPalette(palette)
         self.setBackgroundVisible(False)
 
