@@ -3,7 +3,7 @@ from pathlib import Path
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
-# Class to hold and customize a QPlainTextEdit Widget
+# Class to display a directory
 class DirectoryViewer(QTreeView):
     def __init__(self, rootPath=None):
         super(QTreeView, self).__init__()
@@ -20,7 +20,8 @@ class DirectoryViewer(QTreeView):
         self.setIndentation(10)
         self.setSortingEnabled(True)
 
+    # TODO - link a click on the direcectory viewer to open the clicked file
     def onClicked(self, index):
         path = self.sender().model.filePath(index)
-        print("path")
-        # open_document(path)
+        print(path)
+

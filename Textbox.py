@@ -1,6 +1,5 @@
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import QTextEdit
-
+from PyQt5.QtWidgets import QTextEdit, QApplication
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
@@ -26,3 +25,7 @@ class TextBox(QTextEdit):
 
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
+
+    def refreshTextBox(self, text):
+        self.setText(text)
+        QApplication.processEvents() # update gui for pyqt

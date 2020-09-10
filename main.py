@@ -2,6 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
+from FileManager import FileManager
 from Layout import Layout
 from LayoutProps import LayoutProps
 from MenuBar import MenuBar
@@ -17,9 +18,11 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
-
+        
+        self.file_manager = FileManager(self)
         self.layout_props = LayoutProps(self)
         self.layout = Layout(self.layout_props)
+
         self.menubar = MenuBar(self)
 
     # Returns the Central Widget
