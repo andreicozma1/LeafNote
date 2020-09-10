@@ -1,44 +1,49 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPlainTextEdit, QMainWindow,QVBoxLayout
-from PyQt5.QtGui import QIcon
-import matplotlib
+
+from PyQt5.QtWidgets import QApplication, QMainWindow
+
+from FileManager import FileManager
+from Layout import Layout
+from LayoutProps import LayoutProps
+from MenuBar import MenuBar
 
 
 class App(QMainWindow):
     def __init__(self):
         super(QMainWindow, self).__init__()
-        # Initialize properties. TODO - make application properties their own class separately
+        print("App - init")
+        # Initialize properties.
         self.title = '0x432d2d'
         self.left = 0
         self.top = 0
         self.width = 640
         self.height = 480
-        # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
+        
+        self.file_manager = FileManager(self)
+        self.layout_props = LayoutProps(self)
+        self.layout = Layout(self.layout_props)
 
-        self.setCentralWidget(self.initUI())
+        self.menubar = MenuBar(self)
+
+    # Returns the Central Widget
+    def setup(self):
+        print("App - setup")
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        self.menubar.setup()
+        self.setCentralWidget(self.layout.setup())
+
         self.show()
 
-    def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left,self.top,self.width,self.height)
 
-        titleBox = QPlainTextEdit(self)
-        titleBox.setMaximumHeight(30)
-        textbox = QPlainTextEdit(self)
-
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(titleBox)
-        self.layout.addWidget(textbox)
-
-        widget = QWidget()
-        widget.setLayout(self.layout)
-        return widget
-
-
+def main():
+    print("Main")
+    app = QApplication(sys.argv)
+    App().setup()
+    sys.exit(app.exec_())
 
 
 # Starting point of the program
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = App()
-    sys.exit(app.exec_())
+    main()
