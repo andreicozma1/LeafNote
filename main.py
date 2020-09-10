@@ -26,13 +26,15 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
-        self.barSize = 20
+        self.barSize = 25
         self.minDocWidthRatio = .4 # of width of viewport
         self.maxMenuWidthRatio = .3 # of width of viewport
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
         # Top bar. This is for main actions like saving, undo, etc.
-        self.topBar = MenuBar().initTopBar()
-        self.setMenuBar(self.topBar)
+        # self.statusBar()
+        self.topBar = MenuBar()
+        # self.setMenuBar(self.topBar)
+        self.topBar.setMaximumHeight(self.barSize)
 
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
@@ -62,7 +64,7 @@ class App(QMainWindow):
         self.verticalLayout = QVBoxLayout(centralWidget)
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
-        # self.verticalLayout.addWidget(self.topBar)
+        self.verticalLayout.addWidget(self.topBar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
         self.horizontalLayout = QHBoxLayout()
         # self.horizontalLayout.addWidget(self.leftMenu)
