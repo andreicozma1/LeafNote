@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QTextEdit
 class TextBox(QTextEdit):
     def __init__(self, textDefault=None):
         super(QTextEdit, self).__init__()
-        print("TextBox - created")
 
+        print("TextBox - created")
         self.setPlainText(textDefault)
         self.setAutoFillBackground(True)
 
@@ -28,4 +28,7 @@ class TextBox(QTextEdit):
     def getWordCount(self):
         wordCount = len(self.toPlainText().split(" "))
         print(wordCount)
+
+
+
 

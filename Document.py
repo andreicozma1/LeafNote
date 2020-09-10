@@ -10,4 +10,6 @@ class Document(TextBox):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Welcome to your new Note Page, begin typing here.")
-        self.getWordCount()
+        self.textChanged.connect(self.getWordCount)
+
+
