@@ -10,6 +10,7 @@ class DirectoryViewer(QTreeView):
         self.model.setRootPath(rootPath)
         self.setModel(self.model)
 
+
         # make these functions
         self.setAnimated(False)
         self.setIndentation(10)
