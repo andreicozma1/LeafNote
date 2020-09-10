@@ -27,4 +27,3 @@ class TextBox(QTextEdit):
 
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
-

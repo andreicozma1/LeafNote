@@ -3,15 +3,14 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 from ColorWidget import Color
 from Document import Document
-from MenuBar import MenuBar
 
 
 class Layout():
     def __init__(self, appCtx, minDocWidth, maxMenuWidth, barSize):
-
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
         # TODO - Make top bar slimmer. This is for main actions like saving, undo, etc.
-        self.topBar = MenuBar()  # TODO - Topbar is a HBoxLayout
+        self.topBar = Color('red')  # TODO - Topbar is a HBoxLayout
+        # Top bar to be used for document formatting, font, color, etc like Google Docs
         self.topBar.setMaximumHeight(barSize)
         # TODO - Left menu is used to show workspace and directory structure for notes
         self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
