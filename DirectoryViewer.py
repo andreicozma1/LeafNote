@@ -6,9 +6,12 @@ from pathlib import Path
 
 # Class to hold and customize a QPlainTextEdit Widget
 class DirectoryViewer(QTreeView):
-    def __init__(self, rootPath='/'):
+    def __init__(self, rootPath=None): 
         super(QTreeView, self).__init__()
         self.model = QFileSystemModel()
+        if rootPath is None:
+            rootPath = str(Path.home())
+            print(rootPath)
         self.model.setRootPath(rootPath)
         # self.treeView = QTreeView()
         self.setModel(self.model)
