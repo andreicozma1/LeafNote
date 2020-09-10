@@ -1,49 +1,25 @@
 import sys
-
-from PyQt5.QtWidgets import QApplication, QMainWindow
-
-from FileManager import FileManager
-from Layout import Layout
-from LayoutProps import LayoutProps
-from MenuBar import MenuBar
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import QIcon
+import matplotlib
 
 
-class App(QMainWindow):
+class App(QWidget):
     def __init__(self):
-        super(QMainWindow, self).__init__()
-        print("App - init")
-        # Initialize properties.
-        self.title = '0x432d2d'
+        super().__init__()
+        self.title = 'Window Title'
         self.left = 0
         self.top = 0
         self.width = 640
         self.height = 480
-        
-        self.file_manager = FileManager(self)
-        self.layout_props = LayoutProps(self)
-        self.layout = Layout(self.layout_props)
+        self.initUI()
 
-        self.menubar = MenuBar(self)
-
-    # Returns the Central Widget
-    def setup(self):
-        print("App - setup")
+    def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
-
-        self.menubar.setup()
-        self.setCentralWidget(self.layout.setup())
-
+        self.setGeometry(self.left,self.top,self.width,self.height)
         self.show()
 
-
-def main():
-    print("Main")
-    app = QApplication(sys.argv)
-    App().setup()
-    sys.exit(app.exec_())
-
-
-# Starting point of the program
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    ex = App()
+    sys.exit(app.exec_())
