@@ -3,8 +3,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from Layout import Layout
-from MenuBar import MenuBar
 from LayoutProps import LayoutProps
+from MenuBar import MenuBar
 
 
 class App(QMainWindow):
@@ -18,9 +18,9 @@ class App(QMainWindow):
         self.width = 640
         self.height = 480
 
-        self.menubar = MenuBar(self)
         self.layout_props = LayoutProps(self)
         self.layout = Layout(self.layout_props)
+        self.menubar = MenuBar(self)
 
     # Returns the Central Widget
     def setup(self):

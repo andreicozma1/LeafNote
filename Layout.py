@@ -2,6 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 from ColorWidget import Color
+from DirectoryViewer import DirectoryViewer
 from Document import Document
 
 
@@ -22,7 +23,7 @@ class Layout():
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = Color("purple")
         # TODO - Left menu (VBoxLayout) is used to show workspace and directory structure for notes
-        self.left_menu = Color('yellow')
+        self.left_menu = DirectoryViewer()
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
