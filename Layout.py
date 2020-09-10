@@ -38,7 +38,7 @@ class Layout():
 
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
-        # self.vertical_layout.addWidget(self.top_bar)
+        self.vertical_layout.addWidget(self.top_bar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
 
         self.splitter.addWidget(self.left_menu)

@@ -5,10 +5,10 @@ from pathlib import Path
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
-    def __init__(self, app, layout):
+    def __init__(self, app):
         # super(QMenuBar, self).__init__()
         self.app = app
-        self.layout = layout
+        self.layout = app.layout
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
 

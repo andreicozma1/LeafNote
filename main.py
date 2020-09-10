@@ -15,9 +15,8 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
-
         self.layout = Layout(self, min_doc_width=.4, max_menu_width=.3, bar_size=30)
-        self.menubar = MenuBar(self, self.layout)
+        self.menubar = MenuBar(self)
 
     # Returns the Central Widget
     def setup(self):
