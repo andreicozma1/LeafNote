@@ -1,13 +1,14 @@
 from PyQt5.QtWidgets import qApp, QAction
 from PyQt5.QtWidgets import QFileDialog
 from pathlib import Path
-
+# from FileManager import openDocument
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
     def __init__(self, app):
         # super(QMenuBar, self).__init__()
         self.app = app
+        self.file_manager = app.file_manager
         self.layout = app.layout
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
@@ -50,14 +51,14 @@ class MenuBar():
     def showOpenFileDialog(self):
         # open the dialogue using the home directory as root
         home_dir = str(Path.home())
-        file_name = QFileDialog.getOpenFileName(self.app, 'Open file', home_dir)
+
+        # opens a file dialogue for the user to select a file to open
+        # ***** Currently only looks for text files
+        file_name = QFileDialog.getOpenFileName(self.app, 'Open file',
+                                                home_dir, "Text files (*.txt)")
 
         # open the chosen file and show the text in the text editor
-        if file_name[0]:
-            f = open(file_name[0], 'r')
-            with f:
-                data = f.read()
-                self.layout.document.setText(data)
+        data = self.file_manager.openDocument(file_name[0])
 
     # --------------------------------------------------------------------------------
 

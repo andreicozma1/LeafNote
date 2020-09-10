@@ -1,5 +1,5 @@
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QApplication
 
 from ColorWidget import Color
 from DirectoryViewer import DirectoryViewer
@@ -28,14 +28,13 @@ class Layout():
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
-        self.document = Document(min_doc_width * app.width)
+        self.document = Document(self.min_doc_width * self.app.width)
 
     def setup(self):
         self.top_bar.setMaximumHeight(self.bar_size)
         self.bottom_bar.setMaximumHeight(self.bar_size)
         self.left_menu.setMaximumWidth(int(self.max_menu_width * self.app.width))
         self.right_menu.setMaximumWidth(int(self.max_menu_width * self.app.width))
-
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
         self.vertical_layout.addWidget(self.top_bar)
@@ -48,10 +47,12 @@ class Layout():
         self.splitter.setSizes([100, self.document.minimumWidth(), 100])
         self.horizontal_layout.addWidget(self.splitter)
 
-
         # add the horizontal layout to the middle
         self.vertical_layout.addWidget(self.splitter)
         # add the bottom bar
         self.vertical_layout.addWidget(self.bottom_bar)
 
         return self.central_widget
+
+    def update(self):
+        QApplication.processEvents()  # update gui for pyqt
