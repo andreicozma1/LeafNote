@@ -1,3 +1,6 @@
+from Document import Document
+
+
 # TODO - this class should manage all of the open files and store them into a dict keyed by its path
 class FileManager:
     def __init__(self, app):
@@ -42,7 +45,7 @@ class FileManager:
 
             # creates a new Document and sets the text to the text of the given file
             # adds the new Document to the dictionary of open documents.
-            self.open_documents[path] = Document(self.app.layout.min_doc_width * self.app.width)
+            self.open_documents[path] = Document()
             self.open_documents[path].setText(data)
             print("Opened File - ", path)
         else:
