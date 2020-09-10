@@ -36,7 +36,11 @@ class FileManager:
     def openDocument(self, path):
         # opens the file with the given path
         if path not in self.open_documents.keys():
+            if path == "":
+                print("No File Path Given")
+                return ""
             file = open(path, 'r')
+
             if file.closed:
                 print("Could Not Open File - ", path)
                 return ""
@@ -49,12 +53,8 @@ class FileManager:
             self.open_documents[path].setText(data)
             print("Opened File - ", path)
         else:
-            if path == "":
-                print("No File Path Given")
-                return ""
-            else:
-                print("Document Already Open - ", path)
-                data = self.open_documents[path].toPlainText()
+            print("Document Already Open - ", path)
+            data = self.open_documents[path].toPlainText()
 
         # TODO - add the newly created document as a tab in the workspace
         self.app.layout.document.refreshTextBox(data)

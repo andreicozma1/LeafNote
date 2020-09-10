@@ -20,7 +20,7 @@ class DirectoryViewer(QTreeView):
         self.setIndentation(10)
         self.setSortingEnabled(True)
 
-    # TODO - link a click on the direcectory viewer to open the clicked file
+    # TODO - link a click on the directory viewer to open the clicked file
     def onClicked(self, index):
         path = self.sender().model.filePath(index)
         print(path)
