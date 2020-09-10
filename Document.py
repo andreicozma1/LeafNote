@@ -1,3 +1,5 @@
+from PyQt5.QtGui import QPalette, QColor
+
 from Textbox import TextBox
 
 
