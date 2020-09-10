@@ -2,10 +2,9 @@ from Textbox import TextBox
 
 
 class Document(TextBox):
-    def __init__(self, min_width):
+    def __init__(self):
         super(TextBox, self).__init__()
-        print("Created Document")
+        print("Document - init")
 
-        self.setMinimumWidth(min_width)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")

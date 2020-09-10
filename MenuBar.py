@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import qApp, QAction
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
     def __init__(self, app):
-        # super(QMenuBar, self).__init__()
+        print("MenuBar - init")
         self.app = app
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
@@ -16,6 +16,7 @@ class MenuBar():
         self.help_menu = self.menu.addMenu('&Help')
 
     def setup(self):
+        print("MenuBar - setup")
         # File tab submenus and actions
         exit_act = QAction("&Exit", self.app)
         exit_act.setShortcut('Ctrl+Q')
