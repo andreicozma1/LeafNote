@@ -9,4 +9,4 @@ class Document(TextBox):
         self.setMinimumWidth(minWidth)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
-
+        self.getWordCount()

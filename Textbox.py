@@ -30,5 +30,5 @@ class TextBox(QTextEdit):
 
     def getWordCount(self):
         wordCount = len(self.toPlainText().split(" "))
-        #print(wordCount)
+        print(wordCount)
 

@@ -36,6 +36,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
 
-    ex.docLayout.textBox.getWordCount()
+    #ex.docLayout.textBox.getWordCount()
 
     sys.exit(app.exec_())
