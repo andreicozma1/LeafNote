@@ -26,9 +26,12 @@ class TextBox(QTextEdit):
         self.setTextColor(QColor(color))
 
     def getWordCount(self):
-        wordCount = len(self.toPlainText().split(" "))
+        wordCount = len(self.toPlainText().split())
         print(wordCount)
 
+    def getCharCount(self):
+        charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
+        print("Number of Letters:", charCount)
 
 
 
