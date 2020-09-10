@@ -27,7 +27,9 @@ class TextBox(QTextEdit):
 
     def getWordCount(self):
         wordCount = len(self.toPlainText().split())
-        print(wordCount)
+        if self.toPlainText() == '':
+            wordCount = 0
+        print("Word Count:", wordCount)
 
     def getCharCount(self):
         charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
