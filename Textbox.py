@@ -28,3 +28,7 @@ class TextBox(QTextEdit):
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
 
+    def getWordCount(self):
+        wordCount = len(self.toPlainText().split(" "))
+        #print(wordCount)
+

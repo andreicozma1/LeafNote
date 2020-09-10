@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from Layout import Layout
+import tkinter
 
 
 class App(QMainWindow):
@@ -28,8 +29,13 @@ class App(QMainWindow):
 
 
 
+
+
 # Starting point of the program
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
+
+    ex.docLayout.textBox.getWordCount()
+
     sys.exit(app.exec_())

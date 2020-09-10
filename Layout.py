@@ -3,11 +3,11 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 from ColorWidget import Color
 from Document import Document
+import tkinter
 
 
 class Layout():
     def __init__(self, appCtx, minDocWidth, maxMenuWidth, barSize):
-
         # Vertical main layout. TODO - The middle section of VBox should be a horizontal 3 section box
         # TODO - Make top bar slimmer. This is for main actions like saving, undo, etc.
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
@@ -52,3 +52,8 @@ class Layout():
         self.verticalLayout.addWidget(self.bottomBar)
 
         return centralWidget
+
+    def keyPressEvent(self, event):
+        super(App, self).keyPressEvent(event)
+        ex.docLayout.textBox.getWordCount()
+
