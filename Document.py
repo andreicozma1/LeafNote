@@ -9,4 +9,5 @@ class Document(TextBox):
         self.setMinimumWidth(minWidth)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
+        self.setPlaceholderText("Welcome to your new Note Page, begin typing here.")
         self.getWordCount()

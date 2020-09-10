@@ -7,9 +7,6 @@ class TextBox(QTextEdit):
     def __init__(self, textDefault=None):
         super(QTextEdit, self).__init__()
         print("TextBox - created")
-        if textDefault is None:
-            textDefault = "You can type here."
-        print("TextBox - text: ", textDefault)
 
         self.setPlainText(textDefault)
         self.setAutoFillBackground(True)
