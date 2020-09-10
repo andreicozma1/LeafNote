@@ -4,14 +4,14 @@ from PyQt5.QtWidgets import QTextEdit
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
-    def __init__(self, textDefault=None):
+    def __init__(self, default_text=None):
         super(QTextEdit, self).__init__()
         print("TextBox - created")
-        if textDefault is None:
-            textDefault = "You can type here."
-        print("TextBox - text: ", textDefault)
+        if default_text is None:
+            default_text = "You can type here."
+        print("TextBox - text: ", default_text)
 
-        self.setPlainText(textDefault)
+        self.setPlainText(default_text)
         self.setAutoFillBackground(True)
 
     # Set the background color of the QPlainTextEdit Widget

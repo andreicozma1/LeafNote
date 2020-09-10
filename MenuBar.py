@@ -3,10 +3,10 @@ from PyQt5.QtWidgets import qApp, QAction
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
-    def __init__(self, appCtx):
+    def __init__(self, app):
         # super(QMenuBar, self).__init__()
-        self.appCtx = appCtx
-        self.menu = appCtx.menuBar()
+        self.app = app
+        self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
 
         self.file_menu = self.menu.addMenu('&File')
@@ -15,16 +15,16 @@ class MenuBar():
         self.tools_menu = self.menu.addMenu('&Tools')
         self.help_menu = self.menu.addMenu('&Help')
 
-    def initMenuBar(self):
+    def setup(self):
         # File tab submenus and actions
-        exitAct = QAction("&Exit", self.appCtx)
-        exitAct.setShortcut('Ctrl+Q')
-        exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(qApp.quit)
+        exit_act = QAction("&Exit", self.app)
+        exit_act.setShortcut('Ctrl+Q')
+        exit_act.setStatusTip('Exit application')
+        exit_act.triggered.connect(qApp.quit)
 
-        self.file_menu.addAction(exitAct)
+        self.file_menu.addAction(exit_act)
         # menu.addAction(self.file_menu.menuAction())
-        # self.view_menu.addAction(exitAct)
+        # self.view_menu.addAction(exit_act)
         # self.addAction(self.view_menu.menuAction())
         # TODO - Add more submenus and action for each of the menu tabs
         return self
