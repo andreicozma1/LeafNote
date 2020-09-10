@@ -1,14 +1,15 @@
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import QTextEdit
-
+from PyQt5.QtWidgets import QTextEdit, QApplication
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
-    def __init__(self, textDefault=None):
+    def __init__(self, default_text=None):
         super(QTextEdit, self).__init__()
+        print("TextBox - init")
+        if default_text is None:
+            default_text = "You can type here."
 
-        print("TextBox - created")
-        self.setPlainText(textDefault)
+        self.setPlainText(default_text)
         self.setAutoFillBackground(True)
 
     # Set the background color of the QPlainTextEdit Widget
@@ -35,5 +36,6 @@ class TextBox(QTextEdit):
         charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
         print("Number of Letters:", charCount)
 
-
-
+    def refreshTextBox(self, text):
+        self.setText(text)
+        QApplication.processEvents() # update gui for pyqt
