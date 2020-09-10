@@ -49,7 +49,6 @@ class App(QMainWindow):
         self.bottomBar = Color("purple")  # TODO - Bottombar is a HBoxLayout
         self.bottomBar.setMaximumHeight(self.barSize)
 
-
         self.setCentralWidget(self.initWindow())
         self.show()
 
