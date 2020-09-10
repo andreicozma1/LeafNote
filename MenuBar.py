@@ -17,7 +17,6 @@ class MenuBar(QMenuBar):
         self.help_menu = QMenu('&Help', self)
         self.addMenu(self.help_menu)
 
-
         self.initTopBar()
 
     def initTopBar(self):
