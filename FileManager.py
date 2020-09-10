@@ -1,5 +1,3 @@
-from Document import Document
-
 # TODO - this class should manage all of the open files and store them into a dict keyed by its path
 class FileManager:
     def __init__(self, app):

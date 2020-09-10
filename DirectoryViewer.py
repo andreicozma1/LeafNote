@@ -1,6 +1,6 @@
-from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import QTextEdit, QFileSystemModel, QTreeView, QWidget
 from pathlib import Path
+
+from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
 # Class to display a directory
@@ -24,3 +24,4 @@ class DirectoryViewer(QTreeView):
     def onClicked(self, index):
         path = self.sender().model.filePath(index)
         print(path)
+

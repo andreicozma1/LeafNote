@@ -7,12 +7,11 @@ from Document import Document
 
 
 class Layout():
-    def __init__(self, app, min_doc_width, max_menu_width, bar_size):
+    def __init__(self, layout_props):
+        print("Layout - init")
+
         # Init variables
-        self.app = app
-        self.min_doc_width = min_doc_width
-        self.max_menu_width = max_menu_width
-        self.bar_size = bar_size
+        self.layout_props = layout_props
 
         self.central_widget = QWidget()
         self.vertical_layout = QVBoxLayout(self.central_widget)
@@ -28,23 +27,21 @@ class Layout():
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
-        self.document = Document(self.min_doc_width * self.app.width)
+        self.document = Document()
 
     def setup(self):
-        self.top_bar.setMaximumHeight(self.bar_size)
-        self.bottom_bar.setMaximumHeight(self.bar_size)
-        self.left_menu.setMaximumWidth(int(self.max_menu_width * self.app.width))
-        self.right_menu.setMaximumWidth(int(self.max_menu_width * self.app.width))
+        print("Layout - setup")
+        self.setDimensions()
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
         self.vertical_layout.addWidget(self.top_bar)
+        self.vertical_layout.setSpacing(self.layout_props.splitter_width * 3)
         # Create the horizontal layout which contains the left menu, text box, and right menu
 
         self.splitter.addWidget(self.left_menu)
         self.splitter.addWidget(self.document)
         self.splitter.addWidget(self.right_menu)
-        self.splitter.setStretchFactor(1, 1)
-        self.splitter.setSizes([100, self.document.minimumWidth(), 100])
+        self.splitter.setHandleWidth(self.layout_props.splitter_width)
         self.horizontal_layout.addWidget(self.splitter)
 
         # add the horizontal layout to the middle
@@ -54,5 +51,14 @@ class Layout():
 
         return self.central_widget
 
-    def update(self):
-        QApplication.processEvents()  # update gui for pyqt
+
+    def setDimensions(self):
+        print("Layout - set_dimensions")
+        self.top_bar.setMaximumHeight(self.layout_props.bar_height)
+        self.bottom_bar.setMaximumHeight(self.layout_props.bar_height)
+        self.left_menu.setMinimumWidth(int(self.layout_props.min_menu_width * self.layout_props.app.width))
+        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width))
+        self.right_menu.setMinimumWidth(int(self.layout_props.min_menu_width * self.layout_props.app.width))
+        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width))
+        self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width)
+

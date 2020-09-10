@@ -1,12 +1,13 @@
-from PyQt5.QtWidgets import qApp, QAction
-from PyQt5.QtWidgets import QFileDialog
 from pathlib import Path
-# from FileManager import openDocument
+
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import qApp, QAction
+
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
     def __init__(self, app):
-        # super(QMenuBar, self).__init__()
+        print("MenuBar - init")
         self.app = app
         self.file_manager = app.file_manager
         self.layout = app.layout
@@ -20,13 +21,14 @@ class MenuBar():
         self.help_menu = self.menu.addMenu('&Help')
 
     def setup(self):
+        print("MenuBar - setup")
+        # File tab submenus and actions
         # TODO - Add more submenus and action for each of the menu tabs
         self.fileMenuSetup()
         self.editMenuSetup()
         self.viewMenuSetup()
         self.toolsMenuSetup()
         self.helpMenuSetup()
-        return self
 
     # --------------------------------------------------------------------------------
 
