@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 from ColorWidget import Color
 from DirectoryViewer import DirectoryViewer
+# from FileManager import showDialog
 from Document import Document
 
 class Layout():
@@ -13,7 +14,7 @@ class Layout():
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
         self.topBar.setMaximumHeight(barSize)
         # TODO - Left menu is used to show workspace and directory structure for notes
-        self.leftMenu = DirectoryViewer();
+        self.leftMenu = DirectoryViewer()
         self.leftMenu.setMaximumWidth(int(maxMenuWidth * appCtx.width))
         # Middle block (text box) is the area where you can type in
         self.textBox = Document(minDocWidth * appCtx.width)
