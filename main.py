@@ -3,12 +3,14 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from Layout import Layout
+from LayoutProps import LayoutProps
 from MenuBar import MenuBar
 
 
 class App(QMainWindow):
     def __init__(self):
         super(QMainWindow, self).__init__()
+        print("App - init")
         # Initialize properties.
         self.title = '0x432d2d'
         self.left = 0
@@ -16,11 +18,13 @@ class App(QMainWindow):
         self.width = 640
         self.height = 480
 
+        self.layout_props = LayoutProps(self)
+        self.layout = Layout(self.layout_props)
         self.menubar = MenuBar(self)
-        self.layout = Layout(self, min_doc_width=.4, max_menu_width=.3, bar_size=30)
 
     # Returns the Central Widget
     def setup(self):
+        print("App - setup")
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -31,6 +35,7 @@ class App(QMainWindow):
 
 
 def main():
+    print("Main")
     app = QApplication(sys.argv)
     App().setup()
     sys.exit(app.exec_())
