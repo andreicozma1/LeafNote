@@ -2,8 +2,8 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 from ColorWidget import Color
+from DirectoryViewer import DirectoryViewer
 from Document import Document
-
 
 class Layout():
     def __init__(self, appCtx, minDocWidth, maxMenuWidth, barSize):
@@ -13,7 +13,7 @@ class Layout():
         self.topBar = Color('blue')  # TODO - Topbar is a HBoxLayout
         self.topBar.setMaximumHeight(barSize)
         # TODO - Left menu is used to show workspace and directory structure for notes
-        self.leftMenu = Color('yellow')  # TODO - Leftmenu is a VBoxLayout
+        self.leftMenu = DirectoryViewer();
         self.leftMenu.setMaximumWidth(int(maxMenuWidth * appCtx.width))
         # Middle block (text box) is the area where you can type in
         self.textBox = Document(minDocWidth * appCtx.width)
@@ -34,6 +34,7 @@ class Layout():
         self.verticalLayout.addWidget(self.topBar)
         # Create the horizontal layout which contains the left menu, text box, and right menu
         self.horizontalLayout = QHBoxLayout()
+
         # self.horizontalLayout.addWidget(self.leftMenu)
         # self.horizontalLayout.addWidget(self.textBox, 0, Qt.AlignCenter)
         # self.horizontalLayout.addWidget(self.rightMenu)
