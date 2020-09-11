@@ -28,9 +28,9 @@ class App(QMainWindow):
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
         self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
+        self.centerWindow(self.frameGeometry()) # Must be called after setting geometry
         if not self.app_props.resizable:
             self.setFixedSize(self.app_props.width,self.app_props.height)
-        self.centerWindow(self.frameGeometry()) # Must be called after setting geometry
 
         self.menubar.setup()
         self.setCentralWidget(self.layout.setup())
@@ -41,6 +41,12 @@ class App(QMainWindow):
         center = QDesktopWidget().availableGeometry().center()
         app_geom.moveCenter(center)
         self.move(app_geom.topLeft())
+
+    def resizeEvent(self, event):
+        self.layout.updateDimensions()
+        return super(QMainWindow, self).resizeEvent(event)
+
+
 
 
 def main():

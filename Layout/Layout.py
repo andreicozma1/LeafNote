@@ -31,7 +31,7 @@ class Layout():
 
     def setup(self):
         print("Layout - setup")
-        self.setDimensions()
+        self.updateDimensions()
 
         # Create a Vertical Box layout which will contain top bar, content, and bottom bar
         self.vertical_layout.addWidget(self.top_bar)
@@ -51,13 +51,13 @@ class Layout():
 
         return self.central_widget
 
-    def setDimensions(self):
+    def updateDimensions(self):
         app_props = self.layout_props.app.app_props
-        print("Layout - set_dimensions")
+        # print("Layout - set_dimensions")
         self.top_bar.setMaximumHeight(self.layout_props.bar_height)
         self.bottom_bar.setMaximumHeight(self.layout_props.bar_height)
-        self.left_menu.setMinimumWidth(int(self.layout_props.min_menu_width * app_props.width))
-        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * app_props.width))
-        self.right_menu.setMinimumWidth(int(self.layout_props.min_menu_width * app_props.width))
-        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * app_props.width))
-        self.document.setMinimumWidth(self.layout_props.min_doc_width * app_props.width)
+        self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
+        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
+        self.right_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
+        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
+        self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width())
