@@ -6,6 +6,7 @@ from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
+from Layout.AppProps import AppProps
 
 
 class App(QMainWindow):
@@ -13,11 +14,7 @@ class App(QMainWindow):
         super(QMainWindow, self).__init__()
         print("App - init")
         # Initialize properties.
-        self.title = '0x432d2d'
-        self.left = 0
-        self.top = 0
-        self.width = 640
-        self.height = 480
+        self.app_props = AppProps(self)
 
         self.file_manager = FileManager(self)
         self.layout_props = LayoutProps(self)
@@ -28,8 +25,8 @@ class App(QMainWindow):
     # Returns the Central Widget
     def setup(self):
         print("App - setup")
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setWindowTitle(self.app_props.title)
+        self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
 
         self.menubar.setup()
         self.setCentralWidget(self.layout.setup())
