@@ -1,9 +1,9 @@
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QApplication
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
-from ColorWidget import Color
-from DirectoryViewer import DirectoryViewer
-from Document import Document
+from Elements.ColorWidget import Color
+from Elements.DirectoryViewer import DirectoryViewer
+from Elements.Document import Document
 
 
 class Layout():
@@ -51,7 +51,6 @@ class Layout():
 
         return self.central_widget
 
-
     def setDimensions(self):
         print("Layout - set_dimensions")
         self.top_bar.setMaximumHeight(self.layout_props.bar_height)
@@ -61,4 +60,3 @@ class Layout():
         self.right_menu.setMinimumWidth(int(self.layout_props.min_menu_width * self.layout_props.app.width))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width))
         self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width)
-

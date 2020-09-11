@@ -2,10 +2,10 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from FileManager import FileManager
-from Layout import Layout
-from LayoutProps import LayoutProps
-from MenuBar import MenuBar
+from Layout.Layout import Layout
+from Layout.LayoutProps import LayoutProps
+from Layout.MenuBar import MenuBar
+from Utils.FileManager import FileManager
 
 
 class App(QMainWindow):
@@ -18,7 +18,7 @@ class App(QMainWindow):
         self.top = 0
         self.width = 640
         self.height = 480
-        
+
         self.file_manager = FileManager(self)
         self.layout_props = LayoutProps(self)
         self.layout = Layout(self.layout_props)
