@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
@@ -27,11 +27,17 @@ class App(QMainWindow):
         print("App - setup")
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
+        self.centerWindow(self.frameGeometry()) # Must be called after setting geometry
 
         self.menubar.setup()
         self.setCentralWidget(self.layout.setup())
 
         self.show()
+
+    def centerWindow(self, app_geom):
+        center = QDesktopWidget().availableGeometry().center()
+        app_geom.moveCenter(center)
+        self.move(app_geom.topLeft())
 
 
 def main():
