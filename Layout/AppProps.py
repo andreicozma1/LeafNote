@@ -1,6 +1,8 @@
 
 class AppProps():
     def __init__(self, app):
+        print("LayoutProps - init")
+
         self.app = app
         self.title = '0x432d2d'
         self.left = 0
