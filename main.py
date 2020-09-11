@@ -27,6 +27,9 @@ class App(QMainWindow):
         print("App - setup")
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
+        self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
+        if not self.app_props.resizable:
+            self.setFixedSize(self.app_props.width,self.app_props.height)
         self.centerWindow(self.frameGeometry()) # Must be called after setting geometry
 
         self.menubar.setup()

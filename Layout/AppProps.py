@@ -9,3 +9,6 @@ class AppProps():
         self.top = 0
         self.width = 640
         self.height = 480
+
+        self.min_width = .3 # Proportion of screen width
+        self.resizable = True
