@@ -27,7 +27,7 @@ class TextBox(QTextEdit):
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
 
-    def refreshTextBox(self, text=None):
+    def updateTextBox(self, text=None):
         if text is not None:
             self.setText(text)
 
