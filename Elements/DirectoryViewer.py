@@ -1,5 +1,5 @@
+from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
-from PyQt5.QtCore import QDir
 
 
 # Class to display a directory
@@ -16,10 +16,14 @@ class DirectoryViewer(QTreeView):
         self.setModel(self.model)
         self.setRootIndex(self.model.index(rootPath))
 
+        for i in range(1, self.model.columnCount()):
+            self.hideColumn(i)
+
         # make these functions
         self.setAnimated(False)
         self.setIndentation(10)
         self.setSortingEnabled(True)
+        self.sortByColumn(1, Qt.AscendingOrder)
 
     # TODO - link a click on the directory viewer to open the clicked file
     def onClicked(self, index):

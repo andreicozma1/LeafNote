@@ -31,4 +31,4 @@ class TextBox(QTextEdit):
         if text is not None:
             self.setPlainText(text)
 
-        QApplication.processEvents() # update gui for pyqt
+        QApplication.processEvents()  # update gui for pyqt

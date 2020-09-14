@@ -1,4 +1,3 @@
-from pathlib import Path
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
@@ -58,8 +57,10 @@ class Layout():
         # print("Layout - set_dimensions")
         self.top_bar.setMaximumHeight(self.layout_props.bar_height)
         self.bottom_bar.setMaximumHeight(self.layout_props.bar_height)
-        self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
-        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
-        self.right_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
-        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
+        self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (
+                    app_props.width / self.layout_props.app.width())))
+        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width()))
+        self.right_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (
+                    app_props.width / self.layout_props.app.width())))
+        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width()))
         self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width())

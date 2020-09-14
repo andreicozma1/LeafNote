@@ -2,11 +2,11 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
+from Layout.AppProps import AppProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
-from Layout.AppProps import AppProps
 
 
 class App(QMainWindow):
@@ -29,9 +29,9 @@ class App(QMainWindow):
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
         self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
-        self.centerWindow(self.frameGeometry()) # Must be called after setting geometry
+        self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
         if not self.app_props.resizable:
-            self.setFixedSize(self.app_props.width,self.app_props.height)
+            self.setFixedSize(self.app_props.width, self.app_props.height)
 
         self.menubar.setup()
         self.setCentralWidget(self.layout.setup())
@@ -46,8 +46,6 @@ class App(QMainWindow):
     def resizeEvent(self, event):
         self.layout.updateDimensions()
         return super(QMainWindow, self).resizeEvent(event)
-
-
 
 
 def main():

@@ -94,6 +94,7 @@ class MenuBar():
     def closeWindow(self):
         self.file_manager.closeAll()
         qApp.quit()
+
     # --------------------------------------------------------------------------------
 
     # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
