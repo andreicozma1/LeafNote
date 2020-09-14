@@ -25,7 +25,7 @@ class FileManager:
             file = open(path, 'w')
 
             # get the text of the document with the given path
-            data = self.open_documents[path].refreshTextBox().toPlainText()
+            data = self.open_documents[path].updateTextBox().toPlainText()
 
             # TODO - Delete this line once the multiple textbox display is implemented
             # data = self.app.layout.document.toPlainText()
@@ -94,6 +94,6 @@ class FileManager:
 
         # TODO - add the newly created document as a tab in the workspace
         self.app.layout.document = self.open_documents[path]
-        self.app.layout.document.refreshTextBox(data)
+        self.app.layout.document.updateTextBox(data)
 
         return data
