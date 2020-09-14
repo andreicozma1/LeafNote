@@ -24,4 +24,3 @@ class DirectoryViewer(QTreeView):
     def onClicked(self, index):
         path = self.sender().model.filePath(index)
         print(path)
-

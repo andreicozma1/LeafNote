@@ -1,4 +1,4 @@
-from Textbox import TextBox
+from Elements.Textbox import TextBox
 
 
 class Document(TextBox):
