@@ -7,30 +7,58 @@ class FileManager:
         self.app = app
         self.open_documents = {}
 
-    def update_all(self):
-        for key in self.open_documents:
-            self.open_documents[key].update()
+    # def update_all(self):
+    #     for key in self.open_documents:
+    #         self.open_documents[key].update()
 
-    # TODO - save the file of the given path
+    # saves text to the file of the given path
     def saveDocument(self, path):
-        file = None
-        path = str(path)
+        if path in self.open_documents.keys():
+            file = open(path, 'w')
+
+            # get the text of the document with the given path
+            data = self.open_documents[path].toPlainText()
+
+            # TODO - Delete this line once the multiple textbox display is implemented
+            data = self.app.layout.document.toPlainText()
+
+            file.write(data)
+            file.close()
+
+        else:
+            if path == "":
+                print("No File Path Given")
+            else:
+                print("Could Not Write To File - ", path)
+
 
     # TODO - save the file at the current path to the new path
     def saveAsDocument(self, curr_path, new_path):
         data = None
         curr_path = str(curr_path)
 
-        # update the dict holding the open files
-        self.open_documents.pop(curr_path)
-        # self.open_documents[new_path] = data
+    # saves every file contained in the dictionary
+    def saveAll(self):
+        for path in self.open_documents:
+            self.saveDocument(path)
+            print
 
-    # TODO - save and close the file of the given path and pop it from the dict
+    # this closes the document with the given path and does not save
     def closeDocument(self, path):
-        file = None
-        path = str(path)
-        self.open_documents.pop(path)
-        print(path)
+        if path in self.open_documents.keys():
+            print("Closed File - ", path)
+            self.open_documents.pop(path)
+        else:
+            if path == "":
+                print("No File Path Given")
+            else:
+                print("Could Not Close File - ", path)
+
+    # clears the dictionary of all open documents
+    # !note! this does not save the documents
+    def closeAll(self):
+        for path in self.open_documents:
+            self.closeDocument(path)
 
     # opens the file of the given path and add the Document to the dictionary
     def openDocument(self, path):
@@ -51,6 +79,8 @@ class FileManager:
             # adds the new Document to the dictionary of open documents.
             self.open_documents[path] = Document()
             self.open_documents[path].setText(data)
+
+            file.close()
             print("Opened File - ", path)
         else:
             print("Document Already Open - ", path)

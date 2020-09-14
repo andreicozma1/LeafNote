@@ -35,11 +35,27 @@ class MenuBar():
     # TODO - Add more functionality to file tab - new, save, save as, save all, settings, etc.
     # this function sets up the file tabs drop menu
     def fileMenuSetup(self):
+        # TODO - new file
+
         # opens a dialogue to chose a file an open it
         open_file_act = QAction("&Open", self.app)
         open_file_act.setStatusTip('Open File')
         open_file_act.triggered.connect(self.showOpenFileDialog)
         self.file_menu.addAction(open_file_act)
+
+        # save the open file
+        save_file = QAction("&Save", self.app)
+        save_file.setStatusTip('Save')
+        save_file.triggered.connect(self.saveFile)
+        self.file_menu.addAction(save_file)
+
+        # save all open files
+        save_all = QAction("&Save All", self.app)
+        save_all.setStatusTip('Save All')
+        save_all.triggered.connect(self.saveAll)
+        self.file_menu.addAction(save_all)
+
+        # TODO - save the file as a specified name
 
         # quit main window
         exit_act = QAction("&Exit", self.app)
@@ -48,11 +64,24 @@ class MenuBar():
         exit_act.triggered.connect(qApp.quit)
         self.file_menu.addAction(exit_act)
 
+    # TODO - need a variable to keep track of the current open file
+    def saveFile(self):
+        print("save")
+        pass
+
+    def saveAll(self):
+        self.file_manager.saveAll()
+        pass
+
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
     def showOpenFileDialog(self):
         # open the dialogue using the home directory as root
         home_dir = str(Path.home())
+
+        # this is opens the file dialogue in the project path
+        # ***** Delete this line in the future
+        home_dir = str(Path().parent.absolute())
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
