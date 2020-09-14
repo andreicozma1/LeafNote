@@ -29,10 +29,8 @@ class TextBox(QTextEdit):
 
     def refreshTextBox(self, text=None):
         if text is not None:
-            self.append(text)
-        # else:
-        #     self.setText(self.toPlainText())
-        print(self.toPlainText())
+            self.setText(text)
+
         QApplication.processEvents() # update gui for pyqt
 
         return self

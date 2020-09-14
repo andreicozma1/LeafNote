@@ -1,3 +1,5 @@
+from PyQt5.QtWidgets import QApplication
+
 from Document import Document
 
 
@@ -10,6 +12,14 @@ class FileManager:
     # def update_all(self):
     #     for key in self.open_documents:
     #         self.open_documents[key].update()
+    def printAll(self):
+        print('========================================')
+        print('Open Documents:')
+        for path in self.open_documents:
+            print('----------------------------------------')
+            print('path: ', path)
+            print('text:\n', self.open_documents[path].toPlainText())
+        print('========================================')
 
     # saves text to the file of the given path
     def saveDocument(self, path):
@@ -17,20 +27,19 @@ class FileManager:
             file = open(path, 'w')
 
             # get the text of the document with the given path
-            data = self.open_documents[path].toPlainText()
+            data = self.open_documents[path].refreshTextBox().toPlainText()
 
             # TODO - Delete this line once the multiple textbox display is implemented
-            data = self.app.layout.document.toPlainText()
+            # data = self.app.layout.document.toPlainText()
 
             file.write(data)
             file.close()
-
+            print('Saved File - ', path)
         else:
             if path == "":
                 print("No File Path Given")
             else:
                 print("Could Not Write To File - ", path)
-
 
     # TODO - save the file at the current path to the new path
     def saveAsDocument(self, curr_path, new_path):
@@ -41,7 +50,6 @@ class FileManager:
     def saveAll(self):
         for path in self.open_documents:
             self.saveDocument(path)
-            print
 
     # this closes the document with the given path and does not save
     def closeDocument(self, path):
@@ -87,6 +95,7 @@ class FileManager:
             data = self.open_documents[path].toPlainText()
 
         # TODO - add the newly created document as a tab in the workspace
+        self.app.layout.document = self.open_documents[path]
         self.app.layout.document.refreshTextBox(data)
 
         return data

@@ -71,7 +71,7 @@ class MenuBar():
 
     def saveAll(self):
         self.file_manager.saveAll()
-        pass
+        self.file_manager.printAll()
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
