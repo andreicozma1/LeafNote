@@ -38,40 +38,40 @@ class MenuBar():
         # TODO - new file
 
         # opens a dialogue to chose a file an open it
-        open_file_act = QAction("&Open", self.app)
+        open_file_act = QAction("&Open...", self.app)
         open_file_act.setStatusTip('Open File')
         open_file_act.triggered.connect(self.showOpenFileDialog)
         self.file_menu.addAction(open_file_act)
 
         # save the open file
-        save_file = QAction("&Save", self.app)
+        save_file = QAction("&Save...", self.app)
         save_file.setStatusTip('Save')
         save_file.triggered.connect(self.saveFile)
         self.file_menu.addAction(save_file)
 
-        # save all open files
-        save_all = QAction("&Save All", self.app)
-        save_all.setStatusTip('Save All')
-        save_all.triggered.connect(self.saveAll)
-        self.file_menu.addAction(save_all)
-
         # TODO - save the file as a specified name
+        '''
+        save_as_file = QAction("&Save As...", self.app)
+        save_as_file.setStatusTip('Save As')
+        save_as_file.triggered.connect(self.saveAsFile)
+        self.file_menu.addAction(save_as_file)
+        '''
 
         # quit main window
         exit_act = QAction("&Exit", self.app)
         exit_act.setShortcut('Ctrl+Q')
         exit_act.setStatusTip('Exit application')
-        exit_act.triggered.connect(qApp.quit)
+        exit_act.triggered.connect(self.closeWindow)
         self.file_menu.addAction(exit_act)
 
-    # TODO - need a variable to keep track of the current open file
+    # this saves the current file that is shown in the document
     def saveFile(self):
-        print("save")
-        pass
+        self.file_manager.saveDocument()
 
-    def saveAll(self):
-        self.file_manager.saveAll()
-        self.file_manager.printAll()
+    # TODO - save the file as a specified name
+    def saveAsFile(self):
+        print("TODO")
+        pass
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
@@ -91,6 +91,9 @@ class MenuBar():
         # open the chosen file and show the text in the text editor
         data = self.file_manager.openDocument(file_name[0])
 
+    def closeWindow(self):
+        self.file_manager.closeAll()
+        qApp.quit()
     # --------------------------------------------------------------------------------
 
     # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
