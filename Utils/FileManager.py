@@ -2,58 +2,12 @@ from pathlib import Path
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
-# returns the text inside of the file at the given path
-def getFileData(path):
-    # open the file with read only privileges
-    file = open(path, 'r')
-
-    # check if the file was opened
-    if file.closed:
-        print("Could Not Open File - ", path)
-        return ""
-
-    # read all data then close file
-    with file:
-        data = file.read()
-    file.close()
-
-    print("Opened File - ", path)
-    return data
-
-
-# opens the file at the given path and writes the given data to it
-def writeFileData(path, data):
-    # open the file with write only privileges
-    file = open(path, 'w')
-
-    # check if the file was opened
-    if file.closed:
-        print("Could Not Open File - ", path)
-        return ""
-
-    # write data to the file then close the file
-    file.write(data)
-    file.close()
-
-    print("Opened File - ", path)
-
-
 # this class manages all of the open documents and stores their paths into a list
 class FileManager:
     def __init__(self, app):
         self.app = app                  # app - QMainWindow instance
         self.open_documents = []        # open_documents - holds the paths of all of the open documents
         self.current_document = None    # current_document - the current document that is displayed to the user
-
-    # For debugging prints out all of the documents stored in open_documents dictionary
-    def printAll(self):
-        print('========================================')
-        print('Open Documents:')
-        for path in self.open_documents:
-            print('----------------------------------------')
-            print('path: ', path)
-            print('text:\n', getFileData(path))
-        print('========================================')
 
     # saves text to the file of the given path
     def saveDocument(self):
@@ -141,3 +95,49 @@ class FileManager:
         self.app.layout.document.updateTextBox(data)
 
         return data
+
+    # For debugging prints out all of the documents stored in open_documents dictionary
+    def printAll(self):
+        print('========================================')
+        print('Open Documents:')
+        for path in self.open_documents:
+            print('----------------------------------------')
+            print('path: ', path)
+            print('text:\n', getFileData(path))
+        print('========================================')
+    
+    
+# returns the text inside of the file at the given path
+def getFileData(path):
+    # open the file with read only privileges
+    file = open(path, 'r')
+
+    # check if the file was opened
+    if file.closed:
+        print("Could Not Open File - ", path)
+        return ""
+
+    # read all data then close file
+    with file:
+        data = file.read()
+    file.close()
+
+    print("Opened File - ", path)
+    return data
+
+
+# opens the file at the given path and writes the given data to it
+def writeFileData(path, data):
+    # open the file with write only privileges
+    file = open(path, 'w')
+
+    # check if the file was opened
+    if file.closed:
+        print("Could Not Open File - ", path)
+        return ""
+
+    # write data to the file then close the file
+    file.write(data)
+    file.close()
+
+    print("Opened File - ", path)
