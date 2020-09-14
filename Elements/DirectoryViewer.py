@@ -1,19 +1,20 @@
-from pathlib import Path
-
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
+from PyQt5.QtCore import QDir
 
 
 # Class to display a directory
 class DirectoryViewer(QTreeView):
     def __init__(self, rootPath=None):
         super(QTreeView, self).__init__()
-        self.model = QFileSystemModel()
+
         if rootPath is None:
-            rootPath = str(Path.home())
-            print(rootPath)
+            rootPath = QDir.currentPath()
+
+        self.model = QFileSystemModel()
         self.model.setRootPath(rootPath)
-        # self.treeView = QTreeView()
+
         self.setModel(self.model)
+        self.setRootIndex(self.model.index(rootPath))
 
         # make these functions
         self.setAnimated(False)

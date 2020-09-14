@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QDir
+
 class AppProps():
     def __init__(self, app):
         print("LayoutProps - init")
@@ -9,6 +11,8 @@ class AppProps():
         self.top = 0
         self.width = 800
         self.height = 600
+
+        self.mainPath = QDir.currentPath()
 
         self.min_width = .3 # Proportion of screen width
         self.resizable = True

@@ -1,13 +1,14 @@
 from pathlib import Path
+
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
 # this class manages all of the open documents and stores their paths into a list
 class FileManager:
     def __init__(self, app):
-        self.app = app                  # app - QMainWindow instance
-        self.open_documents = []        # open_documents - holds the paths of all of the open documents
-        self.current_document = None    # current_document - the current document that is displayed to the user
+        self.app = app  # app - QMainWindow instance
+        self.open_documents = []  # open_documents - holds the paths of all of the open documents
+        self.current_document = None  # current_document - the current document that is displayed to the user
 
     # saves text to the file of the given path
     def saveDocument(self):
@@ -16,7 +17,7 @@ class FileManager:
 
         # if a file has already been opened write to the file
         if self.current_document is not None:
-            writeFileData(self.open_documents[self.current_document], data)
+            self.writeFileData(self.open_documents[self.current_document], data)
             print('Saved File - ', self.open_documents[self.current_document])
 
         # if a file has not been opened yet prompt the user for a file name then write to that file
@@ -27,10 +28,10 @@ class FileManager:
             # TODO - default to save in the current open workspace,  but give user ability to change        \
             #  the directory the file is saved to. currently this just sets the file path to the projects   \
             #  Workspaces folder workspace 2
-            path = str(Path().parent.absolute())+'/Workspaces/ws2/'+file_name[0]
+            path = str(Path().parent.absolute()) + '/Workspaces/ws2/' + file_name[0]
 
             # write the text in the document shown to the user to the given file path
-            writeFileData(path, data)
+            self.writeFileData(path, data)
 
             # append the newly created file to the list of open docs and set it to the curr doc
             self.open_documents.append(path)
@@ -78,7 +79,7 @@ class FileManager:
                 return ""
 
             # retrieve the text from the file you are attempting to open
-            data = getFileData(path)
+            data = self.getFileData(path)
 
             # appends the path to the list of open documents and sets it to the current doc
             self.open_documents.append(path)
@@ -87,7 +88,7 @@ class FileManager:
         # if the document has already been opened in this session
         else:
             # get the data from the file and set the current doc
-            data = getFileData(path)
+            data = self.getFileData(path)
             self.current_document = self.open_documents.index(path)
             print("Document Already Open - ", path)
 
@@ -103,41 +104,39 @@ class FileManager:
         for path in self.open_documents:
             print('----------------------------------------')
             print('path: ', path)
-            print('text:\n', getFileData(path))
+            print('text:\n', self.getFileData(path))
         print('========================================')
-    
-    
-# returns the text inside of the file at the given path
-def getFileData(path):
-    # open the file with read only privileges
-    file = open(path, 'r')
 
-    # check if the file was opened
-    if file.closed:
-        print("Could Not Open File - ", path)
-        return ""
+    # returns the text inside of the file at the given path
+    def getFileData(self, path):
+        # open the file with read only privileges
+        file = open(path, 'r')
 
-    # read all data then close file
-    with file:
-        data = file.read()
-    file.close()
+        # check if the file was opened
+        if file.closed:
+            print("Could Not Open File - ", path)
+            return ""
 
-    print("Opened File - ", path)
-    return data
+        # read all data then close file
+        with file:
+            data = file.read()
+        file.close()
 
+        print("Opened File - ", path)
+        return data
 
-# opens the file at the given path and writes the given data to it
-def writeFileData(path, data):
-    # open the file with write only privileges
-    file = open(path, 'w')
+    # opens the file at the given path and writes the given data to it
+    def writeFileData(self, path, data):
+        # open the file with write only privileges
+        file = open(path, 'w')
 
-    # check if the file was opened
-    if file.closed:
-        print("Could Not Open File - ", path)
-        return ""
+        # check if the file was opened
+        if file.closed:
+            print("Could Not Open File - ", path)
+            return ""
 
-    # write data to the file then close the file
-    file.write(data)
-    file.close()
+        # write data to the file then close the file
+        file.write(data)
+        file.close()
 
-    print("Opened File - ", path)
+        print("Opened File - ", path)

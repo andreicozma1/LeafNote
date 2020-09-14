@@ -1,3 +1,4 @@
+from pathlib import Path
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
@@ -7,11 +8,12 @@ from Elements.Document import Document
 
 
 class Layout():
-    def __init__(self, layout_props):
+    def __init__(self, appProps, layoutProps):
         print("Layout - init")
 
         # Init variables
-        self.layout_props = layout_props
+        self.app_props = appProps
+        self.layout_props = layoutProps
 
         self.central_widget = QWidget()
         self.vertical_layout = QVBoxLayout(self.central_widget)
@@ -23,7 +25,7 @@ class Layout():
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = Color("purple")
         # TODO - Left menu (VBoxLayout) is used to show workspace and directory structure for notes
-        self.left_menu = DirectoryViewer()
+        self.left_menu = DirectoryViewer(self.app_props.mainPath)
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 

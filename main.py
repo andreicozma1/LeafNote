@@ -15,10 +15,11 @@ class App(QMainWindow):
         print("App - init")
         # Initialize properties.
         self.app_props = AppProps(self)
+        self.layout_props = LayoutProps(self)
 
         self.file_manager = FileManager(self)
-        self.layout_props = LayoutProps(self)
-        self.layout = Layout(self.layout_props)
+
+        self.layout = Layout(self.app_props, self.layout_props)
 
         self.menubar = MenuBar(self)
 
