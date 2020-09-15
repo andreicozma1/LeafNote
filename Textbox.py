@@ -26,16 +26,6 @@ class TextBox(QTextEdit):
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
 
-    def getWordCount(self):
-        wordCount = len(self.toPlainText().split())
-        if self.toPlainText() == '':
-            wordCount = 0
-        print("Word Count:", wordCount)
-
-    def getCharCount(self):
-        charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
-        print("Number of Letters:", charCount)
-
     def refreshTextBox(self, text):
         self.setText(text)
         QApplication.processEvents() # update gui for pyqt

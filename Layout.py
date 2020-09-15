@@ -28,7 +28,7 @@ class Layout():
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
-        self.document = Document()
+        self.document = Document(self.bottom_bar)
 
     def setup(self):
         print("Layout - setup")
