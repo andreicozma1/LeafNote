@@ -1,6 +1,6 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget,QHBoxLayout, QLabel
-from ColorWidget import Color
+from src.Elements.ColorWidget import Color
 
 
 class BottomBar(QWidget):
