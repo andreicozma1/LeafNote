@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDir, Qt, QModelIndex
+from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
@@ -34,13 +34,9 @@ class DirectoryViewer(QTreeView):
 
         self.doubleClicked.connect(self.onDoubleClick)
 
-
     # TODO - link a click on the directory viewer to open the clicked file
     def onDoubleClick(self, index):
         path = self.sender().model.filePath(index)
         print("DirectoryViewer - onDoubleClick -", path)
         if not self.sender().model.isDir(index):
             self.fileManager.openDocument(path)
-
-
-

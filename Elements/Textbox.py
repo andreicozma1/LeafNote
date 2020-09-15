@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QTextEdit, QApplication
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
-    def __init__(self, default_text=None):
+    def __init__(self, default_text:str=None):
         super(QTextEdit, self).__init__()
         print("TextBox - init - ", default_text)
         if default_text is None:
@@ -14,7 +14,7 @@ class TextBox(QTextEdit):
         self.setAutoFillBackground(True)
 
     # Set the background color of the QPlainTextEdit Widget
-    def setBackgroundColor(self, color):
+    def setBackgroundColor(self, color:str):
         print("TextBox - setBackgroundColor ", color)
         palette = self.palette()
         # Set color for window focused
@@ -25,14 +25,13 @@ class TextBox(QTextEdit):
         self.setPalette(palette)
         # self.setBackgroundVisible(False)
 
-    def setTextColorByString(self, color):
+    def setTextColorByString(self, color:str):
         print("TextBox - setTextColorByString - ", color)
         self.setTextColor(QColor(color))
 
-    def updateTextBox(self, text=None):
+    def updateTextBox(self, text:str=None):
         print("TextBox - updateTextBox")
 
         if text is not None:
             self.setText(text)
 
-        QApplication.processEvents()  # update gui for pyqt
