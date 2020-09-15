@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
@@ -31,9 +30,9 @@ class FileManager:
                 print("No File Path Given")
                 return
 
-            # TODO - default to save in the current open workspace,  but give user ability to change        \
+            # TODO - default to save in the current open workspaces,  but give user ability to change        \
             #  the directory the file is saved to. currently this just sets the file path to the projects   \
-            #  Workspaces folder workspace 2
+            #  Workspaces folder workspaces 2
 
             path = self.app.app_props.mainPath + "/" + file_name[0]
 

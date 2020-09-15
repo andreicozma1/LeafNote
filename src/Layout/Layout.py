@@ -24,7 +24,7 @@ class Layout():
         self.top_bar = Color('red')
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = Color("purple")
-        # TODO - Left menu (VBoxLayout) is used to show workspace and directory structure for notes
+        # TODO - Left menu (VBoxLayout) is used to show workspaces and directory structure for notes
         self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
