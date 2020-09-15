@@ -3,7 +3,7 @@ from PyQt5.QtCore import QDir
 
 class AppProps():
     def __init__(self, app):
-        print("LayoutProps - init")
+        print("AppProps - init")
 
         self.app = app
         # Defaults

@@ -1,20 +1,27 @@
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import QDir, Qt, QModelIndex
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
 # Class to display a directory
 class DirectoryViewer(QTreeView):
-    def __init__(self, rootPath=None):
+    def __init__(self, fileManager, path=None):
         super(QTreeView, self).__init__()
+        print("DirectoryViewer - init - ", path)
+        self.fileManager = fileManager
 
-        if rootPath is None:
-            rootPath = QDir.currentPath()
+        if path is None:
+            path = QDir.currentPath()
 
         self.model = QFileSystemModel()
-        self.model.setRootPath(rootPath)
+        self.updateDirectory(path)
+
+    def updateDirectory(self, path):
+        print("DirectoryViewer - updateDirectory - ", path)
+
+        self.model.setRootPath(path)
 
         self.setModel(self.model)
-        self.setRootIndex(self.model.index(rootPath))
+        self.setRootIndex(self.model.index(path))
 
         for i in range(1, self.model.columnCount()):
             self.hideColumn(i)
@@ -25,7 +32,14 @@ class DirectoryViewer(QTreeView):
         self.setSortingEnabled(True)
         self.sortByColumn(1, Qt.AscendingOrder)
 
+        self.doubleClicked.connect(self.onDoubleClick)
+
+
     # TODO - link a click on the directory viewer to open the clicked file
-    def onClicked(self, index):
+    def onDoubleClick(self, index):
         path = self.sender().model.filePath(index)
-        print(path)
+        print("DirectoryViewer - onDoubleClick -", path)
+        self.fileManager.openDocument(path)
+
+
+

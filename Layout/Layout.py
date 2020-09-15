@@ -7,10 +7,11 @@ from Elements.Document import Document
 
 
 class Layout():
-    def __init__(self, appProps, layoutProps):
+    def __init__(self, app, appProps, layoutProps):
         print("Layout - init")
 
         # Init variables
+        self.app = app
         self.app_props = appProps
         self.layout_props = layoutProps
 
@@ -24,7 +25,7 @@ class Layout():
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = Color("purple")
         # TODO - Left menu (VBoxLayout) is used to show workspace and directory structure for notes
-        self.left_menu = DirectoryViewer(self.app_props.mainPath)
+        self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 

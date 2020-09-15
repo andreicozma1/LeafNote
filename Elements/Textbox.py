@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QTextEdit, QApplication
 class TextBox(QTextEdit):
     def __init__(self, default_text=None):
         super(QTextEdit, self).__init__()
-        print("TextBox - init")
+        print("TextBox - init - ", default_text)
         if default_text is None:
             default_text = "You can type here."
 
@@ -15,6 +15,7 @@ class TextBox(QTextEdit):
 
     # Set the background color of the QPlainTextEdit Widget
     def setBackgroundColor(self, color):
+        print("TextBox - setBackgroundColor ", color)
         palette = self.palette()
         # Set color for window focused
         palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
@@ -25,9 +26,12 @@ class TextBox(QTextEdit):
         # self.setBackgroundVisible(False)
 
     def setTextColorByString(self, color):
+        print("TextBox - setTextColorByString - ", color)
         self.setTextColor(QColor(color))
 
     def updateTextBox(self, text=None):
+        print("TextBox - updateTextBox")
+
         if text is not None:
             self.setPlainText(text)
 

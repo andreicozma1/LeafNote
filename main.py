@@ -19,7 +19,7 @@ class App(QMainWindow):
 
         self.file_manager = FileManager(self)
 
-        self.layout = Layout(self.app_props, self.layout_props)
+        self.layout = Layout(self, self.app_props, self.layout_props)
 
         self.menubar = MenuBar(self)
 
@@ -39,6 +39,7 @@ class App(QMainWindow):
         self.show()
 
     def centerWindow(self, app_geom):
+        print("App - centerWindow")
         center = QDesktopWidget().availableGeometry().center()
         app_geom.moveCenter(center)
         self.move(app_geom.topLeft())

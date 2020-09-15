@@ -1,17 +1,19 @@
-from pathlib import Path
-
+from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
 # this class manages all of the open documents and stores their paths into a list
 class FileManager:
     def __init__(self, app):
+        print("FileManager - init")
         self.app = app  # app - QMainWindow instance
         self.open_documents = []  # open_documents - holds the paths of all of the open documents
         self.current_document = None  # current_document - the current document that is displayed to the user
 
     # saves text to the file of the given path
     def saveDocument(self):
+        print("FileManager - saveDocument")
+
         # get the current text from the document shown to the user
         data = self.app.layout.document.toPlainText()
 
@@ -28,7 +30,7 @@ class FileManager:
             # TODO - default to save in the current open workspace,  but give user ability to change        \
             #  the directory the file is saved to. currently this just sets the file path to the projects   \
             #  Workspaces folder workspace 2
-            path = str(Path().parent.absolute()) + '/Workspaces/ws2/' + file_name[0]
+            path = self.app.app_props.mainPath + file_name[0]
 
             # write the text in the document shown to the user to the given file path
             self.writeFileData(path, data)
@@ -41,12 +43,15 @@ class FileManager:
 
     # TODO - save the file at the current path to the new path
     def saveAsDocument(self, new_path):
+        print("FileManager - saveAsDocument - ", new_path)
         data = self.app.layout.document.toPlainText()
         pass
 
     # this closes the document with the given path
     # !note! this does not save the document
     def closeDocument(self, path):
+        print("FileManager - closeDocument - ", path)
+
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.remove(path)
@@ -62,10 +67,12 @@ class FileManager:
     # clears the list of all open documents
     # !note! this does not save the documents
     def closeAll(self):
+        print("FileManager - closeAll")
         self.open_documents.clear()
 
     # opens the file of the given path and add the Document to the dictionary
     def openDocument(self, path):
+        print("FileManager - openDocument - ", path)
         # if there is already a file open save before the Document's text is overwritten
         if self.current_document is not None:
             self.saveDocument()
@@ -114,7 +121,7 @@ class FileManager:
 
         # check if the file was opened
         if file.closed:
-            print("Could Not Open File - ", path)
+            print("FileManager - getFileData - Could Not Open File - ", path)
             return ""
 
         # read all data then close file
@@ -122,7 +129,6 @@ class FileManager:
             data = file.read()
         file.close()
 
-        print("Opened File - ", path)
         return data
 
     # opens the file at the given path and writes the given data to it
@@ -132,11 +138,10 @@ class FileManager:
 
         # check if the file was opened
         if file.closed:
-            print("Could Not Open File - ", path)
+            print("FileManager - writeFileData - Could Not Open File - ", path)
             return ""
 
         # write data to the file then close the file
         file.write(data)
         file.close()
 
-        print("Opened File - ", path)
