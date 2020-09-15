@@ -1,10 +1,11 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
+
+from src.Elements.BottomBar import BottomBar
 from src.Elements.ColorWidget import Color
 from src.Elements.DirectoryViewer import DirectoryViewer
 from src.Elements.Document import Document
-
 
 class Layout():
     def __init__(self, app, appProps, layoutProps):
@@ -23,13 +24,15 @@ class Layout():
         # TODO - Top Bar (HBoxLayout) for Font Style, Size, Color, Highlighting, etc
         self.top_bar = Color('red')
         # TODO - BottomBar (HBoxLayout) for certain actions and information
-        self.bottom_bar = Color("purple")
+        self.bottom_bar = BottomBar()
+
         # TODO - Left menu (VBoxLayout) is used to show workspaces and directory structure for notes
         self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
+
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
-        self.document = Document()
+        self.document = Document(self.bottom_bar)
 
     def setup(self):
         print("Layout - setup")
@@ -65,3 +68,4 @@ class Layout():
                 app_props.width / self.layout_props.app.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width()))
         self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width())
+
