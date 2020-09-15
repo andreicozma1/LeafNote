@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
 
 from src.Elements.BottomBar import BottomBar
+from src.Elements.TopBar import TopBar
 from src.Elements.ColorWidget import Color
 from src.Elements.DirectoryViewer import DirectoryViewer
 from src.Elements.Document import Document
@@ -22,7 +23,7 @@ class Layout():
         self.splitter = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
 
         # TODO - Top Bar (HBoxLayout) for Font Style, Size, Color, Highlighting, etc
-        self.top_bar = Color('red')
+        self.top_bar = TopBar()
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = BottomBar()
 
