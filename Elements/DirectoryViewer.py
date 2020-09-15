@@ -1,5 +1,4 @@
-from pathlib import Path
-
+from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
@@ -9,13 +8,13 @@ class DirectoryViewer(QTreeView):
         super(QTreeView, self).__init__()
         self.model = QFileSystemModel()
         if rootPath is None:
-            rootPath = str(Path.home())
+            rootPath = str(QDir.currentPath())
             print(rootPath)
         self.model.setRootPath(rootPath)
         # self.treeView = QTreeView()
         self.setModel(self.model)
 
-        # make these functions
+        # make these functionsPath.home(
         self.setAnimated(False)
         self.setIndentation(10)
         self.setSortingEnabled(True)

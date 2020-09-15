@@ -27,6 +27,8 @@ class TextBox(QTextEdit):
     def setTextColorByString(self, color):
         self.setTextColor(QColor(color))
 
-    def refreshTextBox(self, text):
-        self.setText(text)
-        QApplication.processEvents()  # update gui for pyqt
+    def updateTextBox(self, text=None):
+        if text is not None:
+            self.setPlainText(text)
+
+        QApplication.processEvents() # update gui for pyqt
