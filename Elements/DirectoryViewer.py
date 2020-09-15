@@ -39,7 +39,8 @@ class DirectoryViewer(QTreeView):
     def onDoubleClick(self, index):
         path = self.sender().model.filePath(index)
         print("DirectoryViewer - onDoubleClick -", path)
-        self.fileManager.openDocument(path)
+        if not self.sender().model.isDir(index):
+            self.fileManager.openDocument(path)
 
 
 

@@ -10,7 +10,7 @@ class TextBox(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        self.setPlainText(default_text)
+        self.setText(default_text)
         self.setAutoFillBackground(True)
 
     # Set the background color of the QPlainTextEdit Widget
@@ -33,6 +33,6 @@ class TextBox(QTextEdit):
         print("TextBox - updateTextBox")
 
         if text is not None:
-            self.setPlainText(text)
+            self.setText(text)
 
         QApplication.processEvents()  # update gui for pyqt
