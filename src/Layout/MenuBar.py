@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction
 
@@ -88,10 +89,7 @@ class MenuBar():
 
         # this is opens the file dialogue in the project path
         # ***** Delete this line in the future
-        home_dir = self.app.app_props.mainPath
-
-        # this is opens the file dialogue in the project path
-        # ***** Delete this line in the future
+        home_dir = str(QDir.currentPath())
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
