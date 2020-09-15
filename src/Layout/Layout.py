@@ -1,9 +1,9 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
-from Elements.ColorWidget import Color
-from Elements.DirectoryViewer import DirectoryViewer
-from Elements.Document import Document
+from src.Elements.ColorWidget import Color
+from src.Elements.DirectoryViewer import DirectoryViewer
+from src.Elements.Document import Document
 
 
 class Layout():

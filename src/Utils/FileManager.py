@@ -35,7 +35,7 @@ class FileManager:
             #  the directory the file is saved to. currently this just sets the file path to the projects   \
             #  Workspaces folder workspace 2
 
-            path = self.app.app_props.mainPath + file_name[0]
+            path = self.app.app_props.mainPath + "/" + file_name[0]
 
             # write the text in the document shown to the user to the given file path
             self.writeFileData(path, data)
