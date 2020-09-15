@@ -23,7 +23,6 @@ class Layout():
         self.splitter = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
 
         # TODO - Top Bar (HBoxLayout) for Font Style, Size, Color, Highlighting, etc
-        self.top_bar = TopBar()
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = BottomBar()
 
@@ -34,6 +33,8 @@ class Layout():
         self.right_menu = Color('red')
 
         self.document = Document(self.bottom_bar)
+
+        self.top_bar = TopBar(self.document)
 
     def setup(self):
         print("Layout - setup")

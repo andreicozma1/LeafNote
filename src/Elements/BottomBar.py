@@ -12,14 +12,14 @@ class BottomBar(QWidget):
 
         self.l1 = QLabel("0 Words")
         font = self.l1.font()
-        font.setPointSize(12)
+        font.setPointSize(8)
         self.l1.setFont(font)
         self.l1.adjustSize()
         self.horz.addWidget(self.l1)
 
         self.l2 = QLabel("0 Characters")
         font = self.l2.font()
-        font.setPointSize(12)
+        font.setPointSize(8)
         self.l2.setFont(font)
         self.l2.adjustSize()
         self.horz.addWidget(self.l2)
