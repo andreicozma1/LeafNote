@@ -1,17 +1,19 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
-from Elements.ColorWidget import Color
-from Elements.DirectoryViewer import DirectoryViewer
-from Elements.Document import Document
+from src.Elements.ColorWidget import Color
+from src.Elements.DirectoryViewer import DirectoryViewer
+from src.Elements.Document import Document
 
 
 class Layout():
-    def __init__(self, layout_props):
+    def __init__(self, app, appProps, layoutProps):
         print("Layout - init")
 
         # Init variables
-        self.layout_props = layout_props
+        self.app = app
+        self.app_props = appProps
+        self.layout_props = layoutProps
 
         self.central_widget = QWidget()
         self.vertical_layout = QVBoxLayout(self.central_widget)
@@ -22,8 +24,8 @@ class Layout():
         self.top_bar = Color('red')
         # TODO - BottomBar (HBoxLayout) for certain actions and information
         self.bottom_bar = Color("purple")
-        # TODO - Left menu (VBoxLayout) is used to show workspace and directory structure for notes
-        self.left_menu = DirectoryViewer()
+        # TODO - Left menu (VBoxLayout) is used to show workspaces and directory structure for notes
+        self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
         self.right_menu = Color('red')
 
@@ -56,8 +58,10 @@ class Layout():
         # print("Layout - set_dimensions")
         self.top_bar.setMaximumHeight(self.layout_props.bar_height)
         self.bottom_bar.setMaximumHeight(self.layout_props.bar_height)
-        self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
-        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
-        self.right_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (app_props.width /self.layout_props.app.width())))
-        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width *self.layout_props.app.width()))
+        self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (
+                app_props.width / self.layout_props.app.width())))
+        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width()))
+        self.right_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (
+                app_props.width / self.layout_props.app.width())))
+        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.layout_props.app.width()))
         self.document.setMinimumWidth(self.layout_props.min_doc_width * self.layout_props.app.width())
