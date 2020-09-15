@@ -1,5 +1,3 @@
-from PyQt5.QtCore import QDir
-
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction
 
@@ -146,4 +144,3 @@ class MenuBar():
     # this function sets up the help tabs drop menu
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
-

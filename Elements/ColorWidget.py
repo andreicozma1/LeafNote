@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget
 
 
 class Color(QWidget):
-    def __init__(self, color:str, *args, **kwargs):
+    def __init__(self, color: str, *args, **kwargs):
         super(Color, self).__init__(*args, **kwargs)
         self.setAutoFillBackground(True)
 

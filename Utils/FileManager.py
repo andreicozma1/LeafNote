@@ -1,4 +1,3 @@
-from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
@@ -144,4 +143,3 @@ class FileManager:
         # write data to the file then close the file
         file.write(data)
         file.close()
-
