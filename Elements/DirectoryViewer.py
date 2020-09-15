@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 
@@ -10,7 +10,7 @@ class DirectoryViewer(QTreeView):
         self.fileManager = fileManager
 
         if path is None:
-            path = QDir.currentPath()
+            path = self.fileManager.app.app_props.mainPath
 
         self.model = QFileSystemModel()
         self.updateDirectory(path)
@@ -26,7 +26,7 @@ class DirectoryViewer(QTreeView):
         for i in range(1, self.model.columnCount()):
             self.hideColumn(i)
 
-        # make these functions
+        # make these functionsPath.home(
         self.setAnimated(False)
         self.setIndentation(10)
         self.setSortingEnabled(True)

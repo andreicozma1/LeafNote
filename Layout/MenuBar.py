@@ -90,6 +90,9 @@ class MenuBar():
         # ***** Delete this line in the future
         home_dir = self.app.app_props.mainPath
 
+        # this is opens the file dialogue in the project path
+        # ***** Delete this line in the future
+
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
         file_name = QFileDialog.getOpenFileName(self.app, 'Open file',
