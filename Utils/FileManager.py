@@ -1,4 +1,4 @@
-from pathlib import Path
+from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
@@ -24,10 +24,14 @@ class FileManager:
             # get the entered data
             file_name = QInputDialog.getText(self.app, "Get text", "File Name:", QLineEdit.Normal, "")
 
+            if file_name[0] == '':
+                print("No File Path Given")
+                return
+
             # TODO - default to save in the current open workspace,  but give user ability to change        \
             #  the directory the file is saved to. currently this just sets the file path to the projects   \
             #  Workspaces folder workspace 2
-            path = str(Path().parent.absolute())+'/Workspaces/ws2/'+file_name[0]
+            path = str(QDir.currentPath())+'/Workspaces/ws2/'+file_name[0]
 
             # write the text in the document shown to the user to the given file path
             writeFileData(path, data)
