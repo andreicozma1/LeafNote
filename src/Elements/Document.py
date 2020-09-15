@@ -16,12 +16,10 @@ class Document(TextBox):
         wordCount = len(self.toPlainText().split())
         if self.toPlainText() == '':
             wordCount = 0
-        self.bottom_bar.l1.setText("Word Count: " + str(wordCount))
+        self.bottom_bar.l1.setText(str(wordCount) + " Words")
         return wordCount
 
     def getCharCount(self):
         charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
-        self.bottom_bar.l2.setText("Character Count: " + str(charCount))
+        self.bottom_bar.l2.setText(str(charCount) + " Characters")
         return charCount
-
-
