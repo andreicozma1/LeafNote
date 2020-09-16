@@ -9,6 +9,7 @@ class Document(TextBox):
         self.bottom_bar = bottom_bar
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
+        self.setPlaceholderText("Start typing here...")
         self.textChanged.connect(self.getWordCount)
         self.textChanged.connect(self.getCharCount)
 
