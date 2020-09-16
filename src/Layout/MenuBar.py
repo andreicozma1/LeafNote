@@ -49,6 +49,9 @@ class MenuBar():
         open_folder_act.triggered.connect(self.showOpenFolderDialog)
         self.file_menu.addAction(open_folder_act)
 
+        # adds line to separate options
+        self.file_menu.addSeparator()
+
         # save the open file
         save_file = QAction("&Save...", self.app)
         save_file.setStatusTip('Save')
@@ -62,6 +65,9 @@ class MenuBar():
         save_as_file.triggered.connect(self.saveAsFile)
         self.file_menu.addAction(save_as_file)
         '''
+
+        # adds line to separate options
+        self.file_menu.addSeparator()
 
         # quit main window
         exit_act = QAction("&Exit", self.app)
@@ -139,11 +145,17 @@ class MenuBar():
         redo_act.triggered.connect(self.layout.document.redo)
         self.edit_menu.addAction(redo_act)
 
+        # adds line to separate options
+        self.edit_menu.addSeparator()
+
         # select all button and function
         select_all_act = QAction("&Select All", self.app)
         select_all_act.setShortcut('Ctrl+a')
         select_all_act.triggered.connect(self.layout.document.selectAll)
         self.edit_menu.addAction(select_all_act)
+
+        # adds line to separate options
+        self.edit_menu.addSeparator()
 
         # cut button and function
         cut_act = QAction("&Cut", self.app)
