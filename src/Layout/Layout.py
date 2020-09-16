@@ -30,7 +30,7 @@ class Layout():
         self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
 
         # TODO - Right menu (VBoxLayout) for document context actions like customizations, reminders, properties, etc.
-        self.right_menu = Color('red')
+        self.right_menu = Color('white')
 
         self.document = Document(self.bottom_bar)
 
