@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtGui import QColor, QPalette, QFont
 from PyQt5.QtWidgets import QTextEdit
 
 
