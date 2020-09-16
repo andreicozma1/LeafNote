@@ -125,22 +125,33 @@ class MenuBar():
     def editMenuSetup(self):
         print("MenuBar - editMenuSetup")
 
-        # TODO - undo
-
-        # TODO - redo
-
         # Idea: select button when keyboard shortcut used
 
+        # undo button and function
+        undo_act = QAction("&Undo", self.app)
+        undo_act.setShortcut('Ctrl+z')
+        undo_act.triggered.connect(self.layout.document.undo)
+        self.edit_menu.addAction(undo_act)
+
+        # redo button and function
+        redo_act = QAction("&Redo", self.app)
+        redo_act.setShortcut('Ctrl+Shift+z')
+        redo_act.triggered.connect(self.layout.document.redo)
+        self.edit_menu.addAction(redo_act)
+
+        # cut button and function
         cut_act = QAction("&Cut", self.app)
         cut_act.setShortcut('Ctrl+x')
         cut_act.triggered.connect(self.layout.document.cut)
         self.edit_menu.addAction(cut_act)
 
+        # copy button and function
         copy_act = QAction("&Copy", self.app)
         copy_act.setShortcut('Ctrl+c')
         copy_act.triggered.connect(self.layout.document.copy)
         self.edit_menu.addAction(copy_act)
 
+        # paste button and function
         paste_act = QAction("&Paste", self.app)
         paste_act.setShortcut('Ctrl+v')
         paste_act.triggered.connect(self.layout.document.paste)
