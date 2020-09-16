@@ -55,7 +55,7 @@ class Layout():
 
     def updateDimensions(self):
         self.vertical_layout.setContentsMargins(0, 0, 0, 0)
-        # print("Layout - set_dimensions")
+
         self.top_bar.setFixedHeight(self.layout_props.bar_height)
         self.bottom_bar.setFixedHeight(self.layout_props.bar_height)
         self.left_menu.setMinimumWidth(int(self.layout_props.app.width() * self.layout_props.min_menu_width * (

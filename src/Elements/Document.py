@@ -10,17 +10,15 @@ class Document(TextBox):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
-        self.textChanged.connect(self.getWordCount)
-        self.textChanged.connect(self.getCharCount)
+        self.textChanged.connect(self.updateWordCount)
+        self.textChanged.connect(self.updateWordCount)
 
-    def getWordCount(self):
+    def updateWordCount(self):
         wordCount = len(self.toPlainText().split())
         if self.toPlainText() == '':
             wordCount = 0
-        self.bottom_bar.l1.setText(str(wordCount) + " Words")
-        return wordCount
+        self.bottom_bar.label_wc.setText(str(wordCount) + " Words")
 
-    def getCharCount(self):
+    def updateWordCount(self):
         charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
-        self.bottom_bar.l2.setText(str(charCount) + " Characters")
-        return charCount
+        self.bottom_bar.label_cc.setText(str(charCount) + " Characters")

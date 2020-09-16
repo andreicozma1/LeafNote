@@ -15,19 +15,22 @@ class MenuBar():
 
         self.file_menu = self.menu.addMenu('&File')
         self.edit_menu = self.menu.addMenu('&Edit')
-        self.view_menu = self.menu.addMenu('&View')
-        self.tools_menu = self.menu.addMenu('&Tools')
-        self.help_menu = self.menu.addMenu('&Help')
+
+        # TODO - uncomment when implementing these menus individually
+        # self.view_menu = self.menu.addMenu('&View')
+        # self.tools_menu = self.menu.addMenu('&Tools')
+        # self.help_menu = self.menu.addMenu('&Help')
 
     def setup(self):
         print("MenuBar - setup")
         # File tab submenus and actions
-        # TODO - Add more submenus and action for each of the menu tabs
         self.fileMenuSetup()
         self.editMenuSetup()
-        self.viewMenuSetup()
-        self.toolsMenuSetup()
-        self.helpMenuSetup()
+
+        # TODO - uncomment when implementing these menus individually
+        # self.viewMenuSetup()
+        # self.toolsMenuSetup()
+        # self.helpMenuSetup()
 
     # --------------------------------------------------------------------------------
 
@@ -36,55 +39,51 @@ class MenuBar():
     def fileMenuSetup(self):
         print("MenuBar - fileMenuSetup")
 
-        # TODO - new file
+        # TODO - implement new file button that opens a new blank file in the document
+        # new_file_act = QAction("&New...", self.app)
+        # new_file_act.setStatusTip('New')
+        # new_file_act.triggered.connect(self.onNewBtn)
+        # self.file_menu.addAction(new_file_act)
 
         # opens a dialogue to chose a file an open it
         open_file_act = QAction("&Open...", self.app)
         open_file_act.setStatusTip('Open File')
-        open_file_act.triggered.connect(self.showOpenFileDialog)
+        open_file_act.triggered.connect(self.onOpenBtn)
         self.file_menu.addAction(open_file_act)
 
+        # open a folder as a workspace, showing the directory tree in the left menu
         open_folder_act = QAction("&Open Folder...", self.app)
         open_folder_act.setStatusTip('Open Folder')
-        open_folder_act.triggered.connect(self.showOpenFolderDialog)
+        open_folder_act.triggered.connect(self.onOpenFolderBtn)
         self.file_menu.addAction(open_folder_act)
 
         # save the open file
         save_file = QAction("&Save...", self.app)
         save_file.setStatusTip('Save')
-        save_file.triggered.connect(self.saveFile)
+        save_file.triggered.connect(self.onSaveBtn)
         self.file_menu.addAction(save_file)
 
-        # TODO - save the file as a specified name
-        '''
-        save_as_file = QAction("&Save As...", self.app)
-        save_as_file.setStatusTip('Save As')
-        save_as_file.triggered.connect(self.saveAsFile)
-        self.file_menu.addAction(save_as_file)
-        '''
+        # TODO - save the file as a specified name in any location on disk
+        # save_as_file = QAction("&Save As...", self.app)
+        # save_as_file.setStatusTip('Save As')
+        # save_as_file.triggered.connect(self.onSaveAsBtn)
+        # self.file_menu.addAction(save_as_file)
 
         # quit main window
         exit_act = QAction("&Exit", self.app)
         exit_act.setShortcut('Ctrl+Q')
         exit_act.setStatusTip('Exit application')
-        exit_act.triggered.connect(self.closeWindow)
+        exit_act.triggered.connect(self.onExitBtn)
         self.file_menu.addAction(exit_act)
 
-    # this saves the current file that is shown in the document
-    def saveFile(self):
-        print("MenuBar - saveFile")
-
-        self.file_manager.saveDocument()
-
-    # TODO - save the file as a specified name
-    def saveAsFile(self):
-        print("MenuBar - saveAsFile")
-        print("TODO")
+    # TODO - implement new file button that opens a new blank file in the document
+    # def onNewBtn(self):
+    #     print("MenuBar - onNewBtn")
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
-    def showOpenFileDialog(self):
-        print("MenuBar - showOpenFileDialog")
+    def onOpenBtn(self):
+        print("MenuBar - onOpenBtn")
         # open the dialogue using the home directory as root
 
         # this is opens the file dialogue in the project path
@@ -97,11 +96,11 @@ class MenuBar():
                                                 home_dir, "Text files (*.txt)")
 
         # open the chosen file and show the text in the text editor
-        data = self.file_manager.openDocument(file_name[0])
+        self.file_manager.openDocument(file_name[0])
 
-    def showOpenFolderDialog(self):
+    def onOpenFolderBtn(self):
         # open the dialogue using the home directory as root
-        print("MenuBar - showOpenFolderDialog")
+        print("MenuBar - onOpenFolderBtn")
 
         home_dir = self.app.app_props.mainPath
 
@@ -113,8 +112,17 @@ class MenuBar():
 
         self.app.layout.left_menu.updateDirectory(self.app.app_props.mainPath)
 
-    def closeWindow(self):
-        print("MenuBar - closeWindow")
+    # this saves the current file that is shown in the document
+    def onSaveBtn(self):
+        print("MenuBar - onSaveBtn")
+        self.file_manager.saveDocument()
+
+    # TODO - save the file as a specified name in any location on disk
+    # def onSaveAsBtn(self):
+    #     print("MenuBar - saveAsFile")
+
+    def onExitBtn(self):
+        print("MenuBar - onExitBtn")
         self.file_manager.closeAll()
         qApp.quit()
 
@@ -159,6 +167,8 @@ class MenuBar():
 
     # --------------------------------------------------------------------------------
 
+    # TODO - uncomment when implementing these menus
+    """
     # TODO - Add functionality to view tab - appearance, etc.
     # this function sets up the view tabs drop menu
     def viewMenuSetup(self):
@@ -177,3 +187,4 @@ class MenuBar():
     # this function sets up the help tabs drop menu
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
+    """
