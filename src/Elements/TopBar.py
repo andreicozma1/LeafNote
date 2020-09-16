@@ -50,7 +50,9 @@ class TopBar(QWidget):
         #Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
         self.button_strike.setFixedWidth(20)
-        self.button_strike.setStyleSheet("text-decoration: line-through")
+        f = self.button_strike.font()
+        f.setStrikeOut(True)
+        self.button_strike.setFont(f)
         self.button_strike.setCheckable(True)
         self.button_strike.clicked.connect(self.setStrike)
         self.horz.addWidget(self.button_strike)
