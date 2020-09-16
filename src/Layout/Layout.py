@@ -1,10 +1,10 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 
-from src.Elements.BottomBar import BottomBar
-from src.Elements.DirectoryViewer import DirectoryViewer
-from src.Elements.Document import Document
-from src.Elements.TopBar import TopBar
+from Elements.BottomBar import BottomBar
+from Elements.DirectoryViewer import DirectoryViewer
+from Elements.Document import Document
+from Elements.TopBar import TopBar
 
 
 class Layout():

@@ -2,11 +2,11 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
-from src.Layout.AppProps import AppProps
-from src.Layout.Layout import Layout
-from src.Layout.LayoutProps import LayoutProps
-from src.Layout.MenuBar import MenuBar
-from src.Utils.FileManager import FileManager
+from Layout.AppProps import AppProps
+from Layout.Layout import Layout
+from Layout.LayoutProps import LayoutProps
+from Layout.MenuBar import MenuBar
+from Utils.FileManager import FileManager
 
 
 class App(QMainWindow):
