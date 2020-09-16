@@ -35,7 +35,7 @@ class FileManager:
             # write the text in the document shown to the user to the given file path
             self.writeFileData(path, data)
 
-            # append the newly created file to the list of open docs and set it to the curr doc
+            # append the newly created file to the list of open docs and set it to the curr document
             self.open_documents.append(path)
             self.current_document = len(self.open_documents) - 1
 
@@ -87,13 +87,13 @@ class FileManager:
             # retrieve the text from the file you are attempting to open
             data = self.getFileData(path)
 
-            # appends the path to the list of open documents and sets it to the current doc
+            # appends the path to the list of open documents and sets it to the current document
             self.open_documents.append(path)
             self.current_document = len(self.open_documents) - 1
 
         # if the document has already been opened in this session
         else:
-            # get the data from the file and set the current doc
+            # get the data from the file and set the current document
             data = self.getFileData(path)
             self.current_document = self.open_documents.index(path)
             print("Document Already Open - ", path)
