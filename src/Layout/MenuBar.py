@@ -139,6 +139,12 @@ class MenuBar():
         redo_act.triggered.connect(self.layout.document.redo)
         self.edit_menu.addAction(redo_act)
 
+        # select all button and function
+        select_all_act = QAction("&Select All", self.app)
+        select_all_act.setShortcut('Ctrl+a')
+        select_all_act.triggered.connect(self.layout.document.selectAll)
+        self.edit_menu.addAction(select_all_act)
+
         # cut button and function
         cut_act = QAction("&Cut", self.app)
         cut_act.setShortcut('Ctrl+x')
