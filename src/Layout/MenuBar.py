@@ -123,7 +123,28 @@ class MenuBar():
     # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
     # this function sets up the edit tabs drop menu
     def editMenuSetup(self):
-        print("MenuBar - cloeditMenuSetup")
+        print("MenuBar - editMenuSetup")
+
+        # TODO - undo
+
+        # TODO - redo
+
+        # Idea: select button when keyboard shortcut used
+
+        cut_act = QAction("&Cut", self.app)
+        cut_act.setShortcut('Ctrl+x')
+        cut_act.triggered.connect(self.layout.document.cut)
+        self.edit_menu.addAction(cut_act)
+
+        copy_act = QAction("&Copy", self.app)
+        copy_act.setShortcut('Ctrl+c')
+        copy_act.triggered.connect(self.layout.document.copy)
+        self.edit_menu.addAction(copy_act)
+
+        paste_act = QAction("&Paste", self.app)
+        paste_act.setShortcut('Ctrl+v')
+        paste_act.triggered.connect(self.layout.document.paste)
+        self.edit_menu.addAction(paste_act)
 
     # --------------------------------------------------------------------------------
 
