@@ -133,33 +133,18 @@ class MenuBar():
 
         cut_act = QAction("&Cut", self.app)
         cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.cutText)
+        cut_act.triggered.connect(self.layout.document.cut)
         self.edit_menu.addAction(cut_act)
 
         copy_act = QAction("&Copy", self.app)
         copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.copyText)
+        copy_act.triggered.connect(self.layout.document.copy)
         self.edit_menu.addAction(copy_act)
 
         paste_act = QAction("&Paste", self.app)
         paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.pasteText)
+        paste_act.triggered.connect(self.layout.document.paste)
         self.edit_menu.addAction(paste_act)
-
-    def cutText(self):
-        print("MenuBar - cutText")
-
-        self.layout.document.cut()
-
-    def copyText(self):
-        print("MenuBar - copyText")
-
-        self.layout.document.copy()
-
-    def pasteText(self):
-        print("MenuBar - cutText")
-
-        self.layout.document.paste()
 
     # --------------------------------------------------------------------------------
 
