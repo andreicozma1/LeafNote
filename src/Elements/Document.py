@@ -24,4 +24,3 @@ class Document(TextBox):
         charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
         self.bottom_bar.l2.setText(str(charCount) + " Characters")
         return charCount
-
