@@ -51,7 +51,8 @@ class TopBar(QWidget):
         self.button_strike = QPushButton("S", self)
         self.button_strike.setFixedWidth(20)
         self.button_strike.setStyleSheet("text-decoration: line-through")
-        #TODO impliment strike-through feature. https://doc.qt.io/archives/qt-4.8/qtextedit.html#setFontWeight
+        self.button_strike.setCheckable(True)
+        self.button_strike.clicked.connect(self.setStrike)
         self.horz.addWidget(self.button_strike)
 
         #Button press to underline text
@@ -78,10 +79,7 @@ class TopBar(QWidget):
 
     #Sets the font to italic
     def setItal(self):
-        if self.button_ital.isChecked():
-            self.doc.setFontItalic(True)
-        else:
-            self.doc.setFontItalic(False)
+        self.doc.setFontItalic(self.button_ital.isChecked())
 
     #Sets the font to bold
     def setBold(self):
@@ -92,9 +90,12 @@ class TopBar(QWidget):
 
     #Sets the font to underlined
     def setUnder(self):
-        if self.button_under.isChecked():
-            self.doc.setFontUnderline(True)
-        else:
-            self.doc.setFontUnderline(False)
+        self.doc.setFontUnderline(self.button_under.isChecked())
+
+    #Sets the font to strike
+    def setStrike(self):
+        f = self.doc.currentCharFormat()
+        f.setFontStrikeOut(self.button_strike.isChecked())
+        self.doc.setCurrentCharFormat(f)
 
 
