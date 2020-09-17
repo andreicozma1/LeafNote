@@ -28,7 +28,7 @@ class TopBar(QWidget):
 
         # Button press to make text bold
         self.button_bold = QPushButton("B", self)
-        # self.button_bold.adjustSize()
+        self.button_bold.setFixedWidth(30)
         self.button_bold.setStyleSheet("font:Bold")
         self.button_bold.setCheckable(True)
         self.button_bold.clicked.connect(self.setBold)
@@ -36,7 +36,7 @@ class TopBar(QWidget):
 
         # Button press to make text italic
         self.button_ital = QPushButton("I", self)
-        # self.button_ital.adjustSize()
+        self.button_ital.setFixedWidth(30)
         self.button_ital.setStyleSheet("font:Italic")
         self.button_ital.setCheckable(True)
         self.button_ital.clicked.connect(self.setItal)
@@ -44,7 +44,7 @@ class TopBar(QWidget):
 
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
-        # self.button_strike.adjustSize()
+        self.button_strike.setFixedWidth(30)
         self.button_strike.setStyleSheet("text-decoration: line-through")
         self.button_strike.setCheckable(True)
         self.button_strike.clicked.connect(self.setStrike)
@@ -52,7 +52,7 @@ class TopBar(QWidget):
 
         # Button press to underline text
         self.button_under = QPushButton("U", self)
-        # self.button_under.resize(self.button_under.minimumSize())
+        self.button_under.setFixedWidth(30)
         self.button_under.setStyleSheet("text-decoration: underline")
         self.button_under.setCheckable(True)
         self.button_under.clicked.connect(self.setUnder)
