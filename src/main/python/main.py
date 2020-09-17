@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Layout.AppProps import AppProps
 from Layout.Layout import Layout
@@ -51,9 +52,10 @@ class App(QMainWindow):
 
 def main():
     print("Main")
+    appctxt = ApplicationContext()
     app = QApplication(sys.argv)
     App().setup()
-    sys.exit(app.exec_())
+    sys.exit(appctxt.app.exec_())
 
 
 # Starting point of the program

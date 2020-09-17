@@ -14,22 +14,22 @@ class TopBar(QWidget):
         list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
                          "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
 
-       #ComboBox for font sizes
+        # ComboBox for font sizes
         self.combo_font_style = QFontComboBox()
         self.combo_font_style.setToolTip('Change font')
-        self.horizontal_layout.addWidget(self.combo_font_style)
         self.combo_font_style.currentIndexChanged.connect(self.fontChange)
+        self.horizontal_layout.addWidget(self.combo_font_style)
 
-        #Adds functionality to the ComboBox
+        # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.combo_font_size.setToolTip('Change font size')
         self.combo_font_size.addItems(list_FontSize)
         self.combo_font_size.setCurrentIndex(11)
-        self.combo_font_size.setFixedWidth(45)
+        self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.currentIndexChanged.connect(self.selectionChange)
         self.horizontal_layout.addWidget(self.combo_font_size)
 
-        #Button press to make text bold
+        # Button press to make text bold
         self.button_bold = QPushButton("B", self)
         self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
         self.button_bold.setShortcut('ctrl+b')
