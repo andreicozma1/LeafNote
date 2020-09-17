@@ -53,7 +53,6 @@ class App(QMainWindow):
 def main():
     print("Main")
     appctxt = ApplicationContext()
-    app = QApplication(sys.argv)
     App().setup()
     sys.exit(appctxt.app.exec_())
 
