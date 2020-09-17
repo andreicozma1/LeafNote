@@ -16,19 +16,24 @@ class TopBar(QWidget):
 
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox()
+        self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.currentIndexChanged.connect(self.fontChange)
         self.horizontal_layout.addWidget(self.combo_font_style)
 
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
+        self.combo_font_size.setToolTip('Change font size')
         self.combo_font_size.addItems(list_FontSize)
         self.combo_font_size.setCurrentIndex(11)
+        self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.currentIndexChanged.connect(self.selectionChange)
         self.horizontal_layout.addWidget(self.combo_font_size)
 
         # Button press to make text bold
         self.button_bold = QPushButton("B", self)
-        self.button_bold.setFixedWidth(30)
+        self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
+        self.button_bold.setShortcut('ctrl+b')
+        self.button_bold.setFixedWidth(33)
         self.button_bold.setStyleSheet("font:Bold")
         self.button_bold.setCheckable(True)
         self.button_bold.clicked.connect(self.setBold)
@@ -36,7 +41,9 @@ class TopBar(QWidget):
 
         # Button press to make text italic
         self.button_ital = QPushButton("I", self)
-        self.button_ital.setFixedWidth(30)
+        self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
+        self.button_ital.setShortcut('ctrl+i')
+        self.button_ital.setFixedWidth(33)
         self.button_ital.setStyleSheet("font:Italic")
         self.button_ital.setCheckable(True)
         self.button_ital.clicked.connect(self.setItal)
@@ -44,7 +51,13 @@ class TopBar(QWidget):
 
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
-        self.button_strike.setFixedWidth(30)
+        self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
+        self.button_strike.setShortcut('ctrl+s')
+        self.button_strike.setFixedWidth(33)
+        f = self.button_strike.font()
+        f.setStrikeOut(True)
+        self.button_strike.setFont(f)
+        # self.button_strike.adjustSize()
         self.button_strike.setStyleSheet("text-decoration: line-through")
         self.button_strike.setCheckable(True)
         self.button_strike.clicked.connect(self.setStrike)
@@ -52,7 +65,10 @@ class TopBar(QWidget):
 
         # Button press to underline text
         self.button_under = QPushButton("U", self)
-        self.button_under.setFixedWidth(30)
+        self.button_under.setToolTip('Underline your text. "Ctrl+U"')
+        self.button_under.setShortcut('ctrl+u')
+        self.button_under.setFixedWidth(33)
+        # self.button_under.resize(self.button_under.minimumSize())
         self.button_under.setStyleSheet("text-decoration: underline")
         self.button_under.setCheckable(True)
         self.button_under.clicked.connect(self.setUnder)
