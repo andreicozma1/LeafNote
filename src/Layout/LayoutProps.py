@@ -6,6 +6,6 @@ class LayoutProps():
         self.min_doc_width = .4
         self.min_menu_width = .2
         self.max_menu_width = .3
-        self.bar_height = 30
+        self.bar_height = 35
 
         self.splitter_width = 1

@@ -34,7 +34,6 @@ class DirectoryViewer(QTreeView):
 
         self.doubleClicked.connect(self.onDoubleClick)
 
-    # TODO - link a click on the directory viewer to open the clicked file
     def onDoubleClick(self, index):
         path = self.sender().model.filePath(index)
         print("DirectoryViewer - onDoubleClick -", path)
