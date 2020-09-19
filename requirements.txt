@@ -12,7 +12,7 @@ pathlib==1.0.1
 pefile==2019.4.18
 Pillow==7.2.0
 pip-autoremove==0.9.1
-PyInstaller==3.4
+PyInstaller>=3.6
 PyInstaller-Hooks==20170726
 pyparsing==2.4.7
 PyQt5==5.15.0
