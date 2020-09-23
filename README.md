@@ -10,7 +10,7 @@ cd 0x432d2d
 ```
 
 ## Install Dependencies
-
+Recommended: Use the setup script!
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
@@ -22,6 +22,7 @@ source .venv/bin/activate
 ```
 
 4. Install the Dependencies
+Recommended: Use the run script!
 ```
 pip3 install -r requirements.txt
 ```
@@ -49,10 +50,10 @@ sudo dpkg -i target/LeafNote.deb
 
 - Mac
 ```
-TODO
+open target/LeafNote.dmg
 ```
 
 - Windows
 ```
-TODO
+start target\LeafNote.exe
 ```
