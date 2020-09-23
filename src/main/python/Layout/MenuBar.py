@@ -116,7 +116,7 @@ class MenuBar():
 
         self.app.app_props.mainPath = folder_name
 
-        self.app.layout.left_menu.updateDirectory(self.app.app_props.mainPath)
+        self.app.layout.menu_left.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
