@@ -37,10 +37,11 @@ class OpenTabsBar(QWidget):
     def closeTab(self, tab: Tab):
         print('OpenTabsBar - closeTab -', tab.path)
         self.layout().removeWidget(tab)
+        self.app.file_manager.closeDocument(tab.path)
         tab.deleteLater()
 
     def getTabCount(self):
-        print("OpenTabsBar - getTabCount -",self.horizontal_layout.count())
+        print("OpenTabsBar - getTabCount -", self.horizontal_layout.count())
         return self.layout().count()
 
 

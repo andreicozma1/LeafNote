@@ -63,14 +63,16 @@ class MenuBar():
         # save the open file
         save_file = QAction("&Save...", self.app)
         save_file.setStatusTip('Save')
+        save_file.setShortcut('ctrl+s')
         save_file.triggered.connect(self.onSaveBtn)
         self.file_menu.addAction(save_file)
 
         # TODO - save the file as a specified name in any location on disk
-        # save_as_file = QAction("&Save As...", self.app)
-        # save_as_file.setStatusTip('Save As')
-        # save_as_file.triggered.connect(self.onSaveAsBtn)
-        # self.file_menu.addAction(save_as_file)
+        save_as_file = QAction("&Save As...", self.app)
+        save_as_file.setStatusTip('Save As')
+        save_as_file.setShortcut('ctrl+shift+s')
+        save_as_file.triggered.connect(self.onSaveAsBtn)
+        self.file_menu.addAction(save_as_file)
 
         # adds line to separate options
         self.file_menu.addSeparator()
@@ -112,8 +114,8 @@ class MenuBar():
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
-        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open file', home_dir)
-
+        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
+        print(folder_name)
         self.app.app_props.mainPath = folder_name
 
         self.app.layout.menu_left.updateDirectory(self.app.app_props.mainPath)
@@ -124,12 +126,15 @@ class MenuBar():
         self.file_manager.saveDocument()
 
     # TODO - save the file as a specified name in any location on disk
-    # def onSaveAsBtn(self):
-    #     print("MenuBar - saveAsFile")
+    def onSaveAsBtn(self):
+        print("MenuBar - saveAsFile")
+        new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
+        self.file_manager.saveAsDocument(new_file_path[0])
 
     def onExitBtn(self):
         print("MenuBar - onExitBtn")
         self.file_manager.closeAll()
+
         qApp.quit()
 
     # --------------------------------------------------------------------------------
