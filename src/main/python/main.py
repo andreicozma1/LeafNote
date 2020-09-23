@@ -35,7 +35,8 @@ class App(QMainWindow):
             self.setFixedSize(self.app_props.width, self.app_props.height)
 
         self.menubar.setup()
-        self.setCentralWidget(self.layout.setup())
+        self.layout.setup()
+        self.setCentralWidget(self.layout)
 
         self.show()
 

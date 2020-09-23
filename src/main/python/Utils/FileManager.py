@@ -1,13 +1,13 @@
 import os
+# this class manages all of the open documents and stores their paths into a list
 
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
 
-
-# this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
-class FileManager:
+class FileManager():
     def __init__(self, app):
-        print('FileManager - init')
+        print("FileManager - init")
+
         self.app = app  # app - QMainWindow instance
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
