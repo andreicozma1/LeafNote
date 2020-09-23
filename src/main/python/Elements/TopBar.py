@@ -18,6 +18,7 @@ class TopBar(QWidget):
         self.combo_font_style = QFontComboBox()
         self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.currentIndexChanged.connect(self.fontChange)
+        self.combo_font_style.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.combo_font_style)
 
         # Adds functionality to the ComboBox
@@ -27,6 +28,7 @@ class TopBar(QWidget):
         self.combo_font_size.setCurrentIndex(11)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.currentIndexChanged.connect(self.selectionChange)
+        self.combo_font_size.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.combo_font_size)
 
         # Button press to make text bold
@@ -37,6 +39,7 @@ class TopBar(QWidget):
         self.button_bold.setStyleSheet("font:Bold")
         self.button_bold.setCheckable(True)
         self.button_bold.clicked.connect(self.setBold)
+        self.button_bold.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.button_bold)
 
         # Button press to make text italic
@@ -47,6 +50,7 @@ class TopBar(QWidget):
         self.button_ital.setStyleSheet("font:Italic")
         self.button_ital.setCheckable(True)
         self.button_ital.clicked.connect(self.setItal)
+        self.button_ital.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.button_ital)
 
         # Button press to make text strikethrough
@@ -61,6 +65,7 @@ class TopBar(QWidget):
         self.button_strike.setStyleSheet("text-decoration: line-through")
         self.button_strike.setCheckable(True)
         self.button_strike.clicked.connect(self.setStrike)
+        self.button_strike.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.button_strike)
 
         # Button press to underline text
@@ -72,6 +77,7 @@ class TopBar(QWidget):
         self.button_under.setStyleSheet("text-decoration: underline")
         self.button_under.setCheckable(True)
         self.button_under.clicked.connect(self.setUnder)
+        self.button_under.setFocusPolicy(False)
         self.horizontal_layout.addWidget(self.button_under)
 
         # Temporary widgets
