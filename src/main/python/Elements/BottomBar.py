@@ -2,9 +2,10 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
 
 
 class BottomBar(QWidget):
-    def __init__(self):
+    def __init__(self, document):
         super(BottomBar, self).__init__()
         print("Bottom Bar - init")
+        self.document = document
 
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
@@ -23,3 +24,17 @@ class BottomBar(QWidget):
         self.horizontal_layout.addWidget(self.label_cc)
 
         self.horizontal_layout.addStretch()
+
+        self.document.textChanged.connect(self.updateWordCount)
+        self.document.textChanged.connect(self.updateCharCount)
+
+    def updateWordCount(self):
+        wordCount = 0
+        if self.document.toPlainText() != '':
+            wordCount = len(self.document.toPlainText().split())
+
+        self.label_wc.setText(str(wordCount) + " Words")
+
+    def updateCharCount(self):
+        charCount = len(self.document.toPlainText()) - len(self.document.toPlainText().split(" ")) + 1
+        self.label_cc.setText(str(charCount) + " Characters")

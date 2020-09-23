@@ -19,25 +19,22 @@ class Layout(QWidget):
         self.layout_props = layoutProps
 
         # Main layout of the application. Holds the top bar, main horizontal layout, as well as the bottom bar
-        self.vertical_layout = QVBoxLayout(self)  # this defines the QWidget as the parent for the layout
+        QVBoxLayout(self)  # this defines the QWidget as the parent for the layout
         # Horizontal layout contains the left menu, documents layout, and the right menu
         self.horizontal_workspace = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
 
         # Documents view holds the open tabs as well as the actual document
         self.documents_view = QWidget()
         self.documents_view_layout = QVBoxLayout(self.documents_view) # Parent of layout passed in constructor
-        self.documents_view_tabs_bar = OpenTabsBar(self)
+        self.bar_open_tabs = OpenTabsBar(self)
+        self.document = Document(self)
 
         self.menu_left = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
         # TODO - uncomment when implementing right menu
         # self.menu_right = Color('white')
 
-        self.bottom_bar = BottomBar()
-
-        self.open_tabs_bar = OpenTabsBar(self.app)
-        self.document = Document(self.bottom_bar)
-
         self.top_bar = TopBar(self.document)
+        self.bottom_bar = BottomBar(self.document)
 
     def setup(self):
         print("Layout - setup")
@@ -57,7 +54,7 @@ class Layout(QWidget):
         # TODO - uncomment when implementing right menu
         # self.horizontal_workspace.addWidget(self.menu_right)
 
-        self.documents_view.layout().addWidget(self.documents_view_tabs_bar)
+        self.documents_view.layout().addWidget(self.bar_open_tabs)
         self.documents_view.layout().addWidget(self.document)
 
     def updateDimensions(self):
