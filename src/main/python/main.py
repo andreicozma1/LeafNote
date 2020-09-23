@@ -22,6 +22,10 @@ class App(QMainWindow):
 
         self.layout = Layout(self, self.app_props, self.layout_props)
 
+        self.layout.open_tabs_bar.addTab("/abc/def/1.txt")
+        self.layout.open_tabs_bar.addTab("/abc/def/2.txt")
+        self.layout.open_tabs_bar.addTab("/abc/def/3.txt")
+
         self.menubar = MenuBar(self)
 
     # Returns the Central Widget

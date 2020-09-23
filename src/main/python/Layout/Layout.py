@@ -18,8 +18,12 @@ class Layout:
         self.layout_props = layoutProps
 
         self.central_widget = QWidget()
+        # The main layout of the application is the vertical layout
+        # This layout holds the top bar, main horizontal layout, as well as the bottom bar
         self.vertical_layout = QVBoxLayout(self.central_widget)
+        # The horizontal layout contains the left menu, documents layout, and the right menu
         self.horizontal_layout = QHBoxLayout()
+        # The splitter defines the resizing functionality of the horizontal layout
         self.splitter = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
 
         self.left_menu = DirectoryViewer(self.app.file_manager, self.app_props.mainPath)
@@ -43,14 +47,14 @@ class Layout:
 
         self.splitter.addWidget(self.left_menu)
 
-        widget = QWidget()
+        vertical_layout_documents = QWidget()
         docs_layout = QVBoxLayout()
         docs_layout.setSpacing(self.layout_props.splitter_width)
         docs_layout.setContentsMargins(0, 0, 0, 0)
         docs_layout.addWidget(self.open_tabs_bar)
         docs_layout.addWidget(self.document)
-        widget.setLayout(docs_layout)
-        self.splitter.addWidget(widget)
+        vertical_layout_documents.setLayout(docs_layout)
+        self.splitter.addWidget(vertical_layout_documents)
 
         # TODO - uncomment when implementing right menu
         # self.splitter.addWidget(self.right_menu)
