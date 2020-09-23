@@ -36,6 +36,9 @@ class BottomBar(QWidget):
 
         self.zoom_slider = QSlider(Qt.Horizontal, self)
         self.zoom_slider.setGeometry(30, 40, 200, 30)
+        self.zoom_slider.setFixedWidth(140)
+        self.zoom_slider.setValue(8)
+        self.last_zoom_val = self.zoom_slider.value()
         self.zoom_slider.valueChanged[int].connect(self.changeValue)
         self.horizontal_layout.addWidget(self.zoom_slider)
 
@@ -62,8 +65,14 @@ class BottomBar(QWidget):
             self.document.zoomOut(+1)
 
     def changeValue(self, value):
-        temp = value
-        if value <= 50:
-            self.document.zoomOut[+1]
-        else:
-            self.document.zoomIn[+1]
+        temp = value - self.last_zoom_val
+        font_size =self.document.font().pointSize()
+
+        if font_size + temp >= 2:
+            self.document.zoomIn(temp)
+            self.last_zoom_val = value
+
+
+
+
+
