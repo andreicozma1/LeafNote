@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Layout.AppProps import AppProps

@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QInputDialog, QLineEdit
+from PyQt5.QtWidgets import QFileDialog
 
 
 # this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
@@ -26,13 +26,13 @@ class FileManager:
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
             # get the entered data
-            file_name = QInputDialog.getText(self.app, 'Get text', 'File Name:', QLineEdit.Normal, '')
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save file')
 
             if file_name[0] == '':
                 print('FileManager - saveDocument - No File Path Given')
                 return
 
-            path = self.app.app_props.mainPath + os.path.sep + file_name[0]
+            path = file_name[0]
 
             # write the text in the document shown to the user to the given file path
             self.writeFileData(path, data)
@@ -57,8 +57,6 @@ class FileManager:
             if self.current_document.exists():
                 os.remove(old_path)
                 print('FileManager - saveAsDocument - Deleted d')
-            else:
-                print
 
         # now write to the new_path
         self.writeFileData(new_path, data)
@@ -66,7 +64,7 @@ class FileManager:
 
     # this closes the document with the given path
     # !note! this does not save the document
-    def closeDocument(self, path): # TODO - change to work with dict
+    def closeDocument(self, path):  # TODO - change to work with dict
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
@@ -85,7 +83,6 @@ class FileManager:
         print('FileManager - closeAll')
         self.current_document = None
         self.open_documents.clear()
-
 
     # opens the file of the given path and add the Document to the dictionary
     def openDocument(self, path):
@@ -164,5 +161,8 @@ class FileManager:
 
     # this will check all of the current open files to make sure they still exist
     # if a file doesnt exist close the file
-    def fixBrokenFilePaths(self): # TODO - change to work with dict
-        pass
+    # TODO - determine how to handle this problem
+    def fixBrokenFilePaths(self):
+        for key, val in self.open_documents.items():
+            if not val.exists():
+                print('FileManager - fixBrokenFilePaths - File Does Not Exist - {}'.format(val.absoluteFilePath()))

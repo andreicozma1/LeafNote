@@ -70,7 +70,7 @@ class MenuBar():
         # TODO - save the file as a specified name in any location on disk
         save_as_file = QAction("&Save As...", self.app)
         save_as_file.setStatusTip('Save As')
-        self.button_strike.setShortcut('ctrl+shift+s')
+        save_as_file.setShortcut('ctrl+shift+s')
         save_as_file.triggered.connect(self.onSaveAsBtn)
         self.file_menu.addAction(save_as_file)
 
@@ -116,7 +116,7 @@ class MenuBar():
         # ***** Currently only looks for text files
         folder_name = QFileDialog.getExistingDirectory(self.app, 'Open file', home_dir)
 
-        self.app.app_props.mainPath = folder_name
+        self.app.app_props.mainPath = folder_name[0]
 
         self.app.layout.left_menu.updateDirectory(self.app.app_props.mainPath)
 
@@ -129,7 +129,7 @@ class MenuBar():
     def onSaveAsBtn(self):
         print("MenuBar - saveAsFile")
         new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
-        self.file_manager.saveAsDocument(new_file_path)
+        self.file_manager.saveAsDocument(new_file_path[0])
 
     def onExitBtn(self):
         print("MenuBar - onExitBtn")
