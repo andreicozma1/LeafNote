@@ -71,7 +71,8 @@ class FileManager:
         if path in self.open_documents:
             self.open_documents.pop(path)
             print('FileManager - closeDocument - Closed File - ', path)
-            if bool(self.open_documents):
+            if not bool(self.open_documents):
+                self.current_document = None
                 self.app.layout.document.updateTextBox("")
 
         # if it does not exist print error messages
