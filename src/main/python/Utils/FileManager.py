@@ -71,7 +71,13 @@ class FileManager:
         if path in self.open_documents:
             self.open_documents.pop(path)
             print('FileManager - closeDocument - Closed File - ', path)
-            if not bool(self.open_documents):
+
+            # if the open documents is NOT empty change the current document to another open file
+            if bool(self.open_documents):
+                self.current_document = self.open_documents[next(iter(self.open_documents))]
+                self.app.layout.document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+            # if the open documents IS empty set the current document to none/empty document with no path
+            else:
                 self.current_document = None
                 self.app.layout.document.updateTextBox("")
 
