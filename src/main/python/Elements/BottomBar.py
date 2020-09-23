@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
 class BottomBar(QWidget):
     def __init__(self):
         super(BottomBar, self).__init__()
+        print("Bottom Bar - init")
+
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(self.horizontal_layout)

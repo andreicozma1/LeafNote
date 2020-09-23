@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 # Class to display a directory
 class DirectoryViewer(QTreeView):
     def __init__(self, fileManager, path=None):
-        super(QTreeView, self).__init__()
+        super(DirectoryViewer, self).__init__()
         print("DirectoryViewer - init - ", path)
         self.fileManager = fileManager
 

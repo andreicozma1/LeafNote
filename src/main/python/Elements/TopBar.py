@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontC
 class TopBar(QWidget):
     def __init__(self, document):
         super(TopBar, self).__init__()
+        print('TopBar - init')
         self.document = document
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)

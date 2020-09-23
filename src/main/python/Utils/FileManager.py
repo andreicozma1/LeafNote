@@ -1,10 +1,11 @@
+# this class manages all of the open documents and stores their paths into a list
 from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
-# this class manages all of the open documents and stores their paths into a list
-class FileManager:
+class FileManager():
     def __init__(self, app):
         print("FileManager - init")
+
         self.app = app  # app - QMainWindow instance
         self.open_documents = []  # open_documents - holds the paths of all of the open documents
         self.current_document = None  # current_document - the current document that is displayed to the user

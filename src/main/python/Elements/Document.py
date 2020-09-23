@@ -3,7 +3,7 @@ from Elements.Textbox import TextBox
 
 class Document(TextBox):
     def __init__(self, bottom_bar):
-        super(TextBox, self).__init__()
+        super(Document, self).__init__()
         print("Document - init")
 
         self.bottom_bar = bottom_bar

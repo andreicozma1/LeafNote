@@ -4,10 +4,11 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSplitter
 from Elements.BottomBar import BottomBar
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
+from Elements.OpenTabsBar import OpenTabsBar
 from Elements.TopBar import TopBar
 
 
-class Layout():
+class Layout:
     def __init__(self, app, appProps, layoutProps):
         print("Layout - init")
 
@@ -27,6 +28,7 @@ class Layout():
 
         self.bottom_bar = BottomBar()
 
+        self.open_tabs_bar = OpenTabsBar(self.app)
         self.document = Document(self.bottom_bar)
 
         self.top_bar = TopBar(self.document)
@@ -40,7 +42,16 @@ class Layout():
         self.vertical_layout.setSpacing(self.layout_props.splitter_width)
 
         self.splitter.addWidget(self.left_menu)
-        self.splitter.addWidget(self.document)
+
+        widget = QWidget()
+        docs_layout = QVBoxLayout()
+        docs_layout.setSpacing(self.layout_props.splitter_width)
+        docs_layout.setContentsMargins(0, 0, 0, 0)
+        docs_layout.addWidget(self.open_tabs_bar)
+        docs_layout.addWidget(self.document)
+        widget.setLayout(docs_layout)
+        self.splitter.addWidget(widget)
+
         # TODO - uncomment when implementing right menu
         # self.splitter.addWidget(self.right_menu)
         self.splitter.setHandleWidth(self.layout_props.splitter_width)

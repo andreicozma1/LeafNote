@@ -7,5 +7,6 @@ class LayoutProps():
         self.min_menu_width = .2
         self.max_menu_width = .3
         self.bar_height = 35
+        self.bar_tabs_height = 25
 
         self.splitter_width = 1
