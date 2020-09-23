@@ -52,7 +52,7 @@ class TopBar(QWidget):
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
         self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
-        self.button_strike.setShortcut('ctrl+s')
+        self.button_strike.setShortcut('alt+shift+5')
         self.button_strike.setFixedWidth(33)
         f = self.button_strike.font()
         f.setStrikeOut(True)
