@@ -25,7 +25,7 @@ class Layout(QWidget):
 
         # Documents view holds the open tabs as well as the actual document
         self.documents_view = QWidget()
-        self.documents_view_layout = QVBoxLayout(self.documents_view) # Parent of layout passed in constructor
+        self.documents_view_layout = QVBoxLayout(self.documents_view)  # Parent of layout passed in constructor
         self.bar_open_tabs = OpenTabsBar(self.app)
         self.document = Document(self)
 

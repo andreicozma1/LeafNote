@@ -1,7 +1,5 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
-from os import path
-from PyQt5.QtCore import QDir
 
 from Elements.Tab import Tab
 
@@ -43,5 +41,3 @@ class OpenTabsBar(QWidget):
     def getTabCount(self):
         print("OpenTabsBar - getTabCount -", self.horizontal_layout.count())
         return self.layout().count()
-
-
