@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QColorDialog
 from PyQt5.QtCore import Qt
 
 
@@ -81,6 +81,15 @@ class TopBar(QWidget):
         self.button_under.setFocusPolicy(Qt.NoFocus)
         self.horizontal_layout.addWidget(self.button_under)
 
+        # Button to change text color
+        self.button_colorT = QPushButton("A", self)
+        self.button_colorT.setToolTip("Change Text color.")
+        #self.button_colorT.setShortcut('')
+        self.button_colorT.setFixedWidth(33)
+        #self.button_colorT.setStyleSheet("")
+        self.button_colorT.clicked.connect(self.on_click)
+        self.horizontal_layout.addWidget(self.button_colorT)
+
         # Temporary widgets
         self.horizontal_layout.addStretch()
 
@@ -112,3 +121,9 @@ class TopBar(QWidget):
         f = self.document.currentCharFormat()
         f.setFontStrikeOut(self.button_strike.isChecked())
         self.document.setCurrentCharFormat(f)
+
+    def on_click(self):
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.document.setTextColor(color)
