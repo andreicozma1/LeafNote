@@ -114,9 +114,10 @@ class MenuBar():
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
-        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open file', home_dir)
-
-        self.app.app_props.mainPath = folder_name[0]
+        
+        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
+        print(folder_name)
+        self.app.app_props.mainPath = folder_name
 
         self.app.layout.menu_left.updateDirectory(self.app.app_props.mainPath)
 

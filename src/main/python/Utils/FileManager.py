@@ -1,13 +1,12 @@
 import os
-# this class manages all of the open documents and stores their paths into a list
-
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
 
-class FileManager():
-    def __init__(self, app):
-        print("FileManager - init")
 
+# this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
+class FileManager:
+    def __init__(self, app):
+        print('FileManager - init')
         self.app = app  # app - QMainWindow instance
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
@@ -43,7 +42,7 @@ class FileManager():
 
             print('FileManager - saveDocument - Saved File - ', path)
 
-    # TODO - save the file at the current path to the new path
+    # saves the file at the current path to the new path
     def saveAsDocument(self, new_path):
         if new_path == '':
             print('FileManager - saveAsDocument - No New File Path Given')
@@ -70,6 +69,15 @@ class FileManager():
             self.open_documents.pop(path)
             print('FileManager - closeDocument - Closed File - ', path)
 
+            # if the open documents is NOT empty change the current document to another open file
+            if bool(self.open_documents):
+                self.current_document = self.open_documents[next(iter(self.open_documents))]
+                self.app.layout.document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+            # if the open documents IS empty set the current document to none/empty document with no path
+            else:
+                self.current_document = None
+                self.app.layout.document.updateTextBox("")
+
         # if it does not exist print error messages
         else:
             if path == '':
@@ -83,6 +91,7 @@ class FileManager():
         print('FileManager - closeAll')
         self.current_document = None
         self.open_documents.clear()
+        self.app.layout.document.updateTextBox("")
 
     # opens the file of the given path and add the Document to the dictionary
     def openDocument(self, path):
@@ -104,6 +113,9 @@ class FileManager():
             # appends the path to the list of open documents and sets it to the current document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
+
+            self.app.layout.bar_open_tabs.addTab(path)
+
             print('FileManager - openDocument - Opened Document - ', path)
 
         # if the document has already been opened in this session
@@ -115,7 +127,6 @@ class FileManager():
 
         # update the document shown to the user
         self.app.layout.document.updateTextBox(data)
-
         return data
 
     # returns the text inside of the file at the given path
