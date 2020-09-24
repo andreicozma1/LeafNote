@@ -33,6 +33,8 @@ class BottomBar(QWidget):
         self.button_zoom_out.setFixedWidth(33)
         self.button_zoom_out.clicked.connect(self.onZoomOutClicked)
         self.button_zoom_out.setAutoRepeat(True)
+        self.button_zoom_out.setToolTip("Zooms document out, Ctrl+'-' ")
+        self.button_zoom_out.setShortcut("ctrl+-")
         self.horizontal_layout.addWidget(self.button_zoom_out)
 
         self.zoom_slider = QSlider(Qt.Horizontal, self)
@@ -47,6 +49,8 @@ class BottomBar(QWidget):
         self.button_zoom_in.setFixedWidth(33)
         self.button_zoom_in.clicked.connect(self.onZoomInClicked)
         self.button_zoom_in.setAutoRepeat(True)
+        self.button_zoom_in.setToolTip("Zooms document in, Ctrl+'+' ")
+        self.button_zoom_in.setShortcut("ctrl+=")
         self.horizontal_layout.addWidget(self.button_zoom_in)
 
     def updateWordCount(self):
