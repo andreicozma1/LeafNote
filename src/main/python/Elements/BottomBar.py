@@ -32,6 +32,7 @@ class BottomBar(QWidget):
         self.button_zoom_out = QPushButton("-", self)
         self.button_zoom_out.setFixedWidth(33)
         self.button_zoom_out.clicked.connect(self.onZoomOutClicked)
+        self.button_zoom_out.setAutoRepeat(True)
         self.horizontal_layout.addWidget(self.button_zoom_out)
 
         self.zoom_slider = QSlider(Qt.Horizontal, self)
@@ -42,10 +43,11 @@ class BottomBar(QWidget):
         self.zoom_slider.valueChanged[int].connect(self.changeValue)
         self.horizontal_layout.addWidget(self.zoom_slider)
 
-        self.button_zoom_out = QPushButton("+", self)
-        self.button_zoom_out.setFixedWidth(33)
-        self.button_zoom_out.clicked.connect(self.onZoomInClicked)
-        self.horizontal_layout.addWidget(self.button_zoom_out)
+        self.button_zoom_in = QPushButton("+", self)
+        self.button_zoom_in.setFixedWidth(33)
+        self.button_zoom_in.clicked.connect(self.onZoomInClicked)
+        self.button_zoom_in.setAutoRepeat(True)
+        self.horizontal_layout.addWidget(self.button_zoom_in)
 
     def updateWordCount(self):
         wordCount = 0
@@ -60,9 +62,11 @@ class BottomBar(QWidget):
 
     def onZoomInClicked(self):
             self.document.zoomIn(+1)
+            self.zoom_slider.setValue(self.last_zoom_val + 1)
 
     def onZoomOutClicked(self):
             self.document.zoomOut(+1)
+            self.zoom_slider.setValue(self.last_zoom_val - 1)
 
     def changeValue(self, value):
         temp = value - self.last_zoom_val
