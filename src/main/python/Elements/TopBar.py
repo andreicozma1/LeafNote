@@ -5,10 +5,12 @@ from Utils.DialogBuilder import DialogBuilder
 
 
 class TopBar(QWidget):
-    def __init__(self, document):
+    def __init__(self, document, fileManager):
         super(TopBar, self).__init__()
         print('TopBar - init')
         self.document = document
+        self.fileManager = fileManager
+
         self.horizontal_layout = QHBoxLayout()
 
         # List for font sizes
@@ -97,7 +99,9 @@ class TopBar(QWidget):
 
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
+
         self.setLayout(self.horizontal_layout)
+
         return self
 
     # Toggles between Formatting Mode and Plain-Text Mode

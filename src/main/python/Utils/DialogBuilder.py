@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QPushButton, QLayout, QLabel, QDialogButtonBox
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox
 
 
 class DialogBuilder(QDialog):

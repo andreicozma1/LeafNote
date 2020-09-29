@@ -1,8 +1,13 @@
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QVBoxLayout, QWidget
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
+from Elements.BottomBar import BottomBar
+from Elements.DirectoryViewer import DirectoryViewer
+from Elements.Document import Document
+from Elements.OpenTabsBar import OpenTabsBar
+from Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
@@ -22,7 +27,24 @@ class App(QMainWindow):
 
         self.layout = Layout(self, self.app_props, self.layout_props)
 
+        self.bar_open_tabs = OpenTabsBar(self)
+        self.document = Document(self.layout)
+        self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
+        self.top_bar = TopBar(self.document, self.file_manager)
+        self.bottom_bar = BottomBar(self.document)
+        self.setupLayout()
+
         self.menubar = MenuBar(self)
+
+
+    def setupLayout(self):
+        # Setup Documents View
+        self.layout.setTopBar(self.top_bar)
+        self.layout.setBottomBar(self.bottom_bar)
+        self.layout.setBarOpenTabs(self.bar_open_tabs)
+        self.layout.setDocument(self.document)
+        self.layout.setLeftMenu(self.left_menu)
+
 
     # Returns the Central Widget
     def setup(self):
@@ -34,8 +56,6 @@ class App(QMainWindow):
         if not self.app_props.resizable:
             self.setFixedSize(self.app_props.width, self.app_props.height)
 
-        self.menubar.setup()
-        self.layout.setup()
         self.setCentralWidget(self.layout)
 
         self.show()

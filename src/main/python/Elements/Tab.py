@@ -1,12 +1,10 @@
 import random
-from PyQt5.QtCore import QDir
-from os import path
 
-from PyQt5 import QtGui
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
+
 
 class Tab(Color):
     def __init__(self, tabBar, app, path: str):
