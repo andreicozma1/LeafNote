@@ -5,11 +5,11 @@ from Utils.DialogBuilder import DialogBuilder
 
 
 class TopBar(QWidget):
-    def __init__(self, document, fileManager):
+    def __init__(self, app):
         super(TopBar, self).__init__()
         print('TopBar - init')
-        self.document = document
-        self.fileManager = fileManager
+        self.app = app
+        self.document = app.document
 
         self.horizontal_layout = QHBoxLayout()
 

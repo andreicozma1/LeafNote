@@ -9,8 +9,8 @@ class Layout(QWidget):
 
         # Init variables
         self.app = app
-        self.app_props = appProps
-        self.layout_props = layoutProps
+        self.app_props = app.app_props
+        self.layout_props = app.layout_props
 
         # Main layout of the application. Holds the top bar, main horizontal layout, as well as the bottom bar
         QVBoxLayout(self)  # this defines the QWidget as the parent for the layout

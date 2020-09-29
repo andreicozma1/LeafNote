@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements.BottomBar import BottomBar
@@ -25,17 +25,16 @@ class App(QMainWindow):
 
         self.file_manager = FileManager(self)
 
-        self.layout = Layout(self, self.app_props, self.layout_props)
+        self.layout = Layout(self)
 
         self.bar_open_tabs = OpenTabsBar(self)
         self.document = Document(self.layout)
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
-        self.top_bar = TopBar(self.document, self.file_manager)
+        self.top_bar = TopBar(self)
         self.bottom_bar = BottomBar(self.document)
         self.setupLayout()
 
         self.menubar = MenuBar(self)
-
 
     def setupLayout(self):
         # Setup Documents View
@@ -44,7 +43,6 @@ class App(QMainWindow):
         self.layout.setBarOpenTabs(self.bar_open_tabs)
         self.layout.setDocument(self.document)
         self.layout.setLeftMenu(self.left_menu)
-
 
     # Returns the Central Widget
     def setup(self):
