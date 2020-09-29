@@ -226,6 +226,7 @@ class MenuBar():
         self.bold_action = QAction("Bold", self.app)
         self.bold_action.setShortcut('Ctrl+B')
         self.bold_action.setCheckable(True)
+        self.bold_action.setEnabled(False)
         self.bold_action.triggered.connect(self.setBold)
         self.text_menu.addAction(self.bold_action)
 
@@ -233,6 +234,7 @@ class MenuBar():
         self.ital_action = QAction("Italicised", self.app)
         self.ital_action.setShortcut('Ctrl+I')
         self.ital_action.setCheckable(True)
+        self.ital_action.setEnabled(False)
         self.ital_action.triggered.connect(self.setItal)
         self.text_menu.addAction(self.ital_action)
 
@@ -240,6 +242,7 @@ class MenuBar():
         self.strike_action = QAction("Strikout", self.app)
         self.strike_action.setShortcut('Ctrl+Shift+S') #TODO EDIT THIS COMMAND, THIS IS JUST A PLACE HOLDER
         self.strike_action.setCheckable(True)
+        self.strike_action.setEnabled(False)
         self.strike_action.triggered.connect(self.setStrike)
         self.text_menu.addAction(self.strike_action)
 
@@ -247,6 +250,7 @@ class MenuBar():
         self.under_action = QAction("Underline", self.app)
         self.under_action.setShortcut('Ctrl+U')
         self.under_action.setCheckable(True)
+        self.under_action.setEnabled(False)
         self.under_action.triggered.connect(self.setUnder)
         self.text_menu.addAction(self.under_action)
 
@@ -255,8 +259,13 @@ class MenuBar():
 
         # Adds Font Color button to text_menu
         self.font_color_action = QAction("Font Color", self.app)
+        self.font_color_action.setEnabled(False)
         self.font_color_action.triggered.connect(self.on_click)
         self.text_menu.addAction(self.font_color_action)
+
+        # if the enable formatting mode is toggled
+        self.app.layout.top_bar.button_mode_switch.toggled.connect(self.setFE)
+
 
     """
     # TODO - Add functionality to tools tab - tbd
@@ -301,3 +310,11 @@ class MenuBar():
 
     def on_click(self):
         self.openColorDialog()
+
+    # Toggles between Formatting Mode and Plain-Text Mode
+    def setFE(self, state):
+        self.bold_action.setEnabled(state)
+        self.ital_action.setEnabled(state)
+        self.under_action.setEnabled(state)
+        self.strike_action.setEnabled(state)
+        self.font_color_action.setEnabled(state)
