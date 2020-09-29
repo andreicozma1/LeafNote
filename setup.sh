@@ -8,8 +8,6 @@ show_install()
 	echo " # Windows: https://www.python.org/downloads" 
 }
 
-show_install
-
 if which python3 > /dev/null 2>&1; then
 	echo "## Checking Python Version:" &&
 	python3 -V &&
