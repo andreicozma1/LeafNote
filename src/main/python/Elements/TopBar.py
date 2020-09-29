@@ -1,6 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import  QGridLayout, QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QColorDialog, QFrame
+from PyQt5.QtWidgets import QGridLayout, QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QColorDialog, \
+    QFrame, QToolButton
 from PyQt5.QtCore import Qt
 
 
@@ -105,39 +106,26 @@ class TopBar(QWidget):
         self.horizontal_layout.addWidget(self.button_under)
 
         # Button to change text color
-        self.button_colorT = QComboBox(self)
-        self.button_colorT.setFixedWidth(100)
-        model = self.button_colorT.model()
-        # self.frame = QFrame(self)
-        # self.frame.setFrameStyle(QFrame.Box | QFrame.Sunken)
-        # grid = QGridLayout()
-        # grid.addWidget(self.button_colorT, 1, 1, 1, 1)
-        # grid.addWidget(self.frame, 1, 2, 3, 2)
-
-
+        self.text_color = QComboBox(self)
+        self.text_color.setFixedWidth(33)
+        self.text_color.setFixedHeight(20)
+        model = self.text_color.model()
         self.color_list = sorted(self.color_dict.values())
         for i, c in enumerate(self.color_list):
             print(c)
             item = QtGui.QStandardItem()
             item.setBackground(QtGui.QColor(c))
             model.appendRow(item)
-            self.button_colorT.setItemData(i, c)
-
-        self.button_colorT.currentIndexChanged.connect(self.setColorChange)
-        self.button_colorT.setFocusPolicy(Qt.NoFocus)
-
-        self.button_colorT.setToolTip("Change Text color.")
-        #self.button_colorT.setShortcut('')
-        #self.button_colorT.setFixedWidth(33)
-        #self.button_colorT.clicked.connect(self.on_click)
-        self.horizontal_layout.addWidget(self.button_colorT)
-
-        # self.button_colorT = QPushButton("A", self)
-        # self.button_colorT.setToolTip("Change Text color.")
-        # # self.button_colorT.setShortcut('')
-        # self.button_colorT.setFixedWidth(33)
-        # self.button_colorT.clicked.connect(self.on_click)
-        # self.horizontal_layout.addWidget(self.button_colorT)
+            self.text_color.setItemData(i, c)
+        self.text_color.currentIndexChanged.connect(self.setColorChange)
+        self.text_color.setFocusPolicy(Qt.NoFocus)
+        self.text_color.setToolTip("Change Text color.")
+        self.text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
+                                      " QComboBox { background-color: black;"
+                                      "            border: 1px solid gray; }"
+                                      " QComboBox QAbstractItemView { selection-background-color: none; }/")
+        self.text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.horizontal_layout.addWidget(self.text_color)
 
         # Temporary widgets
         self.horizontal_layout.addStretch()
@@ -173,13 +161,10 @@ class TopBar(QWidget):
 
     def setColorChange(self, index):
         print(index)
-        print(self.button_colorT.itemData(index))
-        self.document.setTextColor(QColor(self.button_colorT.itemData(index)))
-
-    def on_click(self):
-        color = QColorDialog.getColor()
-        setcolor = "QPushButton { color: " + color.name() + " } "
-        self.button_colorT.setStyleSheet(setcolor)
-
-        if color.isValid():
-            self.document.setTextColor(color)
+        print(self.text_color.itemData(index))
+        setcolor = "  QComboBox::drop-down          {   border: 0px;}"
+        setcolor += " QComboBox                     {   background-color:" + self.text_color.itemData(index) + ";"
+        setcolor += "                                   border: 1px solid gray; }"
+        setcolor += " QComboBox QAbstractItemView   {   selection-background-color: none; }"
+        self.text_color.setStyleSheet(setcolor)
+        self.document.setTextColor(QColor(self.text_color.itemData(index)))
