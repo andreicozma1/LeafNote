@@ -17,7 +17,7 @@ class MenuBar():
         self.edit_menu = self.menu.addMenu('&Edit')
 
         # TODO - uncomment when implementing these menus individually
-        # self.view_menu = self.menu.addMenu('&View')
+        self.view_menu = self.menu.addMenu('&View')
         # self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
 
@@ -28,7 +28,7 @@ class MenuBar():
         self.editMenuSetup()
 
         # TODO - uncomment when implementing these menus individually
-        # self.viewMenuSetup()
+        self.viewMenuSetup()
         # self.toolsMenuSetup()
         # self.helpMenuSetup()
 
@@ -114,11 +114,11 @@ class MenuBar():
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
-        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open file', home_dir)
 
-        self.app.app_props.mainPath = folder_name[0]
+        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
+        self.app.app_props.mainPath = folder_name
 
-        self.app.layout.left_menu.updateDirectory(self.app.app_props.mainPath)
+        self.app.layout.menu_left.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
@@ -191,14 +191,27 @@ class MenuBar():
     # --------------------------------------------------------------------------------
 
     # TODO - uncomment when implementing these menus
-    """
     # TODO - Add functionality to view tab - appearance, etc.
     # this function sets up the view tabs drop menu
     def viewMenuSetup(self):
         print("MenuBar - viewMenuSetup")
+        zoom_in_act = QAction("&Zoom In", self.app)
+        zoom_in_act.setShortcut('ctrl+=')
+        zoom_in_act.triggered.connect(self.app.layout.bottom_bar.onZoomInClicked)
+        self.view_menu.addAction(zoom_in_act)
+
+        zoom_out_act = QAction("&Zoom Out", self.app)
+        #zoom_out_act.setShortcut('ctrl+-')
+        zoom_out_act.setShortcut('ctrl+-')
+        zoom_out_act.triggered.connect(self.app.layout.bottom_bar.onZoomOutClicked)
+        self.view_menu.addAction(zoom_out_act)
+
+        zoom_r_act = QAction("&Zoom Reset", self.app)
+        zoom_r_act.triggered.connect(self.app.layout.bottom_bar.resetZoom)
+        self.view_menu.addAction(zoom_r_act)
 
     # --------------------------------------------------------------------------------
-
+    """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
     def toolsMenuSetup(self):
