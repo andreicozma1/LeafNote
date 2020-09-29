@@ -1,9 +1,7 @@
-# this class manages all of the open documents and stores their paths into a list
 import os
 
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
-
 
 
 # this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
@@ -116,6 +114,7 @@ class FileManager:
             # appends the path to the list of open documents and sets it to the current document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
+
             self.app.layout.bar_open_tabs.addTab(path)
 
             print('FileManager - openDocument - Opened Document - ', path)
