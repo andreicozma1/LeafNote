@@ -1,5 +1,3 @@
-import math
-
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
 
@@ -80,7 +78,6 @@ class BottomBar(QWidget):
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
-
     def changeValue(self):
         min_rel_font_size = 2
         max_rel_font_size = 150
@@ -103,4 +100,3 @@ class BottomBar(QWidget):
 
     def resetZoom(self):
         self.zoom_slider.setValue(self.slider_start)
-

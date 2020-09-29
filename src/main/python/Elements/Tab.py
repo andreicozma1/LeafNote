@@ -1,21 +1,19 @@
 import random
-from PyQt5.QtCore import QDir
-from os import path
 
-from PyQt5 import QtGui
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
 
+
 class Tab(Color):
-    def __init__(self, tabBar, app, path: str):
+    def __init__(self, tab_bar, file_manager, path: str):
         # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super(Tab, self).__init__(color)
         print('Tab - init')
-        self.tabBar = tabBar
-        self.app = app
+        self.tab_bar = tab_bar
+        self.file_manager = file_manager
         self.path = path
         self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic
 
@@ -40,8 +38,8 @@ class Tab(Color):
         self.setLayout(self.horizontal_layout)
 
     def mousePressEvent(self, QMouseEvent):
-        self.app.file_manager.openDocument(self.path)
+        self.file_manager.openDocument(self.path)
 
     def closeTab(self):
         print("Tab - closeTab -", self.path)
-        self.tabBar.closeTab(self)
+        self.tab_bar.closeTab(self)

@@ -1,12 +1,16 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
+
+from Utils.DialogBuilder import DialogBuilder
 
 
 class TopBar(QWidget):
-    def __init__(self, document):
+    def __init__(self, app):
         super(TopBar, self).__init__()
         print('TopBar - init')
-        self.document = document
+        self.app = app
+        self.document = app.document
+
         self.horizontal_layout = QHBoxLayout()
 
         # List for font sizes
@@ -81,14 +85,13 @@ class TopBar(QWidget):
         # Mode Switching button to the very right (after stretch)
         self.button_mode_switch = QPushButton("Formatting Mode", self)
         self.button_mode_switch.setToolTip("Enable Document Formatting")
-        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in setFormattingEnabled
+        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in queryEnableFormatting
         self.button_mode_switch.setCheckable(True)
         self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
-        self.button_mode_switch.toggled.connect(self.setFormattingEnabled)
+        self.button_mode_switch.clicked.connect(self.queryEnableFormatting)
         self.horizontal_layout.addWidget(self.button_mode_switch)
 
         self.setup()
-
 
     def setup(self):
         # TODO - Keep object definitions in constructor and move all method calls in setup
@@ -96,13 +99,37 @@ class TopBar(QWidget):
 
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
+
         self.setLayout(self.horizontal_layout)
+
         return self
 
     # Toggles between Formatting Mode and Plain-Text Mode
-    def setFormattingEnabled(self, state):
-        print("TopBar - setFormattingEnabled -", state)
+    def queryEnableFormatting(self, state):
+        print("TopBar - queryEnableFormatting -", state)
 
+        if state is True:
+            convert_dialog = DialogBuilder(self.document.layout, "Enable Formatting",
+                                           "Would you like to convert this file?",
+                                           "This file needs to be converted to use enriched text formatting features\n"
+                                           "Selecting 'Yes' will convert the original "
+                                           "file to the enriched text file format.")
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(buttonBox)
+            if convert_dialog.exec():
+                print("TopBar - queryEnableFormatting - User converted file to Proprietary Format")
+                # TODO - Convert file with FileManager to a .lef format, on success, call the function below
+                self.setFormattingEnabled(True)
+            else:
+                print("TopBar - queryEnableFormatting - User DID NOT convert file to Proprietary Format")
+                self.button_mode_switch.setChecked(False)
+        else:
+            # Don't allow converted file to be converted back to Plain Text
+            # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
+            print("TopBar - queryEnableFormatting - Cannot convert back to Plain Text")
+            self.button_mode_switch.setChecked(True)
+
+    def setFormattingEnabled(self, state):
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):

@@ -21,6 +21,8 @@ class MenuBar():
         # self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
 
+        self.setup()
+
     def setup(self):
         print("MenuBar - setup")
         # File tab submenus and actions
@@ -118,7 +120,7 @@ class MenuBar():
         folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
         self.app.app_props.mainPath = folder_name
 
-        self.app.layout.menu_left.updateDirectory(self.app.app_props.mainPath)
+        self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
@@ -149,13 +151,13 @@ class MenuBar():
         # undo button and function
         undo_act = QAction("&Undo", self.app)
         undo_act.setShortcut('Ctrl+z')
-        undo_act.triggered.connect(self.layout.document.undo)
+        undo_act.triggered.connect(self.app.document.undo)
         self.edit_menu.addAction(undo_act)
 
         # redo button and function
         redo_act = QAction("&Redo", self.app)
         redo_act.setShortcut('Ctrl+Shift+z')
-        redo_act.triggered.connect(self.layout.document.redo)
+        redo_act.triggered.connect(self.app.document.redo)
         self.edit_menu.addAction(redo_act)
 
         # adds line to separate options
@@ -164,7 +166,7 @@ class MenuBar():
         # select all button and function
         select_all_act = QAction("&Select All", self.app)
         select_all_act.setShortcut('Ctrl+a')
-        select_all_act.triggered.connect(self.layout.document.selectAll)
+        select_all_act.triggered.connect(self.app.document.selectAll)
         self.edit_menu.addAction(select_all_act)
 
         # adds line to separate options
@@ -173,19 +175,19 @@ class MenuBar():
         # cut button and function
         cut_act = QAction("&Cut", self.app)
         cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.layout.document.cut)
+        cut_act.triggered.connect(self.app.document.cut)
         self.edit_menu.addAction(cut_act)
 
         # copy button and function
         copy_act = QAction("&Copy", self.app)
         copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.layout.document.copy)
+        copy_act.triggered.connect(self.app.document.copy)
         self.edit_menu.addAction(copy_act)
 
         # paste button and function
         paste_act = QAction("&Paste", self.app)
         paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.layout.document.paste)
+        paste_act.triggered.connect(self.app.document.paste)
         self.edit_menu.addAction(paste_act)
 
     # --------------------------------------------------------------------------------
@@ -197,17 +199,17 @@ class MenuBar():
         print("MenuBar - viewMenuSetup")
         zoom_in_act = QAction("&Zoom In", self.app)
         zoom_in_act.setShortcut('ctrl+=')
-        zoom_in_act.triggered.connect(self.app.layout.bottom_bar.onZoomInClicked)
+        zoom_in_act.triggered.connect(self.app.bottom_bar.onZoomInClicked)
         self.view_menu.addAction(zoom_in_act)
 
         zoom_out_act = QAction("&Zoom Out", self.app)
-        #zoom_out_act.setShortcut('ctrl+-')
+        # zoom_out_act.setShortcut('ctrl+-')
         zoom_out_act.setShortcut('ctrl+-')
-        zoom_out_act.triggered.connect(self.app.layout.bottom_bar.onZoomOutClicked)
+        zoom_out_act.triggered.connect(self.app.bottom_bar.onZoomOutClicked)
         self.view_menu.addAction(zoom_out_act)
 
         zoom_r_act = QAction("&Zoom Reset", self.app)
-        zoom_r_act.triggered.connect(self.app.layout.bottom_bar.resetZoom)
+        zoom_r_act.triggered.connect(self.app.bottom_bar.resetZoom)
         self.view_menu.addAction(zoom_r_act)
 
     # --------------------------------------------------------------------------------

@@ -2,10 +2,9 @@ from PyQt5.QtCore import QDir
 
 
 class AppProps():
-    def __init__(self, app):
+    def __init__(self):
         print("AppProps - init")
 
-        self.app = app
         # Defaults
         self.title = '0x432d2d'
         self.left = 0
