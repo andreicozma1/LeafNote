@@ -222,9 +222,29 @@ class MenuBar():
         self.prevMenu = self.format_menu.addMenu('Text')
         #bold_action = self.prevMenu.addAction('Bold')
         self.bold_action = QAction("Bold", self.app)
-        self.prevMenu.addAction(self.bold_action)
+        self.bold_action.setShortcut('Ctrl+B')
         self.bold_action.setCheckable(True)
         self.bold_action.triggered.connect(self.setBold)
+        self.prevMenu.addAction(self.bold_action)
+
+        self.ital_action = QAction("Italicised", self.app)
+        self.ital_action.setShortcut('Ctrl+I')
+        self.ital_action.setCheckable(True)
+        self.ital_action.triggered.connect(self.setItal)
+        self.prevMenu.addAction(self.ital_action)
+
+        self.strike_action = QAction("Strikout", self.app)
+        self.strike_action.setShortcut('Ctrl+Shift+S')
+        self.strike_action.setCheckable(True)
+        self.strike_action.triggered.connect(self.setStrike)
+        self.prevMenu.addAction(self.strike_action)
+
+        self.under_action = QAction("Underline", self.app)
+        self.under_action.setShortcut('Ctrl+U')
+        self.under_action.setCheckable(True)
+        self.under_action.triggered.connect(self.setUnder)
+        self.prevMenu.addAction(self.under_action)
+
 
     def setBold(self):
         if self.bold_action.isChecked():
@@ -232,6 +252,17 @@ class MenuBar():
         else:
             self.app.layout.document.setFontWeight(25)
 
+    def setItal(self):
+        self.app.layout.document.setFontItalic(self.ital_action.isChecked())
+
+    def setUnder(self):
+        self.app.layout.document.setFontUnderline(self.under_action.isChecked())
+
+    # Sets the font to strike
+    def setStrike(self):
+        f = self.app.layout.document.currentCharFormat()
+        f.setFontStrikeOut(self.strike_action.isChecked())
+        self.app.layout.document.setCurrentCharFormat(f)
 
 
     """
