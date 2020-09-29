@@ -2,34 +2,38 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButton
 
 
 class DialogBuilder(QDialog):
-    def __init__(self, blocks, winTitle: str = None, titleText: str = None, msgText: str = None):
-        super(DialogBuilder, self).__init__(blocks)
+    def __init__(self, blocked_widget, text_window: str = None, text_title: str = None, text_msg: str = None):
+        super(DialogBuilder, self).__init__(blocked_widget)
 
-        if winTitle is None:
-            winTitle = "Dialog"
+        if text_window is None:
+            text_window = "Dialog"
 
-        self.setWindowTitle(winTitle)
+        self.setWindowTitle(text_window)
+        self.layout_vertical = QVBoxLayout(self)
+        self.label_title = QLabel(text_title)
+        self.label_message = QLabel(text_msg)
 
-        self.vertical_layout = QVBoxLayout(self)
-        self.title = QLabel(titleText)
-        font = self.title.font()
+        self.setup()
+
+    def setup(self):
+        font = self.label_title.font()
         font.setPointSize(18)
         font.setBold(True)
-        self.title.setFont(font)
-        self.message = QLabel(msgText)
-        self.vertical_layout.addWidget(self.title)
-        self.vertical_layout.addWidget(self.message)
+        self.label_title.setFont(font)
+
+        self.layout_vertical.addWidget(self.label_title)
+        self.layout_vertical.addWidget(self.label_message)
 
     def setTitleText(self, text: str):
-        self.title.setText(text)
+        self.label_title.setText(text)
 
     def setMsgText(self, text: str):
-        self.message.setText(text)
+        self.label_message.setText(text)
 
     def addWidget(self, widget: QWidget):
-        self.vertical_layout.addWidget(widget)
+        self.layout_vertical.addWidget(widget)
 
-    def addButtonBox(self, buttonBox: QDialogButtonBox):
-        self.vertical_layout.addWidget(buttonBox)
-        buttonBox.accepted.connect(self.accept)
-        buttonBox.rejected.connect(self.reject)
+    def addButtonBox(self, button_box: QDialogButtonBox):
+        self.layout_vertical.addWidget(button_box)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)

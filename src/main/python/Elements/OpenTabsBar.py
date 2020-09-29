@@ -5,14 +5,15 @@ from Elements.Tab import Tab
 
 
 class OpenTabsBar(QWidget):
-    def __init__(self, app):
+    def __init__(self, file_manager, layout_props):
         super(OpenTabsBar, self).__init__()
-        self.app = app
+        self.file_manager = file_manager
+        self.layout_props = layout_props
 
         # crate the hbox layout
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_layout.setSpacing(self.app.layout_props.bar_tabs_spacing)
+        self.horizontal_layout.setSpacing(self.layout_props.bar_tabs_spacing)
         self.setLayout(self.horizontal_layout)
 
         # set the background
@@ -26,7 +27,7 @@ class OpenTabsBar(QWidget):
     # this will create a new tab and add it to the horizontal layout
     def addTab(self, path: str) -> Tab:
         print('OpenTabsBar - addTab -', path)
-        tab = Tab(self, self.app, path)
+        tab = Tab(self, self.file_manager, path)
         self.layout().insertWidget(0, tab)
         return tab
 
@@ -34,8 +35,8 @@ class OpenTabsBar(QWidget):
     def closeTab(self, tab: Tab):
         print('OpenTabsBar - closeTab -', tab.path)
         self.layout().removeWidget(tab)
-        self.app.file_manager.saveDocument()
-        self.app.file_manager.closeDocument(tab.path)
+        self.file_manager.saveDocument()
+        self.file_manager.closeDocument(tab.path)
         tab.deleteLater()
 
     def getTabCount(self):

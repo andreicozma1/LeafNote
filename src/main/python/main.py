@@ -20,14 +20,14 @@ class App(QMainWindow):
         super(QMainWindow, self).__init__()
         print("App - init")
         # Initialize properties.
-        self.app_props = AppProps(self)
-        self.layout_props = LayoutProps(self)
+        self.app_props = AppProps()
+        self.layout_props = LayoutProps()
 
         self.file_manager = FileManager(self)
 
-        self.layout = Layout(self)
+        self.layout = Layout(self.app_props, self.layout_props)
 
-        self.bar_open_tabs = OpenTabsBar(self)
+        self.bar_open_tabs = OpenTabsBar(self.file_manager, self.layout_props)
         self.document = Document(self.layout)
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.top_bar = TopBar(self)
@@ -65,7 +65,7 @@ class App(QMainWindow):
         self.move(app_geom.topLeft())
 
     def resizeEvent(self, event):
-        self.layout.updateDimensions()
+        self.layout.updateDimensions(self)
         return super(QMainWindow, self).resizeEvent(event)
 
 
