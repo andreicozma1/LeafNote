@@ -41,10 +41,10 @@ class BottomBar(QWidget):
         self.zoom_slider = QSlider(Qt.Horizontal, self)
         self.zoom_slider.setGeometry(30, 40, 200, 30)
         self.zoom_slider.setFixedWidth(140)
-        self.zoom_slider.setMinimum(0)
-        self.zoom_slider.setMaximum(100)
+        self.zoom_slider.setMinimum(-50)
+        self.zoom_slider.setMaximum(50)
         # Calculate the middle of the scale
-        self.slider_start = (self.zoom_slider.maximum() - self.zoom_slider.minimum()) / 2
+        self.slider_start = 0
         # Set the default position to the middle of the slider
         self.zoom_slider.setValue(self.slider_start)
         # The default font size corresponds to the default position (middle)
@@ -72,28 +72,34 @@ class BottomBar(QWidget):
 
     def onZoomInClicked(self):
         # Setting the value of the slider calls the changeValue function to perform the appropriate calculations
-        self.zoom_slider.setValue(self.zoom_slider.value() + 1)
+        self.zoom_slider.setValue(self.zoom_slider.value() + 5)
+        self.changeValue()
 
     def onZoomOutClicked(self):
         # Setting the value of the slider calls the changeValue function to perform the appropriate calculations
-        self.zoom_slider.setValue(self.zoom_slider.value() - 1)
+        self.zoom_slider.setValue(self.zoom_slider.value() - 5)
+        self.changeValue()
 
-    def changeValue(self, value):
-        # Define minimum font size (at the very left of the slider)
-        min_font_size = 6
-        # To increase maximum font size (at the very right), use a higher power
-        power = 4
 
-        # Logic Example:
-        # Slider ranges between 0 (min) and 200 (max). Middle (100) is the default value. Therefore middle = (max - min)/2
-        # If we are in the middle on the slider (x = 50), the output Y should be default_font_size
-        # We can construct a function of the form Y = (x^3)/((middle^3)/(default_font_size-min_size)) + min_size
-        # We can use higher powers to increase the scale
-        divisor = math.pow(self.slider_start, power) / (self.default_font_size - min_font_size)
-        tmp = (math.pow(value, power) / divisor) + min_font_size
+    def changeValue(self):
+        min_rel_font_size = 2
+        max_rel_font_size = 150
+        default_rel_font_size = self.default_font_size
 
-        delta = int(tmp - self.document.font().pointSize())
-        self.document.zoomIn(delta)
+        # reset zoom to default
+        self.document.zoomIn(self.default_font_size - self.document.font().pointSize())
+        curr_val = self.zoom_slider.value()
+        max_zoom = self.zoom_slider.maximum()
+
+        # if the zoom bar is on the negative side:
+        if curr_val < 0:
+            delta_zoom = (curr_val / max_zoom) * (default_rel_font_size - min_rel_font_size)
+
+        # if the zoom bar is on the positive side
+        else:
+            delta_zoom = (curr_val / max_zoom) * (max_rel_font_size - default_rel_font_size)
+
+        self.document.zoomIn(int(delta_zoom))
 
     def resetZoom(self):
         self.zoom_slider.setValue(self.slider_start)
