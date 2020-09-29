@@ -219,36 +219,45 @@ class MenuBar():
     # this function sets up the tools tabs drop menu
     def formatMenuSetup(self):
         print("MenuBar - formatMenuSetup")
+        # Sets up submenue of 'Text' inside of the 'Format' menu
         self.text_menu = self.format_menu.addMenu('&Text')
+
+        # Adds Bold button to text_menu
         self.bold_action = QAction("Bold", self.app)
         self.bold_action.setShortcut('Ctrl+B')
         self.bold_action.setCheckable(True)
         self.bold_action.triggered.connect(self.setBold)
         self.text_menu.addAction(self.bold_action)
 
+        # Adds Italicised button to text_menu
         self.ital_action = QAction("Italicised", self.app)
         self.ital_action.setShortcut('Ctrl+I')
         self.ital_action.setCheckable(True)
         self.ital_action.triggered.connect(self.setItal)
         self.text_menu.addAction(self.ital_action)
 
+        # Adds Strikeout button to text_menu
         self.strike_action = QAction("Strikout", self.app)
         self.strike_action.setShortcut('Ctrl+Shift+S') #TODO EDIT THIS COMMAND, THIS IS JUST A PLACE HOLDER
         self.strike_action.setCheckable(True)
         self.strike_action.triggered.connect(self.setStrike)
         self.text_menu.addAction(self.strike_action)
 
+        # Adds Underline button to text_menu
         self.under_action = QAction("Underline", self.app)
         self.under_action.setShortcut('Ctrl+U')
         self.under_action.setCheckable(True)
         self.under_action.triggered.connect(self.setUnder)
         self.text_menu.addAction(self.under_action)
 
+        # Adds Seperator to text_menu
         self.text_menu.addSeparator()
 
+        # Adds Font Color button to text_menu
         self.font_color_action = QAction("Font Color", self.app)
         self.font_color_action.triggered.connect(self.on_click)
         self.text_menu.addAction(self.font_color_action)
+
     """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
@@ -262,15 +271,18 @@ class MenuBar():
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
     """
+    # Sets current document font to bold
     def setBold(self):
         if self.bold_action.isChecked():
             self.app.layout.document.setFontWeight(75)
         else:
             self.app.layout.document.setFontWeight(25)
 
+    # Set document font to italicised
     def setItal(self):
         self.app.layout.document.setFontItalic(self.ital_action.isChecked())
 
+    # Set document font to underline
     def setUnder(self):
         self.app.layout.document.setFontUnderline(self.under_action.isChecked())
 
@@ -280,6 +292,7 @@ class MenuBar():
         f.setFontStrikeOut(self.strike_action.isChecked())
         self.app.layout.document.setCurrentCharFormat(f)
 
+    # Opens the color widget and checks for a valid color then sets document font color
     def openColorDialog(self):
         color = QColorDialog.getColor()
 
