@@ -108,7 +108,6 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.setEnabled(state)
 
-
     # Sets the font to the new font
     def fontChange(self):
         self.document.setCurrentFont(self.combo_font_style.currentFont())
