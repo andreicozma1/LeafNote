@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
-
+from Utils.DialogBuilder import DialogBuilder
 
 class TopBar(QWidget):
     def __init__(self, document):
@@ -107,6 +107,10 @@ class TopBar(QWidget):
         for a in self.children():
             if not a.property("persistent"):
                 a.setEnabled(state)
+
+        if state is True:
+            convert_dialog = DialogBuilder("Enable Formatting")
+
 
     # Sets the font to the new font
     def fontChange(self):
