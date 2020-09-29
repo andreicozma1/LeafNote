@@ -12,7 +12,7 @@ class FileManager:
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
 
-    # saves text to the file of the given path
+    # saves text to the current file
     def saveDocument(self):
 
         # get the current text from the document shown to the user

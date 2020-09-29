@@ -29,7 +29,7 @@ class OpenTabsBar(QWidget):
     # this will create a new tab and add it to the horizontal layout
     def addTab(self, path: str) -> Tab:
         print('OpenTabsBar - addTab -', path)
-        tab = Tab(self, path)
+        tab = Tab(self, self.app, path)
         self.layout().insertWidget(0, tab)
         return tab
 
@@ -37,6 +37,7 @@ class OpenTabsBar(QWidget):
     def closeTab(self, tab: Tab):
         print('OpenTabsBar - closeTab -', tab.path)
         self.layout().removeWidget(tab)
+        self.app.file_manager.saveDocument()
         self.app.file_manager.closeDocument(tab.path)
         tab.deleteLater()
 

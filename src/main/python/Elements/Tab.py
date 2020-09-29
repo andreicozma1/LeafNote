@@ -9,12 +9,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
 from Elements.ColorWidget import Color
 
 class Tab(Color):
-    def __init__(self, tabBar, path: str):
+    def __init__(self, tabBar, app, path: str):
         # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super(Tab, self).__init__(color)
         print('Tab - init')
         self.tabBar = tabBar
+        self.app = app
         self.path = path
         self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic
 
@@ -37,6 +38,9 @@ class Tab(Color):
         self.horizontal_layout.addWidget(self.btn_close)
 
         self.setLayout(self.horizontal_layout)
+
+    def mousePressEvent(self, QMouseEvent):
+        self.app.file_manager.openDocument(self.path)
 
     def closeTab(self):
         print("Tab - closeTab -", self.path)
