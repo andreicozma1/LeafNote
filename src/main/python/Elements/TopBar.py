@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy
+from PyQt5.QtCore import Qt, QObject
 
 
 class TopBar(QWidget):
@@ -8,12 +8,9 @@ class TopBar(QWidget):
         print('TopBar - init')
         self.document = document
         self.horizontal_layout = QHBoxLayout()
-        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.horizontal_layout.setSpacing(3)
-        self.setLayout(self.horizontal_layout)
 
         # List for font sizes
-        list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
                          "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
 
         # ComboBox for font sizes
@@ -26,7 +23,7 @@ class TopBar(QWidget):
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.combo_font_size.setToolTip('Change font size')
-        self.combo_font_size.addItems(list_FontSize)
+        self.combo_font_size.addItems(self.list_FontSize)
         self.combo_font_size.setCurrentIndex(11)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.currentIndexChanged.connect(self.selectionChange)
@@ -83,14 +80,30 @@ class TopBar(QWidget):
         # Mode Switching button to the very right (after stretch)
         self.button_mode_switch = QPushButton("Formatting Mode", self)
         self.button_mode_switch.setToolTip("Enable Document Formatting")
+        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in setFormattingEnabled
         self.button_mode_switch.setCheckable(True)
         self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
-        self.button_mode_switch.toggled.connect(self.toggleMode)
+        self.button_mode_switch.toggled.connect(self.setFormattingEnabled)
         self.horizontal_layout.addWidget(self.button_mode_switch)
 
+        self.setup()
+
+    def setup(self):
+        # TODO - Keep object definitions in constructor and move all method calls in setup
+        self.setFormattingEnabled(False)
+
+        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
+        self.horizontal_layout.setSpacing(3)
+        self.setLayout(self.horizontal_layout)
+        return self
+
     # Toggles between Formatting Mode and Plain-Text Mode
-    def toggleMode(self, state):
-        print("TopBar - toggleMode -", state)
+    def setFormattingEnabled(self, state):
+        print("TopBar - setFormattingEnabled -", state)
+
+        for a in self.children():
+            if not a.property("persistent"):
+                a.setEnabled(state)
 
     # Sets the font to the new font
     def fontChange(self):
