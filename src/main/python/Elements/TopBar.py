@@ -60,10 +60,6 @@ class TopBar(QWidget):
         self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
         self.button_strike.setShortcut('alt+shift+5')
         self.button_strike.setFixedWidth(33)
-        f = self.button_strike.font()
-        f.setStrikeOut(True)
-        self.button_strike.setFont(f)
-        # self.button_strike.adjustSize()
         self.button_strike.setStyleSheet("text-decoration: line-through")
         self.button_strike.setCheckable(True)
         self.button_strike.clicked.connect(self.setStrike)
@@ -75,7 +71,6 @@ class TopBar(QWidget):
         self.button_under.setToolTip('Underline your text. "Ctrl+U"')
         self.button_under.setShortcut('ctrl+u')
         self.button_under.setFixedWidth(33)
-        # self.button_under.resize(self.button_under.minimumSize())
         self.button_under.setStyleSheet("text-decoration: underline")
         self.button_under.setCheckable(True)
         self.button_under.clicked.connect(self.setUnder)
@@ -84,6 +79,18 @@ class TopBar(QWidget):
 
         # Temporary widgets
         self.horizontal_layout.addStretch()
+
+        # Mode Switching button to the very right (after stretch)
+        self.button_mode_switch = QPushButton("Formatting Mode", self)
+        self.button_mode_switch.setToolTip("Enable Document Formatting")
+        self.button_mode_switch.setCheckable(True)
+        self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
+        self.button_mode_switch.toggled.connect(self.toggleMode)
+        self.horizontal_layout.addWidget(self.button_mode_switch)
+
+    # Toggles between Formatting Mode and Plain-Text Mode
+    def toggleMode(self, state):
+        print("TopBar - toggleMode -", state)
 
     # Sets the font to the new font
     def fontChange(self):
