@@ -120,7 +120,7 @@ class MenuBar():
         folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
         self.app.app_props.mainPath = folder_name
 
-        self.app.menu_left.updateDirectory(self.app.app_props.mainPath)
+        self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
