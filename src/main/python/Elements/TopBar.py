@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy
-from PyQt5.QtCore import Qt, QObject
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
 
 
 class TopBar(QWidget):
@@ -10,11 +10,12 @@ class TopBar(QWidget):
         self.horizontal_layout = QHBoxLayout()
 
         # List for font sizes
-        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+                              "17",
+                              "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
 
         # ComboBox for font sizes
-        self.combo_font_style = QFontComboBox()
+        self.combo_font_style = QFontComboBox(self)
         self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.currentIndexChanged.connect(self.fontChange)
         self.combo_font_style.setFocusPolicy(Qt.NoFocus)
@@ -88,6 +89,7 @@ class TopBar(QWidget):
 
         self.setup()
 
+
     def setup(self):
         # TODO - Keep object definitions in constructor and move all method calls in setup
         self.setFormattingEnabled(False)
@@ -101,6 +103,7 @@ class TopBar(QWidget):
     def setFormattingEnabled(self, state):
         print("TopBar - setFormattingEnabled -", state)
 
+        a: QWidget
         for a in self.children():
             if not a.property("persistent"):
                 a.setEnabled(state)
