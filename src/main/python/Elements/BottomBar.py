@@ -103,3 +103,4 @@ class BottomBar(QWidget):
 
     def resetZoom(self):
         self.zoom_slider.setValue(self.slider_start)
+
