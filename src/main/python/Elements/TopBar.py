@@ -126,6 +126,7 @@ class TopBar(QWidget):
             self.document.setFontWeight(75)
         else:
             self.document.setFontWeight(25)
+        print("setBold")
 
     # Sets the font to underlined
     def setUnder(self):

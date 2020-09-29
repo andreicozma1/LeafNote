@@ -1,6 +1,8 @@
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, pyqtSlot
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import qApp, QAction
+from PyQt5.QtWidgets import qApp, QAction, QColorDialog
+
 
 
 # Class to hold and customize a QPlainTextEdit Widget
@@ -18,6 +20,7 @@ class MenuBar():
 
         # TODO - uncomment when implementing these menus individually
         self.view_menu = self.menu.addMenu('&View')
+        self.format_menu = self.menu.addMenu('&Format')
         # self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
 
@@ -29,6 +32,7 @@ class MenuBar():
 
         # TODO - uncomment when implementing these menus individually
         self.viewMenuSetup()
+        self.formatMenuSetup()
         # self.toolsMenuSetup()
         # self.helpMenuSetup()
 
@@ -211,6 +215,25 @@ class MenuBar():
         self.view_menu.addAction(zoom_r_act)
 
     # --------------------------------------------------------------------------------
+    # TODO - Add functionality to tools tab - tbd
+    # this function sets up the tools tabs drop menu
+    def formatMenuSetup(self):
+        print("MenuBar - formatMenuSetup")
+        self.prevMenu = self.format_menu.addMenu('Text')
+        #bold_action = self.prevMenu.addAction('Bold')
+        self.bold_action = QAction("Bold", self.app)
+        self.prevMenu.addAction(self.bold_action)
+        self.bold_action.setCheckable(True)
+        self.bold_action.triggered.connect(self.setBold)
+
+    def setBold(self):
+        if self.bold_action.isChecked():
+            self.app.layout.document.setFontWeight(75)
+        else:
+            self.app.layout.document.setFontWeight(25)
+
+
+
     """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
