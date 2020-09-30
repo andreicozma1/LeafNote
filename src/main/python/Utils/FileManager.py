@@ -101,7 +101,6 @@ class FileManager:
 
         logging.info("Saved File As -" + new_path)
 
-    #
     def closeDocument(self, path: str):
         """
         This closes the document with the given path.
@@ -118,6 +117,13 @@ class FileManager:
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
                 self.app.document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+
+                # update the formatting enabled accordingly
+                if self.current_document.suffix() != 'lef':
+                    self.app.document.resetFormatting()
+                self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
+                self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
+
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
@@ -185,7 +191,6 @@ class FileManager:
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         self.app.document.textCursor().clearSelection()
-        logging.info(str(self.current_document.suffix() == 'lef'))
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
         self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
@@ -241,9 +246,9 @@ class FileManager:
         Converts a .lef formatted file to a .txt file
         :return: return nothing
         """
+
         # get the formatted file and the old file path
         unformatted_file = self.app.document.toPlainText()
-        logging.info(unformatted_file)
 
         # if the current file is none make the user save the file
         if self.current_document is None:
@@ -257,38 +262,41 @@ class FileManager:
         except ValueError:
             period_index = len(self.current_document.filePath())
 
-        # create the file with the .lef extension holding the formatted data
-        new_path = self.current_document.filePath()[:period_index] + extension
-        self.writeFileData(new_path, unformatted_file)
-
-        # open the .lef document and add it to the dict of the open files
-        self.openDocument(new_path)
-
-        # close the .txt document from the dict of open files
-        self.closeDocument(self.current_document.absolutePath())
-
-        # close the .txt file tab
-        self.app.bar_open_tabs.closeTab(old_path)
+        # close the .lef file
+        self.app.bar_open_tabs.closeTab(old_path, False)
 
         # delete the .txt file
-        if True:  # TODO - figure out if we do want to delete the file
-            if self.current_document.exists():
-                os.remove(old_path)
-                logging.info("Deleted - " + old_path)
+        os.remove(old_path)
+        logging.info("Deleted - " + old_path)
+
+        # create the file with the given extension holding the formatted data
+        new_path = old_path[:period_index] + extension
+        self.writeFileData(new_path, unformatted_file)
+
+        # open the .txt document and add it to the dict of the open files
+        # this will also set the current document
+        self.openDocument(new_path)
+
+        # converting back from a formatted file. Reset all formatting and button selections
+        self.app.document.resetFormatting()
+        self.app.top_bar.setFormattingEnabled(False)
+
+
 
     def toLef(self):
         """
         Converts an unformatted .txt file to a formatted .lef file
         :return: return nothing
         """
-        # get the formatted file and the old file path
+        # get the formatted file
         formatted_file = self.app.document.toHtml()
 
         # if the current file is none make the user save the file
         if self.current_document is None:
             self.saveDocument()
 
-        old_path = self.current_document.absoluteFilePath()
+        # get teh old file path
+        old_path = self.current_document.filePath()
 
         # grab the index of the last period or if no period get the length of the string
         try:
@@ -296,24 +304,19 @@ class FileManager:
         except ValueError:
             period_index = len(self.current_document.filePath())
 
+        # close the .txt file
+        self.app.bar_open_tabs.closeTab(old_path, False)
+
+        # delete the .txt file
+        os.remove(old_path)
+        logging.info("Deleted - " + old_path)
+
         # create the file with the .lef extension holding the formatted data
-        new_path = self.current_document.filePath()[:period_index] + ".lef"
+        new_path = old_path[:period_index] + ".lef"
         self.writeFileData(new_path, formatted_file)
 
         # open the .lef document and add it to the dict of the open files
         self.openDocument(new_path)
-
-        # close the .txt document from the dict of open files
-        self.closeDocument(self.current_document.absolutePath())
-
-        # close the .txt file tab
-        self.app.bar_open_tabs.closeTab(old_path)
-
-        # delete the .txt file
-        if True:  # TODO - figure out if we do want to delete the file
-            if self.current_document.exists():
-                os.remove(old_path)
-                logging.info("Deleted - " + old_path)
 
     def newFile(self):
         """
@@ -323,14 +326,14 @@ class FileManager:
         # Get path name from user
         file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
         if file_name[0] == '':
-            print('FileManager - newFile - No File Path Given')
+            logging.info('No File Path Given')
             return
         path = file_name[0]
 
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(path)
-        print('FileManager - NewFile - Created NewFile - ', path)
+        logging.info(' Created NewFile - ', path)
 
 
     def printAll(self):
