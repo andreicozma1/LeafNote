@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
@@ -5,7 +7,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 
 from Utils.DialogBuilder import DialogBuilder
-import logging
+
 
 class TopBar(QWidget):
     def __init__(self, app, document):
@@ -111,9 +113,9 @@ class TopBar(QWidget):
         self.combo_text_color.setFocusPolicy(Qt.NoFocus)
         self.combo_text_color.setToolTip("Change Text color.")
         self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
-                                      " QComboBox { background-color: black;"
-                                      "            border: 1px solid gray; }"
-                                      " QComboBox QAbstractItemView { selection-background-color: none; }/")
+                                            " QComboBox { background-color: black;"
+                                            "            border: 1px solid gray; }"
+                                            " QComboBox QAbstractItemView { selection-background-color: none; }/")
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.horizontal_layout.addWidget(self.combo_text_color)
 

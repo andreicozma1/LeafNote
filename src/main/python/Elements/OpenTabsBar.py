@@ -1,8 +1,10 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from Elements.Tab import Tab
-import logging
+
 
 class OpenTabsBar(QWidget):
     def __init__(self, file_manager, layout_props):

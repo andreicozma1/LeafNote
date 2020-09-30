@@ -1,13 +1,16 @@
+import logging
 import os
+
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
-import logging
+
 
 class FileManager:
     """
     FileManger handles everything associated with communicating with files. It handles all of the opening, closing,
     and saving needed for the project.
     """
+
     def __init__(self, app):
         """
         Initializes the 'FileManager' object. It sets up all of the class variables.
@@ -54,7 +57,6 @@ class FileManager:
             # append the newly created file to the dict of open docs and set it to the curr document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
-
 
             # open a new tab associated with the new file
             self.app.bar_open_tabs.addTab(path)
@@ -256,7 +258,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # create the file with the .lef extension holding the formatted data
-        new_path = self.current_document.filePath()[:period_index]+extension
+        new_path = self.current_document.filePath()[:period_index] + extension
         self.writeFileData(new_path, unformatted_file)
 
         # open the .lef document and add it to the dict of the open files
@@ -295,7 +297,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # create the file with the .lef extension holding the formatted data
-        new_path = self.current_document.filePath()[:period_index]+".lef"
+        new_path = self.current_document.filePath()[:period_index] + ".lef"
         self.writeFileData(new_path, formatted_file)
 
         # open the .lef document and add it to the dict of the open files

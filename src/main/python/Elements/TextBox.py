@@ -1,6 +1,8 @@
+import logging
+
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QTextEdit
-import logging
+
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):

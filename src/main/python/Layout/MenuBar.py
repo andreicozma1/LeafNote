@@ -1,8 +1,10 @@
+import logging
+
 from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
-import logging
+
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
@@ -267,7 +269,6 @@ class MenuBar():
 
         self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
         self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-
 
     # --------------------------------------------------------------------------------
 

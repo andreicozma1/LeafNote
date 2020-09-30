@@ -1,6 +1,8 @@
+import logging
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QStackedLayout
-import logging
+
 
 class Layout(QWidget):
     def __init__(self, appProps, layoutProps):
@@ -56,7 +58,6 @@ class Layout(QWidget):
         # self.horizontal_workspace.addWidget(self.menu_right)
 
     def setTopBar(self, topBar: QWidget):
-
         self.top_bar.layout().addWidget(topBar)
 
     def setBottomBar(self, bottomBar: QWidget):

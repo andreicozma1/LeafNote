@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
@@ -13,13 +14,13 @@ from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
-import logging
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
 
 class App(QMainWindow):
     def __init__(self):

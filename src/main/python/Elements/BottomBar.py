@@ -1,6 +1,8 @@
+import logging
+
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
-import logging
+
 
 class BottomBar(QWidget):
     def __init__(self, document):
