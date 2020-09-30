@@ -33,3 +33,10 @@ class Document(TextBox):
         fontFormat = self.currentCharFormat()
         fontFormat.setFontStrikeOut(state)
         self.setCurrentCharFormat(fontFormat)
+
+    def resetFormatting(self):
+        self.onFontUnderChanged(False)
+        self.onFontItalChanged(False)
+        self.onFontBoldChanged(False)
+        self.onFontStrikeChanged(False)
+

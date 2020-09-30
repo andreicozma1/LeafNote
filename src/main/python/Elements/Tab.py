@@ -42,4 +42,6 @@ class Tab(Color):
 
     def closeTab(self):
         print("Tab - closeTab -", self.path)
-        self.tab_bar.closeTab(self)
+
+        self.tab_bar.closeTab(self.path)
+

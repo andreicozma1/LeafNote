@@ -161,6 +161,7 @@ class TopBar(QWidget):
             if convert_dialog.exec():
                 print("TopBar - onEnableFormatting - User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
+                self.app.file_manager.toLef()
                 self.setFormattingEnabled(True)
             else:
                 print("TopBar - onEnableFormatting - User DID NOT convert file to Proprietary Format")
@@ -168,6 +169,8 @@ class TopBar(QWidget):
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
+
+            self.app.file_manager.lefToExt()
             print("TopBar - onEnableFormatting - Cannot convert back to Plain Text")
             self.button_mode_switch.setChecked(True)
 
