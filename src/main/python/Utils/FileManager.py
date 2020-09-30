@@ -100,7 +100,6 @@ class FileManager:
         self.openDocument(new_path)
 
         logging.info("Saved File As -" + new_path)
-        logging.info(self.current_document)
 
     def closeDocument(self, path: str):
         """
@@ -192,7 +191,6 @@ class FileManager:
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         self.app.document.textCursor().clearSelection()
-        logging.info(str(self.current_document.suffix() == 'lef'))
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
         self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
@@ -251,7 +249,6 @@ class FileManager:
 
         # get the formatted file and the old file path
         unformatted_file = self.app.document.toPlainText()
-        logging.info(unformatted_file)
 
         # if the current file is none make the user save the file
         if self.current_document is None:
@@ -329,14 +326,14 @@ class FileManager:
         # Get path name from user
         file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
         if file_name[0] == '':
-            print('FileManager - newFile - No File Path Given')
+            logging.info('No File Path Given')
             return
         path = file_name[0]
 
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(path)
-        print('FileManager - NewFile - Created NewFile - ', path)
+        logging.info(' Created NewFile - ', path)
 
 
     def printAll(self):
