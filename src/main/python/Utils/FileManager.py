@@ -12,11 +12,11 @@ class FileManager:
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
 
-    # saves text to the file of the given path
+    # saves text to the current file
     def saveDocument(self):
 
         # get the current text from the document shown to the user
-        data = self.app.layout.document.toPlainText()
+        data = self.app.document.toPlainText()
 
         # if a file has already been opened write to the file
         if self.current_document is not None:
@@ -43,13 +43,13 @@ class FileManager:
 
             print('FileManager - saveDocument - Saved File - ', path)
 
-    # TODO - save the file at the current path to the new path
+    # saves the file at the current path to the new path
     def saveAsDocument(self, new_path):
         if new_path == '':
             print('FileManager - saveAsDocument - No New File Path Given')
             return
 
-        data = self.app.layout.document.toPlainText()
+        data = self.app.document.toPlainText()
 
         # if the user is working on a document then delete that document
         if self.current_document is not None:
@@ -70,6 +70,15 @@ class FileManager:
             self.open_documents.pop(path)
             print('FileManager - closeDocument - Closed File - ', path)
 
+            # if the open documents is NOT empty change the current document to another open file
+            if bool(self.open_documents):
+                self.current_document = self.open_documents[next(iter(self.open_documents))]
+                self.app.document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+            # if the open documents IS empty set the current document to none/empty document with no path
+            else:
+                self.current_document = None
+                self.app.document.updateTextBox("")
+
         # if it does not exist print error messages
         else:
             if path == '':
@@ -83,6 +92,7 @@ class FileManager:
         print('FileManager - closeAll')
         self.current_document = None
         self.open_documents.clear()
+        self.app.document.updateTextBox("")
 
     # opens the file of the given path and add the Document to the dictionary
     def openDocument(self, path):
@@ -104,6 +114,9 @@ class FileManager:
             # appends the path to the list of open documents and sets it to the current document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
+
+            self.app.bar_open_tabs.addTab(path)
+
             print('FileManager - openDocument - Opened Document - ', path)
 
         # if the document has already been opened in this session
@@ -114,8 +127,7 @@ class FileManager:
             print('FileManager - openDocument - Document Already Open - ', path)
 
         # update the document shown to the user
-        self.app.layout.document.updateTextBox(data)
-
+        self.app.document.updateTextBox(data)
         return data
 
     # returns the text inside of the file at the given path

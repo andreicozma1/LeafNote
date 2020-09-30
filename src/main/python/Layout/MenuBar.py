@@ -1,6 +1,8 @@
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, pyqtSlot
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import qApp, QAction
+from PyQt5.QtWidgets import qApp, QAction, QColorDialog
+
 
 
 # Class to hold and customize a QPlainTextEdit Widget
@@ -17,9 +19,12 @@ class MenuBar():
         self.edit_menu = self.menu.addMenu('&Edit')
 
         # TODO - uncomment when implementing these menus individually
-        # self.view_menu = self.menu.addMenu('&View')
+        self.view_menu = self.menu.addMenu('&View')
+        self.format_menu = self.menu.addMenu('&Format')
         # self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
+
+        self.setup()
 
     def setup(self):
         print("MenuBar - setup")
@@ -28,7 +33,8 @@ class MenuBar():
         self.editMenuSetup()
 
         # TODO - uncomment when implementing these menus individually
-        # self.viewMenuSetup()
+        self.viewMenuSetup()
+        self.formatMenuSetup()
         # self.toolsMenuSetup()
         # self.helpMenuSetup()
 
@@ -114,11 +120,11 @@ class MenuBar():
 
         # opens a file dialogue for the user to select a file to open
         # ***** Currently only looks for text files
-        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open file', home_dir)
 
-        self.app.app_props.mainPath = folder_name[0]
+        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
+        self.app.app_props.mainPath = folder_name
 
-        self.app.layout.left_menu.updateDirectory(self.app.app_props.mainPath)
+        self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
@@ -149,13 +155,13 @@ class MenuBar():
         # undo button and function
         undo_act = QAction("&Undo", self.app)
         undo_act.setShortcut('Ctrl+z')
-        undo_act.triggered.connect(self.layout.document.undo)
+        undo_act.triggered.connect(self.app.document.undo)
         self.edit_menu.addAction(undo_act)
 
         # redo button and function
         redo_act = QAction("&Redo", self.app)
         redo_act.setShortcut('Ctrl+Shift+z')
-        redo_act.triggered.connect(self.layout.document.redo)
+        redo_act.triggered.connect(self.app.document.redo)
         self.edit_menu.addAction(redo_act)
 
         # adds line to separate options
@@ -164,7 +170,7 @@ class MenuBar():
         # select all button and function
         select_all_act = QAction("&Select All", self.app)
         select_all_act.setShortcut('Ctrl+a')
-        select_all_act.triggered.connect(self.layout.document.selectAll)
+        select_all_act.triggered.connect(self.app.document.selectAll)
         self.edit_menu.addAction(select_all_act)
 
         # adds line to separate options
@@ -173,32 +179,97 @@ class MenuBar():
         # cut button and function
         cut_act = QAction("&Cut", self.app)
         cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.layout.document.cut)
+        cut_act.triggered.connect(self.app.document.cut)
         self.edit_menu.addAction(cut_act)
 
         # copy button and function
         copy_act = QAction("&Copy", self.app)
         copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.layout.document.copy)
+        copy_act.triggered.connect(self.app.document.copy)
         self.edit_menu.addAction(copy_act)
 
         # paste button and function
         paste_act = QAction("&Paste", self.app)
         paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.layout.document.paste)
+        paste_act.triggered.connect(self.app.document.paste)
         self.edit_menu.addAction(paste_act)
 
     # --------------------------------------------------------------------------------
 
     # TODO - uncomment when implementing these menus
-    """
     # TODO - Add functionality to view tab - appearance, etc.
     # this function sets up the view tabs drop menu
     def viewMenuSetup(self):
         print("MenuBar - viewMenuSetup")
+        zoom_in_act = QAction("&Zoom In", self.app)
+        zoom_in_act.setShortcut('ctrl+=')
+        zoom_in_act.triggered.connect(self.app.bottom_bar.onZoomInClicked)
+        self.view_menu.addAction(zoom_in_act)
+
+        zoom_out_act = QAction("&Zoom Out", self.app)
+        # zoom_out_act.setShortcut('ctrl+-')
+        zoom_out_act.setShortcut('ctrl+-')
+        zoom_out_act.triggered.connect(self.app.bottom_bar.onZoomOutClicked)
+        self.view_menu.addAction(zoom_out_act)
+
+        zoom_r_act = QAction("&Zoom Reset", self.app)
+        zoom_r_act.triggered.connect(self.app.bottom_bar.resetZoom)
+        self.view_menu.addAction(zoom_r_act)
 
     # --------------------------------------------------------------------------------
+    # TODO - Add functionality to tools tab - tbd
+    # this function sets up the tools tabs drop menu
+    def formatMenuSetup(self):
+        print("MenuBar - formatMenuSetup")
+        # Sets up submenue of 'Text' inside of the 'Format' menu
+        self.text_menu = self.format_menu.addMenu('&Text')
 
+        # Adds Bold button to text_menu
+        self.bold_action = QAction("Bold", self.app)
+        self.bold_action.setShortcut('Ctrl+B')
+        self.bold_action.setCheckable(True)
+        self.bold_action.setEnabled(False)
+        self.bold_action.triggered.connect(self.setBold)
+        self.text_menu.addAction(self.bold_action)
+
+        # Adds Italicised button to text_menu
+        self.ital_action = QAction("Italicised", self.app)
+        self.ital_action.setShortcut('Ctrl+I')
+        self.ital_action.setCheckable(True)
+        self.ital_action.setEnabled(False)
+        self.ital_action.triggered.connect(self.setItal)
+        self.text_menu.addAction(self.ital_action)
+
+        # Adds Strikeout button to text_menu
+        self.strike_action = QAction("Strikout", self.app)
+        self.strike_action.setShortcut('Ctrl+Shift+5')
+        self.strike_action.setCheckable(True)
+        self.strike_action.setEnabled(False)
+        self.strike_action.triggered.connect(self.setStrike)
+        self.text_menu.addAction(self.strike_action)
+
+        # Adds Underline button to text_menu
+        self.under_action = QAction("Underline", self.app)
+        self.under_action.setShortcut('Ctrl+U')
+        self.under_action.setCheckable(True)
+        self.under_action.setEnabled(False)
+        self.under_action.triggered.connect(self.setUnder)
+        self.text_menu.addAction(self.under_action)
+
+        # Adds Seperator to text_menu
+        self.text_menu.addSeparator()
+
+        # Adds Font Color button to text_menu
+        self.font_color_action = QAction("Font Color", self.app)
+        self.font_color_action.setEnabled(False)
+        self.font_color_action.triggered.connect(self.on_click)
+        self.text_menu.addAction(self.font_color_action)
+
+        # if the enable formatting mode is toggled
+        self.app.layout.top_bar.button_mode_switch.toggled.connect(self.setEditState)
+
+
+    """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
     def toolsMenuSetup(self):
@@ -211,3 +282,43 @@ class MenuBar():
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
     """
+    # Sets current document font to bold
+    def setBold(self):
+        if self.bold_action.isChecked():
+            self.app.layout.document.setFontWeight(75)
+        else:
+            self.app.layout.document.setFontWeight(25)
+
+    # Set document font to italicised
+    def setItal(self):
+        self.app.layout.document.setFontItalic(self.ital_action.isChecked())
+
+    # Set document font to underline
+    def setUnder(self):
+        self.app.layout.document.setFontUnderline(self.under_action.isChecked())
+
+    # Sets the font to strike
+    def setStrike(self):
+        f = self.app.layout.document.currentCharFormat()
+        f.setFontStrikeOut(self.strike_action.isChecked())
+        self.app.layout.document.setCurrentCharFormat(f)
+
+    # Opens the color widget and checks for a valid color then sets document font color
+    def openColorDialog(self):
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.app.layout.document.setTextColor(color)
+
+    def on_click(self):
+        self.openColorDialog()
+
+    def setEditState(self, state):
+        """
+        :param state: this is a boolean that sets the states
+        """
+        self.bold_action.setEnabled(state)
+        self.ital_action.setEnabled(state)
+        self.under_action.setEnabled(state)
+        self.strike_action.setEnabled(state)
+        self.font_color_action.setEnabled(state)

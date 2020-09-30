@@ -1,18 +1,20 @@
+
 from PyQt5 import QtGui
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QGridLayout, QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QColorDialog, \
-    QFrame, QToolButton
+    QFrame, QToolButton, QDialogButtonBox
 from PyQt5.QtCore import Qt
+from Utils.DialogBuilder import DialogBuilder
 
 
 class TopBar(QWidget):
-    def __init__(self, document):
+    def __init__(self, app):
         super(TopBar, self).__init__()
-        self.document = document
+        print('TopBar - init')
+        self.app = app
+        self.document = app.document
+
         self.horizontal_layout = QHBoxLayout()
-        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.horizontal_layout.setSpacing(3)
-        self.setLayout(self.horizontal_layout)
 
         # color dictionary for changing text color
         self.color_dict = {
@@ -29,11 +31,12 @@ class TopBar(QWidget):
         }
 
         # List for font sizes
-        list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+                              "17",
+                              "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
 
         # ComboBox for font sizes
-        self.combo_font_style = QFontComboBox()
+        self.combo_font_style = QFontComboBox(self)
         self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.currentIndexChanged.connect(self.fontChange)
         self.combo_font_style.setFocusPolicy(Qt.NoFocus)
@@ -42,7 +45,7 @@ class TopBar(QWidget):
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.combo_font_size.setToolTip('Change font size')
-        self.combo_font_size.addItems(list_FontSize)
+        self.combo_font_size.addItems(self.list_FontSize)
         self.combo_font_size.setCurrentIndex(11)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.currentIndexChanged.connect(self.fontSizeChange)
@@ -91,7 +94,6 @@ class TopBar(QWidget):
         self.button_under.setToolTip('Underline your text. "Ctrl+U"')
         self.button_under.setShortcut('ctrl+u')
         self.button_under.setFixedWidth(33)
-        # self.button_under.resize(self.button_under.minimumSize())
         self.button_under.setStyleSheet("QPushButton { text-decoration: underline }")
         self.button_under.setCheckable(True)
         self.button_under.clicked.connect(self.setUnder)
@@ -121,6 +123,59 @@ class TopBar(QWidget):
 
         # Temporary widgets
         self.horizontal_layout.addStretch()
+
+        # Mode Switching button to the very right (after stretch)
+        self.button_mode_switch = QPushButton("Formatting Mode", self)
+        self.button_mode_switch.setToolTip("Enable Document Formatting")
+        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in queryEnableFormatting
+        self.button_mode_switch.setCheckable(True)
+        self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
+        self.button_mode_switch.clicked.connect(self.queryEnableFormatting)
+        self.horizontal_layout.addWidget(self.button_mode_switch)
+
+        self.setup()
+
+    def setup(self):
+        # TODO - Keep object definitions in constructor and move all method calls in setup
+        self.setFormattingEnabled(False)
+
+        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
+        self.horizontal_layout.setSpacing(3)
+
+        self.setLayout(self.horizontal_layout)
+
+        return self
+
+    # Toggles between Formatting Mode and Plain-Text Mode
+    def queryEnableFormatting(self, state):
+        print("TopBar - queryEnableFormatting -", state)
+
+        if state is True:
+            convert_dialog = DialogBuilder(self.document.layout, "Enable Formatting",
+                                           "Would you like to convert this file?",
+                                           "This file needs to be converted to use enriched text formatting features\n"
+                                           "Selecting 'Yes' will convert the original "
+                                           "file to the enriched text file format.")
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(buttonBox)
+            if convert_dialog.exec():
+                print("TopBar - queryEnableFormatting - User converted file to Proprietary Format")
+                # TODO - Convert file with FileManager to a .lef format, on success, call the function below
+                self.setFormattingEnabled(True)
+            else:
+                print("TopBar - queryEnableFormatting - User DID NOT convert file to Proprietary Format")
+                self.button_mode_switch.setChecked(False)
+        else:
+            # Don't allow converted file to be converted back to Plain Text
+            # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
+            print("TopBar - queryEnableFormatting - Cannot convert back to Plain Text")
+            self.button_mode_switch.setChecked(True)
+
+    def setFormattingEnabled(self, state):
+        a: QWidget
+        for a in self.children():
+            if not a.property("persistent"):
+                a.setEnabled(state)
 
     # Sets the font to the new font
     def fontChange(self):

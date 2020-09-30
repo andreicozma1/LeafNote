@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QTextEdit
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
     def __init__(self, default_text: str = None):
-        super(QTextEdit, self).__init__()
+        super(TextBox, self).__init__()
         print("TextBox - init - ", default_text)
         self.textColor = "black"
 
