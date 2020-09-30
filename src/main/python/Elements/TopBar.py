@@ -205,7 +205,7 @@ class TopBar(QWidget):
 
         size = int(self.document.fontPointSize())
         if size != 0:
-            self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(int(self.document.fontPointSize()))))
+            self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(size)))
 
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())
