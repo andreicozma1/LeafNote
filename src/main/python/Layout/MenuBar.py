@@ -95,7 +95,7 @@ class MenuBar():
         self.file_menu.addAction(exit_act)
 
     # TODO - implement new file button that opens a new blank file in the document
-    # def onNewBtn(self):
+    def onNewBtn(self):
         logging.info("MenuBar - onNewBtn")
         self.app.file_manager.newFile()
 
