@@ -48,10 +48,10 @@ class MenuBar():
         logging.info("fileMenuSetup")
 
         # TODO - implement new file button that opens a new blank file in the document
-        # new_file_act = QAction("&New...", self.app)
-        # new_file_act.setStatusTip('New')
-        # new_file_act.triggered.connect(self.onNewBtn)
-        # self.file_menu.addAction(new_file_act)
+        new_file_act = QAction("&New...", self.app)
+        new_file_act.setStatusTip('New')
+        new_file_act.triggered.connect(self.onNewBtn)
+        self.file_menu.addAction(new_file_act)
 
         # opens a dialogue to chose a file an open it
         open_file_act = QAction("&Open...", self.app)
@@ -94,7 +94,8 @@ class MenuBar():
 
     # TODO - implement new file button that opens a new blank file in the document
     # def onNewBtn(self):
-    #     logging.info("MenuBar - onNewBtn")
+        logging.info("MenuBar - onNewBtn")
+        self.app.file_manager.newFile()
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window

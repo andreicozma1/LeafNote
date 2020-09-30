@@ -313,6 +313,24 @@ class FileManager:
                 os.remove(old_path)
                 logging.info("Deleted - " + old_path)
 
+    def newFile(self):
+        """
+        This will create a new unformatted file.
+        :return: Returns nothing
+        """
+        # Get path name from user
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
+        if file_name[0] == '':
+            print('FileManager - newFile - No File Path Given')
+            return
+        path = file_name[0]
+
+        # create the file and open it
+        self.writeFileData(path, "")
+        self.openDocument(path)
+        print('FileManager - NewFile - Created NewFile - ', path)
+
+
     def printAll(self):
         """
         For debugging. Prints out all of the documents stored in open_documents dictionary.
