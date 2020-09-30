@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget
 
 """
-hold class Color
+holds class Color
 """
 
 
@@ -10,6 +10,7 @@ class Color(QWidget):
     """
     used as place holder for layout of the text editor
     """
+
     def __init__(self, color: str):
         """
         set color of new widget created
