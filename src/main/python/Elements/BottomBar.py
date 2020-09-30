@@ -3,8 +3,21 @@ import logging
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
 
+"""
+This file alters tools on the Bottom Bar
+of the text editor.
+    This includes:
+        Word count
+        Character count
+        Zoom feature
+"""
 
 class BottomBar(QWidget):
+    """
+    BottomBar sets up the bottom bar when called in Main.py
+    holds functionality and format of the the tools in
+    the bottom bar
+    """
     def __init__(self, document):
         super(BottomBar, self).__init__()
         logging.info("")
