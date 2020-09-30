@@ -127,9 +127,10 @@ class MenuBar():
         # TODO - exclude certain files types like pdfs or images
         folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
 
-        self.app.app_props.mainPath = folder_name
-
-        self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
+        # if the user selected a new folder
+        if folder_name != "":
+            self.app.app_props.mainPath = folder_name
+            self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
