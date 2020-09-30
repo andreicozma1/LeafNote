@@ -318,15 +318,15 @@ class FileManager:
         This will create a new unformatted file.
         :return: Returns nothing
         """
-
+        # Get path name from user
         file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
         if file_name[0] == '':
             print('FileManager - newFile - No File Path Given')
             return
         path = file_name[0]
 
+        # create the file and open it
         self.writeFileData(path, "")
-
         self.openDocument(path)
         print('FileManager - NewFile - Created NewFile - ', path)
 
