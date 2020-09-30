@@ -268,6 +268,9 @@ class MenuBar():
         self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
         self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
 
+
+    # --------------------------------------------------------------------------------
+
     """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
