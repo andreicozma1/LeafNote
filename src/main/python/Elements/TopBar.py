@@ -173,8 +173,8 @@ class TopBar(QWidget):
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.app.file_manager.lefToExt()
-            logging.info("Cannot convert back to Plain Text")
-            self.button_mode_switch.setChecked(True)
+            logging.info("Convert back to a txt file")
+            self.button_mode_switch.setChecked(False)
 
     def setFormattingEnabled(self, state):
         """
