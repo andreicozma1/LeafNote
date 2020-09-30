@@ -1,15 +1,19 @@
 from PyQt5.QtCore import QDir
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import qApp, QAction
+from PyQt5.QtWidgets import qApp, QAction, QColorDialog
 
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
-    def __init__(self, app):
+    def __init__(self, app, file_manager, document, top_bar, bottom_bar):
         print("MenuBar - init")
         self.app = app
-        self.file_manager = app.file_manager
-        self.layout = app.layout
+        self.document = document
+        self.top_bar = top_bar
+        self.bottom_bar = bottom_bar
+        self.file_manager = file_manager
+
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
 
@@ -18,6 +22,7 @@ class MenuBar():
 
         # TODO - uncomment when implementing these menus individually
         self.view_menu = self.menu.addMenu('&View')
+        self.format_menu = self.menu.addMenu('&Format')
         # self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
 
@@ -31,6 +36,7 @@ class MenuBar():
 
         # TODO - uncomment when implementing these menus individually
         self.viewMenuSetup()
+        self.formatMenuSetup()
         # self.toolsMenuSetup()
         # self.helpMenuSetup()
 
@@ -213,6 +219,55 @@ class MenuBar():
         self.view_menu.addAction(zoom_r_act)
 
     # --------------------------------------------------------------------------------
+    # TODO - Add functionality to tools tab - tbd
+    # this function sets up the tools tabs drop menu
+    def formatMenuSetup(self):
+        print("MenuBar - formatMenuSetup")
+        # Sets up submenue of 'Text' inside of the 'Format' menu
+        self.text_menu = self.format_menu.addMenu('&Text')
+
+        # Adds Bold button to text_menu
+        self.bold_action = QAction("Bold", self.app)
+        self.bold_action.setShortcut('Ctrl+B')
+        self.bold_action.setCheckable(True)
+        self.bold_action.triggered.connect(self.app.document.onFontBoldChanged)
+        self.text_menu.addAction(self.bold_action)
+
+        # Adds Italicised button to text_menu
+        self.ital_action = QAction("Italicised", self.app)
+        self.ital_action.setShortcut('Ctrl+I')
+        self.ital_action.setCheckable(True)
+        self.ital_action.triggered.connect(self.app.document.onFontItalChanged)
+        self.text_menu.addAction(self.ital_action)
+
+        # Adds Strikeout button to text_menu
+        self.strike_action = QAction("Strikout", self.app)
+        self.strike_action.setShortcut('Ctrl+Shift+5')
+        self.strike_action.setCheckable(True)
+        self.strike_action.triggered.connect(self.app.document.onFontStrikeChanged)
+        self.text_menu.addAction(self.strike_action)
+
+        # Adds Underline button to text_menu
+        self.under_action = QAction("Underline", self.app)
+        self.under_action.setShortcut('Ctrl+U')
+        self.under_action.setCheckable(True)
+        self.under_action.triggered.connect(self.app.document.onFontUnderChanged)
+        self.text_menu.addAction(self.under_action)
+
+        # Adds Seperator to text_menu
+        self.text_menu.addSeparator()
+
+        # Adds Font Color button to text_menu
+        self.font_color_action = QAction("Font Color", self.app)
+        self.font_color_action.triggered.connect(self.openColorDialog)
+        self.text_menu.addAction(self.font_color_action)
+
+        # if the enable formatting mode is toggled
+        self.setFormattingEnabled(False)
+
+        self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
+        self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
+
     """
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
@@ -226,3 +281,36 @@ class MenuBar():
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
     """
+
+    # Opens the color widget and checks for a valid color then sets document font color
+    def openColorDialog(self):
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.app.document.setTextColor(color)
+
+    def setFormattingEnabled(self, state):
+        """
+        :param state: this is a boolean that sets the states
+        """
+        print('MenuBar - setFormattingEnabled -', state)
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.setEnabled(state)
+
+    def updateFormatOnSelectionChange(self):
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.blockSignals(True)
+
+        self.ital_action.setChecked(self.app.document.fontItalic())
+        self.under_action.setChecked(self.app.document.fontUnderline())
+        self.bold_action.setChecked(self.app.document.fontWeight() == QFont.Bold)
+        self.strike_action.setChecked(self.app.document.currentCharFormat().fontStrikeOut())
+
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.blockSignals(False)
