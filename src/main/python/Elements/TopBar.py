@@ -16,23 +16,16 @@ class TopBar(QWidget):
 
         # color dictionary for changing text color
         self.color_dict = {
-            'red': '#ff0000',
-            'green': '#00ff00',
-            'blue': '#0000ff',
+            'black' : '#000000',
+            'red'   : '#ff0000',
+            'pink'  : '#ffc0cb',
+            'orange': '#ffa500',
             'yellow': '#ffff00',
-            'gold': '#ffd700',
-            'pink': '#ffc0cb',
-            'bisque': '#ffe4c4',
-            'ivory': '#fffff0',
-            'black': '#000000',
-            'white': '#ffffff',
-            'violet': '#ee82ee',
-            'silver': '#c0c0c0',
-            'forestgreen': '#228b22',
-            'brown': '#a52a3a',
-            'chocolate': '#d2691e',
-            'azure': '#fffff0',
-            'orange': '#ffa500'
+            'green' : '#00ff00',
+            'blue'  : '#0000ff',
+            'violet': '#9400D3',
+            'brown' : '#a52a3a',
+            'white' : '#ffffff'
         }
 
         # List for font sizes
@@ -110,9 +103,8 @@ class TopBar(QWidget):
         self.text_color.setFixedWidth(33)
         self.text_color.setFixedHeight(20)
         model = self.text_color.model()
-        self.color_list = sorted(self.color_dict.values())
+        self.color_list = self.color_dict.values()
         for i, c in enumerate(self.color_list):
-            print(c)
             item = QtGui.QStandardItem()
             item.setBackground(QtGui.QColor(c))
             model.appendRow(item)
@@ -160,8 +152,6 @@ class TopBar(QWidget):
         self.document.setCurrentCharFormat(f)
 
     def setColorChange(self, index):
-        print(index)
-        print(self.text_color.itemData(index))
         setcolor = "  QComboBox::drop-down          {   border: 0px;}"
         setcolor += " QComboBox                     {   background-color:" + self.text_color.itemData(index) + ";"
         setcolor += "                                   border: 1px solid gray; }"
