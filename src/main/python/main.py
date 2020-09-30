@@ -28,13 +28,16 @@ class App(QMainWindow):
         self.layout = Layout(self.app_props, self.layout_props)
 
         self.bar_open_tabs = OpenTabsBar(self.file_manager, self.layout_props)
-        self.document = Document(self.layout)
-        self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
-        self.top_bar = TopBar(self)
-        self.bottom_bar = BottomBar(self.document)
-        self.setupLayout()
 
-        self.menubar = MenuBar(self)
+        self.document = Document()
+        self.top_bar = TopBar(self, self.document)
+
+        self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
+        self.bottom_bar = BottomBar(self.document)
+
+        self.menubar = MenuBar(self, self.file_manager, self.document, self.top_bar, self.bottom_bar)
+
+        self.setupLayout()
 
     def setupLayout(self):
         # Setup Documents View
