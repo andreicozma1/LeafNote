@@ -12,27 +12,37 @@ of the text editor.
         Zoom feature
 """
 
+
 class BottomBar(QWidget):
     """
     BottomBar sets up the bottom bar when called in Main.py
     holds functionality and format of the the tools in
     the bottom bar
     """
+
     def __init__(self, document):
+        """
+        Creates the bottom bar
+        :param document: the document the bottom bar will be altering
+        :return: returns nothing
+        """
         super(BottomBar, self).__init__()
         logging.info("")
         self.document = document
 
+        # sets up the bottom bar
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(self.horizontal_layout)
 
+        # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
         font = self.label_wc.font()
         font.setPointSize(10)
         self.label_wc.setFont(font)
         self.horizontal_layout.addWidget(self.label_wc)
 
+        # sets default settings for character counter
         self.label_cc = QLabel("0 Characters")
         font = self.label_cc.font()
         font.setPointSize(10)
@@ -41,9 +51,11 @@ class BottomBar(QWidget):
 
         self.horizontal_layout.addStretch()
 
+        # functionality of word and character count
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
 
+        # Zoom Out button
         self.button_zoom_out = QPushButton("-", self)
         self.button_zoom_out.setFixedWidth(33)
         self.button_zoom_out.clicked.connect(self.onZoomOutClicked)
@@ -51,6 +63,7 @@ class BottomBar(QWidget):
         self.button_zoom_out.setToolTip("Zoom out")
         self.horizontal_layout.addWidget(self.button_zoom_out)
 
+        # Zoom Slider
         self.zoom_slider = QSlider(Qt.Horizontal, self)
         self.zoom_slider.setGeometry(30, 40, 200, 30)
         self.zoom_slider.setFixedWidth(140)
@@ -65,6 +78,7 @@ class BottomBar(QWidget):
         self.zoom_slider.valueChanged[int].connect(self.changeValue)
         self.horizontal_layout.addWidget(self.zoom_slider)
 
+        # Zoom in button
         self.button_zoom_in = QPushButton("+", self)
         self.button_zoom_in.setFixedWidth(33)
         self.button_zoom_in.clicked.connect(self.onZoomInClicked)
@@ -73,27 +87,45 @@ class BottomBar(QWidget):
         self.horizontal_layout.addWidget(self.button_zoom_in)
 
     def updateWordCount(self):
-        wordCount = 0
+        """
+        Counts number of words and updates number on bottom bar
+        :return: returns nothing
+        """
+        word_count = 0
         if self.document.toPlainText() != '':
-            wordCount = len(self.document.toPlainText().split())
+            word_count = len(self.document.toPlainText().split())
 
-        self.label_wc.setText(str(wordCount) + " Words")
+        self.label_wc.setText(str(word_count) + " Words")
 
     def updateCharCount(self):
-        charCount = len(self.document.toPlainText()) - len(self.document.toPlainText().split(" ")) + 1
-        self.label_cc.setText(str(charCount) + " Characters")
+        """
+        Counts number of characters and updates number on bottom bar
+        :return: returns nothing
+        """
+        char_count = len(self.document.toPlainText()) - len(self.document.toPlainText().split(" ")) + 1
+        self.label_cc.setText(str(char_count) + " Characters")
 
     def onZoomInClicked(self):
-        # Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        """
+        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        :return: returns nothing
+        """
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
     def onZoomOutClicked(self):
-        # Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        """
+        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        :return: returns nothing
+        """
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
     def changeValue(self):
+        """
+        changes the font size of the document to match the desired zoom preference
+        :return: returns nothing
+        """
         min_rel_font_size = 2
         max_rel_font_size = 150
         default_rel_font_size = self.default_font_size
@@ -114,4 +146,8 @@ class BottomBar(QWidget):
         self.document.zoomIn(int(delta_zoom))
 
     def resetZoom(self):
+        """
+        resets the zoom slider when zoom is reset
+        :return: returns nothing
+        """
         self.zoom_slider.setValue(self.slider_start)
