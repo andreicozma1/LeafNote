@@ -240,7 +240,7 @@ class MenuBar():
 
         # Adds Strikeout button to text_menu
         self.strike_action = QAction("Strikout", self.app)
-        self.strike_action.setShortcut('Ctrl+Shift+S') #TODO EDIT THIS COMMAND, THIS IS JUST A PLACE HOLDER
+        self.strike_action.setShortcut('Ctrl+Shift+5')
         self.strike_action.setCheckable(True)
         self.strike_action.setEnabled(False)
         self.strike_action.triggered.connect(self.setStrike)
@@ -264,7 +264,7 @@ class MenuBar():
         self.text_menu.addAction(self.font_color_action)
 
         # if the enable formatting mode is toggled
-        self.app.layout.top_bar.button_mode_switch.toggled.connect(self.setFE)
+        self.app.layout.top_bar.button_mode_switch.toggled.connect(self.setEditState)
 
 
     """
@@ -311,8 +311,10 @@ class MenuBar():
     def on_click(self):
         self.openColorDialog()
 
-    # Toggles between Formatting Mode and Plain-Text Mode
-    def setFE(self, state):
+    def setEditState(self, state):
+        """
+        :param state: this is a boolean that sets the states
+        """
         self.bold_action.setEnabled(state)
         self.ital_action.setEnabled(state)
         self.under_action.setEnabled(state)
