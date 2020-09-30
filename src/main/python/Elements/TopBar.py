@@ -228,6 +228,10 @@ class TopBar(QWidget):
         if size != 0:
             self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(size)))
 
+        # update the top bar alignment to the current alignment
+        align = self.document.alignment()
+        self.combo_text_align.setCurrentIndex(self.list_alignments_align.index(align))
+
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())
         self.button_bold.setChecked(self.document.fontWeight() == QFont.Bold)
