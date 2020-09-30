@@ -102,6 +102,8 @@ class TopBar(QWidget):
 
         self.setLayout(self.horizontal_layout)
 
+        self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
+
         return self
 
     # Toggles between Formatting Mode and Plain-Text Mode
@@ -161,4 +163,18 @@ class TopBar(QWidget):
         fontFormat.setFontStrikeOut(self.button_strike.isChecked())
         self.document.setCurrentCharFormat(fontFormat)
 
+    def updateFormatOnSelectionChange(self):
+        a: QWidget
+        for a in self.children():
+            if not a.property("persistent"):
+                a.blockSignals(True)
 
+        self.button_ital.setChecked(self.document.fontItalic())
+        self.button_under.setChecked(self.document.fontUnderline())
+        self.button_bold.setChecked(self.document.fontWeight() == QFont.Bold)
+        self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
+
+        a: QWidget
+        for a in self.children():
+            if not a.property("persistent"):
+                a.blockSignals(False)
