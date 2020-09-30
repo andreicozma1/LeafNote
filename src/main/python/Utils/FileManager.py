@@ -1,22 +1,28 @@
 import os
-
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
 
 
-# this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
-from tr import tr
-
-
 class FileManager:
+    """
+    FileManger handles everything associated with communicating with files. It handles all of the opening, closing,
+    and saving needed for the project.
+    """
     def __init__(self, app):
+        """
+        Initializes the 'FileManager' object. It sets up all of the class variables.
+        :param app: QMainWindow instance
+        """
         print('FileManager - init')
-        self.app = app  # app - QMainWindow instance
+        self.app = app
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
 
-    # saves text to the current file
     def saveDocument(self):
+        """
+        This saves formatted or unformatted text in the current document to its respective file.
+        :return: Returns nothing
+        """
         # get the current text from the document shown to the user
 
         if self.app.top_bar.button_mode_switch.isChecked():
@@ -55,8 +61,14 @@ class FileManager:
 
             print('FileManager - saveDocument - Saved File - ', path)
 
-    # saves the file at the current path to the new path
-    def saveAsDocument(self, new_path):
+    def saveAsDocument(self, new_path: str):
+        """
+        This saves the current open document to the new given path.
+        :param new_path: The new path of the current document
+        :return: Returns nothing
+        """
+
+        # if the new path is an empty string do nothing
         if new_path == '':
             print('FileManager - saveAsDocument - No New File Path Given')
             return
@@ -87,9 +99,14 @@ class FileManager:
 
         print('FileManager - saveAsDocument - Saved File As - ', new_path)
 
-    # this closes the document with the given path
-    # !note! this does not save the document
-    def closeDocument(self, path):  # TODO - change to work with dict
+    #
+    def closeDocument(self, path: str):
+        """
+        This closes the document with the given path.
+        NOTE - This does not save the document.
+        :param path: The path of an open document to close
+        :return: Returns nothing
+        """
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
@@ -113,16 +130,25 @@ class FileManager:
             else:
                 print('FileManager - closeDocument - File Is Not Open - ', path)
 
-    # clears the list of all open documents
-    # !note! this does not save the documents
     def closeAll(self):
+        """
+        Clears the list of all open documents.
+        NOTE - This does not save the documents.
+        :return: Returns nothing
+        """
         print('FileManager - closeAll')
         self.current_document = None
         self.open_documents.clear()
         self.app.document.updateTextBox("")
+        self.app.top_bar.setFormattingEnabled(False)
+        self.app.top_bar.button_mode_switch.setChecked(False)
 
-    # opens the file of the given path and add the Document to the dictionary
-    def openDocument(self, path):
+    def openDocument(self, path: str):
+        """
+        Opens the file of the given path and add the Document to the dictionary.
+        :param path: The path to the file to open
+        :return: Returns nothing
+        """
         # if there is already a file open save before the Document's text is overwritten
         if self.current_document is not None:
             self.saveDocument()
@@ -142,6 +168,7 @@ class FileManager:
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
 
+            # if the file is not opened in the open tabs bar open it
             if path not in self.app.bar_open_tabs.open_tabs:
                 self.app.bar_open_tabs.addTab(path)
 
@@ -163,8 +190,12 @@ class FileManager:
         self.app.document.updateTextBox(data)
         return data
 
-    # returns the text inside of the file at the given path
-    def getFileData(self, path):
+    def getFileData(self, path: str) -> str:
+        """
+        This retrieves the data from the file at the specified path.
+        :param path: The path to read data from
+        :return: Returns a string of the read in data
+        """
         # open the file with read only privileges
         file = open(path, 'r')
 
@@ -181,7 +212,13 @@ class FileManager:
         return data
 
     # opens the file at the given path and writes the given data to it
-    def writeFileData(self, path, data):
+    def writeFileData(self, path: str, data: str):
+        """
+        Writes the given data to the file at the specified path.
+        :param path: The file to write data to
+        :param data: The data to write to the file
+        :return: Returns nothing
+        """
         # open the file with write only privileges
         file = open(path, 'w')
 
