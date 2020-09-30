@@ -1,4 +1,6 @@
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 
@@ -13,6 +15,20 @@ class TopBar(QWidget):
         self.document = document
 
         self.horizontal_layout = QHBoxLayout()
+
+        # color dictionary for changing text color
+        self.color_dict = {
+            'black': '#000000',
+            'red': '#ff0000',
+            'pink': '#ffc0cb',
+            'orange': '#ffa500',
+            'yellow': '#ffff00',
+            'green': '#00ff00',
+            'blue': '#0000ff',
+            'violet': '#9400D3',
+            'brown': '#a52a3a',
+            'white': '#ffffff'
+        }
 
         # List for font sizes
         self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
@@ -41,7 +57,7 @@ class TopBar(QWidget):
         self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
         self.button_bold.setShortcut('ctrl+b')
         self.button_bold.setFixedWidth(33)
-        self.button_bold.setStyleSheet("font:Bold")
+        self.button_bold.setStyleSheet("QPushButton { font:Bold }")
         self.button_bold.setCheckable(True)
         self.button_bold.setFocusPolicy(Qt.NoFocus)
         self.button_bold.clicked.connect(self.document.onFontBoldChanged)
@@ -52,7 +68,7 @@ class TopBar(QWidget):
         self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
         self.button_ital.setShortcut('ctrl+i')
         self.button_ital.setFixedWidth(33)
-        self.button_ital.setStyleSheet("font:Italic")
+        self.button_ital.setStyleSheet("QPushButton { font:Italic }")
         self.button_ital.setCheckable(True)
         self.button_ital.setFocusPolicy(Qt.NoFocus)
         self.button_ital.clicked.connect(self.document.onFontItalChanged)
@@ -63,7 +79,11 @@ class TopBar(QWidget):
         self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
         self.button_strike.setShortcut('alt+shift+5')
         self.button_strike.setFixedWidth(33)
-        self.button_strike.setStyleSheet("text-decoration: line-through")
+        f = self.button_strike.font()
+        f.setStrikeOut(True)
+        self.button_strike.setFont(f)
+        # self.button_strike.adjustSize()
+        self.button_strike.setStyleSheet("QPushButton { text-decoration: line-through }")
         self.button_strike.setCheckable(True)
         self.button_strike.setFocusPolicy(Qt.NoFocus)
         self.button_strike.clicked.connect(self.document.onFontStrikeChanged)
@@ -74,11 +94,32 @@ class TopBar(QWidget):
         self.button_under.setToolTip('Underline your text. "Ctrl+U"')
         self.button_under.setShortcut('ctrl+u')
         self.button_under.setFixedWidth(33)
-        self.button_under.setStyleSheet("text-decoration: underline")
+        self.button_under.setStyleSheet("QPushButton { text-decoration: underline }")
         self.button_under.setCheckable(True)
         self.button_under.setFocusPolicy(Qt.NoFocus)
         self.button_under.clicked.connect(self.document.onFontUnderChanged)
         self.horizontal_layout.addWidget(self.button_under)
+
+        # Button to change text color
+        self.combo_text_color = QComboBox(self)
+        self.combo_text_color.setFixedWidth(33)
+        self.combo_text_color.setFixedHeight(20)
+        model = self.combo_text_color.model()
+        self.color_list = self.color_dict.values()
+        for i, c in enumerate(self.color_list):
+            item = QtGui.QStandardItem()
+            item.setBackground(QtGui.QColor(c))
+            model.appendRow(item)
+            self.combo_text_color.setItemData(i, c)
+        self.combo_text_color.currentIndexChanged.connect(self.setColorChange)
+        self.combo_text_color.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_color.setToolTip("Change Text color.")
+        self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
+                                      " QComboBox { background-color: black;"
+                                      "            border: 1px solid gray; }"
+                                      " QComboBox QAbstractItemView { selection-background-color: none; }/")
+        self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.horizontal_layout.addWidget(self.combo_text_color)
 
         # Temporary widgets
         self.horizontal_layout.addStretch()
@@ -172,3 +213,11 @@ class TopBar(QWidget):
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(False)
+
+    def setColorChange(self, index):
+        setcolor = "  QComboBox::drop-down          {   border: 0px;}"
+        setcolor += " QComboBox                     {   background-color:" + self.combo_text_color.itemData(index) + ";"
+        setcolor += "                                   border: 1px solid gray; }"
+        setcolor += " QComboBox QAbstractItemView   {   selection-background-color: none; }"
+        self.combo_text_color.setStyleSheet(setcolor)
+        self.document.setTextColor(QColor(self.combo_text_color.itemData(index)))
