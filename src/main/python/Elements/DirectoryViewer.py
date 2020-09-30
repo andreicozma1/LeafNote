@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
@@ -6,7 +8,7 @@ from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 class DirectoryViewer(QTreeView):
     def __init__(self, fileManager, path=None):
         super(DirectoryViewer, self).__init__()
-        print("DirectoryViewer - init - ", path)
+        logging.info("")
         self.fileManager = fileManager
 
         if path is None:
@@ -16,7 +18,7 @@ class DirectoryViewer(QTreeView):
         self.updateDirectory(path)
 
     def updateDirectory(self, path):
-        print("DirectoryViewer - updateDirectory - ", path)
+        logging.info(path)
 
         self.model.setRootPath(path)
 
@@ -36,6 +38,6 @@ class DirectoryViewer(QTreeView):
 
     def onDoubleClick(self, index):
         path = self.sender().model.filePath(index)
-        print("DirectoryViewer - onDoubleClick -", path)
+        logging.info(path)
         if not self.sender().model.isDir(index):
             self.fileManager.openDocument(path)

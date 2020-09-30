@@ -1,9 +1,11 @@
+import logging
+
 from PyQt5.QtCore import QDir
 
 
 class AppProps():
     def __init__(self):
-        print("AppProps - init")
+        logging.info("Set up Application Properties")
 
         # Defaults
         self.title = '0x432d2d'

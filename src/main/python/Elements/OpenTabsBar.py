@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
@@ -7,6 +9,7 @@ from Elements.Tab import Tab
 class OpenTabsBar(QWidget):
     def __init__(self, file_manager, layout_props):
         super(OpenTabsBar, self).__init__()
+        logging.info("")
 
         self.file_manager = file_manager
         self.layout_props = layout_props
@@ -29,7 +32,7 @@ class OpenTabsBar(QWidget):
 
     # this will create a new tab and add it to the horizontal layout
     def addTab(self, path: str) -> Tab:
-        print('OpenTabsBar - addTab -', path)
+        logging.info(path)
         tab = Tab(self, self.file_manager, path)
         self.layout().insertWidget(0, tab)
 
@@ -40,7 +43,7 @@ class OpenTabsBar(QWidget):
 
     # removes object from layout and destroys it
     def closeTab(self, path: str, save=True):
-        print('OpenTabsBar - closeTab -', path)
+        logging.info(path)
         tab = self.open_tabs[path]
         self.layout().removeWidget(tab)
 
@@ -53,5 +56,5 @@ class OpenTabsBar(QWidget):
         tab.deleteLater()
 
     def getTabCount(self):
-        print("OpenTabsBar - getTabCount -", self.horizontal_layout.count())
+        logging.info(str(self.horizontal_layout.count()))
         return self.layout().count()
