@@ -55,7 +55,6 @@ class TopBar(QWidget):
         # Button press to make text bold
         self.button_bold = QPushButton("B", self)
         self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
-        self.button_bold.setShortcut('ctrl+b')
         self.button_bold.setFixedWidth(33)
         self.button_bold.setStyleSheet("QPushButton { font:Bold }")
         self.button_bold.setCheckable(True)
@@ -66,7 +65,6 @@ class TopBar(QWidget):
         # Button press to make text italic
         self.button_ital = QPushButton("I", self)
         self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
-        self.button_ital.setShortcut('ctrl+i')
         self.button_ital.setFixedWidth(33)
         self.button_ital.setStyleSheet("QPushButton { font:Italic }")
         self.button_ital.setCheckable(True)
@@ -77,7 +75,6 @@ class TopBar(QWidget):
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
         self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
-        self.button_strike.setShortcut('alt+shift+5')
         self.button_strike.setFixedWidth(33)
         f = self.button_strike.font()
         f.setStrikeOut(True)
@@ -92,7 +89,6 @@ class TopBar(QWidget):
         # Button press to underline text
         self.button_under = QPushButton("U", self)
         self.button_under.setToolTip('Underline your text. "Ctrl+U"')
-        self.button_under.setShortcut('ctrl+u')
         self.button_under.setFixedWidth(33)
         self.button_under.setStyleSheet("QPushButton { text-decoration: underline }")
         self.button_under.setCheckable(True)
