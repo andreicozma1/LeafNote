@@ -1,3 +1,4 @@
+import logging
 import random
 
 from PyQt5.QtCore import QFileInfo
@@ -44,4 +45,3 @@ class Tab(Color):
         logging.info(self.path)
 
         self.tab_bar.closeTab(self.path)
-

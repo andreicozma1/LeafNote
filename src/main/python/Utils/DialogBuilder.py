@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox
 import logging
 

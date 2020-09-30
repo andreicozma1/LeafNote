@@ -1,6 +1,6 @@
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-
 from Elements.TextBox import TextBox
 import logging
 
@@ -42,4 +42,3 @@ class Document(TextBox):
         self.onFontBoldChanged(False)
         self.onFontStrikeChanged(False)
         self.setAlignment(Qt.AlignLeft)
-

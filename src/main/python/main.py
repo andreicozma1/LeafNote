@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
@@ -20,6 +21,7 @@ logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
 
 class App(QMainWindow):
     def __init__(self):

@@ -1,5 +1,6 @@
 import logging
 
+
 class LayoutProps():
     def __init__(self):
         logging.info("Setting up Layout Properties")

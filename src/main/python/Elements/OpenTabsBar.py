@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 

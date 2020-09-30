@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.QtCore import QDir
 import logging
 
