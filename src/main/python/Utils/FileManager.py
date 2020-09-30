@@ -184,11 +184,10 @@ class FileManager:
         # check for the proprietary file extension .lef and update the top bar accordingly
         self.app.document.textCursor().clearSelection()
         print(self.current_document.suffix() == 'lef')
-        # self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
+        self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
         self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
-
 
         # update the document shown to the user
         self.app.document.updateTextBox(data)
