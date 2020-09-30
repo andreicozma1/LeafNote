@@ -1,6 +1,8 @@
+import logging
+
 class LayoutProps():
     def __init__(self):
-        print("LayoutProps - init")
+        logging.info("Setting up Layout Properties")
 
         self.min_doc_width = .4
         self.min_menu_width = .2

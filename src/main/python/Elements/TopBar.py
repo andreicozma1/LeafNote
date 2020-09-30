@@ -5,12 +5,12 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 
 from Utils.DialogBuilder import DialogBuilder
-
+import logging
 
 class TopBar(QWidget):
     def __init__(self, app, document):
         super(TopBar, self).__init__()
-        print('TopBar - init')
+        logging.info("")
         self.app = app
         self.document = document
 
@@ -33,6 +33,8 @@ class TopBar(QWidget):
         # List for font sizes
         self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
                               "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+        self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
+        self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
 
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox(self)
@@ -117,6 +119,17 @@ class TopBar(QWidget):
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.horizontal_layout.addWidget(self.combo_text_color)
 
+        # Adds ability to change alignment of text
+        self.combo_text_align = QComboBox(self)
+        self.combo_text_align.setToolTip('Change text alignment')
+        self.combo_text_align.addItems(self.list_alignments)
+        self.combo_text_align.setFixedWidth(100)
+        self.combo_text_align.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_align.currentIndexChanged.connect(self.onTextAlignmentChanged)
+        self.combo_text_align.setCurrentIndex(0)
+        self.horizontal_layout.addWidget(self.combo_text_align)
+
+
         # Temporary widgets
         self.horizontal_layout.addStretch()
 
@@ -132,7 +145,7 @@ class TopBar(QWidget):
         self.setup()
 
     def setup(self):
-        print('TopBar - setup')
+        logging.info("setup")
 
         # TODO - Keep object definitions in constructor and move all method calls in setup
         self.setFormattingEnabled(False)
@@ -148,7 +161,7 @@ class TopBar(QWidget):
 
     # Toggles between Formatting Mode and Plain-Text Mode
     def onEnableFormatting(self, state):
-        print("TopBar - onEnableFormatting -", state)
+        logging.info(str(state))
 
         if state is True:
             convert_dialog = DialogBuilder(self.app, "Enable Formatting",
@@ -159,26 +172,26 @@ class TopBar(QWidget):
             buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             convert_dialog.addButtonBox(buttonBox)
             if convert_dialog.exec():
-                print("TopBar - onEnableFormatting - User converted file to Proprietary Format")
+                logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.app.file_manager.toLef()
                 self.setFormattingEnabled(True)
             else:
-                print("TopBar - onEnableFormatting - User DID NOT convert file to Proprietary Format")
+                logging.info("User DID NOT convert file to Proprietary Format")
                 self.button_mode_switch.setChecked(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.app.file_manager.lefToExt()
-            print("TopBar - onEnableFormatting - Cannot convert back to Plain Text")
+            logging.info("Cannot convert back to Plain Text")
             self.button_mode_switch.setChecked(True)
 
     def setFormattingEnabled(self, state):
         """
         :param state: this is a boolean that sets the states
         """
-        print('TopBar - setFormattingEnabled -', state)
+        logging.info(str(state))
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -186,13 +199,22 @@ class TopBar(QWidget):
 
     # Sets the font to the new font
     def onFontStyleChanged(self):
-        print('TopBar - onFontStyleChanged -', self.combo_font_style.currentFont())
+        logging.info(self.combo_font_style.currentFont())
         self.document.setCurrentFont(self.combo_font_style.currentFont())
 
     # Sets the current sets the font size from the ComboBox
     def onFontSizeChanged(self):
-        print('TopBar - onFontSizeChanged -', int(self.combo_font_size.currentText()))
+        logging.info(self.combo_font_size.currentText())
         self.document.setFontPointSize(int(self.combo_font_size.currentText()))
+
+    def onTextAlignmentChanged(self):
+        """
+        Sets the current text alignment to  the ComboBox
+        :return: Returns nothing
+        """
+        logging.info(self.combo_text_align.currentText())
+        self.document.setAlignment(self.list_alignments_align[self.list_alignments.index(
+            self.combo_text_align.currentText())])
 
     def updateFormatOnSelectionChange(self):
         a: QWidget

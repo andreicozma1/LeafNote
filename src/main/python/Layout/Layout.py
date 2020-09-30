@@ -1,11 +1,11 @@
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QStackedLayout
-
+import logging
 
 class Layout(QWidget):
     def __init__(self, appProps, layoutProps):
         super().__init__()
-        print("Layout - init")
+        logging.info("")
 
         # Init variables
         self.app_props = appProps
@@ -29,10 +29,6 @@ class Layout(QWidget):
         self.menu_left = QWidget()
         QStackedLayout(self.menu_left).setContentsMargins(0, 0, 0, 0)
 
-        # self.menu_right = QWidget()
-        # QStackedLayout(self.menu_right).setContentsMargins(0, 0, 0, 0)
-
-        # TODO - uncomment when implementing right menu
         self.top_bar = QWidget()
         QStackedLayout(self.top_bar).setContentsMargins(0, 0, 0, 0)
 
@@ -42,7 +38,7 @@ class Layout(QWidget):
         self.setup()
 
     def setup(self):
-        print("Layout - setup")
+        logging.info("")
         # Set up the main vertical layout
         # add the top bar at the top
         self.layout().addWidget(self.top_bar)
@@ -60,6 +56,7 @@ class Layout(QWidget):
         # self.horizontal_workspace.addWidget(self.menu_right)
 
     def setTopBar(self, topBar: QWidget):
+
         self.top_bar.layout().addWidget(topBar)
 
     def setBottomBar(self, bottomBar: QWidget):
@@ -67,9 +64,6 @@ class Layout(QWidget):
 
     def setLeftMenu(self, leftMenu: QWidget):
         self.menu_left.layout().addWidget(leftMenu)
-
-    # def setRightMenu(self, rightMenu: QWidget):
-    #     self.menu_right.layout().addWidget(rightMenu)
 
     def setBarOpenTabs(self, barOpenTabs: QWidget):
         self.bar_open_tabs.layout().addWidget(barOpenTabs)

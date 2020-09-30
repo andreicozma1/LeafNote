@@ -13,12 +13,18 @@ from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
+import logging
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 class App(QMainWindow):
     def __init__(self):
         super(QMainWindow, self).__init__()
-        print("App - init")
+        logging.info("Constructor")
         # Initialize properties.
         self.app_props = AppProps()
         self.layout_props = LayoutProps()
@@ -40,21 +46,22 @@ class App(QMainWindow):
         self.setupLayout()
 
     def setupLayout(self):
-        # Setup Documents View
+        logging.info("Setting up layout members")
+        # Setup Layout View
         self.layout.setTopBar(self.top_bar)
         self.layout.setBottomBar(self.bottom_bar)
         self.layout.setBarOpenTabs(self.bar_open_tabs)
         self.layout.setDocument(self.document)
         self.layout.setLeftMenu(self.left_menu)
 
-    # Returns the Central Widget
     def setup(self):
-        print("App - setup")
+        logging.info("Setting up Main Window")
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
         self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
         self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
         if not self.app_props.resizable:
+            logging.debug("Window is not resizable")
             self.setFixedSize(self.app_props.width, self.app_props.height)
 
         self.setCentralWidget(self.layout)
@@ -62,7 +69,7 @@ class App(QMainWindow):
         self.show()
 
     def centerWindow(self, app_geom):
-        print("App - centerWindow")
+        logging.info("Centering Window")
         center = QDesktopWidget().availableGeometry().center()
         app_geom.moveCenter(center)
         self.move(app_geom.topLeft())
@@ -73,7 +80,7 @@ class App(QMainWindow):
 
 
 def main():
-    print("Main")
+    logging.info("Starting application")
     appctxt = ApplicationContext()
     App().setup()
     sys.exit(appctxt.app.exec_())

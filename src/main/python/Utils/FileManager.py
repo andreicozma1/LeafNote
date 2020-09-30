@@ -1,7 +1,7 @@
 import os
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
-
+import logging
 
 class FileManager:
     """
@@ -13,7 +13,7 @@ class FileManager:
         Initializes the 'FileManager' object. It sets up all of the class variables.
         :param app: QMainWindow instance
         """
-        print('FileManager - init')
+        logging.info("")
         self.app = app
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
@@ -35,7 +35,7 @@ class FileManager:
         # if a file has already been opened write to the file
         if self.current_document is not None:
             self.writeFileData(self.current_document.absoluteFilePath(), data)
-            print('FileManager - saveDocument - Saved File - ', self.current_document.absoluteFilePath())
+            logging.info("Saved File -" + self.current_document.absoluteFilePath())
 
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
@@ -43,7 +43,7 @@ class FileManager:
             file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.app_props.mainPath, filter)
 
             if file_name[0] == '':
-                print('FileManager - saveDocument - No File Path Given')
+                logging.info("No File Path Given")
                 return
 
             path = file_name[0]
@@ -59,7 +59,7 @@ class FileManager:
             # open a new tab associated with the new file
             self.app.bar_open_tabs.addTab(path)
 
-            print('FileManager - saveDocument - Saved File - ', path)
+            logging.info("Saved File - " + path)
 
     def saveAsDocument(self, new_path: str):
         """
@@ -70,7 +70,7 @@ class FileManager:
 
         # if the new path is an empty string do nothing
         if new_path == '':
-            print('FileManager - saveAsDocument - No New File Path Given')
+            logging.info("No New File Path Given")
             return
 
         # check if the document is formatted
@@ -84,7 +84,7 @@ class FileManager:
             old_path = self.current_document.absoluteFilePath()
             if self.current_document.exists():
                 os.remove(old_path)
-                print('FileManager - saveAsDocument - Deleted - ',old_path)
+                logging.info("Deleted -" + old_path)
             # close the tab associated with the old file path
             self.app.bar_open_tabs.closeTab(old_path)
 
@@ -97,7 +97,7 @@ class FileManager:
         # open the document with its new text
         self.openDocument(new_path)
 
-        print('FileManager - saveAsDocument - Saved File As - ', new_path)
+        logging.info("Saved File As -" + new_path)
 
     #
     def closeDocument(self, path: str):
@@ -110,7 +110,7 @@ class FileManager:
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
-            print('FileManager - closeDocument - Closed File - ', path)
+            logging.info("Closed File - " + path)
 
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
@@ -126,9 +126,9 @@ class FileManager:
         # if it does not exist print error messages
         else:
             if path == '':
-                print('FileManager - closeDocument - No File Path Given')
+                logging.info("No File Path Given")
             else:
-                print('FileManager - closeDocument - File Is Not Open - ', path)
+                logging.info("File Is Not Open - " + path)
 
     def closeAll(self):
         """
@@ -136,7 +136,7 @@ class FileManager:
         NOTE - This does not save the documents.
         :return: Returns nothing
         """
-        print('FileManager - closeAll')
+        logging.info("closeAll")
         self.current_document = None
         self.open_documents.clear()
         self.app.document.updateTextBox("")
@@ -158,7 +158,7 @@ class FileManager:
 
             # if the user clicks out of the open file prompt do nothing
             if path == '':
-                print('No File Path Given')
+                logging.info("No File Path Given")
                 return ''
 
             # retrieve the text from the file you are attempting to open
@@ -172,18 +172,18 @@ class FileManager:
             if path not in self.app.bar_open_tabs.open_tabs:
                 self.app.bar_open_tabs.addTab(path)
 
-            print('FileManager - openDocument - Opened Document - ', path)
+            logging.info("Opened Document - " + path)
 
         # if the document has already been opened in this session
         else:
             # get the data from the file and set the current document
             data = self.getFileData(path)
             self.current_document = self.open_documents[path]
-            print('FileManager - openDocument - Document Already Open - ', path)
+            logging.info("Document Already Open - " + path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         self.app.document.textCursor().clearSelection()
-        print(self.current_document.suffix() == 'lef')
+        logging.info(str(self.current_document.suffix() == 'lef'))
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
         self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
@@ -204,7 +204,7 @@ class FileManager:
 
         # check if the file was opened
         if file.closed:
-            print('FileManager - getFileData - Could Not Open File - ', path)
+            logging.info("Could Not Open File - " + path)
             return ''
 
         # read all data then close file
@@ -227,7 +227,7 @@ class FileManager:
 
         # check if the file was opened
         if file.closed:
-            print('FileManager - writeFileData - Could Not Open File - ', path)
+            logging.info("Could Not Open File - " + path)
             return ''
 
         # write data to the file then close the file
@@ -241,7 +241,7 @@ class FileManager:
         """
         # get the formatted file and the old file path
         unformatted_file = self.app.document.toPlainText()
-        print(unformatted_file)
+        logging.info(unformatted_file)
 
         # if the current file is none make the user save the file
         if self.current_document is None:
@@ -272,7 +272,7 @@ class FileManager:
         if True:  # TODO - figure out if we do want to delete the file
             if self.current_document.exists():
                 os.remove(old_path)
-                print('FileManager - lefToExt - Deleted - ', old_path)
+                logging.info("Deleted - " + old_path)
 
     def toLef(self):
         """
@@ -311,7 +311,7 @@ class FileManager:
         if True:  # TODO - figure out if we do want to delete the file
             if self.current_document.exists():
                 os.remove(old_path)
-                print('FileManager - txtToLef - Deleted - ', old_path)
+                logging.info("Deleted - " + old_path)
 
     def newFile(self):
         """
@@ -336,13 +336,13 @@ class FileManager:
         For debugging. Prints out all of the documents stored in open_documents dictionary.
         :return:
         """
-        print('========================================')
-        print('Open Documents:')
+        logging.info("========================================")
+        logging.info("Open Documents:")
         for key, path in self.open_documents.items():
-            print('----------------------------------------')
-            print('path: ', key)
-            print('QFileInfo:\n', path)
-        print('========================================')
+            logging.info("----------------------------------------")
+            logging.info("path: ", key)
+            logging.info("QFileInfo:\n", path)
+        logging.info("========================================")
 
     def fixBrokenFilePaths(self):
         """
@@ -352,4 +352,4 @@ class FileManager:
         """
         for key, val in self.open_documents.items():
             if not val.exists():
-                print('FileManager - fixBrokenFilePaths - File Does Not Exist - {}'.format(val.absoluteFilePath()))
+                logging.info("File Does Not Exist - {}".format(val.absoluteFilePath()))
