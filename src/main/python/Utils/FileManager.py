@@ -194,12 +194,45 @@ class FileManager:
         file.write(data)
         file.close()
 
-    def lefToTxt(self):
+    def lefToExt(self, extension: str = '.txt'):
         """
         Converts a .lef formatted file to a .txt file
         :return: return nothing
         """
-        pass
+        # get the formatted file and the old file path
+        unformatted_file = self.app.document.toPlainText()
+        print(unformatted_file)
+
+        # if the current file is none make the user save the file
+        if self.current_document is None:
+            self.saveDocument()
+
+        old_path = self.current_document.absoluteFilePath()
+
+        # grab the index of the last period or if no period get the length of the string
+        try:
+            period_index = self.current_document.filePath().rindex('.')
+        except ValueError:
+            period_index = len(self.current_document.filePath())
+
+        # create the file with the .lef extension holding the formatted data
+        new_path = self.current_document.filePath()[:period_index]+extension
+        self.writeFileData(new_path, unformatted_file)
+
+        # open the .lef document and add it to the dict of the open files
+        self.openDocument(new_path)
+
+        # close the .txt document from the dict of open files
+        self.closeDocument(self.current_document.absolutePath())
+
+        # close the .txt file tab
+        self.app.bar_open_tabs.closeTab(old_path)
+
+        # delete the .txt file
+        if True:  # TODO - figure out if we do want to delete the file
+            if self.current_document.exists():
+                os.remove(old_path)
+                print('FileManager - lefToExt - Deleted - ', old_path)
 
     def toLef(self):
         """
@@ -208,10 +241,8 @@ class FileManager:
         """
         # get the formatted file and the old file path
         formatted_file = self.app.document.toHtml()
-        print(formatted_file)
 
         # if the current file is none make the user save the file
-        # if the current file exists add the .lef extension
         if self.current_document is None:
             self.saveDocument()
 

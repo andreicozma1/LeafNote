@@ -128,6 +128,7 @@ class TopBar(QWidget):
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
+            self.app.file_manager.lefToExt()
             print("TopBar - queryEnableFormatting - Cannot convert back to Plain Text")
             self.button_mode_switch.setChecked(True)
 
