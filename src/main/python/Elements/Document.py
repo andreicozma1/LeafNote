@@ -35,11 +35,6 @@ class Document(TextBox):
         fontFormat.setFontStrikeOut(state)
         self.setCurrentCharFormat(fontFormat)
 
-    # # Sets the font to bold
-    # def onTextAlignmentChanged(self, alignment):
-    #     logging.info(str(alignment))
-    #     self.setAlignment(alignment)
-
     def resetFormatting(self):
         logging.info("")
         self.onFontUnderChanged(False)

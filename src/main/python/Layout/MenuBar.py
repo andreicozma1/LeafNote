@@ -362,7 +362,6 @@ class MenuBar():
         self.under_action.setChecked(self.app.document.fontUnderline())
         self.bold_action.setChecked(self.app.document.fontWeight() == QFont.Bold)
         self.strike_action.setChecked(self.app.document.currentCharFormat().fontStrikeOut())
-        # self.left_align_action.setEnabled(not self.left_align_action.isEnabled())
 
         a: QAction
         for a in self.text_menu.actions():
