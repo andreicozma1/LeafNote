@@ -1,17 +1,19 @@
-from PyQt5.QtCore import QDir, pyqtSlot
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtCore import QDir
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
 
 
-
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
-    def __init__(self, app):
+    def __init__(self, app, file_manager, document, top_bar, bottom_bar):
         print("MenuBar - init")
         self.app = app
-        self.file_manager = app.file_manager
-        self.layout = app.layout
+        self.document = document
+        self.top_bar = top_bar
+        self.bottom_bar = bottom_bar
+        self.file_manager = file_manager
+
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
 
@@ -228,32 +230,28 @@ class MenuBar():
         self.bold_action = QAction("Bold", self.app)
         self.bold_action.setShortcut('Ctrl+B')
         self.bold_action.setCheckable(True)
-        self.bold_action.setEnabled(False)
-        self.bold_action.triggered.connect(self.setBold)
+        self.bold_action.triggered.connect(self.app.document.onFontBoldChanged)
         self.text_menu.addAction(self.bold_action)
 
         # Adds Italicised button to text_menu
         self.ital_action = QAction("Italicised", self.app)
         self.ital_action.setShortcut('Ctrl+I')
         self.ital_action.setCheckable(True)
-        self.ital_action.setEnabled(False)
-        self.ital_action.triggered.connect(self.setItal)
+        self.ital_action.triggered.connect(self.app.document.onFontItalChanged)
         self.text_menu.addAction(self.ital_action)
 
         # Adds Strikeout button to text_menu
         self.strike_action = QAction("Strikout", self.app)
         self.strike_action.setShortcut('Ctrl+Shift+5')
         self.strike_action.setCheckable(True)
-        self.strike_action.setEnabled(False)
-        self.strike_action.triggered.connect(self.setStrike)
+        self.strike_action.triggered.connect(self.app.document.onFontStrikeChanged)
         self.text_menu.addAction(self.strike_action)
 
         # Adds Underline button to text_menu
         self.under_action = QAction("Underline", self.app)
         self.under_action.setShortcut('Ctrl+U')
         self.under_action.setCheckable(True)
-        self.under_action.setEnabled(False)
-        self.under_action.triggered.connect(self.setUnder)
+        self.under_action.triggered.connect(self.app.document.onFontUnderChanged)
         self.text_menu.addAction(self.under_action)
 
         # Adds Seperator to text_menu
@@ -261,13 +259,14 @@ class MenuBar():
 
         # Adds Font Color button to text_menu
         self.font_color_action = QAction("Font Color", self.app)
-        self.font_color_action.setEnabled(False)
-        self.font_color_action.triggered.connect(self.on_click)
+        self.font_color_action.triggered.connect(self.openColorDialog)
         self.text_menu.addAction(self.font_color_action)
 
         # if the enable formatting mode is toggled
-        self.app.layout.top_bar.button_mode_switch.toggled.connect(self.setEditState)
+        self.setFormattingEnabled(False)
 
+        self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
+        self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
 
     """
     # TODO - Add functionality to tools tab - tbd
@@ -282,43 +281,36 @@ class MenuBar():
     def helpMenuSetup(self):
         print("MenuBar - helpMenuSetup")
     """
-    # Sets current document font to bold
-    def setBold(self):
-        if self.bold_action.isChecked():
-            self.app.layout.document.setFontWeight(75)
-        else:
-            self.app.layout.document.setFontWeight(25)
-
-    # Set document font to italicised
-    def setItal(self):
-        self.app.layout.document.setFontItalic(self.ital_action.isChecked())
-
-    # Set document font to underline
-    def setUnder(self):
-        self.app.layout.document.setFontUnderline(self.under_action.isChecked())
-
-    # Sets the font to strike
-    def setStrike(self):
-        f = self.app.layout.document.currentCharFormat()
-        f.setFontStrikeOut(self.strike_action.isChecked())
-        self.app.layout.document.setCurrentCharFormat(f)
 
     # Opens the color widget and checks for a valid color then sets document font color
     def openColorDialog(self):
         color = QColorDialog.getColor()
 
         if color.isValid():
-            self.app.layout.document.setTextColor(color)
+            self.app.document.setTextColor(color)
 
-    def on_click(self):
-        self.openColorDialog()
-
-    def setEditState(self, state):
+    def setFormattingEnabled(self, state):
         """
         :param state: this is a boolean that sets the states
         """
-        self.bold_action.setEnabled(state)
-        self.ital_action.setEnabled(state)
-        self.under_action.setEnabled(state)
-        self.strike_action.setEnabled(state)
-        self.font_color_action.setEnabled(state)
+        print('MenuBar - setFormattingEnabled -', state)
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.setEnabled(state)
+
+    def updateFormatOnSelectionChange(self):
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.blockSignals(True)
+
+        self.ital_action.setChecked(self.app.document.fontItalic())
+        self.under_action.setChecked(self.app.document.fontUnderline())
+        self.bold_action.setChecked(self.app.document.fontWeight() == QFont.Bold)
+        self.strike_action.setChecked(self.app.document.currentCharFormat().fontStrikeOut())
+
+        a: QAction
+        for a in self.text_menu.actions():
+            if not a.property("persistent"):
+                a.blockSignals(False)

@@ -1,15 +1,16 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
+
 from Utils.DialogBuilder import DialogBuilder
 
 
 class TopBar(QWidget):
-    def __init__(self, app):
+    def __init__(self, app, document):
         super(TopBar, self).__init__()
         print('TopBar - init')
         self.app = app
-        self.document = app.document
+        self.document = document
 
         self.horizontal_layout = QHBoxLayout()
 
@@ -21,15 +22,14 @@ class TopBar(QWidget):
         self.combo_font_style = QFontComboBox(self)
         self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.setFocusPolicy(Qt.NoFocus)
-        self.combo_font_style.setCurrentFont(self.document.currentFont())
         self.combo_font_style.currentFontChanged.connect(self.onFontStyleChanged)
+        self.combo_font_style.setCurrentFont(self.document.currentFont())
         self.horizontal_layout.addWidget(self.combo_font_style)
 
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.combo_font_size.setToolTip('Change font size')
         self.combo_font_size.addItems(self.list_FontSize)
-        self.combo_font_size.setCurrentIndex(11)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
         self.combo_font_size.currentIndexChanged.connect(self.onFontSizeChanged)
@@ -44,7 +44,7 @@ class TopBar(QWidget):
         self.button_bold.setStyleSheet("font:Bold")
         self.button_bold.setCheckable(True)
         self.button_bold.setFocusPolicy(Qt.NoFocus)
-        self.button_bold.clicked.connect(self.onFontBoldChanged)
+        self.button_bold.clicked.connect(self.document.onFontBoldChanged)
         self.horizontal_layout.addWidget(self.button_bold)
 
         # Button press to make text italic
@@ -55,7 +55,7 @@ class TopBar(QWidget):
         self.button_ital.setStyleSheet("font:Italic")
         self.button_ital.setCheckable(True)
         self.button_ital.setFocusPolicy(Qt.NoFocus)
-        self.button_ital.clicked.connect(self.onFontItalChanged)
+        self.button_ital.clicked.connect(self.document.onFontItalChanged)
         self.horizontal_layout.addWidget(self.button_ital)
 
         # Button press to make text strikethrough
@@ -66,7 +66,7 @@ class TopBar(QWidget):
         self.button_strike.setStyleSheet("text-decoration: line-through")
         self.button_strike.setCheckable(True)
         self.button_strike.setFocusPolicy(Qt.NoFocus)
-        self.button_strike.clicked.connect(self.onFontStrikeChanged)
+        self.button_strike.clicked.connect(self.document.onFontStrikeChanged)
         self.horizontal_layout.addWidget(self.button_strike)
 
         # Button press to underline text
@@ -77,7 +77,7 @@ class TopBar(QWidget):
         self.button_under.setStyleSheet("text-decoration: underline")
         self.button_under.setCheckable(True)
         self.button_under.setFocusPolicy(Qt.NoFocus)
-        self.button_under.clicked.connect(self.onFontUnderChanged)
+        self.button_under.clicked.connect(self.document.onFontUnderChanged)
         self.horizontal_layout.addWidget(self.button_under)
 
         # Temporary widgets
@@ -114,7 +114,7 @@ class TopBar(QWidget):
         print("TopBar - onEnableFormatting -", state)
 
         if state is True:
-            convert_dialog = DialogBuilder(self.document.layout, "Enable Formatting",
+            convert_dialog = DialogBuilder(self.app, "Enable Formatting",
                                            "Would you like to convert this file?",
                                            "This file needs to be converted to use enriched text formatting features\n"
                                            "Selecting 'Yes' will convert the original "
@@ -135,6 +135,9 @@ class TopBar(QWidget):
             self.button_mode_switch.setChecked(True)
 
     def setFormattingEnabled(self, state):
+        """
+        :param state: this is a boolean that sets the states
+        """
         print('TopBar - setFormattingEnabled -', state)
         a: QWidget
         for a in self.children():
@@ -151,28 +154,6 @@ class TopBar(QWidget):
         print('TopBar - onFontSizeChanged -', int(self.combo_font_size.currentText()))
         self.document.setFontPointSize(int(self.combo_font_size.currentText()))
 
-    # Sets the font to italic
-    def onFontItalChanged(self):
-        print('TopBar - onFontItalChanged -', self.button_ital.isChecked())
-        self.document.setFontItalic(self.button_ital.isChecked())
-
-    # Sets the font to bold
-    def onFontBoldChanged(self):
-        print('TopBar - onFontBoldChanged -', QFont.Bold if self.button_bold.isChecked() else QFont.Normal)
-        self.document.setFontWeight(QFont.Bold if self.button_bold.isChecked() else QFont.Normal)
-
-    # Sets the font to underlined
-    def onFontUnderChanged(self):
-        print('TopBar - onFontUnderChanged -', self.button_under.isChecked())
-        self.document.setFontUnderline(self.button_under.isChecked())
-
-    # Sets the font to strike
-    def onFontStrikeChanged(self):
-        print('TopBar - onFontUnderChanged -', self.button_strike.isChecked())
-        fontFormat = self.document.currentCharFormat()
-        fontFormat.setFontStrikeOut(self.button_strike.isChecked())
-        self.document.setCurrentCharFormat(fontFormat)
-
     def updateFormatOnSelectionChange(self):
         a: QWidget
         for a in self.children():
@@ -180,7 +161,7 @@ class TopBar(QWidget):
                 a.blockSignals(True)
 
         self.combo_font_style.setCurrentFont(self.document.currentFont())
-        self.combo_font_size.setCurrentText(str(int(self.document.fontPointSize())))
+        self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(int(self.document.fontPointSize()))))
 
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())
