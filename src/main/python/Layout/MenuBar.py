@@ -2,12 +2,12 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
-
+import logging
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
     def __init__(self, app, file_manager, document, top_bar, bottom_bar):
-        print("MenuBar - init")
+        logging.info("")
         self.app = app
         self.document = document
         self.top_bar = top_bar
@@ -29,7 +29,7 @@ class MenuBar():
         self.setup()
 
     def setup(self):
-        print("MenuBar - setup")
+        logging.info("setup")
         # File tab submenus and actions
         self.fileMenuSetup()
         self.editMenuSetup()
@@ -45,7 +45,7 @@ class MenuBar():
     # TODO - Add more functionality to file tab - new, save, save as, save all, settings, etc.
     # this function sets up the file tabs drop menu
     def fileMenuSetup(self):
-        print("MenuBar - fileMenuSetup")
+        logging.info("fileMenuSetup")
 
         # TODO - implement new file button that opens a new blank file in the document
         # new_file_act = QAction("&New...", self.app)
@@ -94,12 +94,12 @@ class MenuBar():
 
     # TODO - implement new file button that opens a new blank file in the document
     # def onNewBtn(self):
-    #     print("MenuBar - onNewBtn")
+    #     logging.info("MenuBar - onNewBtn")
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
     def onOpenBtn(self):
-        print("MenuBar - onOpenBtn")
+        logging.info("onOpenBtn")
         # open the dialogue using the home directory as root
 
         # this is opens the file dialogue in the project path
@@ -116,7 +116,7 @@ class MenuBar():
 
     def onOpenFolderBtn(self):
         # open the dialogue using the home directory as root
-        print("MenuBar - onOpenFolderBtn")
+        logging.info("onOpenFolderBtn")
 
         home_dir = self.app.app_props.mainPath
 
@@ -130,17 +130,17 @@ class MenuBar():
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
-        print("MenuBar - onSaveBtn")
+        logging.info("onSaveBtn")
         self.file_manager.saveDocument()
 
     # TODO - save the file as a specified name in any location on disk
     def onSaveAsBtn(self):
-        print("MenuBar - saveAsFile")
+        logging.info("saveAsFile")
         new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
         self.file_manager.saveAsDocument(new_file_path[0])
 
     def onExitBtn(self):
-        print("MenuBar - onExitBtn")
+        logging.info("onExitBtn")
         self.file_manager.closeAll()
 
         qApp.quit()
@@ -150,7 +150,7 @@ class MenuBar():
     # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
     # this function sets up the edit tabs drop menu
     def editMenuSetup(self):
-        print("MenuBar - editMenuSetup")
+        logging.info("editMenuSetup")
 
         # Idea: select button when keyboard shortcut used
 
@@ -202,7 +202,7 @@ class MenuBar():
     # TODO - Add functionality to view tab - appearance, etc.
     # this function sets up the view tabs drop menu
     def viewMenuSetup(self):
-        print("MenuBar - viewMenuSetup")
+        logging.info("viewMenuSetup")
         zoom_in_act = QAction("&Zoom In", self.app)
         zoom_in_act.setShortcut('ctrl+=')
         zoom_in_act.triggered.connect(self.app.bottom_bar.onZoomInClicked)
@@ -222,7 +222,7 @@ class MenuBar():
     # TODO - Add functionality to tools tab - tbd
     # this function sets up the tools tabs drop menu
     def formatMenuSetup(self):
-        print("MenuBar - formatMenuSetup")
+        logging.info("formatMenuSetup")
         # Sets up submenue of 'Text' inside of the 'Format' menu
         self.text_menu = self.format_menu.addMenu('&Text')
 
@@ -272,17 +272,17 @@ class MenuBar():
     # --------------------------------------------------------------------------------
 
     """
-    # TODO - Add functionality to tools tab - tbd
+    # TODO - Add functionality to tools tbd
     # this function sets up the tools tabs drop menu
     def toolsMenuSetup(self):
-        print("MenuBar - toolsMenuSetup")
+        logging.info("toolsMenuSetup")
 
     # --------------------------------------------------------------------------------
 
-    # TODO - Add functionality to help tab - find action, help, getting started, about, etc.
+    # TODO - Add functionality to help find action, help, getting started, about, etc.
     # this function sets up the help tabs drop menu
     def helpMenuSetup(self):
-        print("MenuBar - helpMenuSetup")
+        logging.info("helpMenuSetup")
     """
 
     # Opens the color widget and checks for a valid color then sets document font color
@@ -296,7 +296,7 @@ class MenuBar():
         """
         :param state: this is a boolean that sets the states
         """
-        print('MenuBar - setFormattingEnabled -', state)
+        logging.info(str(state))
         a: QAction
         for a in self.text_menu.actions():
             if not a.property("persistent"):

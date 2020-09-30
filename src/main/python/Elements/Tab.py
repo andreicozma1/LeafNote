@@ -4,14 +4,14 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
-
+import logging
 
 class Tab(Color):
     def __init__(self, tab_bar, file_manager, path: str):
         # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super(Tab, self).__init__(color)
-        print('Tab - init')
+        logging.info("")
         self.tab_bar = tab_bar
         self.file_manager = file_manager
         self.path = path
@@ -41,7 +41,7 @@ class Tab(Color):
         self.file_manager.openDocument(self.path)
 
     def closeTab(self):
-        print("Tab - closeTab -", self.path)
+        logging.info(self.path)
 
         self.tab_bar.closeTab(self.path)
 

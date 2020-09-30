@@ -1,12 +1,12 @@
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QTextEdit
-
+import logging
 
 # Class to hold and customize a QPlainTextEdit Widget
 class TextBox(QTextEdit):
     def __init__(self, default_text: str = None):
         super(TextBox, self).__init__()
-        print("TextBox - init - ", default_text)
+        logging.info(default_text)
         self.textColor = "black"
 
         if default_text is None:
@@ -17,7 +17,7 @@ class TextBox(QTextEdit):
 
     # Set the background color of the QPlainTextEdit Widget
     def setBackgroundColor(self, color: str):
-        print("TextBox - setBackgroundColor ", color)
+        logging.info(color)
         palette = self.palette()
         # Set color for window focused
         palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
@@ -28,13 +28,13 @@ class TextBox(QTextEdit):
         # self.setBackgroundVisible(False)
 
     def setTextColorByString(self, color: str):
-        print("TextBox - setTextColorByString - ", color)
+        logging.info(color)
         palette = self.palette()
         palette.setColor(QPalette.Text, QColor(color))
         self.setPalette(palette)
 
     def updateTextBox(self, text: str = None):
-        print("TextBox - updateTextBox")
+        logging.info(text)
 
         if text is not None:
             self.setText(text)

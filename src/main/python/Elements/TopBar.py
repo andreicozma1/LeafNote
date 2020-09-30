@@ -5,12 +5,12 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 
 from Utils.DialogBuilder import DialogBuilder
-
+import logging
 
 class TopBar(QWidget):
     def __init__(self, app, document):
         super(TopBar, self).__init__()
-        print('TopBar - init')
+        logging.info("")
         self.app = app
         self.document = document
 
@@ -132,7 +132,7 @@ class TopBar(QWidget):
         self.setup()
 
     def setup(self):
-        print('TopBar - setup')
+        logging.info("setup")
 
         # TODO - Keep object definitions in constructor and move all method calls in setup
         self.setFormattingEnabled(False)
@@ -148,7 +148,7 @@ class TopBar(QWidget):
 
     # Toggles between Formatting Mode and Plain-Text Mode
     def onEnableFormatting(self, state):
-        print("TopBar - onEnableFormatting -", state)
+        logging.info(str(state))
 
         if state is True:
             convert_dialog = DialogBuilder(self.app, "Enable Formatting",
@@ -159,26 +159,26 @@ class TopBar(QWidget):
             buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             convert_dialog.addButtonBox(buttonBox)
             if convert_dialog.exec():
-                print("TopBar - onEnableFormatting - User converted file to Proprietary Format")
+                logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.app.file_manager.toLef()
                 self.setFormattingEnabled(True)
             else:
-                print("TopBar - onEnableFormatting - User DID NOT convert file to Proprietary Format")
+                logging.info("User DID NOT convert file to Proprietary Format")
                 self.button_mode_switch.setChecked(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.app.file_manager.lefToExt()
-            print("TopBar - onEnableFormatting - Cannot convert back to Plain Text")
+            logging.info("Cannot convert back to Plain Text")
             self.button_mode_switch.setChecked(True)
 
     def setFormattingEnabled(self, state):
         """
         :param state: this is a boolean that sets the states
         """
-        print('TopBar - setFormattingEnabled -', state)
+        logging.info(str(state))
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -186,12 +186,12 @@ class TopBar(QWidget):
 
     # Sets the font to the new font
     def onFontStyleChanged(self):
-        print('TopBar - onFontStyleChanged -', self.combo_font_style.currentFont())
+        logging.info(self.combo_font_style.currentFont())
         self.document.setCurrentFont(self.combo_font_style.currentFont())
 
     # Sets the current sets the font size from the ComboBox
     def onFontSizeChanged(self):
-        print('TopBar - onFontSizeChanged -', int(self.combo_font_size.currentText()))
+        logging.info(self.combo_font_size.currentText())
         self.document.setFontPointSize(int(self.combo_font_size.currentText()))
 
     def updateFormatOnSelectionChange(self):

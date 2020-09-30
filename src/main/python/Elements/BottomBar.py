@@ -1,11 +1,11 @@
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
-
+import logging
 
 class BottomBar(QWidget):
     def __init__(self, document):
         super(BottomBar, self).__init__()
-        print("Bottom Bar - init")
+        logging.info("")
         self.document = document
 
         self.horizontal_layout = QHBoxLayout()
