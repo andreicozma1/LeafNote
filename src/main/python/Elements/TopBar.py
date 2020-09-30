@@ -120,7 +120,7 @@ class TopBar(QWidget):
             if convert_dialog.exec():
                 print("TopBar - queryEnableFormatting - User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
-                self.app.file_manager.txtToLef()
+                self.app.file_manager.toLef()
                 self.setFormattingEnabled(True)
             else:
                 print("TopBar - queryEnableFormatting - User DID NOT convert file to Proprietary Format")

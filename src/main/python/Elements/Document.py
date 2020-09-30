@@ -10,5 +10,3 @@ class Document(TextBox):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
-        self.isFormatted = False
-

@@ -5,6 +5,9 @@ from PyQt5.QtWidgets import QFileDialog
 
 
 # this class manages all of the open documents and stores their paths into a dict (absolute path: QFileInfo)
+from tr import tr
+
+
 class FileManager:
     def __init__(self, app):
         print('FileManager - init')
@@ -18,8 +21,10 @@ class FileManager:
 
         if self.app.top_bar.button_mode_switch.isChecked():
             data = self.app.document.toHtml()
+            filter = "LeafNote (*.lef)"
         else:
             data = self.app.document.toPlainText()
+            filter = ""
 
         # if a file has already been opened write to the file
         if self.current_document is not None:
@@ -29,7 +34,7 @@ class FileManager:
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
             # get the entered data
-            file_name = QFileDialog.getSaveFileName(self.app, 'Save file')
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.app_props.mainPath, filter)
 
             if file_name[0] == '':
                 print('FileManager - saveDocument - No File Path Given')
@@ -43,8 +48,7 @@ class FileManager:
             # append the newly created file to the dict of open docs and set it to the curr document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
-            if self.app.top_bar.button_mode_switch.isChecked():
-                self.current_document.isFormatted = True
+
 
             # open a new tab associated with the new file
             self.app.bar_open_tabs.addTab(path)
@@ -99,6 +103,8 @@ class FileManager:
             else:
                 self.current_document = None
                 self.app.document.updateTextBox("")
+                self.app.top_bar.setFormattingEnabled(False)
+                self.app.top_bar.button_mode_switch.setChecked(False)
 
         # if it does not exist print error messages
         else:
@@ -148,18 +154,10 @@ class FileManager:
             self.current_document = self.open_documents[path]
             print('FileManager - openDocument - Document Already Open - ', path)
 
-        # check for the proprietary file extension .lef
+        # check for the proprietary file extension .lef and update the top bar accordingly
         print(self.current_document.suffix() == 'lef')
         self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
         self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
-
-
-
-        # update documents isFormatted
-        # if self.current_document.filePath()[self.current_document.filePath().rindex("."):] == "lef":
-        #     self.app.document.isFormatted = True
-        # else:
-        #     self.app.document.isFormatted = False
 
         # update the document shown to the user
         self.app.document.updateTextBox(data)
@@ -203,7 +201,7 @@ class FileManager:
         """
         pass
 
-    def txtToLef(self):
+    def toLef(self):
         """
         Converts an unformatted .txt file to a formatted .lef file
         :return: return nothing
@@ -211,31 +209,39 @@ class FileManager:
         # get the formatted file and the old file path
         formatted_file = self.app.document.toHtml()
         print(formatted_file)
-        '''
-        if self.current_document is not None:
-            old_path = self.current_document.absoluteFilePath()
 
-            # create the .lef file holding the formatted file
-            print(self.current_document.filePath().rindex('.'))
-            new_path = self.current_document.filePath()[:self.current_document.filePath().rindex(".")]+".lef"
-            self.writeFileData(new_path, formatted_file)
+        # if the current file is none make the user save the file
+        # if the current file exists add the .lef extension
+        if self.current_document is None:
+            self.saveDocument()
 
-            # open the .lef document and add it to the dict of the open files
-            self.openDocument(new_path)
+        old_path = self.current_document.absoluteFilePath()
 
-            # close the .txt document from the dict of open files
-            self.closeDocument(self.current_document.absolutePath())
+        # grab the index of the last period or if no period get the length of the string
+        try:
+            period_index = self.current_document.filePath().rindex('.')
+        except ValueError:
+            period_index = len(self.current_document.filePath())
 
-            # close the .txt file tab
-            self.app.bar_open_tabs.closeTab(old_path)
+        # create the file with the .lef extension holding the formatted data
+        new_path = self.current_document.filePath()[:period_index]+".lef"
+        self.writeFileData(new_path, formatted_file)
 
-            # delete the .txt file
-            if True:  # TODO - figure out if we do want to delete the file
-                if self.current_document.exists():
-                    os.remove(old_path)
-                    print('FileManager - txtToLef - Deleted - ', old_path)
-            self.current_document.isFormatted = True
-        '''
+        # open the .lef document and add it to the dict of the open files
+        self.openDocument(new_path)
+
+        # close the .txt document from the dict of open files
+        self.closeDocument(self.current_document.absolutePath())
+
+        # close the .txt file tab
+        self.app.bar_open_tabs.closeTab(old_path)
+
+        # delete the .txt file
+        if True:  # TODO - figure out if we do want to delete the file
+            if self.current_document.exists():
+                os.remove(old_path)
+                print('FileManager - txtToLef - Deleted - ', old_path)
+
     def printAll(self):
         """
         For debugging. Prints out all of the documents stored in open_documents dictionary.
@@ -249,10 +255,12 @@ class FileManager:
             print('QFileInfo:\n', path)
         print('========================================')
 
-    # this will check all of the current open files to make sure they still exist
-    # if a file doesnt exist close the file
-    # TODO - determine how to handle this problem
     def fixBrokenFilePaths(self):
+        """
+        this will check all of the current open files to make sure they still exist
+        if a file doesnt exist close the file.
+        :return:
+        """
         for key, val in self.open_documents.items():
             if not val.exists():
                 print('FileManager - fixBrokenFilePaths - File Does Not Exist - {}'.format(val.absoluteFilePath()))
