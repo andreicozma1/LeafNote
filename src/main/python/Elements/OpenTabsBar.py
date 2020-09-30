@@ -7,8 +7,11 @@ from Elements.Tab import Tab
 class OpenTabsBar(QWidget):
     def __init__(self, file_manager, layout_props):
         super(OpenTabsBar, self).__init__()
+
         self.file_manager = file_manager
         self.layout_props = layout_props
+
+        self.open_tabs = {}
 
         # crate the hbox layout
         self.horizontal_layout = QHBoxLayout()
@@ -29,14 +32,24 @@ class OpenTabsBar(QWidget):
         print('OpenTabsBar - addTab -', path)
         tab = Tab(self, self.file_manager, path)
         self.layout().insertWidget(0, tab)
+
+        # add tab to the dict holding open tabs
+        self.open_tabs[path] = tab
+
         return tab
 
     # removes object from layout and destroys it
-    def closeTab(self, tab: Tab):
-        print('OpenTabsBar - closeTab -', tab.path)
+    def closeTab(self, path: str, save=True):
+        print('OpenTabsBar - closeTab -', path)
+        tab = self.open_tabs[path]
         self.layout().removeWidget(tab)
-        self.file_manager.saveDocument()
+
+        if save:
+            self.file_manager.saveDocument()
         self.file_manager.closeDocument(tab.path)
+
+        # pop the closed tab from the open tab dic
+        self.open_tabs.pop(path)
         tab.deleteLater()
 
     def getTabCount(self):

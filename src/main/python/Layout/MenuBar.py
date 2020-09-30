@@ -101,9 +101,9 @@ class MenuBar():
         home_dir = str(QDir.currentPath())
 
         # opens a file dialogue for the user to select a file to open
-        # ***** Currently only looks for text files
+        # TODO
         file_name = QFileDialog.getOpenFileName(self.app, 'Open file',
-                                                home_dir, "Text files (*.txt)")
+                                                home_dir)
 
         # open the chosen file and show the text in the text editor
         self.file_manager.openDocument(file_name[0])
@@ -115,9 +115,9 @@ class MenuBar():
         home_dir = self.app.app_props.mainPath
 
         # opens a file dialogue for the user to select a file to open
-        # ***** Currently only looks for text files
-
+        # TODO - exclude certain files types like pdfs or images
         folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
+
         self.app.app_props.mainPath = folder_name
 
         self.app.left_menu.updateDirectory(self.app.app_props.mainPath)

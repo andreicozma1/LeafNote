@@ -14,9 +14,12 @@ class FileManager:
 
     # saves text to the current file
     def saveDocument(self):
-
         # get the current text from the document shown to the user
-        data = self.app.document.toPlainText()
+
+        if self.app.top_bar.button_mode_switch.isChecked():
+            data = self.app.document.toHtml()
+        else:
+            data = self.app.document.toPlainText()
 
         # if a file has already been opened write to the file
         if self.current_document is not None:
@@ -40,6 +43,11 @@ class FileManager:
             # append the newly created file to the dict of open docs and set it to the curr document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
+            if self.app.top_bar.button_mode_switch.isChecked():
+                self.current_document.isFormatted = True
+
+            # open a new tab associated with the new file
+            self.app.bar_open_tabs.addTab(path)
 
             print('FileManager - saveDocument - Saved File - ', path)
 
@@ -49,17 +57,30 @@ class FileManager:
             print('FileManager - saveAsDocument - No New File Path Given')
             return
 
-        data = self.app.document.toPlainText()
+        # check if the document is formatted
+        if self.app.top_bar.button_mode_switch.isChecked():
+            data = self.app.document.toHtml()
+        else:
+            data = self.app.document.toPlainText()
 
         # if the user is working on a document then delete that document
         if self.current_document is not None:
             old_path = self.current_document.absoluteFilePath()
             if self.current_document.exists():
                 os.remove(old_path)
-                print('FileManager - saveAsDocument - Deleted d')
+                print('FileManager - saveAsDocument - Deleted - ',old_path)
+            # close the tab associated with the old file path
+            self.app.bar_open_tabs.closeTab(old_path)
+
+        # open a new tab associated with the new file
+        self.app.bar_open_tabs.addTab(new_path)
 
         # now write to the new_path
         self.writeFileData(new_path, data)
+
+        # open the document with its new text
+        self.openDocument(new_path)
+
         print('FileManager - saveAsDocument - Saved File As - ', new_path)
 
     # this closes the document with the given path
@@ -115,7 +136,8 @@ class FileManager:
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
 
-            self.app.bar_open_tabs.addTab(path)
+            if path not in self.app.bar_open_tabs.open_tabs:
+                self.app.bar_open_tabs.addTab(path)
 
             print('FileManager - openDocument - Opened Document - ', path)
 
@@ -125,6 +147,19 @@ class FileManager:
             data = self.getFileData(path)
             self.current_document = self.open_documents[path]
             print('FileManager - openDocument - Document Already Open - ', path)
+
+        # check for the proprietary file extension .lef
+        print(self.current_document.suffix() == 'lef')
+        self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
+        self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
+
+
+
+        # update documents isFormatted
+        # if self.current_document.filePath()[self.current_document.filePath().rindex("."):] == "lef":
+        #     self.app.document.isFormatted = True
+        # else:
+        #     self.app.document.isFormatted = False
 
         # update the document shown to the user
         self.app.document.updateTextBox(data)
@@ -161,8 +196,51 @@ class FileManager:
         file.write(data)
         file.close()
 
-    # For debugging prints out all of the documents stored in open_documents dictionary
+    def lefToTxt(self):
+        """
+        Converts a .lef formatted file to a .txt file
+        :return: return nothing
+        """
+        pass
+
+    def txtToLef(self):
+        """
+        Converts an unformatted .txt file to a formatted .lef file
+        :return: return nothing
+        """
+        # get the formatted file and the old file path
+        formatted_file = self.app.document.toHtml()
+        print(formatted_file)
+        '''
+        if self.current_document is not None:
+            old_path = self.current_document.absoluteFilePath()
+
+            # create the .lef file holding the formatted file
+            print(self.current_document.filePath().rindex('.'))
+            new_path = self.current_document.filePath()[:self.current_document.filePath().rindex(".")]+".lef"
+            self.writeFileData(new_path, formatted_file)
+
+            # open the .lef document and add it to the dict of the open files
+            self.openDocument(new_path)
+
+            # close the .txt document from the dict of open files
+            self.closeDocument(self.current_document.absolutePath())
+
+            # close the .txt file tab
+            self.app.bar_open_tabs.closeTab(old_path)
+
+            # delete the .txt file
+            if True:  # TODO - figure out if we do want to delete the file
+                if self.current_document.exists():
+                    os.remove(old_path)
+                    print('FileManager - txtToLef - Deleted - ', old_path)
+            self.current_document.isFormatted = True
+        '''
     def printAll(self):
+        """
+        For debugging. Prints out all of the documents stored in open_documents dictionary.
+        :return:
+        """
         print('========================================')
         print('Open Documents:')
         for key, path in self.open_documents.items():
