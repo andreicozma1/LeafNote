@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 show_install() {
   echo " # To proceed, please install Python3 and Pip3." &&

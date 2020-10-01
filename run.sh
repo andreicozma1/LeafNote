@@ -1,3 +1,4 @@
+#!/bin/bash
 FILE=.venv/bin/activate
 if [ -f "$FILE" ]; then
   echo "## Activating Virtual Environment:" &&
