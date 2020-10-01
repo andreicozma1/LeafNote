@@ -8,9 +8,22 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontC
 
 from Utils.DialogBuilder import DialogBuilder
 
+"""
+all properties of the top bar
+"""
+
 
 class TopBar(QWidget):
+    """
+    class that holds the top bar attributes
+    """
     def __init__(self, app, document):
+        """
+        sets up the top bar and its features
+        :param app: reference to application
+        :param document: reference to document
+        :return: returns nothing
+        """
         super(TopBar, self).__init__()
         logging.info("")
         self.app = app
@@ -134,6 +147,10 @@ class TopBar(QWidget):
         self.setup()
 
     def setup(self):
+        """
+        sets up the formatting enabler
+        :return: returns nothing
+        """
         logging.info("setup")
 
         # TODO - Keep object definitions in constructor and move all method calls in setup
@@ -148,8 +165,12 @@ class TopBar(QWidget):
 
         return self
 
-    # Toggles between Formatting Mode and Plain-Text Mode
     def onEnableFormatting(self, state):
+        """
+        Toggles between Formatting Mode and Plain-Text Mode
+        :param state: this is a boolean that sets the states
+        :return: returns nothing
+        """
         logging.info(str(state))
 
         if state is True:
@@ -178,7 +199,9 @@ class TopBar(QWidget):
 
     def setFormattingEnabled(self, state):
         """
+        allows formatting once file type is changed from .txt to .lef
         :param state: this is a boolean that sets the states
+        :return: returns nothing
         """
         logging.info(str(state))
         a: QWidget
@@ -186,17 +209,27 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.setEnabled(state)
 
-    # Sets the font to the new font
     def onFontStyleChanged(self):
+        """
+        Sets the font to the new font
+        :return: returns nothing
+        """
         logging.info(self.combo_font_style.currentFont())
         self.document.setCurrentFont(self.combo_font_style.currentFont())
 
-    # Sets the current sets the font size from the ComboBox
     def onFontSizeChanged(self):
+        """
+        Sets the current sets the font size from the ComboBox
+        :return: returns nothing
+        """
         logging.info(self.combo_font_size.currentText())
         self.document.setFontPointSize(int(self.combo_font_size.currentText()))
 
     def updateFormatOnSelectionChange(self):
+        """
+        selected text format will be checked in top bar
+        :return: returns nothing
+        """
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -219,9 +252,15 @@ class TopBar(QWidget):
                 a.blockSignals(False)
 
     def setColorChange(self, index):
-        setcolor = "  QComboBox::drop-down          {   border: 0px;}"
-        setcolor += " QComboBox                     {   background-color:" + self.combo_text_color.itemData(index) + ";"
-        setcolor += "                                   border: 1px solid gray; }"
-        setcolor += " QComboBox QAbstractItemView   {   selection-background-color: none; }"
-        self.combo_text_color.setStyleSheet(setcolor)
+        """
+        set the color the user selects to the text
+        :param index: the location of color in the color_dict
+        :return: returns nothing
+        """
+        set_color = "  QComboBox::drop-down          {   border: 0px;}"
+        set_color += " QComboBox                     {   background-color:" + self.combo_text_color.itemData(index)
+        set_color += "                                   ;"
+        set_color += "                                   border: 1px solid gray; }"
+        set_color += " QComboBox QAbstractItemView   {   selection-background-color: none; }"
+        self.combo_text_color.setStyleSheet(set_color)
         self.document.setTextColor(QColor(self.combo_text_color.itemData(index)))
