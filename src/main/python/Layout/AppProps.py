@@ -2,9 +2,20 @@ import logging
 
 from PyQt5.QtCore import QDir
 
+"""
+Application properties
+"""
+
 
 class AppProps():
+    """
+    class that contains the properties of the application
+    """
     def __init__(self):
+        """
+        sets the default properties of applications
+        :return: returns nothing
+        """
         logging.info("Set up Application Properties")
 
         # Defaults
