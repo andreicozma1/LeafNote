@@ -54,9 +54,10 @@ class Tab(Color):
 
         self.setLayout(self.horizontal_layout)
 
-    def mousePressEvent(self):
+    def mousePressEvent(self, QMouseEvent):
         """
         opens file that has been clicked to open
+        :QMouseEvent: registers the mouse click
         :return: returns nothing
         """
         self.file_manager.openDocument(self.path)
