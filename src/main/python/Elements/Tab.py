@@ -5,10 +5,26 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
+
 import logging
 
+"""
+contains all properties for tabs in the tab menu
+"""
+
+
 class Tab(Color):
+    """
+    sets up the file as a tab
+    """
     def __init__(self, tab_bar, file_manager, path: str):
+        """
+        creates a tab for specific file
+        :param tab_bar: bar where the tabs will be stored
+        :param file_manager: instance of FileManager class - manages all file communication
+        :param path: path to file being displayed
+        :return: returns nothing
+        """
         # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super(Tab, self).__init__(color)
@@ -38,10 +54,18 @@ class Tab(Color):
 
         self.setLayout(self.horizontal_layout)
 
-    def mousePressEvent(self, QMouseEvent):
+    def mousePressEvent(self):
+        """
+        opens file that has been clicked to open
+        :return: returns nothing
+        """
         self.file_manager.openDocument(self.path)
 
     def closeTab(self):
+        """
+        close out tab when called
+        :return: returns nothing
+        """
         logging.info(self.path)
 
         self.tab_bar.closeTab(self.path)

@@ -2,11 +2,28 @@ from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
+
 import logging
 
-# Class to hold and customize a QPlainTextEdit Widget
+"""
+all properties and functionalities of the menu bar
+"""
+
+
 class MenuBar():
+    """
+    Class to hold and customize a QPlainTextEdit Widget
+    """
     def __init__(self, app, file_manager, document, top_bar, bottom_bar):
+        """
+        sets up the menu bar
+        :param app: reference to application
+        :param file_manager: reference to file manager
+        :param document: reference to document
+        :param top_bar: reference to top bar
+        :param bottom_bar: reference to bottom bar
+        :return: returns nothing
+        """
         logging.info("")
         self.app = app
         self.document = document
@@ -29,6 +46,10 @@ class MenuBar():
         self.setup()
 
     def setup(self):
+        """
+        sets up the menu bar tabs
+        :return: returns nothing
+        """
         logging.info("setup")
         # File tab submenus and actions
         self.fileMenuSetup()
@@ -43,8 +64,11 @@ class MenuBar():
     # --------------------------------------------------------------------------------
 
     # TODO - Add more functionality to file tab - new, save, save as, save all, settings, etc.
-    # this function sets up the file tabs drop menu
     def fileMenuSetup(self):
+        """
+        sets up the file tabs drop menu
+        :return: returns nothing
+        """
         logging.info("fileMenuSetup")
 
         # TODO - implement new file button that opens a new blank file in the document
@@ -94,12 +118,20 @@ class MenuBar():
 
     # TODO - implement new file button that opens a new blank file in the document
     def onNewBtn(self):
+        """
+        function of the new file button
+        :return: returns nothing
+        """
         logging.info("MenuBar - onNewBtn")
         self.app.file_manager.newFile()
 
     # this function opens a dialog for the user to select a file to open. When the user
     # selects a file it will show its text in the middle of the window
     def onOpenBtn(self):
+        """
+        function of the open button
+        :return: returns nothing
+        """
         logging.info("onOpenBtn")
         # open the dialogue using the home directory as root
 
@@ -116,6 +148,10 @@ class MenuBar():
         self.file_manager.openDocument(file_name[0])
 
     def onOpenFolderBtn(self):
+        """
+        function of the open folder button
+        :return: returns nothing
+        """
         # open the dialogue using the home directory as root
         logging.info("onOpenFolderBtn")
 
@@ -132,16 +168,28 @@ class MenuBar():
 
     # this saves the current file that is shown in the document
     def onSaveBtn(self):
+        """
+        function of the save button
+        :return: returns nothing
+        """
         logging.info("onSaveBtn")
         self.file_manager.saveDocument()
 
     # TODO - save the file as a specified name in any location on disk
     def onSaveAsBtn(self):
+        """
+        function of the save as button
+        :return: returns nothing
+        """
         logging.info("saveAsFile")
         new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
         self.file_manager.saveAsDocument(new_file_path[0])
 
     def onExitBtn(self):
+        """
+        exits program on quit
+        :return: returns nothing
+        """
         logging.info("onExitBtn")
         self.file_manager.closeAll()
 
@@ -150,8 +198,11 @@ class MenuBar():
     # --------------------------------------------------------------------------------
 
     # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
-    # this function sets up the edit tabs drop menu
     def editMenuSetup(self):
+        """
+        sets up the edit tabs drop menu
+        :return: returns nothing
+        """
         logging.info("editMenuSetup")
 
         # Idea: select button when keyboard shortcut used
@@ -202,8 +253,11 @@ class MenuBar():
 
     # TODO - uncomment when implementing these menus
     # TODO - Add functionality to view tab - appearance, etc.
-    # this function sets up the view tabs drop menu
     def viewMenuSetup(self):
+        """
+        sets up the view tabs drop menu
+        :return: returns nothing
+        """
         logging.info("viewMenuSetup")
         zoom_in_act = QAction("&Zoom In", self.app)
         zoom_in_act.setShortcut('ctrl+=')
@@ -222,8 +276,11 @@ class MenuBar():
 
     # --------------------------------------------------------------------------------
     # TODO - Add functionality to tools tab - tbd
-    # this function sets up the tools tabs drop menu
     def formatMenuSetup(self):
+        """
+        sets up the tools tabs drop menu
+        :return: returns nothing
+        """
         logging.info("formatMenuSetup")
         # Sets up submenue of 'Text' inside of the 'Format' menu
         self.text_menu = self.format_menu.addMenu('&Text')
@@ -298,8 +355,11 @@ class MenuBar():
         self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
         self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
 
-    # Opens the color widget and checks for a valid color then sets document font color
     def openColorDialog(self):
+        """
+        Opens the color widget and checks for a valid color then sets document font color
+        :return: returns nothing
+        """
         color = QColorDialog.getColor()
 
         if color.isValid():
@@ -344,7 +404,9 @@ class MenuBar():
 
     def setFormattingEnabled(self, state):
         """
+        allows formatting once file type is changed from .txt to .lef in menu bar
         :param state: this is a boolean that sets the states
+        :return: returns nothing
         """
         logging.info(str(state))
         a: QAction
@@ -353,6 +415,10 @@ class MenuBar():
                 a.setEnabled(state)
 
     def updateFormatOnSelectionChange(self):
+        """
+        selected text format will be checked in menu bar
+        :return: returns nothing
+        """
         a: QAction
         for a in self.text_menu.actions():
             if not a.property("persistent"):

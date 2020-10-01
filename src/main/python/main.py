@@ -22,9 +22,20 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
+"""
+all the code comes together to set up the GUI
+"""
+
 
 class App(QMainWindow):
+    """
+    puts all the pieces of code together to get finished application
+    """
     def __init__(self):
+        """
+        creates the windown and its attributes
+        :return: returns nothing
+        """
         super(QMainWindow, self).__init__()
         logging.info("Constructor")
         # Initialize properties.
@@ -48,6 +59,10 @@ class App(QMainWindow):
         self.setupLayout()
 
     def setupLayout(self):
+        """
+        sets up the layout within the window
+        :return: returns nothing
+        """
         logging.info("Setting up layout members")
         # Setup Layout View
         self.layout.setTopBar(self.top_bar)
@@ -57,6 +72,10 @@ class App(QMainWindow):
         self.layout.setLeftMenu(self.left_menu)
 
     def setup(self):
+        """
+        sets up the window
+        :return: returns nothing
+        """
         logging.info("Setting up Main Window")
         self.setWindowTitle(self.app_props.title)
         self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
@@ -71,12 +90,22 @@ class App(QMainWindow):
         self.show()
 
     def centerWindow(self, app_geom):
+        """
+        aligns window in the middle of given space
+        :param app_geom: the application geometry
+        :return: returns nothing
+        """
         logging.info("Centering Window")
         center = QDesktopWidget().availableGeometry().center()
         app_geom.moveCenter(center)
         self.move(app_geom.topLeft())
 
     def resizeEvent(self, event):
+        """
+        resizes based on updated dimensions
+        :param event: item that will be resized
+        :return: returns nothing
+        """
         self.layout.updateDimensions(self)
         return super(QMainWindow, self).resizeEvent(event)
 

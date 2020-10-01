@@ -2,10 +2,25 @@ import logging
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QStackedLayout
+
 import logging
 
+"""
+sets the way the application will be layed out
+"""
+
+
 class Layout(QWidget):
+    """
+    class that hold the layout properties
+    """
     def __init__(self, appProps, layoutProps):
+        """
+        sets up the inital workspace
+        :param appProps: reference to application properties
+        :param layoutProps: reference to the layout properties
+        :return: returns nothing
+        """
         super().__init__()
         logging.info("")
 
@@ -40,6 +55,10 @@ class Layout(QWidget):
         self.setup()
 
     def setup(self):
+        """
+        sets up the workspace of the application
+        :return: returns nothing
+        """
         logging.info("")
         # Set up the main vertical layout
         # add the top bar at the top
@@ -58,22 +77,51 @@ class Layout(QWidget):
         # self.horizontal_workspace.addWidget(self.menu_right)
 
     def setTopBar(self, topBar: QWidget):
-
+        """
+        sets up top bar
+        :param topBar: reference to top bar
+        :return: returns nothing
+        """
         self.top_bar.layout().addWidget(topBar)
 
     def setBottomBar(self, bottomBar: QWidget):
+        """
+        sets up bottom bar
+        :param bottomBar: reference to bottom bar
+        :return: returns nothing
+        """
         self.bottom_bar.layout().addWidget(bottomBar)
 
     def setLeftMenu(self, leftMenu: QWidget):
+        """
+        sets up the left menu
+        :param leftMenu: reference to left menu
+        :return: returns nothing
+        """
         self.menu_left.layout().addWidget(leftMenu)
 
     def setBarOpenTabs(self, barOpenTabs: QWidget):
+        """
+        sets up the tabs
+        :param barOpenTabs: reference to tabs
+        :return: returns nothing
+        """
         self.bar_open_tabs.layout().addWidget(barOpenTabs)
 
     def setDocument(self, document: QWidget):
+        """
+        sets up the document
+        :param document: reference to document
+        :return: returns nothing
+        """
         self.document.layout().addWidget(document)
 
     def updateDimensions(self, app):
+        """
+        changes the dimensions of the application
+        :param app: reference to application
+        :return: returns nothing
+        """
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(self.layout_props.splitter_width)
         self.horizontal_workspace.setHandleWidth(self.layout_props.splitter_width)

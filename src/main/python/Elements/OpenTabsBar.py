@@ -4,10 +4,27 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from Elements.Tab import Tab
+
 import logging
 
+"""
+when one or more file is open it
+will show the file tabs under the
+top bar
+"""
+
+
 class OpenTabsBar(QWidget):
+    """
+    functionality and look of Tab Bar
+    """
     def __init__(self, file_manager, layout_props):
+        """
+        sets up the tab bar
+        :param file_manager: instance of FileManager class - manages all file communication
+        :param layout_props: properties for the layout - dimensions
+        :return: returns nothing
+        """
         super(OpenTabsBar, self).__init__()
         logging.info("")
 
@@ -30,8 +47,12 @@ class OpenTabsBar(QWidget):
 
         self.horizontal_layout.addStretch()
 
-    # this will create a new tab and add it to the horizontal layout
     def addTab(self, path: str) -> Tab:
+        """
+        Creates new tab and adds it to the horizontal layout
+        :param path: path to file being displayed
+        :return: returns the new tab that was open
+        """
         logging.info(path)
         tab = Tab(self, self.file_manager, path)
         self.layout().insertWidget(0, tab)
@@ -41,8 +62,14 @@ class OpenTabsBar(QWidget):
 
         return tab
 
-    # removes object from layout and destroys it
+    #
     def closeTab(self, path: str, save=True):
+        """
+        removes object from layout and destroys it
+        :param path: path to file being displayed
+        :param save: boolean - To save
+        :return: returns nothing
+        """
         logging.info(path)
         tab = self.open_tabs[path]
         self.layout().removeWidget(tab)
@@ -56,5 +83,9 @@ class OpenTabsBar(QWidget):
         tab.deleteLater()
 
     def getTabCount(self):
+        """
+        gets the number of open tabs
+        :return: returns nothing
+        """
         logging.info(str(self.horizontal_layout.count()))
         return self.layout().count()
