@@ -31,6 +31,14 @@ class BottomBar(QWidget):
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
 
+        # Zoom reset button
+        self.button_zoom_reset = QPushButton("100%", self)
+        self.button_zoom_reset.setFixedWidth(40)
+        self.button_zoom_reset.clicked.connect(self.resetZoom)
+        self.button_zoom_reset.setStyleSheet("QPushButton { font-size: 6pt; }")
+        self.button_zoom_reset.setToolTip("Resets zoom to default 100%")
+        self.horizontal_layout.addWidget(self.button_zoom_reset)
+
         self.button_zoom_out = QPushButton("-", self)
         self.button_zoom_out.setFixedWidth(33)
         self.button_zoom_out.clicked.connect(self.onZoomOutClicked)
