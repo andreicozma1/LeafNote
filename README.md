@@ -18,7 +18,8 @@ python3 -m virtualenv .venv
 
 3. Activate the Virtual Environment
 ```
-source .venv/bin/activate
+source .venv/bin/activate (Linux/macOS)
+.venv\Scripts\activate.bat (Windows)
 ```
 
 4. Install the Dependencies
