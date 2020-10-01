@@ -54,7 +54,7 @@ class Tab(Color):
 
         self.setLayout(self.horizontal_layout)
 
-    def mousePressEvent(self):
+    def mousePressEvent(self, QMouseEvent):
         """
         opens file that has been clicked to open
         :return: returns nothing
