@@ -10,7 +10,7 @@ cd 0x432d2d
 ```
 
 ## Install Dependencies
-Recommended: Use the setup script!
+Recommended: Use the setup script (Linux and macOS only)!  
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
@@ -23,7 +23,7 @@ source .venv/bin/activate (Linux/macOS)
 ```
 
 4. Install the Dependencies
-Recommended: Use the run script!
+Recommended: Use the run script (Linux and macOS only)!
 ```
 pip3 install -r requirements.txt
 ```
