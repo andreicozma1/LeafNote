@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontC
 
 from Utils.DialogBuilder import DialogBuilder
 
+import logging
+
 """
 all properties of the top bar
 """
@@ -48,6 +50,8 @@ class TopBar(QWidget):
         # List for font sizes
         self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
                               "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+        self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
+        self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
 
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox(self)
@@ -132,6 +136,17 @@ class TopBar(QWidget):
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.horizontal_layout.addWidget(self.combo_text_color)
 
+        # Adds ability to change alignment of text
+        self.combo_text_align = QComboBox(self)
+        self.combo_text_align.setToolTip('Change text alignment')
+        self.combo_text_align.addItems(self.list_alignments)
+        self.combo_text_align.setFixedWidth(100)
+        self.combo_text_align.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_align.currentIndexChanged.connect(self.onTextAlignmentChanged)
+        self.combo_text_align.setCurrentIndex(0)
+        self.horizontal_layout.addWidget(self.combo_text_align)
+
+
         # Temporary widgets
         self.horizontal_layout.addStretch()
 
@@ -194,8 +209,8 @@ class TopBar(QWidget):
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.app.file_manager.lefToExt()
-            logging.info("Cannot convert back to Plain Text")
-            self.button_mode_switch.setChecked(True)
+            logging.info("Convert back to a txt file")
+            self.button_mode_switch.setChecked(False)
 
     def setFormattingEnabled(self, state):
         """
@@ -225,6 +240,15 @@ class TopBar(QWidget):
         logging.info(self.combo_font_size.currentText())
         self.document.setFontPointSize(int(self.combo_font_size.currentText()))
 
+    def onTextAlignmentChanged(self):
+        """
+        Sets the current text alignment to  the ComboBox
+        :return: Returns nothing
+        """
+        logging.info(self.combo_text_align.currentText())
+        self.document.setAlignment(self.list_alignments_align[self.list_alignments.index(
+            self.combo_text_align.currentText())])
+
     def updateFormatOnSelectionChange(self):
         """
         selected text format will be checked in top bar
@@ -240,6 +264,10 @@ class TopBar(QWidget):
         size = int(self.document.fontPointSize())
         if size != 0:
             self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(size)))
+
+        # update the top bar alignment to the current alignment
+        align = self.document.alignment()
+        self.combo_text_align.setCurrentIndex(self.list_alignments_align.index(align))
 
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())

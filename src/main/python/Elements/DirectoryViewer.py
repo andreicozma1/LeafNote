@@ -3,6 +3,8 @@ import logging
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
+import logging
+
 """
 displays interactive directory on 
 left side of text editor

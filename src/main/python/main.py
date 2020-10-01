@@ -14,6 +14,7 @@ from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
+import logging
 
 logging.basicConfig(
     level=logging.DEBUG,

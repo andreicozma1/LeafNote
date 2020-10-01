@@ -3,6 +3,8 @@ import logging
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QStackedLayout
 
+import logging
+
 """
 sets the way the application will be layed out
 """

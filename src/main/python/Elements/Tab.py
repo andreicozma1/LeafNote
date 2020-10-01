@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
 
+import logging
+
 """
 contains all properties for tabs in the tab menu
 """

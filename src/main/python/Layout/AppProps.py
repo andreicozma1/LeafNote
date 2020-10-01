@@ -2,6 +2,8 @@ import logging
 
 from PyQt5.QtCore import QDir
 
+import logging
+
 """
 Application properties
 """
@@ -19,7 +21,7 @@ class AppProps():
         logging.info("Set up Application Properties")
 
         # Defaults
-        self.title = '0x432d2d'
+        self.title = 'LeafNote'
         self.left = 0
         self.top = 0
         self.width = 800

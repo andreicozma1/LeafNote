@@ -3,6 +3,8 @@ import logging
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
 
+import logging
+
 """
 This file alters tools on the Bottom Bar
 of the text editor.
@@ -54,6 +56,14 @@ class BottomBar(QWidget):
         # functionality of word and character count
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
+
+        # Zoom reset button
+        self.button_zoom_reset = QPushButton("100%", self)
+        self.button_zoom_reset.setFixedWidth(40)
+        self.button_zoom_reset.clicked.connect(self.resetZoom)
+        self.button_zoom_reset.setStyleSheet("QPushButton { font-size: 6pt; }")
+        self.button_zoom_reset.setToolTip("Resets zoom to default 100%")
+        self.horizontal_layout.addWidget(self.button_zoom_reset)
 
         # Zoom Out button
         self.button_zoom_out = QPushButton("-", self)

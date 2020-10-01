@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from Elements.Tab import Tab
 
+import logging
+
 """
 when one or more file is open it
 will show the file tabs under the
