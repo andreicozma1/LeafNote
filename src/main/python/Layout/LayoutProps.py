@@ -1,8 +1,19 @@
 import logging
 
+"""
+holds the class with the layout properties
+"""
+
 
 class LayoutProps():
+    """
+    class has the default layout properties
+    """
     def __init__(self):
+        """
+        the default properties for the layout
+        :return: returns nothing
+        """
         logging.info("Setting up Layout Properties")
 
         self.min_doc_width = .4
