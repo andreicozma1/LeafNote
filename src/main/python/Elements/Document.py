@@ -1,24 +1,78 @@
-from Elements.Textbox import TextBox
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+from Elements.TextBox import TextBox
+
+import logging
+
+"""
+The active document - area where user types
+"""
 
 
 class Document(TextBox):
-    def __init__(self, bottom_bar):
-        super(TextBox, self).__init__()
-        print("Document - init")
+    """
+    Creates the widget in the middle of the text editor
+    where the text is input and displayed
+    """
+    def __init__(self):
+        """
+        creates the default layout of the text document
+        :return: returns nothing
+        """
+        super(Document, self).__init__("")
+        logging.info("")
 
-        self.bottom_bar = bottom_bar
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
-        self.textChanged.connect(self.updateWordCount)
-        self.textChanged.connect(self.updateCharCount)
 
-    def updateWordCount(self):
-        wordCount = len(self.toPlainText().split())
-        if self.toPlainText() == '':
-            wordCount = 0
-        self.bottom_bar.label_wc.setText(str(wordCount) + " Words")
+    def onFontItalChanged(self, state):
+        """
+        Sets the font to italic
+        :param state: boolean - format true or false
+        :return: returns nothing
+        """
+        logging.info(str(state))
+        self.setFontItalic(state)
 
-    def updateCharCount(self):
-        charCount = len(self.toPlainText()) - len(self.toPlainText().split(" ")) + 1
-        self.bottom_bar.label_cc.setText(str(charCount) + " Characters")
+    def onFontBoldChanged(self, state):
+        """
+        Sets the font to bold
+        :param state: boolean - format true or false
+        :return: returns nothing
+        """
+        logging.info(str(QFont.Bold if state else QFont.Normal))
+        self.setFontWeight(QFont.Bold if state else QFont.Normal)
+
+    def onFontUnderChanged(self, state):
+        """
+        Sets the font to underlined
+        :param state: boolean - format true or false
+        :return: returns nothing
+        """
+        logging.info(str(state))
+        self.setFontUnderline(state)
+
+    def onFontStrikeChanged(self, state):
+        """
+        Sets the font to strike
+        :param state: boolean - format true or false
+        :return: returns nothing
+        """
+        logging.info(str(state))
+        font_format = self.currentCharFormat()
+        font_format.setFontStrikeOut(state)
+        self.setCurrentCharFormat(font_format)
+
+    def resetFormatting(self):
+        """
+        Clears formatting on text
+        :return: returns nothing
+        """
+        logging.info("")
+        self.onFontUnderChanged(False)
+        self.onFontItalChanged(False)
+        self.onFontBoldChanged(False)
+        self.onFontStrikeChanged(False)
+        self.setAlignment(Qt.AlignLeft)
