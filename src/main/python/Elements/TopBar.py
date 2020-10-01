@@ -199,7 +199,7 @@ class TopBar(QWidget):
 
     def setFormattingEnabled(self, state):
         """
-        allows formatting once file type is changed from .txt to .lef
+        allows formatting once file type is changed from .txt to .lef in top bar
         :param state: this is a boolean that sets the states
         :return: returns nothing
         """
