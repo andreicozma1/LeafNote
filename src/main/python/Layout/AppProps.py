@@ -1,13 +1,27 @@
+import logging
+
 from PyQt5.QtCore import QDir
+
+import logging
+
+"""
+Application properties
+"""
 
 
 class AppProps():
-    def __init__(self, app):
-        print("AppProps - init")
+    """
+    class that contains the properties of the application
+    """
+    def __init__(self):
+        """
+        sets the default properties of applications
+        :return: returns nothing
+        """
+        logging.info("Set up Application Properties")
 
-        self.app = app
         # Defaults
-        self.title = '0x432d2d'
+        self.title = 'LeafNote'
         self.left = 0
         self.top = 0
         self.width = 800
