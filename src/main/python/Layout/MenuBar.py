@@ -1,10 +1,8 @@
-import logging
-
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
-
+import logging
 
 # Class to hold and customize a QPlainTextEdit Widget
 class MenuBar():
@@ -230,6 +228,9 @@ class MenuBar():
         # Sets up submenue of 'Text' inside of the 'Format' menu
         self.text_menu = self.format_menu.addMenu('&Text')
 
+        # sets up a submenu for alignment and indentation in the format menu
+        self.align_indent_menu = self.format_menu.addMenu('&Align && Indent')
+
         # Adds Bold button to text_menu
         self.bold_action = QAction("Bold", self.app)
         self.bold_action.setShortcut('Ctrl+B')
@@ -266,27 +267,36 @@ class MenuBar():
         self.font_color_action.triggered.connect(self.openColorDialog)
         self.text_menu.addAction(self.font_color_action)
 
+        # --- create the alignment and indentation menu ---
+        # create the left alignment action
+        self.left_align_action = QAction("Left Align", self.app)
+        self.left_align_action.setShortcut('Ctrl+Shift+L')
+        self.left_align_action.triggered.connect(self.onTextAlignLeftClicked)
+        self.align_indent_menu.addAction(self.left_align_action)
+
+        # create the center alignment action
+        self.center_align_action = QAction("Center Align", self.app)
+        self.center_align_action.setShortcut('Ctrl+Shift+E')
+        self.center_align_action.triggered.connect(self.onTextAlignCenterClicked)
+        self.align_indent_menu.addAction(self.center_align_action)
+
+        # create the right alignment action
+        self.right_align_action = QAction("Right Align", self.app)
+        self.right_align_action.setShortcut('Ctrl+Shift+R')
+        self.right_align_action.triggered.connect(self.onTextAlignRightClicked)
+        self.align_indent_menu.addAction(self.right_align_action)
+
+        # create the justify alignment action
+        self.justify_align_action = QAction("Justify Align", self.app)
+        self.justify_align_action.setShortcut('Ctrl+Shift+J')
+        self.justify_align_action.triggered.connect(self.onTextAlignJustifyClicked)
+        self.align_indent_menu.addAction(self.justify_align_action)
+
         # if the enable formatting mode is toggled
         self.setFormattingEnabled(False)
 
         self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
         self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-
-    # --------------------------------------------------------------------------------
-
-    """
-    # TODO - Add functionality to tools tbd
-    # this function sets up the tools tabs drop menu
-    def toolsMenuSetup(self):
-        logging.info("toolsMenuSetup")
-
-    # --------------------------------------------------------------------------------
-
-    # TODO - Add functionality to help find action, help, getting started, about, etc.
-    # this function sets up the help tabs drop menu
-    def helpMenuSetup(self):
-        logging.info("helpMenuSetup")
-    """
 
     # Opens the color widget and checks for a valid color then sets document font color
     def openColorDialog(self):
@@ -294,6 +304,43 @@ class MenuBar():
 
         if color.isValid():
             self.app.document.setTextColor(color)
+
+    def onTextAlignLeftClicked(self):
+        """
+        This will left align the selected text in the document
+        :return: Returns nothing
+        """
+        logging.info("Align Left")
+        self.document.setAlignment(Qt.AlignLeft)
+        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignLeft))
+
+    def onTextAlignCenterClicked(self):
+        """
+            This will center align the selected text in the document
+            :return: Returns nothing
+        """
+        logging.info("Align Center")
+        self.document.setAlignment(Qt.AlignCenter)
+        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignCenter))
+
+
+    def onTextAlignRightClicked(self):
+        """
+            This will right align the selected text in the document
+            :return: Returns nothing
+        """
+        logging.info("Align Right")
+        self.document.setAlignment(Qt.AlignRight)
+        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignRight))
+
+    def onTextAlignJustifyClicked(self):
+        """
+            This will justify align the selected text in the document
+            :return: Returns nothing
+        """
+        logging.info("Align Justify")
+        self.document.setAlignment(Qt.AlignJustify)
+        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignJustify))
 
     def setFormattingEnabled(self, state):
         """
@@ -320,3 +367,18 @@ class MenuBar():
         for a in self.text_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+    # --------------------------------------------------------------------------------
+
+    """
+    # TODO - Add functionality to tools tbd
+    # this function sets up the tools tabs drop menu
+    def toolsMenuSetup(self):
+        logging.info("toolsMenuSetup")
+
+    # --------------------------------------------------------------------------------
+
+    # TODO - Add functionality to help find action, help, getting started, about, etc.
+    # this function sets up the help tabs drop menu
+    def helpMenuSetup(self):
+        logging.info("helpMenuSetup")
+    """

@@ -5,7 +5,7 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
-
+import logging
 
 class Tab(Color):
     def __init__(self, tab_bar, file_manager, path: str):

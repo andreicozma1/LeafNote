@@ -1,7 +1,7 @@
 import logging
 
 from PyQt5.QtCore import QDir
-
+import logging
 
 class AppProps():
     def __init__(self):
