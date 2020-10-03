@@ -62,6 +62,9 @@ class App(QMainWindow):
         self.top_bar.addLayoutSpacer()
         self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode()
         self.document.selectionChanged.connect(self.top_bar.updateFormatOnSelectionChange)
+        self.setFormattingEnabled(False)
+        self.top_bar.setLayout(self.top_bar.horizontal_layout)
+
 
 
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
@@ -70,6 +73,9 @@ class App(QMainWindow):
         self.menubar = MenuBar(self, self.file_manager, self.document, self.top_bar, self.bottom_bar)
 
         self.setupLayout()
+
+    def setFormattingEnabled(self, state:bool):
+        self.top_bar.setFormattingEnabled(False)
 
     def setupLayout(self):
         """

@@ -32,6 +32,8 @@ class TopBar(QWidget):
         self.document = document
 
         self.horizontal_layout = QHBoxLayout()
+        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
+        self.horizontal_layout.setSpacing(3)
 
         # color dictionary for changing text color
         self.color_dict = {
@@ -53,24 +55,6 @@ class TopBar(QWidget):
         self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
         self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
 
-        self.setup()
-
-    def setup(self):
-        """
-        sets up the formatting enabler
-        :return: returns nothing
-        """
-        logging.info("setup")
-
-        # TODO - Keep object definitions in constructor and move all method calls in setup
-        self.setFormattingEnabled(False)
-
-        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.horizontal_layout.setSpacing(3)
-
-        self.setLayout(self.horizontal_layout)
-
-        return self
 
     def addLayoutSpacer(self):
         # Temporary widgets
