@@ -33,26 +33,6 @@ class TopBar(QWidget):
 
         self.horizontal_layout = QHBoxLayout()
 
-        # color dictionary for changing text color
-        self.color_dict = {
-            'black': '#000000',
-            'red': '#ff0000',
-            'pink': '#ffc0cb',
-            'orange': '#ffa500',
-            'yellow': '#ffff00',
-            'green': '#00ff00',
-            'blue': '#0000ff',
-            'violet': '#9400D3',
-            'brown': '#a52a3a',
-            'white': '#ffffff'
-        }
-
-        # List for font sizes
-        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-                              "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
-        self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
-        self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
-
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox(self)
         self.combo_font_style.setToolTip('Change font')
@@ -64,7 +44,7 @@ class TopBar(QWidget):
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.combo_font_size.setToolTip('Change font size')
-        self.combo_font_size.addItems(self.list_FontSize)
+        self.combo_font_size.addItems(self.app.doc_props.list_FontSize)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
         self.combo_font_size.currentIndexChanged.connect(self.onFontSizeChanged)
@@ -120,7 +100,7 @@ class TopBar(QWidget):
         self.combo_text_color.setFixedWidth(33)
         self.combo_text_color.setFixedHeight(20)
         model = self.combo_text_color.model()
-        self.color_list = self.color_dict.values()
+        self.color_list = self.app.doc_props.color_dict.values()
         for i, c in enumerate(self.color_list):
             item = QtGui.QStandardItem()
             item.setBackground(QtGui.QColor(c))
@@ -139,7 +119,7 @@ class TopBar(QWidget):
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
         self.combo_text_align.setToolTip('Change text alignment')
-        self.combo_text_align.addItems(self.list_alignments)
+        self.combo_text_align.addItems(self.app.doc_props.list_alignments)
         self.combo_text_align.setFixedWidth(100)
         self.combo_text_align.setFocusPolicy(Qt.NoFocus)
         self.combo_text_align.currentIndexChanged.connect(self.onTextAlignmentChanged)
@@ -246,7 +226,7 @@ class TopBar(QWidget):
         :return: Returns nothing
         """
         logging.info(self.combo_text_align.currentText())
-        self.document.setAlignment(self.list_alignments_align[self.list_alignments.index(
+        self.document.setAlignment(self.app.doc_props.list_alignments_align[self.app.doc_props.list_alignments.index(
             self.combo_text_align.currentText())])
 
     def updateFormatOnSelectionChange(self):
@@ -263,11 +243,11 @@ class TopBar(QWidget):
 
         size = int(self.document.fontPointSize())
         if size != 0:
-            self.combo_font_size.setCurrentIndex(self.list_FontSize.index(str(size)))
+            self.combo_font_size.setCurrentIndex(self.app.doc_props.list_FontSize.index(str(size)))
 
         # update the top bar alignment to the current alignment
         align = self.document.alignment()
-        self.combo_text_align.setCurrentIndex(self.list_alignments_align.index(align))
+        self.combo_text_align.setCurrentIndex(self.app.doc_props.list_alignments_align.index(align))
 
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())
