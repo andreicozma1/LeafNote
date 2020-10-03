@@ -14,7 +14,6 @@ from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.FileManager import FileManager
-from Layout.DocProps import DocProps
 import logging
 
 logging.basicConfig(
@@ -34,7 +33,7 @@ class App(QMainWindow):
     """
     def __init__(self):
         """
-        creates the window and its attributes
+        creates the windown and its attributes
         :return: returns nothing
         """
         super(QMainWindow, self).__init__()
@@ -42,7 +41,6 @@ class App(QMainWindow):
         # Initialize properties.
         self.app_props = AppProps()
         self.layout_props = LayoutProps()
-        self.doc_props = DocProps()
 
         self.file_manager = FileManager(self)
 
