@@ -408,11 +408,19 @@ class MenuBar():
         :param state: this is a boolean that sets the states
         :return: returns nothing
         """
+        # Toggle the state of all buttons in the menu
         logging.info(str(state))
         a: QAction
         for a in self.text_menu.actions():
             if not a.property("persistent"):
                 a.setEnabled(state)
+
+        # Toggle the state of all buttons in the menu
+        a: QAction
+        for a in self.align_indent_menu.actions():
+            if not a.property("persistent"):
+                a.setEnabled(state)
+
 
     def updateFormatOnSelectionChange(self):
         """
