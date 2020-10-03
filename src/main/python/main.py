@@ -33,7 +33,7 @@ class App(QMainWindow):
     """
     def __init__(self):
         """
-        creates the windown and its attributes
+        creates the window and its attributes
         :return: returns nothing
         """
         super(QMainWindow, self).__init__()
