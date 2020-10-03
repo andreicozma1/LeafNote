@@ -49,7 +49,20 @@ class App(QMainWindow):
         self.bar_open_tabs = OpenTabsBar(self.file_manager, self.layout_props)
 
         self.document = Document()
+
         self.top_bar = TopBar(self, self.document)
+        self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox()
+        self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox()
+        self.top_bar_btn_bold = self.top_bar.makeBtnBold()
+        self.top_bar_btn_ital = self.top_bar.makeBtnItal()
+        self.top_bar_btn_strike = self.top_bar.makeBtnStrike()
+        self.top_bar_btn_under = self.top_bar.makeBtnUnder()
+        self.top_bar_combo_font_color = self.top_bar.makeComboFontColor()
+        self.top_bar_combo_text_align = self.top_bar.makeComboTextAlign()
+        self.top_bar.addLayoutSpacer()
+        self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode()
+        self.document.selectionChanged.connect(self.top_bar.updateFormatOnSelectionChange)
+
 
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
@@ -70,6 +83,7 @@ class App(QMainWindow):
         self.layout.setBarOpenTabs(self.bar_open_tabs)
         self.layout.setDocument(self.document)
         self.layout.setLeftMenu(self.left_menu)
+
 
     def setup(self):
         """

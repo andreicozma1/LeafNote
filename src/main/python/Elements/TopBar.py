@@ -53,112 +53,6 @@ class TopBar(QWidget):
         self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
         self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
 
-        # ComboBox for font sizes
-        self.combo_font_style = QFontComboBox(self)
-        self.combo_font_style.setToolTip('Change font')
-        self.combo_font_style.setFocusPolicy(Qt.NoFocus)
-        self.combo_font_style.currentFontChanged.connect(self.onFontStyleChanged)
-        self.combo_font_style.setCurrentFont(self.document.currentFont())
-        self.horizontal_layout.addWidget(self.combo_font_style)
-
-        # Adds functionality to the ComboBox
-        self.combo_font_size = QComboBox(self)
-        self.combo_font_size.setToolTip('Change font size')
-        self.combo_font_size.addItems(self.list_FontSize)
-        self.combo_font_size.setFixedWidth(60)
-        self.combo_font_size.setFocusPolicy(Qt.NoFocus)
-        self.combo_font_size.currentIndexChanged.connect(self.onFontSizeChanged)
-        self.combo_font_size.setCurrentIndex(11)
-        self.horizontal_layout.addWidget(self.combo_font_size)
-
-        # Button press to make text bold
-        self.button_bold = QPushButton("B", self)
-        self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
-        self.button_bold.setFixedWidth(33)
-        self.button_bold.setStyleSheet("QPushButton { font:Bold }")
-        self.button_bold.setCheckable(True)
-        self.button_bold.setFocusPolicy(Qt.NoFocus)
-        self.button_bold.clicked.connect(self.document.onFontBoldChanged)
-        self.horizontal_layout.addWidget(self.button_bold)
-
-        # Button press to make text italic
-        self.button_ital = QPushButton("I", self)
-        self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
-        self.button_ital.setFixedWidth(33)
-        self.button_ital.setStyleSheet("QPushButton { font:Italic }")
-        self.button_ital.setCheckable(True)
-        self.button_ital.setFocusPolicy(Qt.NoFocus)
-        self.button_ital.clicked.connect(self.document.onFontItalChanged)
-        self.horizontal_layout.addWidget(self.button_ital)
-
-        # Button press to make text strikethrough
-        self.button_strike = QPushButton("S", self)
-        self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
-        self.button_strike.setFixedWidth(33)
-        f = self.button_strike.font()
-        f.setStrikeOut(True)
-        self.button_strike.setFont(f)
-        # self.button_strike.adjustSize()
-        self.button_strike.setStyleSheet("QPushButton { text-decoration: line-through }")
-        self.button_strike.setCheckable(True)
-        self.button_strike.setFocusPolicy(Qt.NoFocus)
-        self.button_strike.clicked.connect(self.document.onFontStrikeChanged)
-        self.horizontal_layout.addWidget(self.button_strike)
-
-        # Button press to underline text
-        self.button_under = QPushButton("U", self)
-        self.button_under.setToolTip('Underline your text. "Ctrl+U"')
-        self.button_under.setFixedWidth(33)
-        self.button_under.setStyleSheet("QPushButton { text-decoration: underline }")
-        self.button_under.setCheckable(True)
-        self.button_under.setFocusPolicy(Qt.NoFocus)
-        self.button_under.clicked.connect(self.document.onFontUnderChanged)
-        self.horizontal_layout.addWidget(self.button_under)
-
-        # Button to change text color
-        self.combo_text_color = QComboBox(self)
-        self.combo_text_color.setFixedWidth(33)
-        self.combo_text_color.setFixedHeight(20)
-        model = self.combo_text_color.model()
-        self.color_list = self.color_dict.values()
-        for i, c in enumerate(self.color_list):
-            item = QtGui.QStandardItem()
-            item.setBackground(QtGui.QColor(c))
-            model.appendRow(item)
-            self.combo_text_color.setItemData(i, c)
-        self.combo_text_color.currentIndexChanged.connect(self.setColorChange)
-        self.combo_text_color.setFocusPolicy(Qt.NoFocus)
-        self.combo_text_color.setToolTip("Change Text color.")
-        self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
-                                            " QComboBox { background-color: black;"
-                                            "            border: 1px solid gray; }"
-                                            " QComboBox QAbstractItemView { selection-background-color: none; }/")
-        self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.horizontal_layout.addWidget(self.combo_text_color)
-
-        # Adds ability to change alignment of text
-        self.combo_text_align = QComboBox(self)
-        self.combo_text_align.setToolTip('Change text alignment')
-        self.combo_text_align.addItems(self.list_alignments)
-        self.combo_text_align.setFixedWidth(100)
-        self.combo_text_align.setFocusPolicy(Qt.NoFocus)
-        self.combo_text_align.currentIndexChanged.connect(self.onTextAlignmentChanged)
-        self.combo_text_align.setCurrentIndex(0)
-        self.horizontal_layout.addWidget(self.combo_text_align)
-
-
-        # Temporary widgets
-        self.horizontal_layout.addStretch()
-
-        # Mode Switching button to the very right (after stretch)
-        self.button_mode_switch = QPushButton("Formatting Mode", self)
-        self.button_mode_switch.setToolTip("Enable Document Formatting")
-        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in onEnableFormatting
-        self.button_mode_switch.setCheckable(True)
-        self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
-        self.button_mode_switch.clicked.connect(self.onEnableFormatting)
-        self.horizontal_layout.addWidget(self.button_mode_switch)
-
         self.setup()
 
     def setup(self):
@@ -176,9 +70,131 @@ class TopBar(QWidget):
 
         self.setLayout(self.horizontal_layout)
 
-        self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-
         return self
+
+    def addLayoutSpacer(self):
+        # Temporary widgets
+        self.horizontal_layout.addStretch()
+
+    def makeComboFontStyleBox(self) -> QFontComboBox:
+        # ComboBox for font sizes
+        self.combo_font_style = QFontComboBox(self)
+        self.combo_font_style.setToolTip('Change font')
+        self.combo_font_style.setFocusPolicy(Qt.NoFocus)
+        self.combo_font_style.currentFontChanged.connect(self.onFontStyleChanged)
+        self.combo_font_style.setCurrentFont(self.document.currentFont())
+        self.horizontal_layout.addWidget(self.combo_font_style)
+        return self.combo_font_style
+
+    def makeComboFontSizeBox(self) -> QComboBox:
+        # Adds functionality to the ComboBox
+        self.combo_font_size = QComboBox(self)
+        self.combo_font_size.setToolTip('Change font size')
+        self.combo_font_size.addItems(self.list_FontSize)
+        self.combo_font_size.setFixedWidth(60)
+        self.combo_font_size.setFocusPolicy(Qt.NoFocus)
+        self.combo_font_size.currentIndexChanged.connect(self.onFontSizeChanged)
+        self.combo_font_size.setCurrentIndex(11)
+        self.horizontal_layout.addWidget(self.combo_font_size)
+        return self.combo_font_size
+
+    def makeBtnBold(self) -> QPushButton:
+        # Button press to make text bold
+        self.button_bold = QPushButton("B", self)
+        self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
+        self.button_bold.setFixedWidth(33)
+        self.button_bold.setStyleSheet("QPushButton { font:Bold }")
+        self.button_bold.setCheckable(True)
+        self.button_bold.setFocusPolicy(Qt.NoFocus)
+        self.button_bold.clicked.connect(self.document.onFontBoldChanged)
+        self.horizontal_layout.addWidget(self.button_bold)
+        return self.button_bold
+
+    def makeBtnItal(self) -> QPushButton:
+        # Button press to make text italic
+        self.button_ital = QPushButton("I", self)
+        self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
+        self.button_ital.setFixedWidth(33)
+        self.button_ital.setStyleSheet("QPushButton { font:Italic }")
+        self.button_ital.setCheckable(True)
+        self.button_ital.setFocusPolicy(Qt.NoFocus)
+        self.button_ital.clicked.connect(self.document.onFontItalChanged)
+        self.horizontal_layout.addWidget(self.button_ital)
+        return self.button_ital
+
+    def makeBtnStrike(self) -> QPushButton:
+        # Button press to make text strikethrough
+        self.button_strike = QPushButton("S", self)
+        self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
+        self.button_strike.setFixedWidth(33)
+        f = self.button_strike.font()
+        f.setStrikeOut(True)
+        self.button_strike.setFont(f)
+        # self.button_strike.adjustSize()
+        self.button_strike.setStyleSheet("QPushButton { text-decoration: line-through }")
+        self.button_strike.setCheckable(True)
+        self.button_strike.setFocusPolicy(Qt.NoFocus)
+        self.button_strike.clicked.connect(self.document.onFontStrikeChanged)
+        self.horizontal_layout.addWidget(self.button_strike)
+        return self.button_strike
+
+    def makeBtnUnder(self) -> QPushButton:
+        # Button press to underline text
+        self.button_under = QPushButton("U", self)
+        self.button_under.setToolTip('Underline your text. "Ctrl+U"')
+        self.button_under.setFixedWidth(33)
+        self.button_under.setStyleSheet("QPushButton { text-decoration: underline }")
+        self.button_under.setCheckable(True)
+        self.button_under.setFocusPolicy(Qt.NoFocus)
+        self.button_under.clicked.connect(self.document.onFontUnderChanged)
+        self.horizontal_layout.addWidget(self.button_under)
+        return self.button_under
+
+    def makeComboFontColor(self) -> QComboBox:
+        # Button to change text color
+        self.combo_text_color = QComboBox(self)
+        self.combo_text_color.setFixedWidth(33)
+        self.combo_text_color.setFixedHeight(20)
+        model = self.combo_text_color.model()
+        color_list = self.color_dict.values()
+        for i, c in enumerate(color_list):
+            item = QtGui.QStandardItem()
+            item.setBackground(QtGui.QColor(c))
+            model.appendRow(item)
+            self.combo_text_color.setItemData(i, c)
+        self.combo_text_color.currentIndexChanged.connect(self.setColorChange)
+        self.combo_text_color.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_color.setToolTip("Change Text color.")
+        self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
+                                            " QComboBox { background-color: black;"
+                                            "            border: 1px solid gray; }"
+                                            " QComboBox QAbstractItemView { selection-background-color: none; }/")
+        self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.horizontal_layout.addWidget(self.combo_text_color)
+        return self.combo_text_color
+
+    def makeComboTextAlign(self) -> QComboBox:
+        # Adds ability to change alignment of text
+        self.combo_text_align = QComboBox(self)
+        self.combo_text_align.setToolTip('Change text alignment')
+        self.combo_text_align.addItems(self.list_alignments)
+        self.combo_text_align.setFixedWidth(100)
+        self.combo_text_align.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_align.currentIndexChanged.connect(self.onTextAlignmentChanged)
+        self.combo_text_align.setCurrentIndex(0)
+        self.horizontal_layout.addWidget(self.combo_text_align)
+        return self.combo_text_align
+
+    def makeBtnFormatMode(self) -> QPushButton:
+        # Mode Switching button to the very right (after stretch)
+        self.button_mode_switch = QPushButton("Formatting Mode", self)
+        self.button_mode_switch.setToolTip("Enable Document Formatting")
+        self.button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in onEnableFormatting
+        self.button_mode_switch.setCheckable(True)
+        self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
+        self.button_mode_switch.clicked.connect(self.onEnableFormatting)
+        self.horizontal_layout.addWidget(self.button_mode_switch)
+        return self.button_mode_switch
 
     def onEnableFormatting(self, state):
         """
