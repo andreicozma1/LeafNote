@@ -71,14 +71,14 @@ class App(QMainWindow):
         self.top_bar.makeBtnItal()
         self.top_bar.makeBtnStrike()
         self.top_bar.makeBtnUnder()
-        self.top_bar.makeComboFontColor(self.doc_props.color_dict)
-        self.top_bar.makeComboTextAlign(self.doc_props.list_alignments)
+        self.top_bar.makeComboFontColor()
+        self.top_bar.makeComboTextAlign()
         self.top_bar.addLayoutSpacer()
         self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.top_bar.show()
 
         # TODO - fix this function call causing Format Mode button to not have spacer
-        self.updateFormatBtnsState(False, self.top_bar, self.menu_bar)
+        self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
 
         self.setupLayout()
 

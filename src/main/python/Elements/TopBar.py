@@ -113,10 +113,10 @@ class TopBar(QWidget):
         self.horizontal_layout.addWidget(self.button_under)
         return self.button_under
 
-    def makeComboFontColor(self, color_dict) -> QComboBox:
+    def makeComboFontColor(self) -> QComboBox:
         # Button to change text color
         self.combo_text_color = QComboBox(self)
-        color_list = color_dict.values()
+        color_list = self.doc_props.color_dict.values()
 
         def updateTextColor(index):
             self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
@@ -149,12 +149,11 @@ class TopBar(QWidget):
 
         return self.combo_text_color
 
-    def makeComboTextAlign(self, list_alignments) -> QComboBox:
+    def makeComboTextAlign(self) -> QComboBox:
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
         self.combo_text_align.setToolTip('Change text alignment')
-        self.combo_text_align.addItems(list_alignments)
-        self.combo_text_align.setFixedWidth(100)
+        self.combo_text_align.addItems(self.doc_props.dict_align)
         self.combo_text_align.setFocusPolicy(Qt.NoFocus)
         self.combo_text_align.currentIndexChanged.connect(self.document.onTextAlignmentChanged)
         self.combo_text_align.setCurrentIndex(0)
@@ -203,7 +202,7 @@ class TopBar(QWidget):
 
         # update the top bar alignment to the current alignment
         align = self.document.alignment()
-        self.combo_text_align.setCurrentIndex(self.doc_props.list_alignments_align.index(align))
+        self.combo_text_align.setCurrentIndex(list(self.doc_props.dict_align.values()).index(align))
 
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())

@@ -2,7 +2,7 @@ import logging
 
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QAction, QMenuBar
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup
 from PyQt5.QtWidgets import QFileDialog
 
 from Elements import Document
@@ -213,50 +213,48 @@ class MenuBar(QMenuBar):
 
         self.format_menu = self.addMenu('&Format')
 
-        # Sets up submene of 'Text' inside of the 'Format' menu
-        self.text_menu = self.format_menu.addMenu('&Text Style')
-
         # Adds Bold button to text_menu
         self.bold_action = QAction("Bold", app)
         self.bold_action.setShortcut('Ctrl+B')
         self.bold_action.setCheckable(True)
         self.bold_action.triggered.connect(self.document.onFontBoldChanged)
-        self.text_menu.addAction(self.bold_action)
+        self.format_menu.addAction(self.bold_action)
 
         # Adds Italicised button to text_menu
-        self.ital_action = QAction("Italicised", app)
+        self.ital_action = QAction("Italicized", app)
         self.ital_action.setShortcut('Ctrl+I')
         self.ital_action.setCheckable(True)
         self.ital_action.triggered.connect(self.document.onFontItalChanged)
-        self.text_menu.addAction(self.ital_action)
+        self.format_menu.addAction(self.ital_action)
 
         # Adds Strikeout button to text_menu
         self.strike_action = QAction("Strikout", app)
         self.strike_action.setShortcut('Ctrl+Shift+5')
         self.strike_action.setCheckable(True)
         self.strike_action.triggered.connect(self.document.onFontStrikeChanged)
-        self.text_menu.addAction(self.strike_action)
+        self.format_menu.addAction(self.strike_action)
 
         # Adds Underline button to text_menu
         self.under_action = QAction("Underline", app)
         self.under_action.setShortcut('Ctrl+U')
         self.under_action.setCheckable(True)
         self.under_action.triggered.connect(self.document.onFontUnderChanged)
-        self.text_menu.addAction(self.under_action)
+        self.format_menu.addAction(self.under_action)
 
-        # Adds Seperator to text_menu
-        self.text_menu.addSeparator()
+        # Adds separator after font style options
+        self.format_menu.addSeparator()
 
         # Adds Font Color button to text_menu
         self.font_color_action = QAction("Color Picker", app)
         self.font_color_action.triggered.connect(self.document.openColorDialog)
-        self.text_menu.addAction(self.font_color_action)
+        self.format_menu.addAction(self.font_color_action)
 
+        # Add separator after color options
+        self.format_menu.addSeparator()
         # --- create the alignment and indentation menu ---
         # create the left alignment action
         # sets up a submenu for alignment and indentation in the format menu
-        self.align_indent_menu = self.format_menu.addMenu('&Text Align')
-
+        align_group = QActionGroup(self)
         def onTextAlignLeftClicked():
             logging.info("Align Left")
             self.document.setAlignment(Qt.AlignLeft)
@@ -273,32 +271,36 @@ class MenuBar(QMenuBar):
             logging.info("Align Justify")
             self.document.setAlignment(Qt.AlignJustify)
 
-        self.left_align_action = QAction(self.doc_props.list_alignments[0], app)
+        self.left_align_action = QAction(list(self.doc_props.dict_align.keys())[0], app)
         self.left_align_action.setShortcut('Ctrl+Shift+L')
         self.left_align_action.setCheckable(True)
         self.left_align_action.triggered.connect(onTextAlignLeftClicked)
-        self.align_indent_menu.addAction(self.left_align_action)
-
-        # create the center alignment action
-        self.center_align_action = QAction(self.doc_props.list_alignments[1], app)
-        self.center_align_action.setShortcut('Ctrl+Shift+E')
-        self.center_align_action.setCheckable(True)
-        self.center_align_action.triggered.connect(onTextAlignCenterClicked)
-        self.align_indent_menu.addAction(self.center_align_action)
+        align_group.addAction(self.left_align_action)
+        self.format_menu.addAction(self.left_align_action)
 
         # create the right alignment action
-        self.right_align_action = QAction(self.doc_props.list_alignments[2], app)
+        self.right_align_action = QAction(list(self.doc_props.dict_align.keys())[1], app)
         self.right_align_action.setShortcut('Ctrl+Shift+R')
         self.right_align_action.setCheckable(True)
         self.right_align_action.triggered.connect(onTextAlignRightClicked)
-        self.align_indent_menu.addAction(self.right_align_action)
+        align_group.addAction(self.right_align_action)
+        self.format_menu.addAction(self.right_align_action)
+
+        # create the center alignment action
+        self.center_align_action = QAction(list(self.doc_props.dict_align.keys())[2], app)
+        self.center_align_action.setShortcut('Ctrl+Shift+E')
+        self.center_align_action.setCheckable(True)
+        self.center_align_action.triggered.connect(onTextAlignCenterClicked)
+        align_group.addAction(self.center_align_action)
+        self.format_menu.addAction(self.center_align_action)
 
         # create the justify alignment action
-        self.justify_align_action = QAction(self.doc_props.list_alignments[3], app)
+        self.justify_align_action = QAction(list(self.doc_props.dict_align.keys())[3], app)
         self.justify_align_action.setShortcut('Ctrl+Shift+J')
         self.justify_align_action.setCheckable(True)
         self.justify_align_action.triggered.connect(onTextAlignJustifyClicked)
-        self.align_indent_menu.addAction(self.justify_align_action)
+        align_group.addAction(self.justify_align_action)
+        self.format_menu.addAction(self.justify_align_action)
 
     def setFormattingButtonsEnabled(self, state):
         """
@@ -309,13 +311,7 @@ class MenuBar(QMenuBar):
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
         a: QAction
-        for a in self.text_menu.actions():
-            if not a.property("persistent"):
-                a.setEnabled(state)
-
-        # Toggle the state of all buttons in the menu
-        a: QAction
-        for a in self.align_indent_menu.actions():
+        for a in self.format_menu.actions():
             if not a.property("persistent"):
                 a.setEnabled(state)
 

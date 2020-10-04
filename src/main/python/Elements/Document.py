@@ -90,7 +90,7 @@ class Document(TextBox):
         :return: Returns nothing
         """
         logging.info(state)
-        self.setAlignment(self.doc_props.list_alignments_align[state])
+        self.setAlignment(list(self.doc_props.dict_align.values())[state])
 
     def openColorDialog(self):
         """
