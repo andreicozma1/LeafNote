@@ -2,7 +2,8 @@ import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QAction, QColorDialog
+from PyQt5.QtWidgets import QColorDialog
+
 from Elements.TextBox import TextBox
 
 """
