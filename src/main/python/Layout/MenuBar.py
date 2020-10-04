@@ -2,8 +2,8 @@ import logging
 
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QAction, QColorDialog
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import qApp, QAction, QColorDialog
 
 from Elements import Document
 
@@ -29,8 +29,6 @@ class MenuBar():
         logging.info("")
         self.app = app
         self.document = document
-        self.top_bar = top_bar
-        self.bottom_bar = bottom_bar
 
         self.menu = app.menuBar()
         self.menu.setNativeMenuBar(False)
@@ -297,33 +295,48 @@ class MenuBar():
 
         # --- create the alignment and indentation menu ---
         # create the left alignment action
+        def onTextAlignLeftClicked():
+            logging.info("Align Left")
+            self.document.setAlignment(Qt.AlignLeft)
+
+        def onTextAlignCenterClicked():
+            logging.info("Align Center")
+            self.document.setAlignment(Qt.AlignCenter)
+
+        def onTextAlignRightClicked():
+            logging.info("Align Right")
+            self.document.setAlignment(Qt.AlignRight)
+
+        def onTextAlignJustifyClicked():
+            logging.info("Align Justify")
+            self.document.setAlignment(Qt.AlignJustify)
+
         self.left_align_action = QAction("Left Align", app)
         self.left_align_action.setShortcut('Ctrl+Shift+L')
         self.left_align_action.setCheckable(True)
-        self.left_align_action.triggered.connect(self.onTextAlignLeftClicked)
+        self.left_align_action.triggered.connect(onTextAlignLeftClicked)
         self.align_indent_menu.addAction(self.left_align_action)
 
         # create the center alignment action
         self.center_align_action = QAction("Center Align", app)
         self.center_align_action.setShortcut('Ctrl+Shift+E')
         self.center_align_action.setCheckable(True)
-        self.center_align_action.triggered.connect(self.onTextAlignCenterClicked)
+        self.center_align_action.triggered.connect(onTextAlignCenterClicked)
         self.align_indent_menu.addAction(self.center_align_action)
 
         # create the right alignment action
         self.right_align_action = QAction("Right Align", app)
         self.right_align_action.setShortcut('Ctrl+Shift+R')
         self.right_align_action.setCheckable(True)
-        self.right_align_action.triggered.connect(self.onTextAlignRightClicked)
+        self.right_align_action.triggered.connect(onTextAlignRightClicked)
         self.align_indent_menu.addAction(self.right_align_action)
 
         # create the justify alignment action
         self.justify_align_action = QAction("Justify Align", app)
         self.justify_align_action.setShortcut('Ctrl+Shift+J')
         self.justify_align_action.setCheckable(True)
-        self.justify_align_action.triggered.connect(self.onTextAlignJustifyClicked)
+        self.justify_align_action.triggered.connect(onTextAlignJustifyClicked)
         self.align_indent_menu.addAction(self.justify_align_action)
-
 
     def openColorDialog(self):
         """
@@ -334,38 +347,6 @@ class MenuBar():
 
         if color.isValid():
             self.app.document.setTextColor(color)
-
-    def onTextAlignLeftClicked(self):
-        """
-        This will left align the selected text in the document
-        :return: Returns nothing
-        """
-        logging.info("Align Left")
-        self.document.setAlignment(Qt.AlignLeft)
-
-    def onTextAlignCenterClicked(self):
-        """
-            This will center align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Center")
-        self.document.setAlignment(Qt.AlignCenter)
-
-    def onTextAlignRightClicked(self):
-        """
-            This will right align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Right")
-        self.document.setAlignment(Qt.AlignRight)
-
-    def onTextAlignJustifyClicked(self):
-        """
-            This will justify align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Justify")
-        self.document.setAlignment(Qt.AlignJustify)
 
     def setFormattingButtonsEnabled(self, state):
         """
