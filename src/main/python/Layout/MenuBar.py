@@ -28,7 +28,6 @@ class MenuBar(QMenuBar):
         self.document = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
-        self.show()
 
         self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.document.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -213,11 +212,9 @@ class MenuBar(QMenuBar):
         logging.info("formatMenuSetup")
 
         self.format_menu = self.addMenu('&Format')
-        # Sets up submene of 'Text' inside of the 'Format' menu
-        self.text_menu = self.format_menu.addMenu('&Font Style')
 
-        # sets up a submenu for alignment and indentation in the format menu
-        self.align_indent_menu = self.format_menu.addMenu('&Align && Indent')
+        # Sets up submene of 'Text' inside of the 'Format' menu
+        self.text_menu = self.format_menu.addMenu('&Text Style')
 
         # Adds Bold button to text_menu
         self.bold_action = QAction("Bold", app)
@@ -257,6 +254,9 @@ class MenuBar(QMenuBar):
 
         # --- create the alignment and indentation menu ---
         # create the left alignment action
+        # sets up a submenu for alignment and indentation in the format menu
+        self.align_indent_menu = self.format_menu.addMenu('&Text Align')
+
         def onTextAlignLeftClicked():
             logging.info("Align Left")
             self.document.setAlignment(Qt.AlignLeft)

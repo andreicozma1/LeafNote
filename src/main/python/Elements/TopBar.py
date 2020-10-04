@@ -31,7 +31,6 @@ class TopBar(QWidget):
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
         self.setLayout(self.horizontal_layout)
-        self.show()
 
         document.selectionChanged.connect(self.updateFormatOnSelectionChange)
         document.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)

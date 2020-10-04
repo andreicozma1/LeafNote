@@ -62,6 +62,7 @@ class App(QMainWindow):
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
         self.setMenuBar(self.menu_bar)
+        self.menu_bar.show()
 
         self.top_bar = TopBar(self.document, self.doc_props)
         self.top_bar.makeComboFontStyleBox()
@@ -73,7 +74,8 @@ class App(QMainWindow):
         self.top_bar.makeComboFontColor(self.doc_props.color_dict)
         self.top_bar.makeComboTextAlign(self.doc_props.list_alignments)
         self.top_bar.addLayoutSpacer()
-        self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.top_bar.show()
 
         self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
 
