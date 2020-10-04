@@ -1,4 +1,5 @@
 import codecs
+import glob
 import os
 import logging
 import numpy as np
@@ -14,7 +15,7 @@ import zipfile
 from Utils.DialogBuilder import DialogBuilder
 
 """
-This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/\
+This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/
 The word embeddings are taken from standford pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
 In this file you will find the implementation of the text rank algorithm. The goals is to
 take in an article or any amount of text and develop a summary of the text.
@@ -32,6 +33,7 @@ class Summarizer:
         """
         Sets up class variables.
         """
+        logging.info("Created instance of summarizer class")
         handleDownloads()
         from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings
@@ -50,6 +52,9 @@ class Summarizer:
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
         """
+        if text == "":
+            logging.warning("Document has no text")
+
         handleDownloads()
         from nltk.tokenize import sent_tokenize
 
@@ -58,17 +63,6 @@ class Summarizer:
 
         # clean the data of unnecessary values
         clean_sentences = self.cleanSentences(sentences)
-
-        # Extract word vectors and create a dictionary with key value pairs 'word', [word vector]
-        # https://nlp.stanford.edu/projects/glove/ for the precalculated word vectors
-        # self.word_embeddings = {}
-        # f = open('glove.6B.100d.txt', encoding='utf-8')
-        # for line in f:
-        #     values = line.split()
-        #     word = values[0]
-        #     coefs = np.asarray(values[1:], dtype='float32')
-        #     self.word_embeddings[word] = coefs
-        # f.close()
 
         # create vectors for each of our sentences
         self.sentence_vectors = []
@@ -165,13 +159,13 @@ def handleDownloads():
     try:
         nltk.data.find('corpora/stopwords')
     except LookupError:
-        print("Downloading nltk stopwords")
+        logging.info("Downloading nltk stopwords")
         nltk.download('stopwords')
 
     try:
         nltk.data.find('tokenizers/punkt')
     except LookupError:
-        print("Downloading nltk punkt")
+        logging.info("Downloading nltk punkt")
         nltk.download('punkt')
 
 
@@ -194,33 +188,48 @@ def getWordEmbeddings(path, app, download=True):
         # if cannot find the .zip file
         if not os.path.exists(path + 'glove.6B.100d.zip'):
             if not download:
+                logging.info("Word embeddings not found in directory")
                 download_dialog = DialogBuilder(app, "Could not Find Word Vectors",
                                                 "Would you like to download the dependencies?",
                                                 "The directory you selected does not contain the necessary files.")
                 buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
                 download_dialog.addButtonBox(buttonBox)
-                if not download_dialog.exec():
-                    return
-            # create the directory to hold  the word embeddings
-            path = os.path.join(path, 'WordEmbeddings/')
-            print('########',path)
-            os.mkdir(path)
 
+                if not download_dialog.exec():
+                    logging.info("User chose not to download files")
+                    return
+
+            # create the directory to hold  the word embeddings
+            path = os.path.join(path, 'WordEmbeddings')
+            if not os.path.exists(path):
+                logging.info("Creating WordEmbeddings directory")
+                os.mkdir(path)
+            else:
+                logging.info("WordEmbeddings directory already exists. Removing all contents")
+                files = glob.glob(os.path.join(path, '*'))
+                for f in files:
+                    os.remove(f)
+
+            logging.info("Started Downloading Word Embeddings")
             # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
             # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
             url = "http://hunterprice.org/files/glove.6B.100d.zip"
             wget.download(url, out=path)
 
+            logging.info("Finished downloading")
+
         # create a directory for the files
         # uncompress the files
-        with zipfile.ZipFile(path+'glove.6B.100d.zip', 'r') as zip_ref:
+        logging.info("Unzipping")
+        with zipfile.ZipFile(os.path.join(path, 'glove.6B.100d.zip'), 'r') as zip_ref:
             zip_ref.extractall(path)
+        logging.info("Finished unzipping")
 
         # delete the compressed file
-        os.remove(path+'glove.6B.100d.zip')
+        os.remove(os.path.join(path,'glove.6B.100d.zip'))
+        logging.info("Deleted zip file")
 
-    logging.info("Downloaded Word Embeddings")
-    path = path + "glove.6B.100d"
+    path = os.path.join(path, "glove.6B.100d")
 
     # check to make sure the glove files exist
     if not os.path.exists(path + '.vocab'):
@@ -233,12 +242,13 @@ def getWordEmbeddings(path, app, download=True):
         return
 
     # read the files into a python dict
+    logging.info("Attempting to read dictionary contents")
     with codecs.open(path + '.vocab', 'r', 'utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
     wv = np.load(path + '.npy')
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
+    logging.info("Finished reading dictionary contents")
 
     app.summarizer = Summarizer(model)
-

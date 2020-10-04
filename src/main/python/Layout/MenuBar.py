@@ -459,24 +459,14 @@ class MenuBar():
         summary_act.triggered.connect(self.onSummaryAction)
         self.tools_menu.addAction(summary_act)
 
-
-
     def onSummaryAction(self):
-        # if summarizer has not been created create it `
+        # if summarizer has not been created create it
         if self.app.summarizer is None:
-            # check if we have the files
-
-            # check if we have the zip
-
+            logging.info("Missing dependencies. Prompting user")
             # prompt the user to select or download the word word_embeddings
-            download_dialog = DialogBuilder(self.app, "Unmet Dependencies",
-                                            "Would you like to download the needed dependencies?",
-                                            "In order to use this summarization feature you need certain "
-                                            "dependencies.\n"
-                                            "If you already have the files downloaded click the open button and "
-                                            "select the directory containing the files.\n"
-                                            "If you want to download the files click the yes button and select the "
-                                            "directory where you would like to download the files.")
+            download_dialog = DialogBuilder(self.app, "Dictionaries",
+                                            "Would you like to download required dictionaries?",
+                                            "If you have already downloaded them previously click open to select the location on disk.")
             buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
             buttonBox.clicked.connect(self.onWordVecDownload)
             download_dialog.addButtonBox(buttonBox)
@@ -484,18 +474,18 @@ class MenuBar():
 
         # if there is already an instance of the summarizer
         else:
-            print(self.app.summarizer.summarize(self.app.document.toPlainText()))
+            logging.info(self.app.summarizer.summarize(self.app.document.toPlainText()))
 
     def onWordVecDownload(self, button):
-        print(button.text())
         from Utils.DocumentSummarizer import  getWordEmbeddings
         if button.text() == '&Yes':
+            logging.info("User selected Yes")
             download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder To Download To",
                                                              "/home",
                                                              QFileDialog.ShowDirsOnly
                                                              | QFileDialog.DontResolveSymlinks)
             if download_path == "":
-                logging.info("User cancelled Download")
+                logging.info("User Cancelled Summarizer Prompt")
             download_path = download_path + os.path.sep
             try:
                 _thread.start_new_thread(getWordEmbeddings, (download_path, self.app))
@@ -503,6 +493,7 @@ class MenuBar():
                 logging.error("Unable to start thread")
 
         elif button.text() == 'Open':
+            logging.info("User selected Open")
             download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder With Word Vector Files",
                                                              "/home",
                                                              QFileDialog.ShowDirsOnly
@@ -517,7 +508,7 @@ class MenuBar():
             except:
                 logging.error("Unable to start thread")
         else:
-            logging.info("User cancelled download")
+            logging.info("User selected Cancel")
 
     # --------------------------------------------------------------------------------
 
