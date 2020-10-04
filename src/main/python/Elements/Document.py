@@ -2,7 +2,7 @@ import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor
-
+from PyQt5.QtWidgets import QAction, QColorDialog
 from Elements.TextBox import TextBox
 
 """
@@ -90,6 +90,16 @@ class Document(TextBox):
         """
         logging.info(state)
         self.setAlignment(self.doc_props.list_alignments_align[state])
+
+    def openColorDialog(self):
+        """
+        Opens the color widget and checks for a valid color then sets document font color
+        :return: returns nothing
+        """
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.setTextColor(color)
 
     def onTextColorChanged(self, index):
         """

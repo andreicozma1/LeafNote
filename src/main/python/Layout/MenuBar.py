@@ -2,7 +2,7 @@ import logging
 
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QAction, QColorDialog
+from PyQt5.QtWidgets import QAction, QMenuBar
 from PyQt5.QtWidgets import QFileDialog
 
 from Elements import Document
@@ -12,25 +12,18 @@ all properties and functionalities of the menu bar
 """
 
 
-class MenuBar():
+class MenuBar:
     """
     Class to hold and customize a QPlainTextEdit Widget
     """
 
-    def __init__(self, app, document, top_bar, bottom_bar):
+    def __init__(self, menu_bar: QMenuBar):
         """
         sets up the menu bar
-        :param app: reference to application
-        :param document: reference to document
-        :param top_bar: reference to top bar
-        :param bottom_bar: reference to bottom bar
         :return: returns nothing
         """
         logging.info("")
-        self.app = app
-        self.document = document
-
-        self.menu = app.menuBar()
+        self.menu = menu_bar
         self.menu.setNativeMenuBar(False)
 
     # --------------------------------------------------------------------------------
@@ -55,56 +48,34 @@ class MenuBar():
         # this function opens a dialog for the user to select a file to open. When the user
         # selects a file it will show its text in the middle of the window
         def onOpenBtn():
-            """
-            function of the open button
-            :return: returns nothing
-            """
             logging.info("onOpenBtn")
             # this is opens the file dialogue in the project path
             home_dir = str(QDir.currentPath())
             # opens a file dialogue for the user to select a file to open
-            file_name = QFileDialog.getOpenFileName(self.app, 'Open file', home_dir)
+            file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
             # open the chosen file and show the text in the text editor
             file_manager.openDocument(file_name[0])
 
         def onOpenFolderBtn():
-            """
-            function of the open folder button
-            :return: returns nothing
-            """
-            # open the dialogue using the home directory as root
             logging.info("onOpenFolderBtn")
             # opens a file dialogue for the user to select a file to open
-            folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', str(QDir.currentPath()))
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', str(QDir.currentPath()))
             # if the user selected a new folder
             if folder_name != "":
-                app.app_props.mainPath = folder_name
-                app.left_menu.updateDirectory(self.app.app_props.mainPath)
+                app.left_menu.updateDirectory(folder_name)
 
         # this saves the current file that is shown in the document
         def onSaveBtn():
-            """
-            function of the save button
-            :return: returns nothing
-            """
             logging.info("onSaveBtn")
             file_manager.saveDocument()
 
         # TODO - save the file as a specified name in any location on disk
         def onSaveAsBtn():
-            """
-            function of the save as button
-            :return: returns nothing
-            """
             logging.info("saveAsFile")
-            new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
+            new_file_path = QFileDialog.getSaveFileName(app, 'Save File')
             file_manager.saveAsDocument(new_file_path[0])
 
         def onExitBtn():
-            """
-            exits program on quit
-            :return: returns nothing
-            """
             logging.info("onExitBtn")
             file_manager.closeAll()
             app.close()
@@ -243,7 +214,7 @@ class MenuBar():
 
     # --------------------------------------------------------------------------------
     # TODO - Add functionality to tools tab - tbd
-    def makeFormatMenu(self, app, document, top_bar):
+    def makeFormatMenu(self, app, document, doc_props):
         """
         sets up the tools tabs drop menu
         :return: returns nothing
@@ -290,63 +261,53 @@ class MenuBar():
 
         # Adds Font Color button to text_menu
         self.font_color_action = QAction("Font Color", app)
-        self.font_color_action.triggered.connect(self.openColorDialog)
+        self.font_color_action.triggered.connect(document.openColorDialog)
         self.text_menu.addAction(self.font_color_action)
 
         # --- create the alignment and indentation menu ---
         # create the left alignment action
         def onTextAlignLeftClicked():
             logging.info("Align Left")
-            self.document.setAlignment(Qt.AlignLeft)
+            document.setAlignment(Qt.AlignLeft)
 
         def onTextAlignCenterClicked():
             logging.info("Align Center")
-            self.document.setAlignment(Qt.AlignCenter)
+            document.setAlignment(Qt.AlignCenter)
 
         def onTextAlignRightClicked():
             logging.info("Align Right")
-            self.document.setAlignment(Qt.AlignRight)
+            document.setAlignment(Qt.AlignRight)
 
         def onTextAlignJustifyClicked():
             logging.info("Align Justify")
-            self.document.setAlignment(Qt.AlignJustify)
+            document.setAlignment(Qt.AlignJustify)
 
-        self.left_align_action = QAction("Left Align", app)
+        self.left_align_action = QAction(doc_props.list_alignments[0], app)
         self.left_align_action.setShortcut('Ctrl+Shift+L')
         self.left_align_action.setCheckable(True)
         self.left_align_action.triggered.connect(onTextAlignLeftClicked)
         self.align_indent_menu.addAction(self.left_align_action)
 
         # create the center alignment action
-        self.center_align_action = QAction("Center Align", app)
+        self.center_align_action = QAction(doc_props.list_alignments[1], app)
         self.center_align_action.setShortcut('Ctrl+Shift+E')
         self.center_align_action.setCheckable(True)
         self.center_align_action.triggered.connect(onTextAlignCenterClicked)
         self.align_indent_menu.addAction(self.center_align_action)
 
         # create the right alignment action
-        self.right_align_action = QAction("Right Align", app)
+        self.right_align_action = QAction(doc_props.list_alignments[2], app)
         self.right_align_action.setShortcut('Ctrl+Shift+R')
         self.right_align_action.setCheckable(True)
         self.right_align_action.triggered.connect(onTextAlignRightClicked)
         self.align_indent_menu.addAction(self.right_align_action)
 
         # create the justify alignment action
-        self.justify_align_action = QAction("Justify Align", app)
+        self.justify_align_action = QAction(doc_props.list_alignments[3], app)
         self.justify_align_action.setShortcut('Ctrl+Shift+J')
         self.justify_align_action.setCheckable(True)
         self.justify_align_action.triggered.connect(onTextAlignJustifyClicked)
         self.align_indent_menu.addAction(self.justify_align_action)
-
-    def openColorDialog(self):
-        """
-        Opens the color widget and checks for a valid color then sets document font color
-        :return: returns nothing
-        """
-        color = QColorDialog.getColor()
-
-        if color.isValid():
-            self.app.document.setTextColor(color)
 
     def setFormattingButtonsEnabled(self, state):
         """

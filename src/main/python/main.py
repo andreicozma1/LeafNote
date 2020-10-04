@@ -54,14 +54,14 @@ class App(QMainWindow):
         self.document = Document(self.doc_props)
 
         self.top_bar = TopBar()
-        self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox(self.document)
-        self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
-        self.top_bar_btn_bold = self.top_bar.makeBtnBold(self.document)
-        self.top_bar_btn_ital = self.top_bar.makeBtnItal(self.document)
-        self.top_bar_btn_strike = self.top_bar.makeBtnStrike(self.document)
-        self.top_bar_btn_under = self.top_bar.makeBtnUnder(self.document)
-        self.top_bar_combo_font_color = self.top_bar.makeComboFontColor(self.document, self.doc_props.color_dict)
-        self.top_bar_combo_text_align = self.top_bar.makeComboTextAlign(self.document, self.doc_props.list_alignments)
+        self.top_bar.makeComboFontStyleBox(self.document)
+        self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
+        self.top_bar.makeBtnBold(self.document)
+        self.top_bar.makeBtnItal(self.document)
+        self.top_bar.makeBtnStrike(self.document)
+        self.top_bar.makeBtnUnder(self.document)
+        self.top_bar.makeComboFontColor(self.document, self.doc_props.color_dict)
+        self.top_bar.makeComboTextAlign(self.document, self.doc_props.list_alignments)
         self.top_bar.addLayoutSpacer()
         self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.top_bar.show()
@@ -71,16 +71,16 @@ class App(QMainWindow):
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
 
-        self.menubar = MenuBar(self, self.document, self.top_bar, self.bottom_bar)
-        self.menubar.makeFileMenu(self, self.file_manager)
-        self.menubar.makeEditMenu(self, self.document)
-        self.menubar.makeViewMenu(self, self.bottom_bar)
-        self.menubar.makeFormatMenu(self, self.document, self.top_bar)
+        self.menu_bar = MenuBar(self.menuBar())
+        self.menu_bar.makeFileMenu(self, self.file_manager)
+        self.menu_bar.makeEditMenu(self, self.document)
+        self.menu_bar.makeViewMenu(self, self.bottom_bar)
+        self.menu_bar.makeFormatMenu(self, self.document, self.doc_props)
 
         self.document.selectionChanged.connect(self.onSelectionChanged)
         self.document.currentCharFormatChanged.connect(self.onSelectionChanged)
 
-        self.updateFormattingBtnsState(True, self.top_bar, self.menubar)
+        self.updateFormattingBtnsState(True, self.top_bar, self.menu_bar)
 
         self.setupLayout()
 
@@ -139,8 +139,9 @@ class App(QMainWindow):
         menubar.setFormattingButtonsEnabled(state)
 
     def onSelectionChanged(self):
+        logging.info("")
         self.top_bar.updateFormatOnSelectionChange(self.document, self.doc_props)
-        self.menubar.updateFormatOnSelectionChange(self.document)
+        self.menu_bar.updateFormatOnSelectionChange(self.document)
 
     def setupLayout(self):
         """

@@ -36,5 +36,5 @@ class DocProps():
         # List for font sizes
         self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
                               "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
-        self.list_alignments = ["Align Left", "Align Right", "Align Center", " Align Justify"]
+        self.list_alignments = ["Left", "Right", "Center", " Justify"]
         self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
