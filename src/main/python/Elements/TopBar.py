@@ -31,6 +31,7 @@ class TopBar(QWidget):
         self.horizontal_layout.setSpacing(3)
         self.setLayout(self.horizontal_layout)
 
+
     def addLayoutSpacer(self):
         # Temporary widgets
         self.horizontal_layout.addStretch()

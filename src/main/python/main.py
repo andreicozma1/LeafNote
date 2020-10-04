@@ -64,16 +64,23 @@ class App(QMainWindow):
         self.top_bar_combo_text_align = self.top_bar.makeComboTextAlign(self.document, self.doc_props.list_alignments)
         self.top_bar.addLayoutSpacer()
         self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
-        self.document.selectionChanged.connect(self.onSelectionChanged)
         self.top_bar.show()
-        self.updateFormattingBtnsState(False)
 
         # self.top_bar.setLayout(self.top_bar.horizontal_layout)
 
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
 
-        self.menubar = MenuBar(self, self.file_manager, self.document, self.top_bar, self.bottom_bar)
+        self.menubar = MenuBar(self, self.document, self.top_bar, self.bottom_bar)
+        self.menubar.makeFileMenu(self, self.file_manager)
+        self.menubar.makeEditMenu(self, self.document)
+        self.menubar.makeViewMenu(self, self.bottom_bar)
+        self.menubar.makeFormatMenu(self, self.document, self.top_bar)
+
+        self.document.selectionChanged.connect(self.onSelectionChanged)
+        self.document.currentCharFormatChanged.connect(self.onSelectionChanged)
+
+        self.updateFormattingBtnsState(True, self.top_bar, self.menubar)
 
         self.setupLayout()
 
@@ -127,11 +134,13 @@ class App(QMainWindow):
             logging.info("Convert back to a txt file")
             self.top_bar_btn_format_mode.setChecked(False)
 
-    def updateFormattingBtnsState(self, state: bool):
-        self.top_bar.setFormattingButtonsEnabled(state)
+    def updateFormattingBtnsState(self, state: bool, top_bar, menubar):
+        top_bar.setFormattingButtonsEnabled(state)
+        menubar.setFormattingButtonsEnabled(state)
 
     def onSelectionChanged(self):
         self.top_bar.updateFormatOnSelectionChange(self.document, self.doc_props)
+        self.menubar.updateFormatOnSelectionChange(self.document)
 
     def setupLayout(self):
         """
