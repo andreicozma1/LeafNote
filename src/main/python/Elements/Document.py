@@ -1,9 +1,9 @@
+import logging
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from Elements.TextBox import TextBox
+from PyQt5.QtGui import QFont, QColor
 
-import logging
+from Elements.TextBox import TextBox
 
 """
 The active document - area where user types
@@ -15,13 +15,15 @@ class Document(TextBox):
     Creates the widget in the middle of the text editor
     where the text is input and displayed
     """
-    def __init__(self):
+
+    def __init__(self, doc_props):
         """
         creates the default layout of the text document
         :return: returns nothing
         """
         super(Document, self).__init__("")
         logging.info("")
+        self.doc_props = doc_props
 
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
@@ -64,6 +66,40 @@ class Document(TextBox):
         font_format = self.currentCharFormat()
         font_format.setFontStrikeOut(state)
         self.setCurrentCharFormat(font_format)
+
+    def onFontStyleChanged(self, state):
+        """
+        Sets the font to the new font
+        :return: returns nothing
+        """
+        logging.info(state)
+        self.setCurrentFont(state)
+
+    def onFontSizeChanged(self, state):
+        """
+        Sets the current sets the font size from the ComboBox
+        :return: returns nothing
+        """
+        logging.info(state)
+        self.setFontPointSize(int(state))
+
+    def onTextAlignmentChanged(self, state):
+        """
+        Sets the current text alignment to  the ComboBox
+        :return: Returns nothing
+        """
+        logging.info(state)
+        self.setAlignment(self.doc_props.list_alignments_align[state])
+
+    def onTextColorChanged(self, index):
+        """
+        set the color the user selects to the text
+        :param index: the location of color in the color_dict
+        :return: returns nothing
+        """
+        logging.info(index)
+        color_list: list = list(self.doc_props.color_dict.values())
+        self.setTextColor(QColor(color_list[index]))
 
     def resetFormatting(self):
         """

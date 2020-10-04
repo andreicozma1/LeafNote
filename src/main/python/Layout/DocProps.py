@@ -1,5 +1,6 @@
-from PyQt5.QtCore import Qt
 import logging
+
+from PyQt5.QtCore import Qt
 
 """
 holds the class with the document properties
@@ -10,6 +11,7 @@ class DocProps():
     """
     class has the default document properties
     """
+
     def __init__(self):
         """
         the default properties for the document

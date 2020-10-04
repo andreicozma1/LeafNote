@@ -3,8 +3,6 @@ import logging
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QTextEdit
 
-import logging
-
 """
 all properties and set of of text box
 """
@@ -14,6 +12,7 @@ class TextBox(QTextEdit):
     """
     Class to hold and customize a QPlainTextEdit Widget
     """
+
     def __init__(self, default_text: str = None):
         """
         creates the text box

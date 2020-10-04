@@ -3,8 +3,6 @@ import logging
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter, QStackedLayout
 
-import logging
-
 """
 sets the way the application will be layed out
 """
@@ -14,6 +12,7 @@ class Layout(QWidget):
     """
     class that hold the layout properties
     """
+
     def __init__(self, appProps, layoutProps):
         """
         sets up the inital workspace

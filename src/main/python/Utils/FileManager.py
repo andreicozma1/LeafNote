@@ -3,7 +3,7 @@ import os
 
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog
-import logging
+
 
 class FileManager:
     """
@@ -121,14 +121,14 @@ class FileManager:
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
                     self.app.document.resetFormatting()
-                self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
+                self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
                 self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
                 self.app.document.updateTextBox("")
-                self.app.top_bar.setFormattingEnabled(False)
+                self.app.top_bar.setFormattingButtonsEnabled(False)
                 self.app.top_bar.button_mode_switch.setChecked(False)
 
         # if it does not exist print error messages
@@ -148,7 +148,7 @@ class FileManager:
         self.current_document = None
         self.open_documents.clear()
         self.app.document.updateTextBox("")
-        self.app.top_bar.setFormattingEnabled(False)
+        self.app.top_bar.setFormattingButtonsEnabled(False)
         self.app.top_bar.button_mode_switch.setChecked(False)
 
     def openDocument(self, path: str):
@@ -193,7 +193,7 @@ class FileManager:
         self.app.document.textCursor().clearSelection()
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
-        self.app.top_bar.setFormattingEnabled(self.current_document.suffix() == 'lef')
+        self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
         self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
@@ -279,9 +279,7 @@ class FileManager:
 
         # converting back from a formatted file. Reset all formatting and button selections
         self.app.document.resetFormatting()
-        self.app.top_bar.setFormattingEnabled(False)
-
-
+        self.app.top_bar.setFormattingButtonsEnabled(False)
 
     def toLef(self):
         """
@@ -334,7 +332,6 @@ class FileManager:
         self.writeFileData(path, "")
         self.openDocument(path)
         logging.info(' Created NewFile - ', path)
-
 
     def printAll(self):
         """

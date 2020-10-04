@@ -1,9 +1,9 @@
+import logging
+
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
-
-import logging
 
 """
 all properties and functionalities of the menu bar
@@ -14,6 +14,7 @@ class MenuBar():
     """
     Class to hold and customize a QPlainTextEdit Widget
     """
+
     def __init__(self, app, file_manager, document, top_bar, bottom_bar):
         """
         sets up the menu bar
@@ -383,7 +384,6 @@ class MenuBar():
         self.document.setAlignment(Qt.AlignCenter)
         self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignCenter))
 
-
     def onTextAlignRightClicked(self):
         """
             This will right align the selected text in the document
@@ -421,7 +421,6 @@ class MenuBar():
             if not a.property("persistent"):
                 a.setEnabled(state)
 
-
     def updateFormatOnSelectionChange(self):
         """
         selected text format will be checked in menu bar
@@ -441,6 +440,7 @@ class MenuBar():
         for a in self.text_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+
     # --------------------------------------------------------------------------------
 
     """
