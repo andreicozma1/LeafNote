@@ -78,7 +78,7 @@ class App(QMainWindow):
         self.top_bar.show()
 
         # TODO - fix this function call causing Format Mode button to not have spacer
-        self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
+        self.updateFormatBtnsState(False, self.top_bar, self.menu_bar)
 
         self.setupLayout()
 
