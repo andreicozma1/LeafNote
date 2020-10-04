@@ -1,7 +1,6 @@
 import logging
 
 from PyQt5.QtCore import QDir
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
@@ -20,7 +19,7 @@ class MenuBar(QMenuBar):
 
     def __init__(self, document: Document, doc_props: DocProps):
         """
-        sets up the menu bar
+        Sets up the System MenuBar
         :return: returns nothing
         """
         super(MenuBar, self).__init__()
@@ -32,8 +31,7 @@ class MenuBar(QMenuBar):
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
-    # =====================================================================================================================--
-
+    # =====================================================================================
     def makeFileMenu(self, app, file_manager):
         """
         sets up the file tabs drop menu
@@ -77,141 +75,88 @@ class MenuBar(QMenuBar):
             file_manager.closeAll()
             app.close()
 
-        self.file_menu = self.addMenu('&File')
+        self.menu_file = self.addMenu('&File')
+
+        # ========= START FILE MENU SECTION =========
+        def makeFileAction(name: str, shortcut: str, signal) -> QAction:
+            file_action = QAction(name, app)
+            file_action.setShortcut(shortcut)
+            file_action.triggered.connect(signal)
+            return file_action
 
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.file_menu.addAction(new_file_act)
+        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
+        # ========= END FILE MENU SECTION =========
 
-        # opens a dialogue to chose a file an open it
-        open_file_act = QAction("&Open...", app)
-        open_file_act.setStatusTip('Open File')
-        open_file_act.triggered.connect(onOpenBtn)
-        self.file_menu.addAction(open_file_act)
+        return self.menu_file
 
-        # open a folder as a workspace, showing the directory tree in the left menu
-        open_folder_act = QAction("&Open Folder...", app)
-        open_folder_act.setStatusTip('Open Folder')
-        open_folder_act.triggered.connect(onOpenFolderBtn)
-        self.file_menu.addAction(open_folder_act)
-
-        # adds line to separate options
-        self.file_menu.addSeparator()
-
-        # save the open file
-        save_file = QAction("&Save...", app)
-        save_file.setStatusTip('Save')
-        save_file.setShortcut('ctrl+s')
-        save_file.triggered.connect(onSaveBtn)
-        self.file_menu.addAction(save_file)
-
-        save_as_file = QAction("&Save As...", app)
-        save_as_file.setStatusTip('Save As')
-        save_as_file.setShortcut('ctrl+shift+s')
-        save_as_file.triggered.connect(onSaveAsBtn)
-        self.file_menu.addAction(save_as_file)
-
-        # adds line to separate options
-        self.file_menu.addSeparator()
-
-        # quit main window
-        exit_act = QAction("&Exit", app)
-        exit_act.setShortcut('Ctrl+Q')
-        exit_act.setStatusTip('Exit application')
-        exit_act.triggered.connect(onExitBtn)
-        self.file_menu.addAction(exit_act)
-
-        return self.file_menu
-
-    # =====================================================================================================================--
-
+    # =====================================================================================
     def makeEditMenu(self, app):
         """
-        sets up the edit tabs drop menu
-        :return: returns nothing
+        Create Edit Menu
+        :return: the menu created
         """
         logging.info("makeEditMenu")
+        self.menu_edit = self.addMenu('&Edit')
 
-        self.edit_menu = self.addMenu('&Edit')
+        # ========= START EDIT MENU SECTION =========
+        def makeEditAction(name: str, shortcut: str, signal) -> QAction:
+            edit_action = QAction(name, app)
+            edit_action.setShortcut(shortcut)
+            edit_action.triggered.connect(signal)
+            return edit_action
 
-        # undo button and function
-        undo_act = QAction("&Undo", app)
-        undo_act.setShortcut('Ctrl+z')
-        undo_act.triggered.connect(self.doc.undo)
-        self.edit_menu.addAction(undo_act)
+        # Add actions
+        self.menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
+        self.menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
+        self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
+        self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        # ========= END EDIT MENU SECTION =========
+        return self.menu_edit
 
-        # redo button and function
-        redo_act = QAction("&Redo", app)
-        redo_act.setShortcut('Ctrl+Shift+z')
-        redo_act.triggered.connect(self.doc.redo)
-        self.edit_menu.addAction(redo_act)
-
-        # adds line to separate options
-        self.edit_menu.addSeparator()
-
-        # select all button and function
-        select_all_act = QAction("&Select All", app)
-        select_all_act.setShortcut('Ctrl+a')
-        select_all_act.triggered.connect(self.doc.selectAll)
-        self.edit_menu.addAction(select_all_act)
-
-        # adds line to separate options
-        self.edit_menu.addSeparator()
-
-        # cut button and function
-        cut_act = QAction("&Cut", app)
-        cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.doc.cut)
-        self.edit_menu.addAction(cut_act)
-
-        # copy button and function
-        copy_act = QAction("&Copy", app)
-        copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.doc.copy)
-        self.edit_menu.addAction(copy_act)
-
-        # paste button and function
-        paste_act = QAction("&Paste", app)
-        paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.doc.paste)
-        self.edit_menu.addAction(paste_act)
-
-    # =====================================================================================================================--
-
+    # =====================================================================================
     def makeViewMenu(self, app, bottom_bar) -> QMenu:
         """
-        Create Format Menu
+        Create View Menu
         :return: the menu created
         """
         logging.info("makeViewMenu")
+        self.menu_view = self.addMenu('&View')
 
-        self.view_menu = self.addMenu('&View')
+        # ========= START VIEW MENU SECTION =========
+        def makeViewAction(name: str, shortcut: str, signal) -> QAction:
+            view_action = QAction(name, app)
+            view_action.setShortcut(shortcut)
+            view_action.triggered.connect(signal)
+            return view_action
 
-        zoom_in_act = QAction("&Zoom In", app)
-        zoom_in_act.setShortcut('ctrl+=')
-        zoom_in_act.triggered.connect(bottom_bar.onZoomInClicked)
-        self.view_menu.addAction(zoom_in_act)
+        self.menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
+        self.menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
+        self.menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+        # ========= END VIEW MENU SECTION =========
+        return self.menu_view
 
-        zoom_out_act = QAction("&Zoom Out", app)
-        # zoom_out_act.setShortcut('ctrl+-')
-        zoom_out_act.setShortcut('ctrl+-')
-        zoom_out_act.triggered.connect(bottom_bar.onZoomOutClicked)
-        self.view_menu.addAction(zoom_out_act)
-
-        zoom_r_act = QAction("&Zoom Reset", app)
-        zoom_r_act.triggered.connect(bottom_bar.resetZoom)
-        self.view_menu.addAction(zoom_r_act)
-        return self.view_menu
-
-    # =====================================================================================================================--
+    # =====================================================================================
     def makeFormatMenu(self, app) -> QMenu:
         """
         Create Format Menu
         :return: the menu created
         """
         logging.info("formatMenuSetup")
-        self.format_menu = self.addMenu('&Format')
+        self.menu_format = self.addMenu('&Format')
 
         # ========= START FONT STYLES SECTION =========
         def makeStyleAction(name: str, shortcut: str, signal, docref) -> QAction:
@@ -222,7 +167,7 @@ class MenuBar(QMenuBar):
             style_action.triggered.connect(signal)
             return style_action
 
-        self.group_style = QActionGroup(self.format_menu)
+        self.group_style = QActionGroup(self.menu_format)
         self.group_style.setExclusive(False)
         act_bold = makeStyleAction("Bold", "Ctrl+B", self.doc.onFontBoldChanged, self.doc.fontBold)
         self.group_style.addAction(act_bold)
@@ -233,14 +178,14 @@ class MenuBar(QMenuBar):
         act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged, self.doc.fontUnderline)
         self.group_style.addAction(act_undr)
         # Add all actions in group to Style Menu
-        self.format_menu.addActions(self.group_style.actions())
+        self.menu_format.addActions(self.group_style.actions())
         # ========= END FONT STYLES SECTION =========
 
         # ========= START EXTRA SECTION =========
-        self.format_menu.addSeparator()
+        self.menu_format.addSeparator()
         act_color_picker = QAction("Color Picker", app)
         act_color_picker.triggered.connect(self.doc.openColorDialog)
-        self.format_menu.addAction(act_color_picker)
+        self.menu_format.addAction(act_color_picker)
 
         # ========= END EXTRA SECTION =========
 
@@ -255,20 +200,25 @@ class MenuBar(QMenuBar):
         def onTextAlignmentChanged(state):
             self.doc.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
 
-        self.format_menu.addSeparator()
+        self.menu_format.addSeparator()
         # Action Group for Alignments options (Exclusive picks)
-        self.align_group = QActionGroup(self.format_menu)
-        self.align_group.triggered.connect(onTextAlignmentChanged)
-        # Add alignment options to the group
-        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[0], 'Ctrl+Shift+L', True))
-        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[1], 'Ctrl+Shift+R'))
-        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[2], 'Ctrl+Shift+E'))
-        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[3], 'Ctrl+Shift+J'))
-        # Add all actions in group to Format Menu
-        self.format_menu.addActions(self.align_group.actions())
-        # ========= END ALIGNMENT SECTION =========
-        return self.format_menu
+        self.group_align = QActionGroup(self.menu_format)
+        self.group_align.triggered.connect(onTextAlignmentChanged)
 
+        def getName(index: int):
+            return list(self.doc_props.dict_align.keys())[index]
+
+        # Add alignment options to the group
+        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
+        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+R'))
+        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+E'))
+        self.group_align.addAction(makeAlignAction(getName(3), 'Ctrl+Shift+J'))
+        # Add all actions in group to Format Menu
+        self.menu_format.addActions(self.group_align.actions())
+        # ========= END ALIGNMENT SECTION =========
+        return self.menu_format
+
+    # =====================================================================================
     def setFormattingButtonsEnabled(self, state):
         """
         Sets all formatting options to Enabled or Disabled
@@ -278,7 +228,7 @@ class MenuBar(QMenuBar):
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
         a: QAction
-        for a in self.format_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.setEnabled(state)
 
@@ -290,25 +240,24 @@ class MenuBar(QMenuBar):
         # Block signals
         logging.info("Started updating")
         a: QAction
-        for a in self.format_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(True)
         # Update Style options
         for action in self.group_style.actions():
-            print(action.text() + " " + str(action.property("docref")()))
-            action.setChecked(action.property("docref")())
+            get = action.property("docref")
+            action.setChecked(get())
         # Update Align options
-        align = self.doc.alignment()
-        for action in self.align_group.actions():
+        alignment = self.doc.alignment()
+        for action in self.group_align.actions():
             action.setChecked(False)
-            index = list(self.doc_props.dict_align.values()).index(align)
+            get = action.property("docref")
+            index = list(self.doc_props.dict_align.values()).index(alignment)
             if action.text() == list(self.doc_props.dict_align.keys())[index]:
                 action.setChecked(True)
         # Unblock signals
         a: QAction
-        for a in self.format_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
         logging.info("Finished updating")
-
-
