@@ -78,7 +78,7 @@ class App(QMainWindow):
         self.top_bar.show()
 
         # TODO - fix this function call causing Format Mode button to not have spacer
-        self.updateFormatBtnsState(False, self.top_bar, self.menu_bar)
+        self.updateFormatBtnsState(False)
 
         self.setupLayout()
 
@@ -100,9 +100,9 @@ class App(QMainWindow):
 
         self.show()
 
-    def updateFormatBtnsState(self, state: bool, top_bar, menubar):
-        top_bar.setFormattingButtonsEnabled(state)
-        menubar.setFormattingButtonsEnabled(state)
+    def updateFormatBtnsState(self, state: bool):
+        self.top_bar.setFormattingButtonsEnabled(state)
+        self.menu_bar.setFormattingButtonsEnabled(state)
 
     def setFormattingMode(self, state: bool):
         """
@@ -124,7 +124,7 @@ class App(QMainWindow):
                 logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.file_manager.toLef()
-                self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
+                self.updateFormatBtnsState(True)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
                 self.button_mode_switch.setChecked(False)

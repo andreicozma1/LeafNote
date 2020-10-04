@@ -193,7 +193,8 @@ class FileManager:
         self.app.document.textCursor().clearSelection()
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
-        self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
+        self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
+        # self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
         self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
