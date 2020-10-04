@@ -1,8 +1,8 @@
 import logging
 
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
 from Elements import Document
@@ -25,14 +25,14 @@ class MenuBar(QMenuBar):
         """
         super(MenuBar, self).__init__()
         logging.info("")
-        self.document = document
+        self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
 
-        self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-        self.document.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
+        self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
+        self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
-    # --------------------------------------------------------------------------------
+    # =====================================================================================================================--
 
     def makeFileMenu(self, app, file_manager):
         """
@@ -62,7 +62,7 @@ class MenuBar(QMenuBar):
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
 
-        # this saves the current file that is shown in the self.document
+        # this saves the current file that is shown in the self.doc
         def onSaveBtn():
             logging.info("onSaveBtn")
             file_manager.saveDocument()
@@ -124,7 +124,7 @@ class MenuBar(QMenuBar):
 
         return self.file_menu
 
-    # --------------------------------------------------------------------------------
+    # =====================================================================================================================--
 
     def makeEditMenu(self, app):
         """
@@ -138,13 +138,13 @@ class MenuBar(QMenuBar):
         # undo button and function
         undo_act = QAction("&Undo", app)
         undo_act.setShortcut('Ctrl+z')
-        undo_act.triggered.connect(self.document.undo)
+        undo_act.triggered.connect(self.doc.undo)
         self.edit_menu.addAction(undo_act)
 
         # redo button and function
         redo_act = QAction("&Redo", app)
         redo_act.setShortcut('Ctrl+Shift+z')
-        redo_act.triggered.connect(self.document.redo)
+        redo_act.triggered.connect(self.doc.redo)
         self.edit_menu.addAction(redo_act)
 
         # adds line to separate options
@@ -153,7 +153,7 @@ class MenuBar(QMenuBar):
         # select all button and function
         select_all_act = QAction("&Select All", app)
         select_all_act.setShortcut('Ctrl+a')
-        select_all_act.triggered.connect(self.document.selectAll)
+        select_all_act.triggered.connect(self.doc.selectAll)
         self.edit_menu.addAction(select_all_act)
 
         # adds line to separate options
@@ -162,27 +162,27 @@ class MenuBar(QMenuBar):
         # cut button and function
         cut_act = QAction("&Cut", app)
         cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.document.cut)
+        cut_act.triggered.connect(self.doc.cut)
         self.edit_menu.addAction(cut_act)
 
         # copy button and function
         copy_act = QAction("&Copy", app)
         copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.document.copy)
+        copy_act.triggered.connect(self.doc.copy)
         self.edit_menu.addAction(copy_act)
 
         # paste button and function
         paste_act = QAction("&Paste", app)
         paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.document.paste)
+        paste_act.triggered.connect(self.doc.paste)
         self.edit_menu.addAction(paste_act)
 
-    # --------------------------------------------------------------------------------
+    # =====================================================================================================================--
 
-    def makeViewMenu(self, app, bottom_bar):
+    def makeViewMenu(self, app, bottom_bar) -> QMenu:
         """
-        sets up the view tabs drop menu
-        :return: returns nothing
+        Create Format Menu
+        :return: the menu created
         """
         logging.info("makeViewMenu")
 
@@ -202,96 +202,77 @@ class MenuBar(QMenuBar):
         zoom_r_act = QAction("&Zoom Reset", app)
         zoom_r_act.triggered.connect(bottom_bar.resetZoom)
         self.view_menu.addAction(zoom_r_act)
+        return self.view_menu
 
-    # --------------------------------------------------------------------------------
-    def makeFormatMenu(self, app):
+    # =====================================================================================================================--
+    def makeFormatMenu(self, app) -> QMenu:
         """
-        sets up the tools tabs drop menu
-        :return: returns nothing
+        Create Format Menu
+        :return: the menu created
         """
         logging.info("formatMenuSetup")
-
         self.format_menu = self.addMenu('&Format')
 
-        # Adds Bold button to text_menu
-        self.bold_action = QAction("Bold", app)
-        self.bold_action.setShortcut('Ctrl+B')
-        self.bold_action.setCheckable(True)
-        self.bold_action.triggered.connect(self.document.onFontBoldChanged)
-        self.format_menu.addAction(self.bold_action)
+        # ========= START FONT STYLES SECTION =========
+        def makeStyleAction(name: str, shortcut: str, signal, docref) -> QAction:
+            style_action = QAction(name, app)
+            style_action.setShortcut(shortcut)
+            style_action.setCheckable(True)
+            style_action.setProperty("docref", docref)
+            style_action.triggered.connect(signal)
+            return style_action
 
-        # Adds Italicised button to text_menu
-        self.ital_action = QAction("Italicized", app)
-        self.ital_action.setShortcut('Ctrl+I')
-        self.ital_action.setCheckable(True)
-        self.ital_action.triggered.connect(self.document.onFontItalChanged)
-        self.format_menu.addAction(self.ital_action)
+        self.group_style = QActionGroup(self.format_menu)
+        self.group_style.setExclusive(False)
+        act_bold = makeStyleAction("Bold", "Ctrl+B", self.doc.onFontBoldChanged, self.doc.fontBold)
+        self.group_style.addAction(act_bold)
+        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged, self.doc.fontItalic)
+        self.group_style.addAction(act_ital)
+        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged, self.doc.fontStrike)
+        self.group_style.addAction(act_strk)
+        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged, self.doc.fontUnderline)
+        self.group_style.addAction(act_undr)
+        # Add all actions in group to Style Menu
+        self.format_menu.addActions(self.group_style.actions())
+        # ========= END FONT STYLES SECTION =========
 
-        # Adds Strikeout button to text_menu
-        self.strike_action = QAction("Strikout", app)
-        self.strike_action.setShortcut('Ctrl+Shift+5')
-        self.strike_action.setCheckable(True)
-        self.strike_action.triggered.connect(self.document.onFontStrikeChanged)
-        self.format_menu.addAction(self.strike_action)
-
-        # Adds Underline button to text_menu
-        self.under_action = QAction("Underline", app)
-        self.under_action.setShortcut('Ctrl+U')
-        self.under_action.setCheckable(True)
-        self.under_action.triggered.connect(self.document.onFontUnderChanged)
-        self.format_menu.addAction(self.under_action)
-
-        # Adds separator after font style options
+        # ========= START EXTRA SECTION =========
         self.format_menu.addSeparator()
+        act_color_picker = QAction("Color Picker", app)
+        act_color_picker.triggered.connect(self.doc.openColorDialog)
+        self.format_menu.addAction(act_color_picker)
 
-        # Adds Font Color button to text_menu
-        self.font_color_action = QAction("Color Picker", app)
-        self.font_color_action.triggered.connect(self.document.openColorDialog)
-        self.format_menu.addAction(self.font_color_action)
+        # ========= END EXTRA SECTION =========
 
-        # Add separator after color options
-        self.format_menu.addSeparator()
+        # ========= START ALIGNMENT SECTION =========
+        def makeAlignAction(name: str, shortcut: str, default: bool = False) -> QAction:
+            align_action = QAction(name, app)
+            align_action.setShortcut(shortcut)
+            align_action.setCheckable(True)
+            align_action.setChecked(default)
+            return align_action
 
-        # --- create the alignment menu ---
         def onTextAlignmentChanged(state):
-            self.document.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
+            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
 
-        # Action group for alignment options. Defaults to exclusive selection in group
-        align_group = QActionGroup(self)
-        align_group.triggered.connect(onTextAlignmentChanged)
-
-        # create the left alignment action
-        self.left_align_action = QAction(list(self.doc_props.dict_align.keys())[0], app)
-        self.left_align_action.setShortcut('Ctrl+Shift+L')
-        self.left_align_action.setCheckable(True)
-        align_group.addAction(self.left_align_action)
-        self.format_menu.addAction(self.left_align_action)
-
-        # create the right alignment action
-        self.right_align_action = QAction(list(self.doc_props.dict_align.keys())[1], app)
-        self.right_align_action.setShortcut('Ctrl+Shift+R')
-        self.right_align_action.setCheckable(True)
-        align_group.addAction(self.right_align_action)
-        self.format_menu.addAction(self.right_align_action)
-
-        # create the center alignment action
-        self.center_align_action = QAction(list(self.doc_props.dict_align.keys())[2], app)
-        self.center_align_action.setShortcut('Ctrl+Shift+E')
-        self.center_align_action.setCheckable(True)
-        align_group.addAction(self.center_align_action)
-        self.format_menu.addAction(self.center_align_action)
-
-        # create the justify alignment action
-        self.justify_align_action = QAction(list(self.doc_props.dict_align.keys())[3], app)
-        self.justify_align_action.setShortcut('Ctrl+Shift+J')
-        self.justify_align_action.setCheckable(True)
-        align_group.addAction(self.justify_align_action)
-        self.format_menu.addAction(self.justify_align_action)
+        self.format_menu.addSeparator()
+        # Action Group for Alignments options (Exclusive picks)
+        self.align_group = QActionGroup(self.format_menu)
+        self.align_group.triggered.connect(onTextAlignmentChanged)
+        # Add alignment options to the group
+        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[0], 'Ctrl+Shift+L', True))
+        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[1], 'Ctrl+Shift+R'))
+        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[2], 'Ctrl+Shift+E'))
+        self.align_group.addAction(makeAlignAction(list(self.doc_props.dict_align.keys())[3], 'Ctrl+Shift+J'))
+        # Add all actions in group to Format Menu
+        self.format_menu.addActions(self.align_group.actions())
+        # ========= END ALIGNMENT SECTION =========
+        return self.format_menu
 
     def setFormattingButtonsEnabled(self, state):
         """
-        allows formatting once file type is changed from .txt to .lef in menu bar
-        :param state: this is a boolean that sets the states
+        Sets all formatting options to Enabled or Disabled
+        :param state: boolean that sets the states
         :return: returns nothing
         """
         # Toggle the state of all buttons in the menu
@@ -303,22 +284,31 @@ class MenuBar(QMenuBar):
 
     def updateFormatOnSelectionChange(self):
         """
-        selected text format will be checked in menu bar
+        Selected text format reflected in the MenuBar
         :return: returns nothing
         """
+        # Block signals
+        logging.info("Started updating")
         a: QAction
         for a in self.format_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(True)
-
-        self.ital_action.setChecked(self.document.fontItalic())
-        self.under_action.setChecked(self.document.fontUnderline())
-        self.bold_action.setChecked(self.document.fontWeight() == QFont.Bold)
-        self.strike_action.setChecked(self.document.currentCharFormat().fontStrikeOut())
-
+        # Update Style options
+        for action in self.group_style.actions():
+            print(action.text() + " " + str(action.property("docref")()))
+            action.setChecked(action.property("docref")())
+        # Update Align options
+        align = self.doc.alignment()
+        for action in self.align_group.actions():
+            action.setChecked(False)
+            index = list(self.doc_props.dict_align.values()).index(align)
+            if action.text() == list(self.doc_props.dict_align.keys())[index]:
+                action.setChecked(True)
+        # Unblock signals
         a: QAction
         for a in self.format_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+        logging.info("Finished updating")
 
-    # -------------------------------------------------------------------------------
+

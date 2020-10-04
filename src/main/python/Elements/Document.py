@@ -89,7 +89,7 @@ class Document(TextBox):
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.info(state)
+        logging.info(list(self.doc_props.dict_align.keys())[state])
         self.setAlignment(list(self.doc_props.dict_align.values())[state])
         self.currentCharFormatChanged.emit(self.currentCharFormat())
 
@@ -124,3 +124,9 @@ class Document(TextBox):
         self.onFontBoldChanged(False)
         self.onFontStrikeChanged(False)
         self.setAlignment(Qt.AlignLeft)
+
+    def fontBold(self):
+        return self.fontWeight() == QFont.Bold
+
+    def fontStrike(self):
+        return self.currentCharFormat().fontStrikeOut()
