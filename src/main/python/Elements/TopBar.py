@@ -57,7 +57,7 @@ class TopBar(QWidget):
         self.combo_font_size.addItems(list_FontSize)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
-        # self.combo_font_size.setCurrentIndex(list_FontSize.index(str(self.document.fontPointSize())))
+        self.combo_font_size.setCurrentIndex(list_FontSize.index(str(self.document.font().pointSize())))
         self.combo_font_size.currentIndexChanged.connect(self.document.onFontSizeChanged)
         self.horizontal_layout.addWidget(self.combo_font_size)
         return self.combo_font_size
