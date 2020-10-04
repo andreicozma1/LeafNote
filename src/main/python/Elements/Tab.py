@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Elements.ColorWidget import Color
 
-import logging
-
 """
 contains all properties for tabs in the tab menu
 """
@@ -17,6 +15,7 @@ class Tab(Color):
     """
     sets up the file as a tab
     """
+
     def __init__(self, tab_bar, file_manager, path: str):
         """
         creates a tab for specific file

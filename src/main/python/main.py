@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements.BottomBar import BottomBar
@@ -10,12 +10,12 @@ from Elements.Document import Document
 from Elements.OpenTabsBar import OpenTabsBar
 from Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
+from Layout.DocProps import DocProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
+from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
-from Layout.DocProps import DocProps
-import logging
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -32,6 +32,7 @@ class App(QMainWindow):
     """
     puts all the pieces of code together to get finished application
     """
+
     def __init__(self):
         """
         creates the window and its attributes
@@ -50,8 +51,24 @@ class App(QMainWindow):
 
         self.bar_open_tabs = OpenTabsBar(self.file_manager, self.layout_props)
 
-        self.document = Document()
-        self.top_bar = TopBar(self, self.document)
+        self.document = Document(self.doc_props)
+
+        self.top_bar = TopBar()
+        self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox(self.document)
+        self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
+        self.top_bar_btn_bold = self.top_bar.makeBtnBold(self.document)
+        self.top_bar_btn_ital = self.top_bar.makeBtnItal(self.document)
+        self.top_bar_btn_strike = self.top_bar.makeBtnStrike(self.document)
+        self.top_bar_btn_under = self.top_bar.makeBtnUnder(self.document)
+        self.top_bar_combo_font_color = self.top_bar.makeComboFontColor(self.document, self.doc_props.color_dict)
+        self.top_bar_combo_text_align = self.top_bar.makeComboTextAlign(self.document, self.doc_props.list_alignments)
+        self.top_bar.addLayoutSpacer()
+        self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.document.selectionChanged.connect(self.onSelectionChanged)
+        self.top_bar.show()
+        self.updateFormattingBtnsState(False)
+
+        # self.top_bar.setLayout(self.top_bar.horizontal_layout)
 
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
@@ -59,19 +76,6 @@ class App(QMainWindow):
         self.menubar = MenuBar(self, self.file_manager, self.document, self.top_bar, self.bottom_bar)
 
         self.setupLayout()
-
-    def setupLayout(self):
-        """
-        sets up the layout within the window
-        :return: returns nothing
-        """
-        logging.info("Setting up layout members")
-        # Setup Layout View
-        self.layout.setTopBar(self.top_bar)
-        self.layout.setBottomBar(self.bottom_bar)
-        self.layout.setBarOpenTabs(self.bar_open_tabs)
-        self.layout.setDocument(self.document)
-        self.layout.setLeftMenu(self.left_menu)
 
     def setup(self):
         """
@@ -90,6 +94,57 @@ class App(QMainWindow):
         self.setCentralWidget(self.layout)
 
         self.show()
+
+    def setFormattingMode(self, state: bool):
+        """
+        Toggles between Formatting Mode and Plain-Text Mode
+        :param state: this is a boolean that sets the states
+        :return: returns nothing
+        """
+        logging.info(str(state))
+
+        if state is True:
+            convert_dialog = DialogBuilder(self, "Enable Formatting",
+                                           "Would you like to convert this file?",
+                                           "This file needs to be converted to use enriched text formatting features\n"
+                                           "Selecting 'Yes' will convert the original "
+                                           "file to the enriched text file format.")
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(buttonBox)
+            if convert_dialog.exec():
+                logging.info("User converted file to Proprietary Format")
+                # TODO - Convert file with FileManager to a .lef format, on success, call the function below
+                self.file_manager.toLef()
+                self.updateFormattingBtnsState(True)
+            else:
+                logging.info("User DID NOT convert file to Proprietary Format")
+                self.top_bar_btn_format_mode.setChecked(False)
+        else:
+            # Don't allow converted file to be converted back to Plain Text
+            # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
+
+            self.file_manager.lefToExt()
+            logging.info("Convert back to a txt file")
+            self.top_bar_btn_format_mode.setChecked(False)
+
+    def updateFormattingBtnsState(self, state: bool):
+        self.top_bar.setFormattingButtonsEnabled(state)
+
+    def onSelectionChanged(self):
+        self.top_bar.updateFormatOnSelectionChange(self.document, self.doc_props)
+
+    def setupLayout(self):
+        """
+        sets up the layout within the window
+        :return: returns nothing
+        """
+        logging.info("Setting up layout members")
+        # Setup Layout View
+        self.layout.setTopBar(self.top_bar)
+        self.layout.setBottomBar(self.bottom_bar)
+        self.layout.setBarOpenTabs(self.bar_open_tabs)
+        self.layout.setDocument(self.document)
+        self.layout.setLeftMenu(self.left_menu)
 
     def centerWindow(self, app_geom):
         """
