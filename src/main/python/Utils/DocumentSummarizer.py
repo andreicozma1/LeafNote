@@ -160,6 +160,7 @@ def handleDownloads():
         print("Downloading nltk punkt")
         nltk.download('punkt')
 
+
 def removeStopwords(sen, stopwords):
     """
     this will remove all stopwords from a given sentence and return the new cleaned sentence
@@ -174,17 +175,23 @@ def removeStopwords(sen, stopwords):
 
 def downloadWordEmbeddings(download_path):
     """
-    This will download the word embeddings into the specified directory and leave the files compressed.
-    :param download_path: The directory to which the word embeddings will be saved
+    This will download the word embeddings into the specified directory and uncompresses the file.
+    :param download_path: The directory and filename to which the word embeddings will be saved
     :return: Returns nothing
     """
-
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
     url = "http://hunterprice.org/files/glove.6B.100d.zip"
-    wget.download(url, download_path)
+    wget.download(url, out=download_path)
+
+    # uncompress the files
+    with zipfile.ZipFile(download_path+'glove.6B.100d.zip', 'r') as zip_ref:
+        zip_ref.extractall(download_path)
+
+    # delete the compressed file
+    os.remove(download_path+'glove.6B.100d.zip')
 
 
-def load_embeddings_binary(embeddings_path):
+def getWordEmbeddings(embeddings_path):
     """
     This will uncompress the glove files then read the files into a python dictionary.
     Then recompress the files and delete the uncompressed files.
@@ -193,13 +200,14 @@ def load_embeddings_binary(embeddings_path):
     """
 
     # check to make sure the glove files exist
-    if not os.path.exists(embeddings_path+'.zip'):
-        logging.error('Path does not exist - '+embeddings_path+'.zip')
+    if not os.path.exists(embeddings_path+'.vocab'):
+        logging.error('Path does not exist - '+embeddings_path+'.vocab')
         return
 
-    # uncompress the files
-    with zipfile.ZipFile(embeddings_path+'zip', 'r') as zip_ref:
-        zip_ref.extractall(embeddings_path)
+    # check to make sure the glove files exist
+    if not os.path.exists(embeddings_path + '.npy'):
+        logging.error('Path does not exist - ' + embeddings_path + '.npy')
+        return
 
     # read the files into a python dict
     with codecs.open(embeddings_path + '.vocab', 'r', 'utf-8') as f_in:
@@ -209,13 +217,5 @@ def load_embeddings_binary(embeddings_path):
     for i, w in enumerate(index2word):
         model[w] = wv[i]
 
-    # recompress the files to save space
-    with zipfile.ZipFile(embeddings_path+'zip', 'w') as zip_ref:
-        zip_ref.write(embeddings_path+'.vocab')
-        zip_ref.write(embeddings_path+'.npy')
-
-    # remove the large files
-    os.remove(embeddings_path+'.vocab')
-    os.remove(embeddings_path+'.npy')
 
     return model
