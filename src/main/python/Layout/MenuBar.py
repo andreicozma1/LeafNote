@@ -251,30 +251,19 @@ class MenuBar(QMenuBar):
 
         # Add separator after color options
         self.format_menu.addSeparator()
-        # --- create the alignment and indentation menu ---
-        # create the left alignment action
-        # sets up a submenu for alignment and indentation in the format menu
+
+        # --- create the alignment menu ---
+        def onTextAlignmentChanged(state):
+            self.document.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
+
+        # Action group for alignment options. Defaults to exclusive selection in group
         align_group = QActionGroup(self)
-        def onTextAlignLeftClicked():
-            logging.info("Align Left")
-            self.document.setAlignment(Qt.AlignLeft)
+        align_group.triggered.connect(onTextAlignmentChanged)
 
-        def onTextAlignCenterClicked():
-            logging.info("Align Center")
-            self.document.setAlignment(Qt.AlignCenter)
-
-        def onTextAlignRightClicked():
-            logging.info("Align Right")
-            self.document.setAlignment(Qt.AlignRight)
-
-        def onTextAlignJustifyClicked():
-            logging.info("Align Justify")
-            self.document.setAlignment(Qt.AlignJustify)
-
+        # create the left alignment action
         self.left_align_action = QAction(list(self.doc_props.dict_align.keys())[0], app)
         self.left_align_action.setShortcut('Ctrl+Shift+L')
         self.left_align_action.setCheckable(True)
-        self.left_align_action.triggered.connect(onTextAlignLeftClicked)
         align_group.addAction(self.left_align_action)
         self.format_menu.addAction(self.left_align_action)
 
@@ -282,7 +271,6 @@ class MenuBar(QMenuBar):
         self.right_align_action = QAction(list(self.doc_props.dict_align.keys())[1], app)
         self.right_align_action.setShortcut('Ctrl+Shift+R')
         self.right_align_action.setCheckable(True)
-        self.right_align_action.triggered.connect(onTextAlignRightClicked)
         align_group.addAction(self.right_align_action)
         self.format_menu.addAction(self.right_align_action)
 
@@ -290,7 +278,6 @@ class MenuBar(QMenuBar):
         self.center_align_action = QAction(list(self.doc_props.dict_align.keys())[2], app)
         self.center_align_action.setShortcut('Ctrl+Shift+E')
         self.center_align_action.setCheckable(True)
-        self.center_align_action.triggered.connect(onTextAlignCenterClicked)
         align_group.addAction(self.center_align_action)
         self.format_menu.addAction(self.center_align_action)
 
@@ -298,7 +285,6 @@ class MenuBar(QMenuBar):
         self.justify_align_action = QAction(list(self.doc_props.dict_align.keys())[3], app)
         self.justify_align_action.setShortcut('Ctrl+Shift+J')
         self.justify_align_action.setCheckable(True)
-        self.justify_align_action.triggered.connect(onTextAlignJustifyClicked)
         align_group.addAction(self.justify_align_action)
         self.format_menu.addAction(self.justify_align_action)
 
@@ -321,7 +307,7 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         a: QAction
-        for a in self.text_menu.actions():
+        for a in self.format_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(True)
 
@@ -331,7 +317,7 @@ class MenuBar(QMenuBar):
         self.strike_action.setChecked(self.document.currentCharFormat().fontStrikeOut())
 
         a: QAction
-        for a in self.text_menu.actions():
+        for a in self.format_menu.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
 

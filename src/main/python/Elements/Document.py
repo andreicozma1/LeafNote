@@ -91,6 +91,7 @@ class Document(TextBox):
         """
         logging.info(state)
         self.setAlignment(list(self.doc_props.dict_align.values())[state])
+        self.currentCharFormatChanged.emit(self.currentCharFormat())
 
     def openColorDialog(self):
         """
