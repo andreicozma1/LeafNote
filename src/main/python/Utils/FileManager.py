@@ -58,9 +58,6 @@ class FileManager:
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
 
-            # open a new tab associated with the new file
-            self.app.bar_open_tabs.addTab(path)
-
             logging.info("Saved File - " + path)
 
     def saveAsDocument(self, new_path: str):
