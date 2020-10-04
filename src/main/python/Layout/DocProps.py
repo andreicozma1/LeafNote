@@ -19,7 +19,11 @@ class DocProps():
         """
         logging.info("Setting up Document Properties")
 
-        # color dictionary for changing text color
+        # Font sizes available in the TopBar
+        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+                              "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+
+        # Colors available in the TopBar
         self.color_dict = {
             'black': '#000000',
             'red': '#ff0000',
@@ -33,8 +37,10 @@ class DocProps():
             'white': '#ffffff'
         }
 
-        # List for font sizes
-        self.list_FontSize = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-                              "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
-        self.list_alignments = ["Left", "Right", "Center", " Justify"]
-        self.list_alignments_align = [Qt.AlignLeft, Qt.AlignRight, Qt.AlignCenter, Qt.AlignJustify]
+        # Alignment options available in the TopBar and MenuBar
+        self.dict_align = {
+            'Left': Qt.AlignLeft,
+            'Right': Qt.AlignRight,
+            'Center': Qt.AlignCenter,
+            'Justify': Qt.AlignJustify
+        }

@@ -338,13 +338,13 @@ class FileManager:
         For debugging. Prints out all of the documents stored in open_documents dictionary.
         :return:
         """
-        logging.info("========================================")
+        logging.info("==========================================================")
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
-            logging.info("----------------------------------------")
+            logging.info("======================================================")
             logging.info("path: ", key)
             logging.info("QFileInfo:\n", path)
-        logging.info("========================================")
+        logging.info("==========================================================")
 
     def fixBrokenFilePaths(self):
         """
