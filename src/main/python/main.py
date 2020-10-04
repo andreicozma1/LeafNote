@@ -53,27 +53,32 @@ class App(QMainWindow):
 
         self.document = Document(self.doc_props)
 
-        self.top_bar = TopBar()
-        self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox(self.document)
-        self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
-        self.top_bar_btn_bold = self.top_bar.makeBtnBold(self.document)
-        self.top_bar_btn_ital = self.top_bar.makeBtnItal(self.document)
-        self.top_bar_btn_strike = self.top_bar.makeBtnStrike(self.document)
-        self.top_bar_btn_under = self.top_bar.makeBtnUnder(self.document)
-        self.top_bar_combo_font_color = self.top_bar.makeComboFontColor(self.document, self.doc_props.color_dict)
-        self.top_bar_combo_text_align = self.top_bar.makeComboTextAlign(self.document, self.doc_props.list_alignments)
-        self.top_bar.addLayoutSpacer()
-        self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
-        self.document.selectionChanged.connect(self.onSelectionChanged)
-        self.top_bar.show()
-        self.updateFormattingBtnsState(False)
-
-        # self.top_bar.setLayout(self.top_bar.horizontal_layout)
-
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
 
-        self.menubar = MenuBar(self, self.file_manager, self.document, self.top_bar, self.bottom_bar)
+        self.menu_bar = MenuBar(self.document, self.doc_props)
+        self.menu_bar.makeFileMenu(self, self.file_manager)
+        self.menu_bar.makeEditMenu(self)
+        self.menu_bar.makeViewMenu(self, self.bottom_bar)
+        self.menu_bar.makeFormatMenu(self)
+        self.setMenuBar(self.menu_bar)
+        self.menu_bar.show()
+
+        self.top_bar = TopBar(self.document, self.doc_props)
+        self.top_bar.makeComboFontStyleBox()
+        self.top_bar.makeComboFontSizeBox(self.doc_props.list_FontSize)
+        self.top_bar.makeBtnBold()
+        self.top_bar.makeBtnItal()
+        self.top_bar.makeBtnStrike()
+        self.top_bar.makeBtnUnder()
+        self.top_bar.makeComboFontColor(self.doc_props.color_dict)
+        self.top_bar.makeComboTextAlign(self.doc_props.list_alignments)
+        self.top_bar.addLayoutSpacer()
+        self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.top_bar.show()
+
+        # TODO - fix this function call causing Format Mode button to not have spacer
+        self.updateFormatBtnsState(False, self.top_bar, self.menu_bar)
 
         self.setupLayout()
 
@@ -95,6 +100,10 @@ class App(QMainWindow):
 
         self.show()
 
+    def updateFormatBtnsState(self, state: bool, top_bar, menubar):
+        top_bar.setFormattingButtonsEnabled(state)
+        menubar.setFormattingButtonsEnabled(state)
+
     def setFormattingMode(self, state: bool):
         """
         Toggles between Formatting Mode and Plain-Text Mode
@@ -115,23 +124,17 @@ class App(QMainWindow):
                 logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.file_manager.toLef()
-                self.updateFormattingBtnsState(True)
+                self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
-                self.top_bar_btn_format_mode.setChecked(False)
+                self.button_mode_switch.setChecked(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.file_manager.lefToExt()
             logging.info("Convert back to a txt file")
-            self.top_bar_btn_format_mode.setChecked(False)
-
-    def updateFormattingBtnsState(self, state: bool):
-        self.top_bar.setFormattingButtonsEnabled(state)
-
-    def onSelectionChanged(self):
-        self.top_bar.updateFormatOnSelectionChange(self.document, self.doc_props)
+            self.button_mode_switch.setChecked(False)
 
     def setupLayout(self):
         """
