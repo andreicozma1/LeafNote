@@ -1,9 +1,14 @@
 import logging
+import _thread
+import os
 
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
 from PyQt5.QtWidgets import qApp, QAction, QColorDialog
+from tr.tr import tr
+
+from Utils.DialogBuilder import DialogBuilder
 
 """
 all properties and functionalities of the menu bar
@@ -41,7 +46,7 @@ class MenuBar():
         # TODO - uncomment when implementing these menus individually
         self.view_menu = self.menu.addMenu('&View')
         self.format_menu = self.menu.addMenu('&Format')
-        # self.tools_menu = self.menu.addMenu('&Tools')
+        self.tools_menu = self.menu.addMenu('&Tools')
         # self.help_menu = self.menu.addMenu('&Help')
 
         self.setup()
@@ -59,7 +64,7 @@ class MenuBar():
         # TODO - uncomment when implementing these menus individually
         self.viewMenuSetup()
         self.formatMenuSetup()
-        # self.toolsMenuSetup()
+        self.toolsMenuSetup()
         # self.helpMenuSetup()
 
     # --------------------------------------------------------------------------------
@@ -443,14 +448,76 @@ class MenuBar():
 
     # --------------------------------------------------------------------------------
 
-    """
     # TODO - Add functionality to tools tbd
-    # this function sets up the tools tabs drop menu
     def toolsMenuSetup(self):
+        """
+        this function sets up the tools tabs drop menu
+        :return:
+        """
         logging.info("toolsMenuSetup")
+        summary_act = QAction("&Generate Summary", self.app)
+        summary_act.triggered.connect(self.onSummaryAction)
+        self.tools_menu.addAction(summary_act)
+
+
+
+    def onSummaryAction(self):
+        from Utils.DocumentSummarizer import Summarizer, getWordEmbeddings
+        # if summarizer has not been created create it `
+        if self.app.summarizer is None:
+            # check if we have the files
+
+            # check if we have the zip
+
+            # prompt the user to select or download the word word_embeddings
+            download_dialog = DialogBuilder(self.app, "Download Dependencies",
+                                            "Would you like to download the necessary dependencies?",
+                                            "In order to use this feature you need certain dependencies")
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+            buttonBox.clicked.connect(self.onWordVecDownload)
+            download_dialog.addButtonBox(buttonBox)
+            state = download_dialog.exec()
+
+        # if there is already an instance of the summarizer
+        else:
+            print(self.app.summarizer.summarize(self.app.document.toPlainText()))
+
+    def onWordVecDownload(self, button):
+        print(button.text())
+        from Utils.DocumentSummarizer import Summarizer, getWordEmbeddings
+        if button.text() == '&Yes':
+            download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder To Download To",
+                                                             "/home",
+                                                             QFileDialog.ShowDirsOnly
+                                                             | QFileDialog.DontResolveSymlinks)
+            if download_path == "":
+                logging.info("User cancelled Download")
+            download_path = download_path + os.path.sep
+            try:
+                _thread.start_new_thread(getWordEmbeddings, (download_path, self.app))
+            except:
+                logging.error("Unable to start thread")
+
+        elif button.text() == 'Open':
+            download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder With Word Vector Files",
+                                                             "/home",
+                                                             QFileDialog.ShowDirsOnly
+                                                             | QFileDialog.DontResolveSymlinks)
+            if download_path == "":
+                logging.info("User cancelled Open")
+
+            download_path = download_path + os.path.sep
+
+            try:
+                _thread.start_new_thread(getWordEmbeddings, (download_path, self.app, False))
+            except:
+                logging.error("Unable to start thread")
+        else:
+            logging.info("User cancelled download")
 
     # --------------------------------------------------------------------------------
 
+    """
     # TODO - Add functionality to help find action, help, getting started, about, etc.
     # this function sets up the help tabs drop menu
     def helpMenuSetup(self):

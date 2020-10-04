@@ -5,9 +5,13 @@ import numpy as np
 import pandas as pd
 import nltk
 import wget as wget
+from PyQt5.QtCore import QRunnable
+from PyQt5.QtWidgets import QDialogButtonBox
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 import zipfile
+
+from Utils.DialogBuilder import DialogBuilder
 
 """
 This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/\
@@ -23,39 +27,48 @@ The algorithm is split into 5 steps:
 """
 
 
-class Summary:
-    def __init__(self, text, summary_size=5):
+class Summarizer:
+    def __init__(self, word_embeddings):
+        """
+        Sets up class variables.
+        """
+        handleDownloads()
+        from nltk.corpus import stopwords
+        self.word_embeddings = word_embeddings
+        self.sentence_vectors = []
+        self.sim_mat = []
+        self.ranked_sentences = []
+        self.summary = ""
+
+        # get a list of english stop words
+        # stopwords are commonly used words of a language (we want to get rid of these words)
+        self.stopwords = stopwords.words('english')
+
+    def summarize(self, text: str, summary_size: int = 5):
         """
         This will take in text and the size of a summary and generate a summary of the text.
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
         """
-
-        # get necessary imports
         handleDownloads()
         from nltk.tokenize import sent_tokenize
-        from nltk.corpus import stopwords
 
         # break text into sentences
         sentences = sent_tokenize(text)
-
-        # get a list of english stop words
-        # stopwords are commonly used words of a language (we want to get rid of these words)
-        self.stopwords = stopwords.words('english')
 
         # clean the data of unnecessary values
         clean_sentences = self.cleanSentences(sentences)
 
         # Extract word vectors and create a dictionary with key value pairs 'word', [word vector]
         # https://nlp.stanford.edu/projects/glove/ for the precalculated word vectors
-        self.word_embeddings = {}
-        f = open('glove.6B.100d.txt', encoding='utf-8')
-        for line in f:
-            values = line.split()
-            word = values[0]
-            coefs = np.asarray(values[1:], dtype='float32')
-            self.word_embeddings[word] = coefs
-        f.close()
+        # self.word_embeddings = {}
+        # f = open('glove.6B.100d.txt', encoding='utf-8')
+        # for line in f:
+        #     values = line.split()
+        #     word = values[0]
+        #     coefs = np.asarray(values[1:], dtype='float32')
+        #     self.word_embeddings[word] = coefs
+        # f.close()
 
         # create vectors for each of our sentences
         self.sentence_vectors = []
@@ -73,8 +86,10 @@ class Summary:
         # extract top n sentences as the summary
         self.ranked_sentences = sorted(((scores[i], s)
                                         for i, s in enumerate(sentences)), reverse=True)
-        self.ranked_sentences = self.ranked_sentences[:][1]
+        # self.ranked_sentences = self.ranked_sentences[:]
+        self.ranked_sentences = [s[1] for s in self.ranked_sentences]
         self.summary = sentToText(self.ranked_sentences[:summary_size])
+        return self.summary
 
     def cleanSentences(self, sentences):
         """
@@ -138,7 +153,7 @@ def sentToText(text, separator=' '):
     """
     sentence = ""
     for s in text:
-        sentence += s + separator
+        sentence += str(s) + str(separator)
     return sentence
 
 
@@ -172,49 +187,58 @@ def removeStopwords(sen, stopwords):
     return new_sent
 
 
-def downloadWordEmbeddings(download_path):
-    """
-    This will download the word embeddings into the specified directory and uncompresses the file.
-    :param download_path: The directory and filename to which the word embeddings will be saved
-    :return: Returns nothing
-    """
-    # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
-    # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
-    url = "http://hunterprice.org/files/glove.6B.100d.zip"
-    wget.download(url, out=download_path)
+def getWordEmbeddings(path, app, download=True):
 
-    # uncompress the files
-    with zipfile.ZipFile(download_path+'glove.6B.100d.zip', 'r') as zip_ref:
-        zip_ref.extractall(download_path)
+    # if cannot find both of the wv files
+    if not os.path.exists(path+'glove.6B.100d.vocab') and not os.path.exists(path+'glove.6B.100d.npy'):
+        # if cannot find the .zip file
+        if not os.path.exists(path + 'glove.6B.100d.zip'):
+            if not download:
+                download_dialog = DialogBuilder(app, "Could not Find Word Vectors",
+                                                "Would you like to download the dependencies?",
+                                                "The directory you selected does not contain the necessary files.")
+                buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+                download_dialog.addButtonBox(buttonBox)
+                if not download_dialog.exec():
+                    return
+            # create the directory to hold  the word embeddings
+            path = os.path.join(path, 'WordEmbeddings/')
+            print('########',path)
+            os.mkdir(path)
 
-    # delete the compressed file
-    os.remove(download_path+'glove.6B.100d.zip')
+            # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
+            # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
+            url = "http://hunterprice.org/files/glove.6B.100d.zip"
+            wget.download(url, out=path)
 
+        # create a directory for the files
+        # uncompress the files
+        with zipfile.ZipFile(path+'glove.6B.100d.zip', 'r') as zip_ref:
+            zip_ref.extractall(path)
 
-def getWordEmbeddings(embeddings_path):
-    """
-    This will uncompress the glove files then read the files into a python dictionary.
-    Then recompress the files and delete the uncompressed files.
-    :param embeddings_path: path of glove file.
-    :return: glove model as a python dict
-    """
+        # delete the compressed file
+        os.remove(path+'glove.6B.100d.zip')
+
+    logging.info("Downloaded Word Embeddings")
+    path = path + "glove.6B.100d"
 
     # check to make sure the glove files exist
-    if not os.path.exists(embeddings_path+'.vocab'):
-        logging.error('Path does not exist - '+embeddings_path+'.vocab')
+    if not os.path.exists(path + '.vocab'):
+        logging.error('Path does not exist - '+path+'.vocab')
         return
 
     # check to make sure the glove files exist
-    if not os.path.exists(embeddings_path + '.npy'):
-        logging.error('Path does not exist - ' + embeddings_path + '.npy')
+    if not os.path.exists(path + '.npy'):
+        logging.error('Path does not exist - ' + path + '.npy')
         return
 
     # read the files into a python dict
-    with codecs.open(embeddings_path + '.vocab', 'r', 'utf-8') as f_in:
+    with codecs.open(path + '.vocab', 'r', 'utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
-    wv = np.load(embeddings_path + '.npy')
+    wv = np.load(path + '.npy')
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
 
-    return model
+    app.summarizer = Summarizer(model)
+

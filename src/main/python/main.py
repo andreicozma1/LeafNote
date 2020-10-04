@@ -53,6 +53,7 @@ class App(QMainWindow):
 
         self.document = Document(self.doc_props)
 
+        self.summarizer = None
         self.top_bar = TopBar()
         self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox(self.document)
         self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
