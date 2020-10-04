@@ -53,7 +53,7 @@ class App(QMainWindow):
 
         self.document = Document(self.doc_props)
 
-        self.top_bar = TopBar(self, self.document)
+        self.top_bar = TopBar()
         self.top_bar_combo_font_style = self.top_bar.makeComboFontStyleBox(self.document)
         self.top_bar_combo_font_size = self.top_bar.makeComboFontSizeBox(self.document, self.doc_props.list_FontSize)
         self.top_bar_btn_bold = self.top_bar.makeBtnBold(self.document)
@@ -65,9 +65,10 @@ class App(QMainWindow):
         self.top_bar.addLayoutSpacer()
         self.top_bar_btn_format_mode = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.document.selectionChanged.connect(self.onSelectionChanged)
+        self.top_bar.show()
         self.updateFormattingBtnsState(False)
 
-        self.top_bar.setLayout(self.top_bar.horizontal_layout)
+        # self.top_bar.setLayout(self.top_bar.horizontal_layout)
 
         self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)

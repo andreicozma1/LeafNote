@@ -18,21 +18,18 @@ class TopBar(QWidget):
     class that holds the top bar attributes
     """
 
-    def __init__(self, app, document):
+    def __init__(self):
         """
         sets up the top bar and its features
-        :param app: reference to application
-        :param document: reference to document
         :return: returns nothing
         """
         super(TopBar, self).__init__()
         logging.info("")
-        self.app = app
-        self.document = document
 
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
+        self.setLayout(self.horizontal_layout)
 
     def addLayoutSpacer(self):
         # Temporary widgets
@@ -44,7 +41,7 @@ class TopBar(QWidget):
         self.combo_font_style.setToolTip('Change font')
         self.combo_font_style.setFocusPolicy(Qt.NoFocus)
         self.combo_font_style.currentFontChanged.connect(doc.onFontStyleChanged)
-        self.combo_font_style.setCurrentFont(self.document.currentFont())
+        self.combo_font_style.setCurrentFont(doc.currentFont())
         self.horizontal_layout.addWidget(self.combo_font_style)
         return self.combo_font_style
 
@@ -195,12 +192,12 @@ class TopBar(QWidget):
 
         self.combo_font_style.setCurrentFont(doc.currentFont())
 
-        size = int(self.document.fontPointSize())
+        size = int(doc.fontPointSize())
         if size != 0:
             self.combo_font_size.setCurrentIndex(doc_props.list_FontSize.index(str(size)))
 
         # update the top bar alignment to the current alignment
-        align = self.document.alignment()
+        align = doc.alignment()
         self.combo_text_align.setCurrentIndex(doc_props.list_alignments_align.index(align))
 
         self.button_ital.setChecked(doc.fontItalic())
