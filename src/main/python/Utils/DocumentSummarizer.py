@@ -11,12 +11,11 @@ import zipfile
 
 """
 This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/\
-
+The word embeddings are taken from standford pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
 In this file you will find the implementation of the text rank algorithm. The goals is to
 take in an article or any amount of text and develop a summary of the text.
-The algorithm is split into 6 steps:
-    1. Concatenate all the text contained in the articles ****** take this out once impl. works
-    2. Split the text into sentences
+The algorithm is split into 5 steps:
+    1. Split the text into sentences
     3. Find the vector representation (word embeddings) for every sentence
     4. Calculate the similarities between the sentence vectors and store
         them into a similarity matrix.
@@ -180,6 +179,7 @@ def downloadWordEmbeddings(download_path):
     :return: Returns nothing
     """
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
+    # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
     url = "http://hunterprice.org/files/glove.6B.100d.zip"
     wget.download(url, out=download_path)
 
@@ -216,6 +216,5 @@ def getWordEmbeddings(embeddings_path):
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
-
 
     return model
