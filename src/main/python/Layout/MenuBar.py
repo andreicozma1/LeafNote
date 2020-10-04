@@ -462,7 +462,6 @@ class MenuBar():
 
 
     def onSummaryAction(self):
-        from Utils.DocumentSummarizer import Summarizer, getWordEmbeddings
         # if summarizer has not been created create it `
         if self.app.summarizer is None:
             # check if we have the files
@@ -470,9 +469,14 @@ class MenuBar():
             # check if we have the zip
 
             # prompt the user to select or download the word word_embeddings
-            download_dialog = DialogBuilder(self.app, "Download Dependencies",
-                                            "Would you like to download the necessary dependencies?",
-                                            "In order to use this feature you need certain dependencies")
+            download_dialog = DialogBuilder(self.app, "Unmet Dependencies",
+                                            "Would you like to download the needed dependencies?",
+                                            "In order to use this summarization feature you need certain "
+                                            "dependencies.\n"
+                                            "If you already have the files downloaded click the open button and "
+                                            "select the directory containing the files.\n"
+                                            "If you want to download the files click the yes button and select the "
+                                            "directory where you would like to download the files.")
             buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
             buttonBox.clicked.connect(self.onWordVecDownload)
             download_dialog.addButtonBox(buttonBox)
@@ -484,7 +488,7 @@ class MenuBar():
 
     def onWordVecDownload(self, button):
         print(button.text())
-        from Utils.DocumentSummarizer import Summarizer, getWordEmbeddings
+        from Utils.DocumentSummarizer import  getWordEmbeddings
         if button.text() == '&Yes':
             download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder To Download To",
                                                              "/home",
