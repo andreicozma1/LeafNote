@@ -9,6 +9,7 @@ class LayoutProps():
     """
     class has the default layout properties
     """
+
     def __init__(self):
         """
         the default properties for the layout

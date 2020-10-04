@@ -13,6 +13,7 @@ class Tab(Color):
     """
     sets up the file as a tab
     """
+
     def __init__(self, tab_bar, file_manager, path: str):
         """
         creates a tab for specific file

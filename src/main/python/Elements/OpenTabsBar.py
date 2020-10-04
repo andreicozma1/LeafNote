@@ -5,8 +5,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from Elements.Tab import Tab
 
-import logging
-
 """
 when one or more file is open it
 will show the file tabs under the
@@ -18,6 +16,7 @@ class OpenTabsBar(QWidget):
     """
     functionality and look of Tab Bar
     """
+
     def __init__(self, file_manager, layout_props):
         """
         sets up the tab bar
