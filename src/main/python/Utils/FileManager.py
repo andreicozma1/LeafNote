@@ -28,7 +28,7 @@ class FileManager:
         """
         # get the current text from the document shown to the user
 
-        if self.app.top_bar.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             data = self.app.document.toHtml()
             filter = "LeafNote (*.lef)"
         else:
@@ -76,7 +76,7 @@ class FileManager:
             return
 
         # check if the document is formatted
-        if self.app.top_bar.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             data = self.app.document.toHtml()
         else:
             data = self.app.document.toPlainText()
@@ -122,14 +122,14 @@ class FileManager:
                 if self.current_document.suffix() != 'lef':
                     self.app.document.resetFormatting()
                 self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
-                self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
+                self.app.btn_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
                 self.app.document.updateTextBox("")
                 self.app.top_bar.setFormattingButtonsEnabled(False)
-                self.app.top_bar.button_mode_switch.setChecked(False)
+                self.app.btn_mode_switch.setChecked(False)
 
         # if it does not exist print error messages
         else:
@@ -149,7 +149,7 @@ class FileManager:
         self.open_documents.clear()
         self.app.document.updateTextBox("")
         self.app.top_bar.setFormattingButtonsEnabled(False)
-        self.app.top_bar.button_mode_switch.setChecked(False)
+        self.app.btn_mode_switch.setChecked(False)
 
     def openDocument(self, path: str):
         """
@@ -193,8 +193,8 @@ class FileManager:
         self.app.document.textCursor().clearSelection()
         if self.current_document.suffix() != 'lef':
             self.app.document.resetFormatting()
-        self.app.top_bar.setFormattingButtonsEnabled(self.current_document.suffix() == 'lef')
-        self.app.top_bar.button_mode_switch.setChecked(self.current_document.suffix() == 'lef')
+        self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
+        self.app.btn_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
         self.app.document.updateTextBox(data)
