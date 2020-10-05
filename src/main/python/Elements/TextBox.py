@@ -62,6 +62,5 @@ class TextBox(QTextEdit):
         :param text: text to be added
         :return: returns nothing
         """
-
         if text is not None:
             self.setText(text)

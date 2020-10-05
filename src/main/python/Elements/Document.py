@@ -2,6 +2,7 @@ import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtWidgets import QColorDialog
 
 from Elements.TextBox import TextBox
 
@@ -88,8 +89,19 @@ class Document(TextBox):
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.info(state)
-        self.setAlignment(self.doc_props.list_alignments_align[state])
+        logging.info(list(self.doc_props.dict_align.keys())[state])
+        self.setAlignment(list(self.doc_props.dict_align.values())[state])
+        self.currentCharFormatChanged.emit(self.currentCharFormat())
+
+    def openColorDialog(self):
+        """
+        Opens the color widget and checks for a valid color then sets document font color
+        :return: returns nothing
+        """
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.setTextColor(color)
 
     def onTextColorChanged(self, index):
         """
@@ -112,3 +124,9 @@ class Document(TextBox):
         self.onFontBoldChanged(False)
         self.onFontStrikeChanged(False)
         self.setAlignment(Qt.AlignLeft)
+
+    def fontBold(self):
+        return self.fontWeight() == QFont.Bold
+
+    def fontStrike(self):
+        return self.currentCharFormat().fontStrikeOut()

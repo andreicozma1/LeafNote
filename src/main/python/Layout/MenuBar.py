@@ -1,514 +1,348 @@
-import logging
 import _thread
+import logging
 import os
 
-from PyQt5.QtCore import QDir, Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
-from PyQt5.QtWidgets import qApp, QAction, QColorDialog
-from tr.tr import tr
+from PyQt5.QtCore import QDir
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QDialogButtonBox
+from PyQt5.QtWidgets import QFileDialog
 
+from Elements import Document
+from Layout import DocProps
 from Utils.DialogBuilder import DialogBuilder
+from Utils.DocumentSummarizer import getWordEmbeddings
 
 """
 all properties and functionalities of the menu bar
 """
 
 
-class MenuBar():
+class MenuBar(QMenuBar):
     """
     Class to hold and customize a QPlainTextEdit Widget
     """
 
-    def __init__(self, app, file_manager, document, top_bar, bottom_bar):
+    def __init__(self, document: Document, doc_props: DocProps):
         """
-        sets up the menu bar
-        :param app: reference to application
-        :param file_manager: reference to file manager
-        :param document: reference to document
-        :param top_bar: reference to top bar
-        :param bottom_bar: reference to bottom bar
+        Sets up the System MenuBar
         :return: returns nothing
         """
+        super(MenuBar, self).__init__()
         logging.info("")
-        self.app = app
-        self.document = document
-        self.top_bar = top_bar
-        self.bottom_bar = bottom_bar
-        self.file_manager = file_manager
+        self.doc = document
+        self.doc_props = doc_props
+        self.setNativeMenuBar(False)
 
-        self.menu = app.menuBar()
-        self.menu.setNativeMenuBar(False)
+        self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
+        self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
-        self.file_menu = self.menu.addMenu('&File')
-        self.edit_menu = self.menu.addMenu('&Edit')
-
-        # TODO - uncomment when implementing these menus individually
-        self.view_menu = self.menu.addMenu('&View')
-        self.format_menu = self.menu.addMenu('&Format')
-        self.tools_menu = self.menu.addMenu('&Tools')
-        # self.help_menu = self.menu.addMenu('&Help')
-
-        self.setup()
-
-    def setup(self):
-        """
-        sets up the menu bar tabs
-        :return: returns nothing
-        """
-        logging.info("setup")
-        # File tab submenus and actions
-        self.fileMenuSetup()
-        self.editMenuSetup()
-
-        # TODO - uncomment when implementing these menus individually
-        self.viewMenuSetup()
-        self.formatMenuSetup()
-        self.toolsMenuSetup()
-        # self.helpMenuSetup()
-
-    # --------------------------------------------------------------------------------
-
-    # TODO - Add more functionality to file tab - new, save, save as, save all, settings, etc.
-    def fileMenuSetup(self):
+    # =====================================================================================
+    def makeFileMenu(self, app, file_manager):
         """
         sets up the file tabs drop menu
         :return: returns nothing
         """
-        logging.info("fileMenuSetup")
+        logging.info("makeFileMenu")
 
-        # TODO - implement new file button that opens a new blank file in the document
-        new_file_act = QAction("&New...", self.app)
+        def onNewBtn():
+            logging.info("MenuBar - onNewBtn")
+            file_manager.newFile()
+
+        def onOpenBtn():
+            logging.info("onOpenBtn")
+            # this is opens the file dialogue in the project path
+            home_dir = str(QDir.currentPath())
+            # opens a file dialogue for the user to select a file to open
+            file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
+            # open the chosen file and show the text in the text editor
+            file_manager.openDocument(file_name[0])
+
+        def onOpenFolderBtn():
+            logging.info("onOpenFolderBtn")
+            # opens a file dialogue for the user to select a file to open
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', str(QDir.currentPath()))
+            # if the user selected a new folder
+            if folder_name != "":
+                app.left_menu.updateDirectory(folder_name)
+
+        # this saves the current file that is shown in the self.doc
+        def onSaveBtn():
+            logging.info("onSaveBtn")
+            file_manager.saveDocument()
+
+        def onSaveAsBtn():
+            logging.info("saveAsFile")
+            new_file_path = QFileDialog.getSaveFileName(app, 'Save File')
+            file_manager.saveAsDocument(new_file_path[0])
+
+        def onExitBtn():
+            logging.info("onExitBtn")
+            file_manager.closeAll()
+            app.close()
+
+        self.menu_file = self.addMenu('&File')
+
+        # ========= START FILE MENU SECTION =========
+        def makeFileAction(name: str, shortcut: str, signal) -> QAction:
+            file_action = QAction(name, app)
+            file_action.setShortcut(shortcut)
+            file_action.triggered.connect(signal)
+            return file_action
+
+        new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
-        new_file_act.triggered.connect(self.onNewBtn)
-        self.file_menu.addAction(new_file_act)
+        new_file_act.triggered.connect(onNewBtn)
+        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
+        # ========= END FILE MENU SECTION =========
 
-        # opens a dialogue to chose a file an open it
-        open_file_act = QAction("&Open...", self.app)
-        open_file_act.setStatusTip('Open File')
-        open_file_act.triggered.connect(self.onOpenBtn)
-        self.file_menu.addAction(open_file_act)
+        return self.menu_file
 
-        # open a folder as a workspace, showing the directory tree in the left menu
-        open_folder_act = QAction("&Open Folder...", self.app)
-        open_folder_act.setStatusTip('Open Folder')
-        open_folder_act.triggered.connect(self.onOpenFolderBtn)
-        self.file_menu.addAction(open_folder_act)
-
-        # adds line to separate options
-        self.file_menu.addSeparator()
-
-        # save the open file
-        save_file = QAction("&Save...", self.app)
-        save_file.setStatusTip('Save')
-        save_file.setShortcut('ctrl+s')
-        save_file.triggered.connect(self.onSaveBtn)
-        self.file_menu.addAction(save_file)
-
-        # TODO - save the file as a specified name in any location on disk
-        save_as_file = QAction("&Save As...", self.app)
-        save_as_file.setStatusTip('Save As')
-        save_as_file.setShortcut('ctrl+shift+s')
-        save_as_file.triggered.connect(self.onSaveAsBtn)
-        self.file_menu.addAction(save_as_file)
-
-        # adds line to separate options
-        self.file_menu.addSeparator()
-
-        # quit main window
-        exit_act = QAction("&Exit", self.app)
-        exit_act.setShortcut('Ctrl+Q')
-        exit_act.setStatusTip('Exit application')
-        exit_act.triggered.connect(self.onExitBtn)
-        self.file_menu.addAction(exit_act)
-
-    # TODO - implement new file button that opens a new blank file in the document
-    def onNewBtn(self):
+    # =====================================================================================
+    def makeEditMenu(self, app):
         """
-        function of the new file button
-        :return: returns nothing
+        Create Edit Menu
+        :return: the menu created
         """
-        logging.info("MenuBar - onNewBtn")
-        self.app.file_manager.newFile()
+        logging.info("makeEditMenu")
+        self.menu_edit = self.addMenu('&Edit')
 
-    # this function opens a dialog for the user to select a file to open. When the user
-    # selects a file it will show its text in the middle of the window
-    def onOpenBtn(self):
+        # ========= START EDIT MENU SECTION =========
+        def makeEditAction(name: str, shortcut: str, signal) -> QAction:
+            edit_action = QAction(name, app)
+            edit_action.setShortcut(shortcut)
+            edit_action.triggered.connect(signal)
+            return edit_action
+
+        # Add actions
+        self.menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
+        self.menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
+        self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
+        self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        # ========= END EDIT MENU SECTION =========
+        return self.menu_edit
+
+    # =====================================================================================
+    def makeViewMenu(self, app, bottom_bar) -> QMenu:
         """
-        function of the open button
-        :return: returns nothing
+        Create View Menu
+        :return: the menu created
         """
-        logging.info("onOpenBtn")
-        # open the dialogue using the home directory as root
+        logging.info("makeViewMenu")
+        self.menu_view = self.addMenu('&View')
 
-        # this is opens the file dialogue in the project path
-        # ***** Delete this line in the future
-        home_dir = str(QDir.currentPath())
+        # ========= START VIEW MENU SECTION =========
+        def makeViewAction(name: str, shortcut: str, signal) -> QAction:
+            view_action = QAction(name, app)
+            view_action.setShortcut(shortcut)
+            view_action.triggered.connect(signal)
+            return view_action
 
-        # opens a file dialogue for the user to select a file to open
-        # TODO
-        file_name = QFileDialog.getOpenFileName(self.app, 'Open file',
-                                                home_dir)
+        self.menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
+        self.menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
+        self.menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+        # ========= END VIEW MENU SECTION =========
+        return self.menu_view
 
-        # open the chosen file and show the text in the text editor
-        self.file_manager.openDocument(file_name[0])
-
-    def onOpenFolderBtn(self):
+    # =====================================================================================
+    def makeFormatMenu(self, app) -> QMenu:
         """
-        function of the open folder button
-        :return: returns nothing
-        """
-        # open the dialogue using the home directory as root
-        logging.info("onOpenFolderBtn")
-
-        home_dir = self.app.app_props.mainPath
-
-        # opens a file dialogue for the user to select a file to open
-        # TODO - exclude certain files types like pdfs or images
-        folder_name = QFileDialog.getExistingDirectory(self.app, 'Open folder', home_dir)
-
-        # if the user selected a new folder
-        if folder_name != "":
-            self.app.app_props.mainPath = folder_name
-            self.app.left_menu.updateDirectory(self.app.app_props.mainPath)
-
-    # this saves the current file that is shown in the document
-    def onSaveBtn(self):
-        """
-        function of the save button
-        :return: returns nothing
-        """
-        logging.info("onSaveBtn")
-        self.file_manager.saveDocument()
-
-    # TODO - save the file as a specified name in any location on disk
-    def onSaveAsBtn(self):
-        """
-        function of the save as button
-        :return: returns nothing
-        """
-        logging.info("saveAsFile")
-        new_file_path = QFileDialog.getSaveFileName(self.app, 'Save File')
-        self.file_manager.saveAsDocument(new_file_path[0])
-
-    def onExitBtn(self):
-        """
-        exits program on quit
-        :return: returns nothing
-        """
-        logging.info("onExitBtn")
-        self.file_manager.closeAll()
-
-        qApp.quit()
-
-    # --------------------------------------------------------------------------------
-
-    # TODO - Add functionality to edit tab - undo, redo, cut, copy, paste, etc.
-    def editMenuSetup(self):
-        """
-        sets up the edit tabs drop menu
-        :return: returns nothing
-        """
-        logging.info("editMenuSetup")
-
-        # Idea: select button when keyboard shortcut used
-
-        # undo button and function
-        undo_act = QAction("&Undo", self.app)
-        undo_act.setShortcut('Ctrl+z')
-        undo_act.triggered.connect(self.app.document.undo)
-        self.edit_menu.addAction(undo_act)
-
-        # redo button and function
-        redo_act = QAction("&Redo", self.app)
-        redo_act.setShortcut('Ctrl+Shift+z')
-        redo_act.triggered.connect(self.app.document.redo)
-        self.edit_menu.addAction(redo_act)
-
-        # adds line to separate options
-        self.edit_menu.addSeparator()
-
-        # select all button and function
-        select_all_act = QAction("&Select All", self.app)
-        select_all_act.setShortcut('Ctrl+a')
-        select_all_act.triggered.connect(self.app.document.selectAll)
-        self.edit_menu.addAction(select_all_act)
-
-        # adds line to separate options
-        self.edit_menu.addSeparator()
-
-        # cut button and function
-        cut_act = QAction("&Cut", self.app)
-        cut_act.setShortcut('Ctrl+x')
-        cut_act.triggered.connect(self.app.document.cut)
-        self.edit_menu.addAction(cut_act)
-
-        # copy button and function
-        copy_act = QAction("&Copy", self.app)
-        copy_act.setShortcut('Ctrl+c')
-        copy_act.triggered.connect(self.app.document.copy)
-        self.edit_menu.addAction(copy_act)
-
-        # paste button and function
-        paste_act = QAction("&Paste", self.app)
-        paste_act.setShortcut('Ctrl+v')
-        paste_act.triggered.connect(self.app.document.paste)
-        self.edit_menu.addAction(paste_act)
-
-    # --------------------------------------------------------------------------------
-
-    # TODO - uncomment when implementing these menus
-    # TODO - Add functionality to view tab - appearance, etc.
-    def viewMenuSetup(self):
-        """
-        sets up the view tabs drop menu
-        :return: returns nothing
-        """
-        logging.info("viewMenuSetup")
-        zoom_in_act = QAction("&Zoom In", self.app)
-        zoom_in_act.setShortcut('ctrl+=')
-        zoom_in_act.triggered.connect(self.app.bottom_bar.onZoomInClicked)
-        self.view_menu.addAction(zoom_in_act)
-
-        zoom_out_act = QAction("&Zoom Out", self.app)
-        # zoom_out_act.setShortcut('ctrl+-')
-        zoom_out_act.setShortcut('ctrl+-')
-        zoom_out_act.triggered.connect(self.app.bottom_bar.onZoomOutClicked)
-        self.view_menu.addAction(zoom_out_act)
-
-        zoom_r_act = QAction("&Zoom Reset", self.app)
-        zoom_r_act.triggered.connect(self.app.bottom_bar.resetZoom)
-        self.view_menu.addAction(zoom_r_act)
-
-    # --------------------------------------------------------------------------------
-    # TODO - Add functionality to tools tab - tbd
-    def formatMenuSetup(self):
-        """
-        sets up the tools tabs drop menu
-        :return: returns nothing
+        Create Format Menu
+        :return: the menu created
         """
         logging.info("formatMenuSetup")
-        # Sets up submenue of 'Text' inside of the 'Format' menu
-        self.text_menu = self.format_menu.addMenu('&Text')
+        self.menu_format = self.addMenu('&Format')
 
-        # sets up a submenu for alignment and indentation in the format menu
-        self.align_indent_menu = self.format_menu.addMenu('&Align && Indent')
+        # ========= START FONT STYLES SECTION =========
+        def makeStyleAction(name: str, shortcut: str, signal, docref) -> QAction:
+            style_action = QAction(name, app)
+            style_action.setShortcut(shortcut)
+            style_action.setCheckable(True)
+            style_action.setProperty("docref", docref)
+            style_action.triggered.connect(signal)
+            return style_action
 
-        # Adds Bold button to text_menu
-        self.bold_action = QAction("Bold", self.app)
-        self.bold_action.setShortcut('Ctrl+B')
-        self.bold_action.setCheckable(True)
-        self.bold_action.triggered.connect(self.app.document.onFontBoldChanged)
-        self.text_menu.addAction(self.bold_action)
+        self.group_style = QActionGroup(self.menu_format)
+        self.group_style.setExclusive(False)
+        act_bold = makeStyleAction("Bold", "Ctrl+B", self.doc.onFontBoldChanged, self.doc.fontBold)
+        self.group_style.addAction(act_bold)
+        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged, self.doc.fontItalic)
+        self.group_style.addAction(act_ital)
+        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged, self.doc.fontStrike)
+        self.group_style.addAction(act_strk)
+        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged, self.doc.fontUnderline)
+        self.group_style.addAction(act_undr)
+        # Add all actions in group to Style Menu
+        self.menu_format.addActions(self.group_style.actions())
+        # ========= END FONT STYLES SECTION =========
 
-        # Adds Italicised button to text_menu
-        self.ital_action = QAction("Italicised", self.app)
-        self.ital_action.setShortcut('Ctrl+I')
-        self.ital_action.setCheckable(True)
-        self.ital_action.triggered.connect(self.app.document.onFontItalChanged)
-        self.text_menu.addAction(self.ital_action)
+        # ========= START EXTRA SECTION =========
+        self.menu_format.addSeparator()
+        act_color_picker = QAction("Color Picker", app)
+        act_color_picker.triggered.connect(self.doc.openColorDialog)
+        self.menu_format.addAction(act_color_picker)
 
-        # Adds Strikeout button to text_menu
-        self.strike_action = QAction("Strikout", self.app)
-        self.strike_action.setShortcut('Ctrl+Shift+5')
-        self.strike_action.setCheckable(True)
-        self.strike_action.triggered.connect(self.app.document.onFontStrikeChanged)
-        self.text_menu.addAction(self.strike_action)
+        # ========= END EXTRA SECTION =========
 
-        # Adds Underline button to text_menu
-        self.under_action = QAction("Underline", self.app)
-        self.under_action.setShortcut('Ctrl+U')
-        self.under_action.setCheckable(True)
-        self.under_action.triggered.connect(self.app.document.onFontUnderChanged)
-        self.text_menu.addAction(self.under_action)
+        # ========= START ALIGNMENT SECTION =========
+        def makeAlignAction(name: str, shortcut: str, default: bool = False) -> QAction:
+            align_action = QAction(name, app)
+            align_action.setShortcut(shortcut)
+            align_action.setCheckable(True)
+            align_action.setChecked(default)
+            return align_action
 
-        # Adds Seperator to text_menu
-        self.text_menu.addSeparator()
+        def onTextAlignmentChanged(state):
+            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
 
-        # Adds Font Color button to text_menu
-        self.font_color_action = QAction("Font Color", self.app)
-        self.font_color_action.triggered.connect(self.openColorDialog)
-        self.text_menu.addAction(self.font_color_action)
+        self.menu_format.addSeparator()
+        # Action Group for Alignments options (Exclusive picks)
+        self.group_align = QActionGroup(self.menu_format)
+        self.group_align.triggered.connect(onTextAlignmentChanged)
 
-        # --- create the alignment and indentation menu ---
-        # create the left alignment action
-        self.left_align_action = QAction("Left Align", self.app)
-        self.left_align_action.setShortcut('Ctrl+Shift+L')
-        self.left_align_action.triggered.connect(self.onTextAlignLeftClicked)
-        self.align_indent_menu.addAction(self.left_align_action)
+        def getName(index: int):
+            return list(self.doc_props.dict_align.keys())[index]
 
-        # create the center alignment action
-        self.center_align_action = QAction("Center Align", self.app)
-        self.center_align_action.setShortcut('Ctrl+Shift+E')
-        self.center_align_action.triggered.connect(self.onTextAlignCenterClicked)
-        self.align_indent_menu.addAction(self.center_align_action)
+        # Add alignment options to the group
+        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
+        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+R'))
+        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+E'))
+        self.group_align.addAction(makeAlignAction(getName(3), 'Ctrl+Shift+J'))
+        # Add all actions in group to Format Menu
+        self.menu_format.addActions(self.group_align.actions())
+        # ========= END ALIGNMENT SECTION =========
+        return self.menu_format
 
-        # create the right alignment action
-        self.right_align_action = QAction("Right Align", self.app)
-        self.right_align_action.setShortcut('Ctrl+Shift+R')
-        self.right_align_action.triggered.connect(self.onTextAlignRightClicked)
-        self.align_indent_menu.addAction(self.right_align_action)
-
-        # create the justify alignment action
-        self.justify_align_action = QAction("Justify Align", self.app)
-        self.justify_align_action.setShortcut('Ctrl+Shift+J')
-        self.justify_align_action.triggered.connect(self.onTextAlignJustifyClicked)
-        self.align_indent_menu.addAction(self.justify_align_action)
-
-        # if the enable formatting mode is toggled
-        self.setFormattingEnabled(False)
-
-        self.app.top_bar.button_mode_switch.toggled.connect(self.setFormattingEnabled)
-        self.app.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-
-    def openColorDialog(self):
+    # =====================================================================================
+    def makeToolsMenu(self, app) -> QMenu:
         """
-        Opens the color widget and checks for a valid color then sets document font color
-        :return: returns nothing
+        Create View Menu
+        :return: the menu created
         """
-        color = QColorDialog.getColor()
+        logging.info("makeViewMenu")
+        self.menu_tools = self.addMenu('&View')
 
-        if color.isValid():
-            self.app.document.setTextColor(color)
+        # ========= START TOOLS MENU SECTION =========
+        def onSummaryAction():
+            # if summarizer has not been created create it
+            if app.summarizer is None:
+                logging.info("Missing dependencies. Prompting user")
+                # prompt the user to select or download the word word_embeddings
+                download_dialog = DialogBuilder(app, "Dictionaries",
+                                                "Would you like to download required dictionaries?",
+                                                "If you have already downloaded them previously click open to select the location on disk.")
+                buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+                buttonBox.clicked.connect(onWordVecDownload)
+                download_dialog.addButtonBox(buttonBox)
+                state = download_dialog.exec()
 
-    def onTextAlignLeftClicked(self):
-        """
-        This will left align the selected text in the document
-        :return: Returns nothing
-        """
-        logging.info("Align Left")
-        self.document.setAlignment(Qt.AlignLeft)
-        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignLeft))
+            # if there is already an instance of the summarizer
+            else:
+                logging.info(app.summarizer.summarize(app.document.toPlainText()))
 
-    def onTextAlignCenterClicked(self):
-        """
-            This will center align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Center")
-        self.document.setAlignment(Qt.AlignCenter)
-        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignCenter))
+        def onWordVecDownload( button):
+            if button.text() == '&Yes':
+                logging.info("User selected Yes")
+                download_path = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
+                                                                 "/home",
+                                                                 QFileDialog.ShowDirsOnly
+                                                                 | QFileDialog.DontResolveSymlinks)
+                if download_path == "":
+                    logging.info("User Cancelled Summarizer Prompt")
+                download_path = download_path + os.path.sep
+                try:
+                    _thread.start_new_thread(getWordEmbeddings, (download_path, app))
+                except:
+                    logging.error("Unable to start thread")
 
-    def onTextAlignRightClicked(self):
-        """
-            This will right align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Right")
-        self.document.setAlignment(Qt.AlignRight)
-        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignRight))
+            elif button.text() == 'Open':
+                logging.info("User selected Open")
+                download_path = QFileDialog.getExistingDirectory(app, "Select Folder With Word Vector Files",
+                                                                 "/home",
+                                                                 QFileDialog.ShowDirsOnly
+                                                                 | QFileDialog.DontResolveSymlinks)
+                if download_path == "":
+                    logging.info("User cancelled Open")
 
-    def onTextAlignJustifyClicked(self):
-        """
-            This will justify align the selected text in the document
-            :return: Returns nothing
-        """
-        logging.info("Align Justify")
-        self.document.setAlignment(Qt.AlignJustify)
-        self.top_bar.combo_text_align.setCurrentIndex(self.top_bar.list_alignments_align.index(Qt.AlignJustify))
+                download_path = download_path + os.path.sep
 
-    def setFormattingEnabled(self, state):
+                try:
+                    _thread.start_new_thread(getWordEmbeddings, (download_path, app, False))
+                except:
+                    logging.error("Unable to start thread")
+            else:
+                logging.info("User selected Cancel")
+
+
+        def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
+            tools_action = QAction(name, app)
+            tools_action.setShortcut(shortcut)
+            tools_action.triggered.connect(signal)
+            return tools_action
+
+        self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+
+        # ========= END TOOLS MENU SECTION =========
+
+
+        return self.menu_tools
+
+    # =====================================================================================
+
+    def setFormattingButtonsEnabled(self, state):
         """
-        allows formatting once file type is changed from .txt to .lef in menu bar
-        :param state: this is a boolean that sets the states
+        Sets all formatting options to Enabled or Disabled
+        :param state: boolean that sets the states
         :return: returns nothing
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
         a: QAction
-        for a in self.text_menu.actions():
-            if not a.property("persistent"):
-                a.setEnabled(state)
-
-        # Toggle the state of all buttons in the menu
-        a: QAction
-        for a in self.align_indent_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.setEnabled(state)
 
     def updateFormatOnSelectionChange(self):
         """
-        selected text format will be checked in menu bar
+        Selected text format reflected in the MenuBar
         :return: returns nothing
         """
+        # Block signals
+        logging.info("Started updating")
         a: QAction
-        for a in self.text_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(True)
-
-        self.ital_action.setChecked(self.app.document.fontItalic())
-        self.under_action.setChecked(self.app.document.fontUnderline())
-        self.bold_action.setChecked(self.app.document.fontWeight() == QFont.Bold)
-        self.strike_action.setChecked(self.app.document.currentCharFormat().fontStrikeOut())
-
+        # Update Style options
+        for action in self.group_style.actions():
+            get = action.property("docref")
+            action.setChecked(get())
+        # Update Align options
+        alignment = self.doc.alignment()
+        for action in self.group_align.actions():
+            action.setChecked(False)
+            get = action.property("docref")
+            index = list(self.doc_props.dict_align.values()).index(alignment)
+            if action.text() == list(self.doc_props.dict_align.keys())[index]:
+                action.setChecked(True)
+        # Unblock signals
         a: QAction
-        for a in self.text_menu.actions():
+        for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+        logging.info("Finished updating")
 
-    # --------------------------------------------------------------------------------
 
-    # TODO - Add functionality to tools tbd
-    def toolsMenuSetup(self):
-        """
-        this function sets up the tools tabs drop menu
-        :return:
-        """
-        logging.info("toolsMenuSetup")
-        summary_act = QAction("&Generate Summary", self.app)
-        summary_act.triggered.connect(self.onSummaryAction)
-        self.tools_menu.addAction(summary_act)
 
-    def onSummaryAction(self):
-        # if summarizer has not been created create it
-        if self.app.summarizer is None:
-            logging.info("Missing dependencies. Prompting user")
-            # prompt the user to select or download the word word_embeddings
-            download_dialog = DialogBuilder(self.app, "Dictionaries",
-                                            "Would you like to download required dictionaries?",
-                                            "If you have already downloaded them previously click open to select the location on disk.")
-            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
-            buttonBox.clicked.connect(self.onWordVecDownload)
-            download_dialog.addButtonBox(buttonBox)
-            state = download_dialog.exec()
-
-        # if there is already an instance of the summarizer
-        else:
-            logging.info(self.app.summarizer.summarize(self.app.document.toPlainText()))
-
-    def onWordVecDownload(self, button):
-        from Utils.DocumentSummarizer import  getWordEmbeddings
-        if button.text() == '&Yes':
-            logging.info("User selected Yes")
-            download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder To Download To",
-                                                             "/home",
-                                                             QFileDialog.ShowDirsOnly
-                                                             | QFileDialog.DontResolveSymlinks)
-            if download_path == "":
-                logging.info("User Cancelled Summarizer Prompt")
-            download_path = download_path + os.path.sep
-            try:
-                _thread.start_new_thread(getWordEmbeddings, (download_path, self.app))
-            except:
-                logging.error("Unable to start thread")
-
-        elif button.text() == 'Open':
-            logging.info("User selected Open")
-            download_path = QFileDialog.getExistingDirectory(self.app, "Select Folder With Word Vector Files",
-                                                             "/home",
-                                                             QFileDialog.ShowDirsOnly
-                                                             | QFileDialog.DontResolveSymlinks)
-            if download_path == "":
-                logging.info("User cancelled Open")
-
-            download_path = download_path + os.path.sep
-
-            try:
-                _thread.start_new_thread(getWordEmbeddings, (download_path, self.app, False))
-            except:
-                logging.error("Unable to start thread")
-        else:
-            logging.info("User selected Cancel")
 
     # --------------------------------------------------------------------------------
 
