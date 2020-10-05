@@ -1,7 +1,9 @@
 import logging
 
-from PyQt5.Qt import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
+from PyQt5.Qt import Qt, QTime, QTimer
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout
+from PyQt5.QtCore import QDate, QDateTime
+
 
 """
 This file alters tools on the Bottom Bar
@@ -34,6 +36,13 @@ class BottomBar(QWidget):
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(self.horizontal_layout)
+
+        datetime = QDateTime.currentDateTime()
+        self.current_time = QPushButton(datetime.toString(Qt.DefaultLocaleShortDate), self)
+        self.horizontal_layout.addWidget(self.current_time)
+        timer = QTimer(self)
+        timer.timeout.connect(self.showTime)
+        timer.start(1000)
 
         # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
@@ -93,6 +102,7 @@ class BottomBar(QWidget):
         self.button_zoom_in.setAutoRepeat(True)
         self.button_zoom_in.setToolTip("Zoom in")
         self.horizontal_layout.addWidget(self.button_zoom_in)
+
 
     def updateWordCount(self):
         """
@@ -159,3 +169,11 @@ class BottomBar(QWidget):
         :return: returns nothing
         """
         self.zoom_slider.setValue(self.slider_start)
+
+    def showTime(self):
+        """
+        Updates current time displayed on current_time label
+        :return: returns current time
+        """
+        datetime = QDateTime.currentDateTime()
+        self.current_time.setText(datetime.toString(Qt.DefaultLocaleShortDate))
