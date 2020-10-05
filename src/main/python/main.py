@@ -74,7 +74,7 @@ class App(QMainWindow):
         self.top_bar.makeComboFontColor()
         self.top_bar.makeComboTextAlign()
         self.top_bar.addLayoutSpacer()
-        self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.top_bar.show()
 
         # TODO - fix this function call causing Format Mode button to not have spacer
@@ -127,14 +127,14 @@ class App(QMainWindow):
                 self.updateFormatBtnsState(True)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
-                self.button_mode_switch.setChecked(False)
+                self.btn_mode_switch.setChecked(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.file_manager.lefToExt()
             logging.info("Convert back to a txt file")
-            self.button_mode_switch.setChecked(False)
+            self.btn_mode_switch.setChecked(False)
 
     def setupLayout(self):
         """
