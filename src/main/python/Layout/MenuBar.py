@@ -223,7 +223,7 @@ class MenuBar(QMenuBar):
         return self.menu_format
 
     # =====================================================================================
-    def makeToolsMenu(self, app) -> QMenu:
+    def makeToolsMenu(self, app, document) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -232,56 +232,10 @@ class MenuBar(QMenuBar):
         self.menu_tools = self.addMenu('&View')
 
         # ========= START TOOLS MENU SECTION =========
+        import Utils.DocumentSummarizer as DocumentSummarizer
+
         def onSummaryAction():
-            # if summarizer has not been created create it
-            if app.summarizer is None:
-                logging.info("Missing dependencies. Prompting user")
-                # prompt the user to select or download the word word_embeddings
-                download_dialog = DialogBuilder(app, "Dictionaries",
-                                                "Would you like to download required dictionaries?",
-                                                "If you have already downloaded them previously click open to select the location on disk.")
-                buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
-                buttonBox.clicked.connect(onWordVecDownload)
-                download_dialog.addButtonBox(buttonBox)
-                state = download_dialog.exec()
-
-            # if there is already an instance of the summarizer
-            else:
-                logging.info(app.summarizer.summarize(app.document.toPlainText()))
-
-        def onWordVecDownload( button):
-            if button.text() == '&Yes':
-                logging.info("User selected Yes")
-                download_path = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                                 "/home",
-                                                                 QFileDialog.ShowDirsOnly
-                                                                 | QFileDialog.DontResolveSymlinks)
-                if download_path == "":
-                    logging.info("User Cancelled Summarizer Prompt")
-                download_path = download_path + os.path.sep
-                try:
-                    _thread.start_new_thread(getWordEmbeddings, (download_path, app))
-                except:
-                    logging.error("Unable to start thread")
-
-            elif button.text() == 'Open':
-                logging.info("User selected Open")
-                download_path = QFileDialog.getExistingDirectory(app, "Select Folder With Word Vector Files",
-                                                                 "/home",
-                                                                 QFileDialog.ShowDirsOnly
-                                                                 | QFileDialog.DontResolveSymlinks)
-                if download_path == "":
-                    logging.info("User cancelled Open")
-
-                download_path = download_path + os.path.sep
-
-                try:
-                    _thread.start_new_thread(getWordEmbeddings, (download_path, app, False))
-                except:
-                    logging.error("Unable to start thread")
-            else:
-                logging.info("User selected Cancel")
-
+            DocumentSummarizer.onSummaryAction(app, document)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)

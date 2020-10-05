@@ -1,3 +1,4 @@
+import _thread
 import codecs
 import glob
 import os
@@ -7,7 +8,7 @@ import pandas as pd
 import nltk
 import wget as wget
 from PyQt5.QtCore import QRunnable
-from PyQt5.QtWidgets import QDialogButtonBox
+from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 import zipfile
@@ -52,6 +53,7 @@ class Summarizer:
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
         """
+        print(text)
         if text == "":
             logging.warning("Document has no text")
 
@@ -181,8 +183,86 @@ def removeStopwords(sen, stopwords):
     return new_sent
 
 
-def getWordEmbeddings(path, app, download=True):
+#################################################################
+# HANDLING DOWNLOADS
 
+def onSummaryAction(app, document):
+    """
+    This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
+    :param app:
+    :param document:
+    :return:
+    """
+    # The action that gets called when the user selects a button on the prompt
+    def onDownload(button):
+        onWordVecDownload(app, button)
+
+    # if summarizer has not been created create it
+    if app.summarizer is None:
+        logging.info("Missing dependencies. Prompting user")
+        # prompt the user to select or download the word word_embeddings
+        download_dialog = DialogBuilder(app, "Dictionaries",
+                                        "Would you like to download required dictionaries?",
+                                        "If you have already downloaded them previously click open to select the location on disk.")
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+        buttonBox.clicked.connect(onDownload)
+        download_dialog.addButtonBox(buttonBox)
+        state = download_dialog.exec()
+
+    # if there is already an instance of the summarizer
+    else:
+        logging.info(app.summarizer.summarize(document.toPlainText()))
+
+
+def onWordVecDownload(app, button):
+    """
+    This will handle the users choice for the download prompt the user will select where they want to find/download the files
+    :param app: an application reference
+    :param button: the button the user selected
+    :return:
+    """
+    if button.text() == '&Yes':
+        logging.info("User selected Yes")
+        download_path = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
+                                                         "/home",
+                                                         QFileDialog.ShowDirsOnly
+                                                         | QFileDialog.DontResolveSymlinks)
+        if download_path == "":
+            logging.info("User Cancelled Summarizer Prompt")
+        download_path = download_path + os.path.sep
+        try:
+            _thread.start_new_thread(getWordEmbeddings, (download_path, app))
+        except:
+            logging.error("Unable to start thread")
+
+    elif button.text() == 'Open':
+        logging.info("User selected Open")
+        download_path = QFileDialog.getExistingDirectory(app, "Select Folder With Word Vector Files",
+                                                         "/home",
+                                                         QFileDialog.ShowDirsOnly
+                                                         | QFileDialog.DontResolveSymlinks)
+        if download_path == "":
+            logging.info("User cancelled Open")
+
+        download_path = download_path + os.path.sep
+
+        try:
+            _thread.start_new_thread(getWordEmbeddings, (download_path, app, False))
+        except:
+            logging.error("Unable to start thread")
+    else:
+        logging.info("User selected Cancel")
+
+
+def getWordEmbeddings(path: str, app, download=True):
+    """
+    This will download the necessary files for Summarizer then create the word embedding model and create
+    an instance of the summarizer
+    :param path: A path to where the files are or are to be downloaded
+    :param app: A reference to the application
+    :param download: Whether or not the user selected the download butotn
+    :return:
+    """
     # if cannot find both of the wv files
     if not os.path.exists(path+'glove.6B.100d.vocab') and not os.path.exists(path+'glove.6B.100d.npy'):
         # if cannot find the .zip file
@@ -251,4 +331,5 @@ def getWordEmbeddings(path, app, download=True):
         model[w] = wv[i]
     logging.info("Finished reading dictionary contents")
 
+    # create an instance of the summarizer and give it to the application
     app.summarizer = Summarizer(model)
