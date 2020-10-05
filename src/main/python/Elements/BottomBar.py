@@ -1,6 +1,6 @@
 import logging
-
-from PyQt5.Qt import Qt, QTime, QTimer
+import os
+from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QDate, QDateTime
 
@@ -37,6 +37,14 @@ class BottomBar(QWidget):
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(self.horizontal_layout)
 
+        temp = os.path.join("Resources", "Calender.ico")
+        pixmap = QPixmap(temp)
+        icon = QIcon(pixmap)
+        self.calender = QPushButton("",self)
+        self.calender.setIcon(icon)
+        self.horizontal_layout.addWidget(self.calender)
+
+        # adds time label
         datetime = QDateTime.currentDateTime()
         self.current_time = QPushButton(datetime.toString(Qt.DefaultLocaleShortDate), self)
         self.horizontal_layout.addWidget(self.current_time)
