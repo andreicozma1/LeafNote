@@ -1,15 +1,12 @@
-import _thread
 import logging
-import os
 
 from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QDialogButtonBox
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
+import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document
 from Layout import DocProps
-from Utils.DialogBuilder import DialogBuilder
-from Utils.DocumentSummarizer import getWordEmbeddings
 
 """
 all properties and functionalities of the menu bar
@@ -236,7 +233,6 @@ class MenuBar(QMenuBar):
         self.menu_tools = self.addMenu('&Tools')
 
         # ========= START TOOLS MENU SECTION =========
-        import Utils.DocumentSummarizer as DocumentSummarizer
 
         def onSummaryAction():
             DocumentSummarizer.onSummaryAction(app, document)
@@ -295,4 +291,3 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-

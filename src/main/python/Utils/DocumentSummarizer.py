@@ -1,17 +1,18 @@
 import _thread
 import codecs
 import glob
-import os
 import logging
+import os
+import zipfile
+from os.path import expanduser
+
+import networkx as nx
+import nltk
 import numpy as np
 import pandas as pd
-import nltk
 import wget as wget
-from os.path import expanduser
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from sklearn.metrics.pairwise import cosine_similarity
-import networkx as nx
-import zipfile
 
 from Utils.DialogBuilder import DialogBuilder
 
@@ -195,6 +196,7 @@ def onSummaryAction(app, document):
     :param document: Reference to the document
     :return: Returns nothing
     """
+
     # The action that gets called when the user selects a button on the prompt
     def onDownload(button):
         onWordVecDownload(app, button)
@@ -266,7 +268,7 @@ def getWordEmbeddings(path: str, app, download=True):
     :return:
     """
     # if cannot find both of the wv files
-    if not os.path.exists(path+'glove.6B.100d.vocab') and not os.path.exists(path+'glove.6B.100d.npy'):
+    if not os.path.exists(path + 'glove.6B.100d.vocab') and not os.path.exists(path + 'glove.6B.100d.npy'):
         # if cannot find the .zip file
         if not os.path.exists(path + 'glove.6B.100d.zip'):
             if not download:
