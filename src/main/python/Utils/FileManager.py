@@ -322,7 +322,7 @@ class FileManager:
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(document, path)
-        logging.info(' Created NewFile - ', path)
+        logging.info(' Created NewFile - ' + path)
 
     def printAll(self):
         """
