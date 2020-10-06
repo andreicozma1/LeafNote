@@ -54,8 +54,8 @@ class Summarizer:
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
         """
+        logging.info("Starting to generate summary")
 
-        handleDownloads()
         from nltk.tokenize import sent_tokenize
 
         # break text into sentences
@@ -88,6 +88,7 @@ class Summarizer:
         # self.ranked_sentences = self.ranked_sentences[:]
         self.ranked_sentences = [s[1] for s in self.ranked_sentences]
         self.summary = sentToText(self.ranked_sentences[:summary_size])
+        logging.info("Finished generating summary")
         return self.summary
 
     def cleanSentences(self, sentences):
