@@ -4,6 +4,7 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
+import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document
 from Layout import DocProps
 
@@ -223,6 +224,33 @@ class MenuBar(QMenuBar):
         return self.menu_format
 
     # =====================================================================================
+    def makeToolsMenu(self, app, document) -> QMenu:
+        """
+        Create View Menu
+        :return: the menu created
+        """
+        logging.info("makeViewMenu")
+        self.menu_tools = self.addMenu('&Tools')
+
+        # ========= START TOOLS MENU SECTION =========
+
+        def onSummaryAction():
+            DocumentSummarizer.onSummaryAction(app, document)
+
+        def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
+            tools_action = QAction(name, app)
+            tools_action.setShortcut(shortcut)
+            tools_action.triggered.connect(signal)
+            return tools_action
+
+        self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+
+        # ========= END TOOLS MENU SECTION =========
+
+        return self.menu_tools
+
+    # =====================================================================================
+
     def setFormattingButtonsEnabled(self, state):
         """
         Sets all formatting options to Enabled or Disabled
