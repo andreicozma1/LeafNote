@@ -48,6 +48,7 @@ class App(QMainWindow):
         self.summarizer = None
 
         self.layout = Layout(self.app_props, self.layout_props)
+
         self.document = Document(self.doc_props)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
 
