@@ -1,7 +1,9 @@
 import logging
 import random
+
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
+
 from Elements.ColorWidget import Color
 
 """
@@ -14,7 +16,7 @@ class Tab(Color):
     sets up the file as a tab
     """
 
-    def __init__(self, tab_bar, path: str):
+    def __init__(self, tab_bar, file_manager, path: str):
         """
         creates a tab for specific file
         :param tab_bar: bar where the tabs will be stored
@@ -27,6 +29,7 @@ class Tab(Color):
         super(Tab, self).__init__(color)
         logging.info("")
         self.tab_bar = tab_bar
+        self.file_manager = file_manager
         self.path = path
         self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic
 
@@ -52,12 +55,11 @@ class Tab(Color):
 
     def mousePressEvent(self, QMouseEvent):
         """
-        opens file of the path that the tab is holding
+        opens file that has been clicked to open
         :QMouseEvent: registers the mouse click
         :return: returns nothing
         """
-        logging.info(self.path)
-        self.tab_bar.openTab(self)
+        self.file_manager.openDocument(self.path)
 
     def closeTab(self):
         """
@@ -65,4 +67,5 @@ class Tab(Color):
         :return: returns nothing
         """
         logging.info(self.path)
+
         self.tab_bar.closeTab(self.path)
