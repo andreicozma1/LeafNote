@@ -144,7 +144,6 @@ class FileManager:
         document.setText("")
         self.app.updateFormatBtnsState(False)
 
-
     def openDocument(self, document, path: str):
         """
         This will open the file with the given path and display it on the document

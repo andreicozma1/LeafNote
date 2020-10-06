@@ -41,7 +41,7 @@ class MenuBar(QMenuBar):
 
         def onNewBtn():
             logging.info("MenuBar - onNewBtn")
-            file_manager.newFile(self.document)
+            file_manager.newFile(self.doc)
 
         def onOpenBtn():
             logging.info("onOpenBtn")
@@ -50,7 +50,7 @@ class MenuBar(QMenuBar):
             # opens a file dialogue for the user to select a file to open
             file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
             # open the chosen file and show the text in the text editor
-            file_manager.openDocument(self.document, file_name[0])
+            file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("onOpenFolderBtn")
@@ -59,18 +59,20 @@ class MenuBar(QMenuBar):
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
+            else:
+                logging.info("User chose not to open folder")
 
         # this saves the current file that is shown in the self.doc
         def onSaveBtn():
             logging.info("onSaveBtn")
-            if file_manager.saveDocument(app, self.document):
+            if file_manager.saveDocument(self.doc):
                 logging.info("Created tab")
                 bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onSaveAsBtn():
             logging.info("saveAsFile")
             old_path = file_manager.current_document.absoluteFilePath()
-            if file_manager.saveAsDocument(app, self.document):
+            if file_manager.saveAsDocument(self.doc):
                 logging.info("Created tab")
                 # close the old document and the old tab. Reset the formatting if needed
                 bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
