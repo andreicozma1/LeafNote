@@ -91,11 +91,11 @@ class MenuBar(QMenuBar):
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
+        self.menu_file.addAction(makeFileAction("New", "Alt+insert", onNewBtn))
         self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
         self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save...", "Ctrl+s", onSaveBtn))
         self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
         self.menu_file.addSeparator()
         self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
@@ -111,6 +111,12 @@ class MenuBar(QMenuBar):
         """
         logging.info("makeEditMenu")
         self.menu_edit = self.addMenu('&Edit')
+
+        def onFindBtn():
+            logging.info("")
+
+        def onFindAllBtn():
+            logging.info("")
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -128,8 +134,15 @@ class MenuBar(QMenuBar):
         self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
         self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
         self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
+        self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+
+
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
+
+
 
     # =====================================================================================
     def makeViewMenu(self, app, bottom_bar) -> QMenu:
