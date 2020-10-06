@@ -273,7 +273,6 @@ class FileManager:
 
         # converting back from a formatted file. Reset all formatting and button selections
         document.resetFormatting()
-        self.app.updateFormatBtnsState(False)
 
     def toLef(self, document):
         """

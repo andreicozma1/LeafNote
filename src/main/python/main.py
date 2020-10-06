@@ -69,8 +69,8 @@ class App(QMainWindow):
         self.top_bar.makeBtnItal()
         self.top_bar.makeBtnStrike()
         self.top_bar.makeBtnUnder()
-        self.top_bar.makeComboFontColor(self.doc_props.color_dict)
-        self.top_bar.makeComboTextAlign(self.doc_props.list_alignments)
+        self.top_bar.makeComboFontColor()
+        self.top_bar.makeComboTextAlign()
         self.top_bar.addLayoutSpacer()
         self.button_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.top_bar.show()
@@ -123,17 +123,15 @@ class App(QMainWindow):
                 logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.file_manager.toLef(self.document)
-                self.updateFormatBtnsState(True)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
-                self.button_mode_switch.setChecked(False)
+                self.updateFormatBtnsState(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
-            self.button_mode_switch.setChecked(False)
 
     def setupLayout(self):
         """

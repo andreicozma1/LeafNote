@@ -113,10 +113,10 @@ class TopBar(QWidget):
         self.horizontal_layout.addWidget(self.button_under)
         return self.button_under
 
-    def makeComboFontColor(self, color_dict) -> QComboBox:
+    def makeComboFontColor(self) -> QComboBox:
         # Button to change text color
         self.combo_text_color = QComboBox(self)
-        color_list = color_dict.values()
+        color_list = self.doc_props.color_dict.values()
 
         def updateTextColor(index):
             self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
@@ -149,12 +149,11 @@ class TopBar(QWidget):
 
         return self.combo_text_color
 
-    def makeComboTextAlign(self, list_alignments) -> QComboBox:
+    def makeComboTextAlign(self) -> QComboBox:
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
         self.combo_text_align.setToolTip('Change text alignment')
-        self.combo_text_align.addItems(list_alignments)
-        self.combo_text_align.setFixedWidth(100)
+        self.combo_text_align.addItems(self.doc_props.dict_align)
         self.combo_text_align.setFocusPolicy(Qt.NoFocus)
         self.combo_text_align.currentIndexChanged.connect(self.document.onTextAlignmentChanged)
         self.combo_text_align.setCurrentIndex(0)
@@ -175,10 +174,11 @@ class TopBar(QWidget):
 
     def setFormattingButtonsEnabled(self, state):
         """
-        allows formatting once file type is changed from .txt to .lef in top bar
-        :param state: this is a boolean that sets the states
+        Sets all formatting options to Enabled or Disabled
+        :param state: boolean that sets the states
         :return: returns nothing
         """
+        # Toggle the state of all buttons in the menu
         logging.info(str(state))
         a: QWidget
         for a in self.children():
@@ -187,30 +187,33 @@ class TopBar(QWidget):
 
     def updateFormatOnSelectionChange(self):
         """
-        selected text format will be checked in top bar
+        Selected text format reflected in the TopBar
         :return: returns nothing
         """
+        logging.info("Started updating")
+        # Block signals
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(True)
-
+        # Update the font style displayed
         self.combo_font_style.setCurrentFont(self.document.currentFont())
-
+        # Update the font size displayed
         size = int(self.document.fontPointSize())
         if size != 0:
             self.combo_font_size.setCurrentIndex(self.doc_props.list_FontSize.index(str(size)))
-
-        # update the top bar alignment to the current alignment
-        align = self.document.alignment()
-        self.combo_text_align.setCurrentIndex(self.doc_props.list_alignments_align.index(align))
-
+        # Update extra formatting options
         self.button_ital.setChecked(self.document.fontItalic())
         self.button_under.setChecked(self.document.fontUnderline())
         self.button_bold.setChecked(self.document.fontWeight() == QFont.Bold)
         self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
-
+        # Update the text alignment
+        align = self.document.alignment()
+        self.combo_text_align.setCurrentIndex(list(self.doc_props.dict_align.values()).index(align))
+        # Unblock signals
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(False)
+        logging.info("Finished updating")
+
