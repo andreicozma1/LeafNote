@@ -71,7 +71,6 @@ class MenuBar(QMenuBar):
 
         def onSaveAsBtn():
             logging.info("saveAsFile")
-            old_path = file_manager.current_document.absoluteFilePath()
             if file_manager.saveAsDocument(self.doc):
                 logging.info("Created tab")
 

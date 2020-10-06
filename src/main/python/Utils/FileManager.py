@@ -77,8 +77,14 @@ class FileManager:
 
         # check if the document is formatted
         if self.app.button_mode_switch.isChecked():
+            f_info = QFileInfo(new_path)
+            if f_info.suffix() != "lef":
+                new_path = os.path.join(f_info.path(), f_info.baseName()) + '.lef'
             data = document.toHtml()
         else:
+            f_info = QFileInfo(new_path)
+            if f_info.suffix() == "lef":
+                new_path = os.path.join(f_info.path(), f_info.baseName()) + '.txt'
             data = document.toPlainText()
 
         # now write to the new_path
@@ -185,7 +191,8 @@ class FileManager:
             logging.info("Document Already Open - " + path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
-        document.resetFormatting()
+        if self.current_document.suffix() != 'lef':
+            document.resetFormatting()
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
