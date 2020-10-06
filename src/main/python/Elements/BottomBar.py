@@ -37,7 +37,7 @@ class BottomBar(QWidget):
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(self.horizontal_layout)
 
-        temp = os.path.join("Resources", "Calender.ico")
+        temp = os.path.join("resources", "calender.ico")
         pixmap = QPixmap(temp)
         icon = QIcon(pixmap)
         self.calender = QPushButton("",self)
