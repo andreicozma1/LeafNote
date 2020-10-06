@@ -44,20 +44,18 @@ class App(QMainWindow):
         self.app_props = AppProps()
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
-
         self.file_manager = FileManager(self)
 
         self.layout = Layout(self.app_props, self.layout_props)
 
-        self.bar_open_tabs = OpenTabsBar(self.file_manager, self.layout_props)
-
         self.document = Document(self.doc_props)
+        self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
 
-        self.left_menu = DirectoryViewer(self.file_manager, self.app_props.mainPath)
+        self.left_menu = DirectoryViewer(self.document, self.file_manager, self.app_props.mainPath)
         self.bottom_bar = BottomBar(self.document)
 
         self.menu_bar = MenuBar(self.document, self.doc_props)
-        self.menu_bar.makeFileMenu(self, self.file_manager)
+        self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
@@ -74,11 +72,11 @@ class App(QMainWindow):
         self.top_bar.makeComboFontColor(self.doc_props.color_dict)
         self.top_bar.makeComboTextAlign(self.doc_props.list_alignments)
         self.top_bar.addLayoutSpacer()
-        self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.button_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.top_bar.show()
 
         # TODO - fix this function call causing Format Mode button to not have spacer
-        self.updateFormatBtnsState(False, self.top_bar, self.menu_bar)
+        self.updateFormatBtnsState(False)
 
         self.setupLayout()
 
@@ -100,9 +98,10 @@ class App(QMainWindow):
 
         self.show()
 
-    def updateFormatBtnsState(self, state: bool, top_bar, menubar):
-        top_bar.setFormattingButtonsEnabled(state)
-        menubar.setFormattingButtonsEnabled(state)
+    def updateFormatBtnsState(self, state: bool):
+        self.button_mode_switch.setChecked(state)
+        self.top_bar.setFormattingButtonsEnabled(state)
+        self.menu_bar.setFormattingButtonsEnabled(state)
 
     def setFormattingMode(self, state: bool):
         """
@@ -123,8 +122,8 @@ class App(QMainWindow):
             if convert_dialog.exec():
                 logging.info("User converted file to Proprietary Format")
                 # TODO - Convert file with FileManager to a .lef format, on success, call the function below
-                self.file_manager.toLef()
-                self.updateFormatBtnsState(True, self.top_bar, self.menu_bar)
+                self.file_manager.toLef(self.document)
+                self.updateFormatBtnsState(True)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
                 self.button_mode_switch.setChecked(False)
@@ -132,7 +131,7 @@ class App(QMainWindow):
             # Don't allow converted file to be converted back to Plain Text
             # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
 
-            self.file_manager.lefToExt()
+            self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
             self.button_mode_switch.setChecked(False)
 

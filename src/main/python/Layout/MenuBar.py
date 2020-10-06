@@ -34,7 +34,7 @@ class MenuBar(QMenuBar):
 
     # --------------------------------------------------------------------------------
 
-    def makeFileMenu(self, app, file_manager):
+    def makeFileMenu(self, app, file_manager, bar_open_tabs):
         """
         sets up the file tabs drop menu
         :return: returns nothing
@@ -43,7 +43,7 @@ class MenuBar(QMenuBar):
 
         def onNewBtn():
             logging.info("MenuBar - onNewBtn")
-            file_manager.newFile()
+            file_manager.newFile(self.document)
 
         def onOpenBtn():
             logging.info("onOpenBtn")
@@ -52,7 +52,7 @@ class MenuBar(QMenuBar):
             # opens a file dialogue for the user to select a file to open
             file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
             # open the chosen file and show the text in the text editor
-            file_manager.openDocument(file_name[0])
+            file_manager.openDocument(self.document, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("onOpenFolderBtn")
@@ -65,12 +65,17 @@ class MenuBar(QMenuBar):
         # this saves the current file that is shown in the self.document
         def onSaveBtn():
             logging.info("onSaveBtn")
-            file_manager.saveDocument()
+            if file_manager.saveDocument(app, self.document):
+                logging.info("Created tab")
+                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onSaveAsBtn():
             logging.info("saveAsFile")
-            new_file_path = QFileDialog.getSaveFileName(app, 'Save File')
-            file_manager.saveAsDocument(new_file_path[0])
+            old_path = file_manager.current_document.absoluteFilePath()
+            if file_manager.saveAsDocument(app, self.document):
+                logging.info("Created tab")
+                # close the old document and the old tab. Reset the formatting if needed
+                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onExitBtn():
             logging.info("onExitBtn")
