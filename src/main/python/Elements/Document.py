@@ -17,7 +17,7 @@ class Document(QTextEdit):
     where the text is input and displayed
     """
 
-    def __init__(self, doc_props, default_text: str = None):
+    def __init__(self, doc_props, default_text: str = ""):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -145,15 +145,6 @@ class Document(QTextEdit):
         palette = self.palette()
         palette.setColor(QPalette.Text, QColor(color))
         self.setPalette(palette)
-
-    def updateTextBox(self, text: str = None):
-        """
-        adds text to the text box
-        :param text: text to be added
-        :return: returns nothing
-        """
-        if text is not None:
-            self.setText(text)
 
     def fontBold(self):
         return self.fontWeight() == QFont.Bold

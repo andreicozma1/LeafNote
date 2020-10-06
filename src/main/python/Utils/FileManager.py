@@ -116,7 +116,7 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
-                self.app.document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+                self.app.document.setText(self.getFileData(self.current_document.absoluteFilePath()))
 
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
@@ -127,7 +127,7 @@ class FileManager:
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
-                self.app.document.updateTextBox("")
+                self.app.document.setText("")
                 self.app.top_bar.setFormattingButtonsEnabled(False)
                 self.app.btn_mode_switch.setChecked(False)
 
@@ -147,7 +147,7 @@ class FileManager:
         logging.info("closeAll")
         self.current_document = None
         self.open_documents.clear()
-        self.app.document.updateTextBox("")
+        self.app.document.setText("")
         self.app.top_bar.setFormattingButtonsEnabled(False)
         self.app.btn_mode_switch.setChecked(False)
 
@@ -197,7 +197,7 @@ class FileManager:
         self.app.btn_mode_switch.setChecked(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
-        self.app.document.updateTextBox(data)
+        self.app.document.setText(data)
         return data
 
     def getFileData(self, path: str) -> str:
