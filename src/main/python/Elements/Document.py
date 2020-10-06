@@ -1,10 +1,8 @@
 import logging
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
-
 
 """
 The active document - area where user types
