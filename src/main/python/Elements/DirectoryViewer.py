@@ -14,7 +14,7 @@ class DirectoryViewer(QTreeView):
     displays a directory
     """
 
-    def __init__(self, file_manager, path=None):
+    def __init__(self, document, file_manager, path=None):
         """
         creates the directory display
         :param file_manager: instance of FileManager class - manages all file communication
@@ -23,6 +23,7 @@ class DirectoryViewer(QTreeView):
         """
         super(DirectoryViewer, self).__init__()
         logging.info("")
+        self.document = document
         self.fileManager = file_manager
 
         if path is None:
@@ -64,4 +65,4 @@ class DirectoryViewer(QTreeView):
         path = self.sender().model.filePath(index)
         logging.info(path)
         if not self.sender().model.isDir(index):
-            self.fileManager.openDocument(path)
+            self.fileManager.openDocument(self.document, path)

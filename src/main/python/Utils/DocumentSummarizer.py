@@ -53,15 +53,17 @@ class Summarizer:
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
         """
-        print(text)
-        if text == "":
-            logging.warning("Document has no text")
 
         handleDownloads()
         from nltk.tokenize import sent_tokenize
 
         # break text into sentences
         sentences = sent_tokenize(text)
+
+        # do nothing if there are not words passed
+        if not sentences:
+            logging.warning("Document has no text")
+            return ""
 
         # clean the data of unnecessary values
         clean_sentences = self.cleanSentences(sentences)

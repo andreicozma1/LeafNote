@@ -14,7 +14,7 @@ class Tab(Color):
     sets up the file as a tab
     """
 
-    def __init__(self, tab_bar, file_manager, path: str):
+    def __init__(self, tab_bar, path: str):
         """
         creates a tab for specific file
         :param tab_bar: bar where the tabs will be stored
@@ -27,7 +27,6 @@ class Tab(Color):
         super(Tab, self).__init__(color)
         logging.info("")
         self.tab_bar = tab_bar
-        self.file_manager = file_manager
         self.path = path
         self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic
 
@@ -53,11 +52,12 @@ class Tab(Color):
 
     def mousePressEvent(self, QMouseEvent):
         """
-        opens file that has been clicked to open
+        opens file of the path that the tab is holding
         :QMouseEvent: registers the mouse click
         :return: returns nothing
         """
-        self.file_manager.openDocument(self.path)
+        logging.info(self.path)
+        self.tab_bar.openTab(self)
 
     def closeTab(self):
         """
@@ -65,5 +65,4 @@ class Tab(Color):
         :return: returns nothing
         """
         logging.info(self.path)
-
         self.tab_bar.closeTab(self.path)

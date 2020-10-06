@@ -3,9 +3,7 @@ import logging
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
-
-from Utils.DialogBuilder import DialogBuilder
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox
 
 """
 all properties of the top bar
@@ -190,7 +188,6 @@ class TopBar(QWidget):
         Selected text format reflected in the TopBar
         :return: returns nothing
         """
-        logging.info("Started updating")
         # Block signals
         a: QWidget
         for a in self.children():
@@ -215,5 +212,3 @@ class TopBar(QWidget):
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(False)
-        logging.info("Finished updating")
-

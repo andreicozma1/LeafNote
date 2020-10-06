@@ -36,7 +36,7 @@ class MenuBar(QMenuBar):
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
     # =====================================================================================
-    def makeFileMenu(self, app, file_manager):
+    def makeFileMenu(self, app, file_manager, bar_open_tabs):
         """
         sets up the file tabs drop menu
         :return: returns nothing
@@ -45,7 +45,7 @@ class MenuBar(QMenuBar):
 
         def onNewBtn():
             logging.info("MenuBar - onNewBtn")
-            file_manager.newFile()
+            file_manager.newFile(self.doc)
 
         def onOpenBtn():
             logging.info("onOpenBtn")
@@ -54,7 +54,7 @@ class MenuBar(QMenuBar):
             # opens a file dialogue for the user to select a file to open
             file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
             # open the chosen file and show the text in the text editor
-            file_manager.openDocument(file_name[0])
+            file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("onOpenFolderBtn")
@@ -63,20 +63,24 @@ class MenuBar(QMenuBar):
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
+            else:
+                logging.info("User chose not to open folder")
 
         # this saves the current file that is shown in the self.doc
         def onSaveBtn():
             logging.info("onSaveBtn")
-            file_manager.saveDocument()
+            if file_manager.saveDocument(self.doc):
+                logging.info("Created tab")
+                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onSaveAsBtn():
             logging.info("saveAsFile")
-            new_file_path = QFileDialog.getSaveFileName(app, 'Save File')
-            file_manager.saveAsDocument(new_file_path[0])
+            if file_manager.saveAsDocument(self.doc):
+                logging.info("Created tab")
 
         def onExitBtn():
             logging.info("onExitBtn")
-            file_manager.closeAll()
+            file_manager.closeAll(self.document)
             app.close()
 
         self.menu_file = self.addMenu('&File')
@@ -229,7 +233,7 @@ class MenuBar(QMenuBar):
         :return: the menu created
         """
         logging.info("makeViewMenu")
-        self.menu_tools = self.addMenu('&View')
+        self.menu_tools = self.addMenu('&Tools')
 
         # ========= START TOOLS MENU SECTION =========
         import Utils.DocumentSummarizer as DocumentSummarizer
@@ -246,7 +250,6 @@ class MenuBar(QMenuBar):
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
 
         # ========= END TOOLS MENU SECTION =========
-
 
         return self.menu_tools
 
@@ -271,7 +274,6 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         # Block signals
-        logging.info("Started updating")
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -293,16 +295,4 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-        logging.info("Finished updating")
 
-
-
-
-    # --------------------------------------------------------------------------------
-
-    """
-    # TODO - Add functionality to help find action, help, getting started, about, etc.
-    # this function sets up the help tabs drop menu
-    def helpMenuSetup(self):
-        logging.info("helpMenuSetup")
-    """
