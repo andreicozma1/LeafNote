@@ -67,4 +67,4 @@ class Tab(Color):
         :return: returns nothing
         """
         logging.info(self.path)
-        self.tab_bar.closeTab(self.path, True)
+        self.tab_bar.closeTab(self.path)

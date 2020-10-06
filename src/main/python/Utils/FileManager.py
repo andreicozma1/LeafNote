@@ -186,8 +186,7 @@ class FileManager:
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         self.app.document.textCursor().clearSelection()
-        if self.current_document.suffix() != 'lef':
-            self.app.document.resetFormatting()
+        self.app.document.resetFormatting()
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
@@ -257,7 +256,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .lef file
-        self.app.bar_open_tabs.closeTab(old_path, closeDocument=True, save=False)
+        self.app.bar_open_tabs.closeTab(old_path, save=False)
 
         # delete the .txt file
         os.remove(old_path)
@@ -296,7 +295,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .txt file
-        self.app.bar_open_tabs.closeTab(old_path, closeDocument=True, save=False)
+        self.app.bar_open_tabs.closeTab(old_path, save=False)
 
         # delete the .txt file
         os.remove(old_path)

@@ -66,7 +66,7 @@ class OpenTabsBar(QWidget):
         self.active_tab = tab
         return tab
 
-    def closeTab(self, path: str, closeDocument: bool = False, save: bool = True):
+    def closeTab(self, path: str, save: bool = True):
         """
         removes object from layout and destroys it
         :param path: path to file being displayed
@@ -78,10 +78,9 @@ class OpenTabsBar(QWidget):
         tab = self.open_tabs[path]
         self.layout().removeWidget(tab)
         # if close tab is called with the optional parameter
-        if closeDocument:
-            if save:
-                self.file_manager.saveDocument(self.document)
-            self.file_manager.closeDocument(self.document, path)
+        if save:
+            self.file_manager.saveDocument(self.document)
+        self.file_manager.closeDocument(self.document, path)
 
         # pop the closed tab from the open tab dic
         self.open_tabs.pop(path)
