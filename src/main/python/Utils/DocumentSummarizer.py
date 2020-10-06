@@ -279,24 +279,8 @@ def getWordEmbeddings(path: str, app, download=True):
                     logging.info("User chose not to download files")
                     return
 
-            # create the directory to hold  the word embeddings
-            path = os.path.join(path, 'WordEmbeddings')
-            if not os.path.exists(path):
-                logging.info("Creating WordEmbeddings directory")
-                os.mkdir(path)
-            else:
-                logging.info("WordEmbeddings directory already exists. Removing all contents")
-                files = glob.glob(os.path.join(path, '*'))
-                for f in files:
-                    os.remove(f)
-
-            logging.info("Started Downloading Word Embeddings")
-            # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
-            # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
-            url = "http://hunterprice.org/files/glove.6B.100d.zip"
-            wget.download(url, out=path)
-
-            logging.info("Finished downloading")
+            # download the actual files
+            handleDownload(path)
 
         # create a directory for the files
         # uncompress the files
@@ -310,22 +294,24 @@ def getWordEmbeddings(path: str, app, download=True):
         logging.info("Deleted zip file")
 
     path = os.path.join(path, "glove.6B.100d")
+    path_vocab = path + '.vocab'
+    path_npy = path + '.npy'
 
     # check to make sure the glove files exist
-    if not os.path.exists(path + '.vocab'):
-        logging.error('Path does not exist - '+path+'.vocab')
+    if not os.path.exists(path_vocab):
+        logging.error('Path does not exist - ' + path_vocab)
         return
 
     # check to make sure the glove files exist
-    if not os.path.exists(path + '.npy'):
-        logging.error('Path does not exist - ' + path + '.npy')
+    if not os.path.exists(path_npy):
+        logging.error('Path does not exist - ' + path_npy)
         return
 
     # read the files into a python dict
     logging.info("Attempting to read dictionary contents")
-    with codecs.open(path + '.vocab', 'r', 'utf-8') as f_in:
+    with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
-    wv = np.load(path + '.npy')
+    wv = np.load(path_npy)
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
@@ -333,3 +319,24 @@ def getWordEmbeddings(path: str, app, download=True):
 
     # create an instance of the summarizer and give it to the application
     app.summarizer = Summarizer(model)
+
+
+def handleDownload(path):
+    # create the directory to hold  the word embeddings
+    path = os.path.join(path, 'WordEmbeddings')
+    if not os.path.exists(path):
+        logging.info("Creating WordEmbeddings directory")
+        os.mkdir(path)
+    else:
+        logging.info("WordEmbeddings directory already exists. Removing all contents")
+        files = glob.glob(os.path.join(path, '*'))
+        for f in files:
+            os.remove(f)
+
+    logging.info("Started Downloading Word Embeddings")
+    # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
+    # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
+    url = "http://hunterprice.org/files/glove.6B.100d.zip"
+    wget.download(url, out=path)
+
+    logging.info("Finished downloading")
