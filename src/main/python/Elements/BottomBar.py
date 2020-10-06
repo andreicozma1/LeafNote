@@ -195,3 +195,10 @@ class BottomBar(QWidget):
         """
         self.cal = QCalendarWidget()
         self.cal.setVisible(True)
+        self.cal.selectionChanged.connect(self.onSelectedDate)
+
+    def onSelectedDate(self):
+        """
+        :return: New date selected on the calendar
+        """
+        ca = self.cal.selectedDate()
