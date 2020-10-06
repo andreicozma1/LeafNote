@@ -31,9 +31,9 @@ class BottomBar(QWidget):
         self.document = document
 
         # sets up the bottom bar
-        self.horizontal_layout = QHBoxLayout()
+        self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.setLayout(self.horizontal_layout)
+        self.horizontal_layout.setSpacing(3)
 
         # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
@@ -118,6 +118,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
@@ -126,6 +127,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
@@ -158,4 +160,5 @@ class BottomBar(QWidget):
         resets the zoom slider when zoom is reset
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.slider_start)

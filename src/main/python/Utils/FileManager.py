@@ -28,7 +28,7 @@ class FileManager:
         """
 
         # get the current text from the document shown to the user
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             data = document.toHtml()
             file_filter = "LeafNote (*.lef)"
         else:
@@ -76,7 +76,7 @@ class FileManager:
             return False
 
         # check if the document is formatted
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             f_info = QFileInfo(new_path)
             if f_info.suffix() != "lef":
                 new_path = os.path.join(f_info.path(), f_info.baseName()) + '.lef'
