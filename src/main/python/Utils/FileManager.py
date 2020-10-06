@@ -68,7 +68,7 @@ class FileManager:
         :param document: Reference to the document
         :return: Returns if the save as succeeded or not
         """
-        new_path = QFileDialog.getSaveFileName(self.app, 'Save File')
+        new_path = QFileDialog.getSaveFileName(self.app, 'Save File')[0]
 
         # if the new path is an empty string do nothing
         if new_path == '':

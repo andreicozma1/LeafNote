@@ -75,11 +75,11 @@ class MenuBar(QMenuBar):
             if file_manager.saveAsDocument(self.doc):
                 logging.info("Created tab")
                 # close the old document and the old tab. Reset the formatting if needed
-                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
+                # bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onExitBtn():
             logging.info("onExitBtn")
-            file_manager.closeAll()
+            file_manager.closeAll(self.document)
             app.close()
 
         self.menu_file = self.addMenu('&File')
