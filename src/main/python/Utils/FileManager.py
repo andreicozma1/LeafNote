@@ -106,7 +106,8 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
-                document.updateTextBox(self.getFileData(self.current_document.absoluteFilePath()))
+
+                document.setText(self.getFileData(self.current_document.absoluteFilePath()))
 
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
@@ -116,7 +117,7 @@ class FileManager:
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
-                document.updateTextBox("")
+                document.setText("")
                 document.resetFormatting()
                 state = False
 
@@ -140,9 +141,9 @@ class FileManager:
         logging.info("closeAll")
         self.current_document = None
         self.open_documents.clear()
-        document.updateTextBox("")
+        document.setText("")
         self.app.updateFormatBtnsState(False)
-        return False
+
 
     def openDocument(self, document, path: str):
         """
@@ -185,12 +186,11 @@ class FileManager:
             logging.info("Document Already Open - " + path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
-        self.app.document.textCursor().clearSelection()
-        self.app.document.resetFormatting()
+        document.resetFormatting()
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
-        self.app.document.updateTextBox(data)
+        document.setText(data)
         return True
 
     def getFileData(self, path: str) -> str:

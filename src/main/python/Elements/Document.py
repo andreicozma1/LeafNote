@@ -1,23 +1,23 @@
 import logging
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QColorDialog
+from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
-from Elements.TextBox import TextBox
 
 """
 The active document - area where user types
 """
 
 
-class Document(TextBox):
+class Document(QTextEdit):
     """
     Creates the widget in the middle of the text editor
     where the text is input and displayed
     """
 
-    def __init__(self, doc_props):
+    def __init__(self, doc_props, default_text: str = ""):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -25,7 +25,13 @@ class Document(TextBox):
         super(Document, self).__init__("")
         logging.info("")
         self.doc_props = doc_props
+        self.textColor = "black"
 
+        if default_text is None:
+            default_text = "You can type here."
+
+        self.setText(default_text)
+        self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
@@ -113,20 +119,47 @@ class Document(TextBox):
         color_list: list = list(self.doc_props.color_dict.values())
         self.setTextColor(QColor(color_list[index]))
 
-    def resetFormatting(self):
+    def setBackgroundColor(self, color: str):
         """
-        Clears formatting on text
+        Set the background color of the QPlainTextEdit Widget
+        :param color: color the background will be set to
         :return: returns nothing
         """
-        logging.info("")
-        self.onFontUnderChanged(False)
-        self.onFontItalChanged(False)
-        self.onFontBoldChanged(False)
-        self.onFontStrikeChanged(False)
-        self.setAlignment(Qt.AlignLeft)
+        logging.info(color)
+        palette = self.palette()
+        # Set color for window focused
+        palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
+        # Set color for window out of focus
+        palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color))
+
+        self.setPalette(palette)
+        # self.setBackgroundVisible(False)
+
+    def setTextColorByString(self, color: str):
+        """
+        sets the text box to designated color
+        :param color: color the text box will be set to
+        :return: return nothing
+        """
+        logging.info(color)
+        palette = self.palette()
+        palette.setColor(QPalette.Text, QColor(color))
+        self.setPalette(palette)
 
     def fontBold(self):
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self):
         return self.currentCharFormat().fontStrikeOut()
+
+    def resetFormatting(self):
+        """
+        Clears formatting on text
+        :return: returns nothing
+        """
+        logging.info("")
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.Document)
+        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.clearSelection()
+        self.setTextCursor(cursor)
