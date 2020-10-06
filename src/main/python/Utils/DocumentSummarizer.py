@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import nltk
 import wget as wget
-from PyQt5.QtCore import QRunnable
+from os.path import expanduser
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
@@ -224,7 +224,7 @@ def onWordVecDownload(app, button):
     if button.text() == '&Yes':
         logging.info("User selected Yes")
         download_path = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                         "/home",
+                                                         expanduser("~"),
                                                          QFileDialog.ShowDirsOnly
                                                          | QFileDialog.DontResolveSymlinks)
         if download_path == "":
@@ -238,7 +238,7 @@ def onWordVecDownload(app, button):
     elif button.text() == 'Open':
         logging.info("User selected Open")
         download_path = QFileDialog.getExistingDirectory(app, "Select Folder With Word Vector Files",
-                                                         "/home",
+                                                         expanduser("~"),
                                                          QFileDialog.ShowDirsOnly
                                                          | QFileDialog.DontResolveSymlinks)
         if download_path == "":
@@ -306,7 +306,7 @@ def getWordEmbeddings(path: str, app, download=True):
         logging.info("Finished unzipping")
 
         # delete the compressed file
-        os.remove(os.path.join(path,'glove.6B.100d.zip'))
+        os.remove(os.path.join(path, 'glove.6B.100d.zip'))
         logging.info("Deleted zip file")
 
     path = os.path.join(path, "glove.6B.100d")
