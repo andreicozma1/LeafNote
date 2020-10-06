@@ -48,12 +48,14 @@ class BottomBar(QWidget):
 
         # adds time label
         datetime = QDateTime.currentDateTime()
-        self.current_time = QPushButton(datetime.toString(Qt.DefaultLocaleShortDate), self)
-        self.horizontal_layout.addWidget(self.current_time)
+        self.current_time1 = QLabel()
+        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.horizontal_layout.addWidget(self.current_time1)
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)
 
+        self.horizontal_layout.addStretch()
         # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
         font = self.label_wc.font()
@@ -186,7 +188,7 @@ class BottomBar(QWidget):
         :return: returns current time
         """
         datetime = QDateTime.currentDateTime()
-        self.current_time.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
 
     def showCalendar(self):
         """
