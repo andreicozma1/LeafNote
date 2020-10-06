@@ -46,6 +46,7 @@ class App(QMainWindow):
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
         self.file_manager = FileManager(self)
+        self.summarizer = None
 
         self.layout = Layout(self.app_props, self.layout_props)
 
@@ -60,6 +61,7 @@ class App(QMainWindow):
         self.menu_bar.makeEditMenu(self)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
+        self.menu_bar.makeToolsMenu(self, self.document)
         self.setMenuBar(self.menu_bar)
         self.menu_bar.show()
 
