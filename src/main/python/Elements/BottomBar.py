@@ -1,7 +1,7 @@
 import logging
 import os
 from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget
 from PyQt5.QtCore import QDate, QDateTime
 
 
@@ -42,7 +42,9 @@ class BottomBar(QWidget):
         icon = QIcon(pixmap)
         self.calender = QPushButton("",self)
         self.calender.setIcon(icon)
+        self.calender.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calender)
+
 
         # adds time label
         datetime = QDateTime.currentDateTime()
@@ -185,3 +187,11 @@ class BottomBar(QWidget):
         """
         datetime = QDateTime.currentDateTime()
         self.current_time.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+
+    def showCalendar(self):
+        """
+        Shows a calendar with current date
+        :return: CalendarWidget()
+        """
+        self.cal = QCalendarWidget()
+        self.cal.setVisible(True)
