@@ -74,8 +74,6 @@ class MenuBar(QMenuBar):
             old_path = file_manager.current_document.absoluteFilePath()
             if file_manager.saveAsDocument(self.doc):
                 logging.info("Created tab")
-                # close the old document and the old tab. Reset the formatting if needed
-                # bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onExitBtn():
             logging.info("onExitBtn")
@@ -245,7 +243,6 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         # Block signals
-        logging.info("Started updating")
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -267,4 +264,3 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-        logging.info("Finished updating")

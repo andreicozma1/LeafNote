@@ -188,7 +188,6 @@ class TopBar(QWidget):
         Selected text format reflected in the TopBar
         :return: returns nothing
         """
-        logging.info("Started updating")
         # Block signals
         a: QWidget
         for a in self.children():
@@ -213,4 +212,3 @@ class TopBar(QWidget):
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(False)
-        logging.info("Finished updating")
