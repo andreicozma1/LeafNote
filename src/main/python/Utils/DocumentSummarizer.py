@@ -191,9 +191,9 @@ def removeStopwords(sen, stopwords):
 def onSummaryAction(app, document):
     """
     This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
-    :param app:
-    :param document:
-    :return:
+    :param app: Reference to the application
+    :param document: Reference to the document
+    :return: Returns nothing
     """
     # The action that gets called when the user selects a button on the prompt
     def onDownload(button):
@@ -295,29 +295,8 @@ def getWordEmbeddings(path: str, app, download=True):
         os.remove(os.path.join(path, 'glove.6B.100d.zip'))
         logging.info("Deleted zip file")
 
-    path = os.path.join(path, "glove.6B.100d")
-    path_vocab = path + '.vocab'
-    path_npy = path + '.npy'
-
-    # check to make sure the glove files exist
-    if not os.path.exists(path_vocab):
-        logging.error('Path does not exist - ' + path_vocab)
-        return
-
-    # check to make sure the glove files exist
-    if not os.path.exists(path_npy):
-        logging.error('Path does not exist - ' + path_npy)
-        return
-
-    # read the files into a python dict
-    logging.info("Attempting to read dictionary contents")
-    with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
-        index2word = [line.strip() for line in f_in]
-    wv = np.load(path_npy)
-    model = {}
-    for i, w in enumerate(index2word):
-        model[w] = wv[i]
-    logging.info("Finished reading dictionary contents")
+    # fill the dictionary with the word embeddings
+    model = fillModel(path)
 
     # create an instance of the summarizer and give it to the application
     app.summarizer = Summarizer(model)
@@ -342,3 +321,35 @@ def handleDownload(path):
     wget.download(url, out=path)
 
     logging.info("Finished downloading")
+
+
+def fillModel(path):
+    """
+    takes the path to the word embedding files and fills a dictionary with the (word: word vector) pairs
+    :param path: path to the word embedding files
+    :return: Returns a dictionary of word vectors
+    """
+    path = os.path.join(path, "glove.6B.100d")
+    path_vocab = path + '.vocab'
+    path_npy = path + '.npy'
+
+    # check to make sure the glove files exist
+    if not os.path.exists(path_vocab):
+        logging.error('Path does not exist - ' + path_vocab)
+        return
+
+    # check to make sure the glove files exist
+    if not os.path.exists(path_npy):
+        logging.error('Path does not exist - ' + path_npy)
+        return
+
+    # read the files into a python dict
+    logging.info("Attempting to read dictionary contents")
+    with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
+        index2word = [line.strip() for line in f_in]
+    wv = np.load(path_npy)
+    model = {}
+    for i, w in enumerate(index2word):
+        model[w] = wv[i]
+    logging.info("Finished reading dictionary contents")
+    return model
