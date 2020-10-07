@@ -282,7 +282,6 @@ class MenuBar(QMenuBar):
         alignment = self.doc.alignment()
         for action in self.group_align.actions():
             action.setChecked(False)
-            get = action.property("docref")
             index = list(self.doc_props.dict_align.values()).index(alignment)
             if action.text() == list(self.doc_props.dict_align.keys())[index]:
                 action.setChecked(True)
