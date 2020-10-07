@@ -72,6 +72,7 @@ class App(QMainWindow):
         self.top_bar.makeBtnStrike()
         self.top_bar.makeBtnUnder()
         self.top_bar.makeComboFontColor()
+        self.top_bar.makeClearFormatting()
         self.top_bar.makeComboTextAlign()
         self.top_bar.addLayoutSpacer()
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)

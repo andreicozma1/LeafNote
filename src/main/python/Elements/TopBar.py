@@ -149,6 +149,16 @@ class TopBar(QWidget):
 
         return self.combo_text_color
 
+    def makeClearFormatting(self) -> QPushButton:
+        # Button press to Clear formating
+        self.button_clear = QPushButton("A", self)
+        self.button_clear.setToolTip('Clear Formatting. "Ctrl+Shift+0"')
+        self.button_clear.setFixedWidth(33)
+        self.button_clear.setFocusPolicy(Qt.NoFocus)
+        self.button_clear.clicked.connect(self.document.resetFormatting)
+        self.horizontal_layout.addWidget(self.button_clear)
+        return self.button_clear
+
     def makeComboTextAlign(self) -> QComboBox:
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
