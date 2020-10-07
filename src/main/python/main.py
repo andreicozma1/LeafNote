@@ -4,7 +4,6 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
-from Elements import Search
 from Elements.BottomBar import BottomBar
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document

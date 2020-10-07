@@ -126,6 +126,8 @@ class Layout(QWidget):
         self.horizontal_workspace.setHandleWidth(self.layout_props.splitter_width)
         self.documents_view.layout().setContentsMargins(0, 0, 0, 0)
         self.documents_view.layout().setSpacing(self.layout_props.splitter_width)
+        # self.document.resize(self.layout_props.splitter_width, self.height())
+        # self.document.search.updatePosition()
         self.bar_open_tabs.setFixedHeight(self.layout_props.bar_tabs_height)
 
         self.top_bar.setFixedHeight(self.layout_props.bar_height)

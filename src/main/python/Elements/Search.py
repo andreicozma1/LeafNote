@@ -1,10 +1,10 @@
 import logging
 import os
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel
 
 
 ############################################################################
@@ -19,20 +19,13 @@ class SearchFile(QWidget):
         self.flags = QTextDocument.FindFlag(0)
 
         self.initUI()
-        self.setPosition()
-
+        self.hide()
 
     def initUI(self):
-
-        def createLayout():
-            hbox = QHBoxLayout()
-            hbox.setContentsMargins(0, 0, 0, 0)
-            hbox.setAlignment(Qt.AlignLeft)
-            hbox.setSpacing(0)
-            return hbox
-
-        self.horizontal_layout = createLayout()
-        self.setLayout(self.horizontal_layout)
+        self.horizontal_layout = QHBoxLayout(self)
+        self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
+        self.horizontal_layout.setAlignment(Qt.AlignLeft)
+        self.horizontal_layout.setSpacing(0)
 
         # set the background
         palette = self.palette()
@@ -94,20 +87,8 @@ class SearchFile(QWidget):
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
-        self.setMaximumWidth(400)
-        # self.resize(450,self.height())
         self.setFixedWidth(400)
-    def setPosition(self):
-        logging.info("")
-        if hasattr(self.parent(), 'viewport'):
-            parent_rect = self.parent().viewport().rect()
-        else:
-            parent_rect = self.parent().rect()
-
-        if not parent_rect:
-            return
-        self.setGeometry(parent_rect.width() - self.width() - 50, 0, self.width(), self.height())
-
+        self.setFixedHeight(self.height())
 
     def onCaseSensitiveSearchSelect(self):
         if self.regex_search.isChecked():
@@ -141,7 +122,6 @@ class SearchFile(QWidget):
             self.occurances.setText(str(self.document.toPlainText().count(search)) + " Results")
         else:
             self.occurances.setText("0 Results")
-
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
