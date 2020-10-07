@@ -37,11 +37,11 @@ class Find(QWidget):
         self.search_bar.setFixedWidth(200)
         self.horizontal_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
 
-        def createSearchBtn(title, tool_tip, on_click, isCheckable: bool = True):
+        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
             btn.setToolTip(tool_tip)
-            btn.setCheckable(isCheckable)
+            btn.setCheckable(is_checkable)
             btn.setFlat(True)
             btn.setFixedWidth(25)
             btn.clicked.connect(on_click)
@@ -74,7 +74,6 @@ class Find(QWidget):
         self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect, False)
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
-
 
     def onCaseSensitiveSearchSelect(self):
         if self.regex_search.isChecked():
