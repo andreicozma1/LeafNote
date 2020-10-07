@@ -114,7 +114,8 @@ class MenuBar(QMenuBar):
         self.menu_edit = self.addMenu('&Edit')
 
         def onFindBtn():
-            logging.info("")
+            logging.info(not self.doc.search.isVisible())
+            self.doc.search.setVisible(not self.doc.search.isVisible())
 
         def onFindAllBtn():
             logging.info("")
@@ -139,11 +140,8 @@ class MenuBar(QMenuBar):
         self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
 
-
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
-
-
 
     # =====================================================================================
     def makeViewMenu(self, app, bottom_bar) -> QMenu:

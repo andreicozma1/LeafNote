@@ -4,7 +4,6 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
-from Elements import Search
 from Elements.BottomBar import BottomBar
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
@@ -145,8 +144,7 @@ class App(QMainWindow):
         # Setup Layout View
         self.layout.setTopBar(self.top_bar)
         self.layout.setBottomBar(self.bottom_bar)
-        # self.layout.setBarOpenTabs(self.bar_open_tabs)
-        self.layout.setBarOpenTabs(Search.Find(self.document))
+        self.layout.setBarOpenTabs(self.bar_open_tabs)
         self.layout.setDocument(self.document)
         self.layout.setLeftMenu(self.left_menu)
 
