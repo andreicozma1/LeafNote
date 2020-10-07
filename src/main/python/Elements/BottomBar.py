@@ -1,9 +1,9 @@
 import logging
 import os
+from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget
+from PyQt5.QtCore import QDate, QDateTime
 
-from PyQt5.Qt import Qt, QTimer, QPixmap, QIcon
-from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QCalendarWidget
 
 """
 This file alters tools on the Bottom Bar
@@ -40,10 +40,11 @@ class BottomBar(QWidget):
         temp = os.path.join("resources", "calendar.ico")
         pixmap = QPixmap(temp)
         icon = QIcon(pixmap)
-        self.calender = QPushButton("", self)
+        self.calender = QPushButton("",self)
         self.calender.setIcon(icon)
         self.calender.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calender)
+
 
         # adds time label
         datetime = QDateTime.currentDateTime()
@@ -113,6 +114,7 @@ class BottomBar(QWidget):
         self.button_zoom_in.setAutoRepeat(True)
         self.button_zoom_in.setToolTip("Zoom in")
         self.horizontal_layout.addWidget(self.button_zoom_in)
+
 
     def updateWordCount(self):
         """
