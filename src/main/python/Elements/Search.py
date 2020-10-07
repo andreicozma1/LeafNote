@@ -4,7 +4,7 @@ import os
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel
 
 
 class Find(QWidget):
@@ -17,25 +17,41 @@ class Find(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.horizontal_layout = QHBoxLayout()
-        self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_layout.setAlignment(Qt.AlignLeft)
-        self.horizontal_layout.setSpacing(0)
+        self.setMaximumWidth(425)
+
+        def createLayout():
+            hbox = QHBoxLayout()
+            hbox.setContentsMargins(0, 0, 0, 0)
+            hbox.setAlignment(Qt.AlignLeft)
+            hbox.setSpacing(0)
+            return hbox
+        self.horizontal_layout = createLayout()
         self.setLayout(self.horizontal_layout)
 
         # set the background
         palette = self.palette()
-        palette.setColor(QtGui.QPalette.Window, QtGui.QColor('pink'))
+        palette.setColor(QtGui.QPalette.Window, QtGui.QColor('#dadada'))
         self.setPalette(palette)
         self.setAutoFillBackground(True)
-        # self.horizontal_layout.addStretch()
+
+
 
         # add the qLineEdit
         self.search_bar = QLineEdit()
         self.search_bar.setContentsMargins(0, 0, 0, 0)
         self.search_bar.textChanged[str].connect(self.onChanged)
         self.search_bar.setFixedWidth(200)
+        self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
         self.horizontal_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
+
+
+        # add label to count occurrences
+        self.occurances = QLabel("0 Results")
+        self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
+        self.occurances.setContentsMargins(10,0,0,0)
+        self.horizontal_layout.addWidget(self.occurances)
+
+        self.horizontal_layout.addStretch()
 
         def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
             btn = QPushButton(title)
@@ -49,15 +65,15 @@ class Find(QWidget):
 
         # add the case sensitive option
         self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
-        self.horizontal_layout.addWidget(self.case_sensitive)
+        self.horizontal_layout.addWidget(self.case_sensitive, 0, Qt.AlignLeft)
 
         # add the case sensitive option
         self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
-        self.horizontal_layout.addWidget(self.whole_word)
+        self.horizontal_layout.addWidget(self.whole_word, 0, Qt.AlignLeft)
 
         # add the case sensitive option
         self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
-        self.horizontal_layout.addWidget(self.regex_search)
+        self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
 
         # get required images
         path = os.path.join("resources", "arrow.ico")
@@ -125,7 +141,7 @@ class Find(QWidget):
         logging.info(self.document.find(self.search, self.flags))
 
 
-class FindAll(QWidget):
+class FindWorkspace(QWidget):
     def __init__(self, path):
-        super(FindAll, self).__init__()
+        super(FindWorkspace, self).__init__()
         self.path = path
