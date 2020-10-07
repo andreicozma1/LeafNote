@@ -21,6 +21,7 @@ class ContextMenu(QWidget):
         :param vertical_layout: layout to add elements to
         :return: nothing
         """
+
         def createLabel(text):
             label = QLabel(text)
             label.setWordWrap(True)
@@ -59,11 +60,19 @@ class ContextMenu(QWidget):
         # TODO - use document ref to display info about the document
         info = QFileInfo(path)
         # Get the file info and update all the respective fields
-        self.lbl_file.setText(info.fileName())
+        file_name = info.fileName() if path is not None else "Unknown"
+        file_path = info.path() if path is not None else "?"
+        file_owner = (str(info.owner())) if path is not None else "?"
+        file_size = (str(round(info.size() / 1000000.0, 2))) if path is not None else "?"
+        file_birthTime = (info.birthTime().toString(self.format_time)) if path is not None else "?"
+        file_lastModified = (info.lastModified().toString(self.format_time)) if path is not None else "?"
+        file_lastRead = (info.lastRead().toString(self.format_time)) if path is not None else "?"
+
+        self.lbl_file.setText(file_name)
         self.lbl_formatting_mode.setText("Formatting: " + str(formattingMode))
-        self.lbl_path.setText("Path: " + info.path())
-        self.lbl_owner.setText("Owner: " + str(info.owner()))
-        self.lbl_size.setText("Size: " + str(round(info.size() / 1000000.0, 2)) + "MB")
-        self.lbl_created.setText("Created: " + info.birthTime().toString(self.format_time))
-        self.lbl_modified.setText("Modified: " + info.lastModified().toString(self.format_time))
-        self.lbl_viewed.setText("Read: " + info.lastRead().toString(self.format_time))
+        self.lbl_path.setText("Path: " + file_path)
+        self.lbl_owner.setText("Owner: " + file_owner)
+        self.lbl_size.setText("Size: " + file_size + " MB")
+        self.lbl_created.setText("Created: " + file_birthTime)
+        self.lbl_modified.setText("Modified: " + file_lastModified)
+        self.lbl_viewed.setText("Read: " + file_lastRead)
