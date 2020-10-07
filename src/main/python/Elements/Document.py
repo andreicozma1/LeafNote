@@ -1,8 +1,11 @@
 import logging
 
 from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
-from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout
+
+from Elements.Search import SearchFile
 
 """
 The active document - area where user types
@@ -27,6 +30,9 @@ class Document(QTextEdit):
 
         if default_text is None:
             default_text = "You can type here."
+
+        self.search = SearchFile(self)
+        self.search.hide()
 
         self.setText(default_text)
         self.setAutoFillBackground(True)

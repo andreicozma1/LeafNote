@@ -145,8 +145,7 @@ class App(QMainWindow):
         # Setup Layout View
         self.layout.setTopBar(self.top_bar)
         self.layout.setBottomBar(self.bottom_bar)
-        # self.layout.setBarOpenTabs(self.bar_open_tabs)
-        self.layout.setBarOpenTabs(Search.Find(self.document))
+        self.layout.setBarOpenTabs(self.bar_open_tabs)
         self.layout.setDocument(self.document)
         self.layout.setLeftMenu(self.left_menu)
 

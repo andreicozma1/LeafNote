@@ -7,17 +7,22 @@ from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel
 
 
-class Find(QWidget):
+############################################################################
+# SEARCH CURRENT FILE
+
+class SearchFile(QWidget):
     def __init__(self, document):
-        super(Find, self).__init__()
+        logging.info("")
+        super(SearchFile, self).__init__(document)
         self.document = document
         self.search = ""
         self.flags = QTextDocument.FindFlag(0)
 
         self.initUI()
+        self.setPosition()
+
 
     def initUI(self):
-        self.setMaximumWidth(425)
 
         def createLayout():
             hbox = QHBoxLayout()
@@ -25,6 +30,7 @@ class Find(QWidget):
             hbox.setAlignment(Qt.AlignLeft)
             hbox.setSpacing(0)
             return hbox
+
         self.horizontal_layout = createLayout()
         self.setLayout(self.horizontal_layout)
 
@@ -34,8 +40,6 @@ class Find(QWidget):
         self.setPalette(palette)
         self.setAutoFillBackground(True)
 
-
-
         # add the qLineEdit
         self.search_bar = QLineEdit()
         self.search_bar.setContentsMargins(0, 0, 0, 0)
@@ -43,7 +47,6 @@ class Find(QWidget):
         self.search_bar.setFixedWidth(200)
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
         self.horizontal_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
-
 
         # add label to count occurrences
         self.occurances = QLabel("0 Results")
@@ -91,6 +94,21 @@ class Find(QWidget):
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
+        self.setMaximumWidth(400)
+        # self.resize(450,self.height())
+        self.setFixedWidth(400)
+    def setPosition(self):
+        logging.info("")
+        if hasattr(self.parent(), 'viewport'):
+            parent_rect = self.parent().viewport().rect()
+        else:
+            parent_rect = self.parent().rect()
+
+        if not parent_rect:
+            return
+        self.setGeometry(parent_rect.width() - self.width() - 50, 0, self.width(), self.height())
+
+
     def onCaseSensitiveSearchSelect(self):
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
@@ -118,6 +136,13 @@ class Find(QWidget):
         logging.info(search)
         self.search = search
 
+        # update the number of occurrences of the search
+        if search != "":
+            self.occurances.setText(str(self.document.toPlainText().count(search)) + " Results")
+        else:
+            self.occurances.setText("0 Results")
+
+
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
         cursor.setPosition(0)
@@ -140,8 +165,9 @@ class Find(QWidget):
 
         logging.info(self.document.find(self.search, self.flags))
 
+
 ############################################################################
-# Find
+# SEARCH CURRENT WORKSPACE
 
 
 class FindWorkspace(QWidget):

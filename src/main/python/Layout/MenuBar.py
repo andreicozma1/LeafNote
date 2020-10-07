@@ -115,6 +115,7 @@ class MenuBar(QMenuBar):
 
         def onFindBtn():
             logging.info("")
+            self.doc.search.setVisible(not self.doc.search.isVisible())
 
         def onFindAllBtn():
             logging.info("")
