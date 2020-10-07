@@ -197,6 +197,7 @@ class FileManager:
 
         # update the document shown to the user
         document.setText(data)
+        self.app.right_menu.updateMenu(document, path, self.current_document.suffix() == 'lef')
         return True
 
     def getFileData(self, path: str) -> str:

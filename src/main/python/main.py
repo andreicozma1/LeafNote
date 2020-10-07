@@ -6,6 +6,7 @@ from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements.BottomBar import BottomBar
 from Elements.ColorWidget import Color
+from Elements.ContextMenu import ContextMenu
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
 from Elements.OpenTabsBar import OpenTabsBar
@@ -63,7 +64,7 @@ class App(QMainWindow):
         # Create Main Workspace
         self.left_menu = DirectoryViewer(self.document, self.file_manager)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
-        self.right_menu = Color("red")
+        self.right_menu = ContextMenu()
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document, self.right_menu)
         layout_main.addWidget(self.documents_view)
 
@@ -186,7 +187,7 @@ class App(QMainWindow):
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.right_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
-        self.documents_view.setMinimumWidth(self.layout_props.min_doc_width * self.width())
+        self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
         return super(QMainWindow, self).resizeEvent(event)
 
