@@ -48,7 +48,7 @@ class Find(QWidget):
         # add label to count occurrences
         self.occurances = QLabel("0 Results")
         self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
-        self.occurances.setContentsMargins(10,0,0,0)
+        self.occurances.setContentsMargins(10, 0, 0, 0)
         self.horizontal_layout.addWidget(self.occurances)
 
         self.horizontal_layout.addStretch()
@@ -139,6 +139,9 @@ class Find(QWidget):
             self.search = QRegExp(self.search)
 
         logging.info(self.document.find(self.search, self.flags))
+
+############################################################################
+# Find
 
 
 class FindWorkspace(QWidget):
