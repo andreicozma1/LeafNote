@@ -190,7 +190,7 @@ class MenuBar(QMenuBar):
         self.menu_format.addSeparator()
 
         clear_format = QAction("Clear Format", app)
-        clear_format.setShortcut("Ctrl+SHIFT+0")
+        clear_format.setShortcut("Ctrl+0")
         clear_format.triggered.connect(self.doc.resetFormatting)
         self.menu_format.addAction(clear_format)
 
