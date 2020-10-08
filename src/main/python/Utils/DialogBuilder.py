@@ -1,6 +1,6 @@
 import logging
 
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox, QProgressBar
 
 
 class DialogBuilder(QDialog):
@@ -46,3 +46,22 @@ class DialogBuilder(QDialog):
         self.layout_vertical.addWidget(button_box)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
+
+    def addProgessBar(self, min_max_range: tuple = (0, 0), initial_value: int = 0,
+                      text_format: str = None, orientation=None, text_direction=None):
+        logging.info("")
+
+        # create the progress_bar and set its properties
+        progress_bar = QProgressBar()
+        progress_bar.setValue(initial_value)
+        progress_bar.setRange(min_max_range[0], min_max_range[1])
+        if orientation is not None:
+            progress_bar.setOrientation(orientation)
+        if text_format is not None:
+            progress_bar.setFormat(text_format)
+        if text_direction is not None:
+            progress_bar.setTextDirection(text_direction)
+
+        # add the progress_bar to the dialog box and return the created object
+        self.layout_vertical.addWidget(progress_bar)
+        return progress_bar

@@ -36,7 +36,7 @@ class Summarizer:
         Sets up class variables.
         """
         logging.info("Created instance of summarizer class")
-        handleDownloads()
+        handlePackageDownloads()
         from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings
         self.sentence_vectors = []
@@ -157,7 +157,7 @@ def sentToText(text, separator=' '):
     return sentence
 
 
-def handleDownloads():
+def handlePackageDownloads():
     """
     this downloads the nltk packages in the nltk module needed for this file
     :return: Returns nothing
@@ -285,7 +285,7 @@ def getWordEmbeddings(path: str, app, download=True):
                     return
 
             # download the actual files
-            handleDownload(path)
+            handleWordVectorDownload(app, path)
 
         # create a directory for the files
         # uncompress the files
@@ -305,7 +305,7 @@ def getWordEmbeddings(path: str, app, download=True):
     app.summarizer = Summarizer(model)
 
 
-def handleDownload(path):
+def handleWordVectorDownload(app, path: str):
     # create the directory to hold  the word embeddings
     path = os.path.join(path, 'WordEmbeddings')
     if not os.path.exists(path):
@@ -318,12 +318,19 @@ def handleDownload(path):
             os.remove(f)
 
     logging.info("Started Downloading Word Embeddings")
+    progress_bar_dialog = DialogBuilder(app, "Downloading")
+    progress_bar = progress_bar_dialog.addProgessBar((0, 100),)
+
+    def progressBarSignal(self, current):
+        progress_bar.setValue(current)
+
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
     # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
     url = "http://hunterprice.org/files/glove.6B.100d.zip"
-    wget.download(url, out=path)
+    wget.download(url, out=progressBarSignal)
 
     logging.info("Finished downloading")
+
 
 
 def fillModel(path):
