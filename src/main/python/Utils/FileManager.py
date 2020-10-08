@@ -301,7 +301,6 @@ class FileManager:
         if is_new_file:
             self.app.bar_open_tabs.addTab(old_path)
 
-
         # grab the index of the last period or if no period get the length of the string
         try:
             period_index = self.current_document.filePath().rindex('.')
