@@ -289,11 +289,18 @@ class FileManager:
         formatted_file = self.app.document.toHtml()
 
         # if the current file is none make the user save the file
+        is_new_file = False
         if self.current_document is None:
+            is_new_file = True
             self.saveDocument(document)
 
-        # get teh old file path
+        # get the old file path
         old_path = self.current_document.filePath()
+
+        # if it is a new file open the tab
+        if is_new_file:
+            self.app.bar_open_tabs.addTab(old_path)
+
 
         # grab the index of the last period or if no period get the length of the string
         try:
@@ -341,8 +348,8 @@ class FileManager:
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
             logging.info("----------------------------------------")
-            logging.info("path: ", key)
-            logging.info("QFileInfo:\n", path)
+            logging.info("path: "+ key)
+            logging.info("QFileInfo: "+ path.absoluteFilePath())
         logging.info("========================================")
 
     def fixBrokenFilePaths(self):
