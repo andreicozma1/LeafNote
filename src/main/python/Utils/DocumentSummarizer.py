@@ -236,7 +236,9 @@ def onWordVecDownload(app, button):
             logging.info("User Cancelled Summarizer Prompt")
         download_path = download_path + os.path.sep
         try:
-            _thread.start_new_thread(getWordEmbeddings, (download_path, app))
+            progress_bar_dialog = DialogBuilder(app, "Downloading")
+            progress_bar = progress_bar_dialog.addProgessBar((0, 100))
+            _thread.start_new_thread(getWordEmbeddings, (download_path, app, progress_bar, progress_bar_dialog))
         except:
             logging.error("Unable to start thread")
 
@@ -259,7 +261,7 @@ def onWordVecDownload(app, button):
         logging.info("User selected Cancel")
 
 
-def getWordEmbeddings(path: str, app, download=True):
+def getWordEmbeddings(path: str, app, progress_bar, progress_bar_dialog, download=True):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer
@@ -285,7 +287,9 @@ def getWordEmbeddings(path: str, app, download=True):
                     return
 
             # download the actual files
-            handleWordVectorDownload(app, path)
+            path = os.path.join(path, 'WordEmbeddings')
+            path = path + os.path.sep
+            handleWordVectorDownload(app, progress_bar, progress_bar_dialog, path)
 
         # create a directory for the files
         # uncompress the files
@@ -305,9 +309,9 @@ def getWordEmbeddings(path: str, app, download=True):
     app.summarizer = Summarizer(model)
 
 
-def handleWordVectorDownload(app, path: str):
+def handleWordVectorDownload(app, progress_bar, progress_bar_dialog, path: str):
     # create the directory to hold  the word embeddings
-    path = os.path.join(path, 'WordEmbeddings')
+
     if not os.path.exists(path):
         logging.info("Creating WordEmbeddings directory")
         os.mkdir(path)
@@ -317,19 +321,24 @@ def handleWordVectorDownload(app, path: str):
         for f in files:
             os.remove(f)
 
-    logging.info("Started Downloading Word Embeddings")
-    progress_bar_dialog = DialogBuilder(app, "Downloading")
-    progress_bar = progress_bar_dialog.addProgessBar((0, 100),)
 
-    def progressBarSignal(self, current):
+    state = progress_bar_dialog.open()
+    logging.info("Started Downloading Word Embeddings")
+
+    def progressBarSignal(current, total, width):
         progress_bar.setValue(current)
+        progress_bar.setMaximum(total)
+        if current == total:
+            progress_bar_dialog.close()
 
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
     # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
     url = "http://hunterprice.org/files/glove.6B.100d.zip"
-    wget.download(url, out=progressBarSignal)
+    print(path)
+    wget.download(url, out=path, bar=progressBarSignal)
 
     logging.info("Finished downloading")
+
 
 
 
