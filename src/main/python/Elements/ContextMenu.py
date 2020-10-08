@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
+from Elements.CollapsibleWidget import CollapsibleWidget
+
 
 class ContextMenu(QWidget):
     def __init__(self):
@@ -21,6 +23,8 @@ class ContextMenu(QWidget):
         :param vertical_layout: layout to add elements to
         :return: nothing
         """
+
+        vertical_layout.addWidget(CollapsibleWidget("File Details:"))
 
         def createLabel(text):
             label = QLabel(text)
