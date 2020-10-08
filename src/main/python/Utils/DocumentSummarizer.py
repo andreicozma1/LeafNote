@@ -308,8 +308,7 @@ def getWordEmbeddings(path: str, app, download=True):
     """
     zip_file = 'glove.6B.100d.zip'
     # if cannot find both of the wv files
-    if not os.path.exists(os.path.join(path, 'glove.6B.100d.vocab')) and not os.path.exists(
-            os.path.join(path, 'glove.6B.100d.npy')):
+    if not os.path.exists(os.path.join(path, 'glove.6B.100d.vocab')) and not os.path.exists(os.path.join(path, 'glove.6B.100d.npy')):
         # if cannot find the .zip file
         if not os.path.exists(os.path.join(path, zip_file)):
             if not download:
