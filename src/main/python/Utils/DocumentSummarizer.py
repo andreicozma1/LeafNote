@@ -267,8 +267,10 @@ def getWordEmbeddings(path: str, app, progress_bar, progress_bar_dialog, downloa
     an instance of the summarizer
     :param path: A path to where the files are or are to be downloaded
     :param app: A reference to the application
-    :param download: Whether or not the user selected the download butotn
-    :return:
+    :param download: Whether or not the user selected the download button
+    :param progress_bar: A reference to the progress bar
+    :param progress_bar_dialog: A reference to the downloading progress dialog
+    :return: Returns nothing
     """
     # if cannot find both of the wv files
     if not os.path.exists(path + 'glove.6B.100d.vocab') and not os.path.exists(path + 'glove.6B.100d.npy'):
@@ -310,8 +312,15 @@ def getWordEmbeddings(path: str, app, progress_bar, progress_bar_dialog, downloa
 
 
 def handleWordVectorDownload(app, progress_bar, progress_bar_dialog, path: str):
+    """
+    This handles the download of the file itself
+    :param app: A reference to app
+    :param progress_bar: A reference to progress bar object
+    :param progress_bar_dialog: A reference to progress bar dialog object
+    :param path: The path to save the file to
+    :return: Returns nothing
+    """
     # create the directory to hold  the word embeddings
-
     if not os.path.exists(path):
         logging.info("Creating WordEmbeddings directory")
         os.mkdir(path)
@@ -321,10 +330,11 @@ def handleWordVectorDownload(app, progress_bar, progress_bar_dialog, path: str):
         for f in files:
             os.remove(f)
 
-
+    # open the progress dialogue
     state = progress_bar_dialog.open()
     logging.info("Started Downloading Word Embeddings")
 
+    # function to update the progress bar
     def progressBarSignal(current, total, width):
         progress_bar.setValue(current)
         progress_bar.setMaximum(total)
@@ -334,12 +344,9 @@ def handleWordVectorDownload(app, progress_bar, progress_bar_dialog, path: str):
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
     # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
     url = "http://hunterprice.org/files/glove.6B.100d.zip"
-    print(path)
     wget.download(url, out=path, bar=progressBarSignal)
 
     logging.info("Finished downloading")
-
-
 
 
 def fillModel(path):
