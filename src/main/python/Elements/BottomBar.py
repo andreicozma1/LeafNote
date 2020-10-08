@@ -1,7 +1,9 @@
 import logging
+import os
+from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget
+from PyQt5.QtCore import QDate, QDateTime
 
-from PyQt5.Qt import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton
 
 """
 This file alters tools on the Bottom Bar
@@ -31,10 +33,29 @@ class BottomBar(QWidget):
         self.document = document
 
         # sets up the bottom bar
-        self.horizontal_layout = QHBoxLayout()
+        self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.setLayout(self.horizontal_layout)
+        self.horizontal_layout.setSpacing(3)
 
+        temp = os.path.join("resources", "calendar.ico")
+        pixmap = QPixmap(temp)
+        icon = QIcon(pixmap)
+        self.calender = QPushButton("",self)
+        self.calender.setIcon(icon)
+        self.calender.clicked.connect(self.showCalendar)
+        self.horizontal_layout.addWidget(self.calender)
+
+
+        # adds time label
+        datetime = QDateTime.currentDateTime()
+        self.current_time1 = QLabel()
+        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.horizontal_layout.addWidget(self.current_time1)
+        timer = QTimer(self)
+        timer.timeout.connect(self.showTime)
+        timer.start(1000)
+
+        self.horizontal_layout.addStretch()
         # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
         font = self.label_wc.font()
@@ -94,6 +115,7 @@ class BottomBar(QWidget):
         self.button_zoom_in.setToolTip("Zoom in")
         self.horizontal_layout.addWidget(self.button_zoom_in)
 
+
     def updateWordCount(self):
         """
         Counts number of words and updates number on bottom bar
@@ -118,6 +140,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
@@ -126,6 +149,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
@@ -158,4 +182,28 @@ class BottomBar(QWidget):
         resets the zoom slider when zoom is reset
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.slider_start)
+
+    def showTime(self):
+        """
+        Updates current time displayed on current_time label
+        :return: returns current time
+        """
+        datetime = QDateTime.currentDateTime()
+        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+
+    def showCalendar(self):
+        """
+        Shows a calendar with current date
+        :return: CalendarWidget()
+        """
+        self.cal = QCalendarWidget()
+        self.cal.setVisible(True)
+        self.cal.selectionChanged.connect(self.onSelectedDate)
+
+    def onSelectedDate(self):
+        """
+        :return: New date selected on the calendar
+        """
+        ca = self.cal.selectedDate()
