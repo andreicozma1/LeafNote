@@ -268,10 +268,21 @@ def getWordEmbeddings(path: str, app, download=True):
     :param download: Whether or not the user selected the download butotn
     :return:
     """
+    zip_file = 'glove.6B.100d.zip'
+
+    path = os.path.join(path, 'WordEmbeddings')
+    if not os.path.exists(path):
+        logging.info("Creating WordEmbeddings directory")
+        os.mkdir(path)
+    else:
+        logging.info("WordEmbeddings directory already exists. Removing all contents")
+        files = glob.glob(os.path.join(path, '*'))
+        for f in files:
+            os.remove(f)
     # if cannot find both of the wv files
-    if not os.path.exists(path + 'glove.6B.100d.vocab') and not os.path.exists(path + 'glove.6B.100d.npy'):
+    if not os.path.exists(os.path.join(path, 'glove.6B.100d.vocab')) and not os.path.exists(os.path.join(path, 'glove.6B.100d.npy')):
         # if cannot find the .zip file
-        if not os.path.exists(path + 'glove.6B.100d.zip'):
+        if not os.path.exists(os.path.join(path, zip_file)):
             if not download:
                 logging.info("Word embeddings not found in directory")
                 download_dialog = DialogBuilder(app, "Could not Find Word Vectors",
@@ -285,17 +296,17 @@ def getWordEmbeddings(path: str, app, download=True):
                     return
 
             # download the actual files
-            handleDownload(path)
+            handleDownload(path, zip_file)
 
         # create a directory for the files
         # uncompress the files
         logging.info("Unzipping")
-        with zipfile.ZipFile(os.path.join(path, 'glove.6B.100d.zip'), 'r') as zip_ref:
+        with zipfile.ZipFile(os.path.join(path, zip_file), 'r') as zip_ref:
             zip_ref.extractall(path)
         logging.info("Finished unzipping")
 
         # delete the compressed file
-        os.remove(os.path.join(path, 'glove.6B.100d.zip'))
+        os.remove(os.path.join(path, zip_file))
         logging.info("Deleted zip file")
 
     # fill the dictionary with the word embeddings
@@ -305,22 +316,13 @@ def getWordEmbeddings(path: str, app, download=True):
     app.summarizer = Summarizer(model)
 
 
-def handleDownload(path):
+def handleDownload(path, zip_file):
     # create the directory to hold  the word embeddings
-    path = os.path.join(path, 'WordEmbeddings')
-    if not os.path.exists(path):
-        logging.info("Creating WordEmbeddings directory")
-        os.mkdir(path)
-    else:
-        logging.info("WordEmbeddings directory already exists. Removing all contents")
-        files = glob.glob(os.path.join(path, '*'))
-        for f in files:
-            os.remove(f)
 
     logging.info("Started Downloading Word Embeddings")
     # download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
     # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
-    url = "http://hunterprice.org/files/glove.6B.100d.zip"
+    url = "http://hunterprice.org/files/" + zip_file
     wget.download(url, out=path)
 
     logging.info("Finished downloading")
