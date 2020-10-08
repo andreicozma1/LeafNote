@@ -1,8 +1,9 @@
 import logging
+import os
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPixmap, QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox
 
 from Utils.DialogBuilder import DialogBuilder
@@ -151,7 +152,11 @@ class TopBar(QWidget):
 
     def makeClearFormatting(self) -> QPushButton:
         # Button press to Clear formating
-        self.button_clear = QPushButton("A", self)
+        formatclear_iconpath = os.path.join("resources", "clear_formatting.ico")
+        pixmap = QPixmap(formatclear_iconpath)
+        icon = QIcon(pixmap)
+        self.button_clear = QPushButton("", self)
+        self.button_clear.setIcon(icon)
         self.button_clear.setToolTip('Clear Formatting. "Ctrl+Shift+0"')
         self.button_clear.setFixedWidth(33)
         self.button_clear.setFocusPolicy(Qt.NoFocus)
