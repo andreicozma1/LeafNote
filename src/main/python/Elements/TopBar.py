@@ -164,11 +164,10 @@ class TopBar(QWidget):
         return self.combo_text_color
 
     def makeClearFormatting(self) -> QPushButton:
-        # Button press to Clear formating
-        formatclear_iconpath = os.path.join("resources", "clear_formatting.ico")
-        icon = QIcon(QPixmap(formatclear_iconpath))
-        self.button_clear = QPushButton("", self)
-        self.button_clear.setIcon(icon)
+        # Button to Clear Formatting
+        path_icon = os.path.join("resources", "clear_formatting.ico")
+        self.button_clear = QPushButton(self)
+        self.button_clear.setIcon(QIcon(path_icon))
         self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
         self.button_clear.setFixedWidth(33)
         self.button_clear.setFocusPolicy(Qt.NoFocus)
