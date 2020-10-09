@@ -188,6 +188,12 @@ class MenuBar(QMenuBar):
 
         # ========= START EXTRA SECTION =========
         self.menu_format.addSeparator()
+
+        clear_format = QAction("Clear Format", app)
+        clear_format.setShortcut("Ctrl+0")
+        clear_format.triggered.connect(self.doc.resetFormatting)
+        self.menu_format.addAction(clear_format)
+
         act_color_picker = QAction("Color Picker", app)
         act_color_picker.triggered.connect(self.doc.openColorDialog)
         self.menu_format.addAction(act_color_picker)

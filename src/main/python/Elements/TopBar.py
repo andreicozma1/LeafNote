@@ -1,9 +1,12 @@
 import logging
+import os
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy
+
+from PyQt5.QtGui import QFont, QPixmap, QIcon, QKeySequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QDialogButtonBox, QSizePolicy, \
+    QShortcut
 
 from Elements import Document
 
@@ -159,6 +162,17 @@ class TopBar(QWidget):
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         return self.combo_text_color
+
+    def makeClearFormatting(self) -> QPushButton:
+        # Button to Clear Formatting
+        path_icon = os.path.join("resources", "clear_formatting.ico")
+        self.button_clear = QPushButton(self)
+        self.button_clear.setIcon(QIcon(path_icon))
+        self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
+        self.button_clear.setFixedWidth(33)
+        self.button_clear.setFocusPolicy(Qt.NoFocus)
+        self.button_clear.clicked.connect(self.document.resetFormatting)
+        return self.button_clear
 
     def makeComboTextAlign(self, dict_align: dict) -> QComboBox:
         # Adds ability to change alignment of text
