@@ -1,7 +1,9 @@
 import logging
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QDir, QRect
+from PyQt5.QtGui import QPainter
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -250,12 +252,31 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        self.c = QAction("Calculator", app)
+        self.c.triggered.connect(self.calculator)
+        self.menu_tools.addAction(self.c)
 
         # ========= END TOOLS MENU SECTION =========
 
         return self.menu_tools
 
     # =====================================================================================
+
+    def calculator(self):
+        print("button clicked")
+        self.calc = QWidget()
+        grid = QGridLayout()
+        self.calc.setLayout(grid)
+        row = 0
+        col = 0
+        for x in range(1, 10):
+            button = QPushButton(f'{x}')
+            grid.addWidget(button, row, col)
+            col += 1
+            if x % 3 == 0:
+                row += 1
+                col = 0
+        self.calc.show()
 
     def setFormattingButtonsEnabled(self, state):
         """
