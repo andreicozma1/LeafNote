@@ -1,9 +1,9 @@
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, Qt
 from PyQt5.QtCore import QDir, QRect
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton
+from PyQt5.QtGui import QPainter, QFont
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton, QLabel
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -267,15 +267,54 @@ class MenuBar(QMenuBar):
         self.calc = QWidget()
         grid = QGridLayout()
         self.calc.setLayout(grid)
-        row = 0
-        col = 0
+        # label = QLabel(self)
+        #
+        # # setting geometry to the label
+        # label.setGeometry(5, 5, 350, 70)
+        #
+        # # creating label multi line
+        # label.setWordWrap(True)
+        #
+        # # setting style sheet to the label
+        # label.setStyleSheet("QLabel"
+        #                          "{"
+        #                          "border : 4px solid black;"
+        #                          "background : white;"
+        #                          "}")
+
+        # setting alignment to the label
+        # self.calc.label.setAlignment(Qt.AlignRight)
+
+        # setting font
+        # self.label.setFont(QFont('Arial', 15))
+        screen = QLabel()
+        space = QLabel()
+        screen.setWordWrap(True)
+        screen.setStyleSheet("QLabel"
+                                 "{"
+                                 "border : 1px solid black;"
+                                 "background : white;"
+                                 "}")
+        # output.setGeometry()
+        grid.addWidget(screen, 0, 0, 4, 3)
+        grid.addWidget(space, 3, 3)
+        row = 4
+        col = 2
+        y = 9
         for x in range(1, 10):
-            button = QPushButton(f'{x}')
+            button = QPushButton(f'{y}')
             grid.addWidget(button, row, col)
-            col += 1
+            col -= 1
             if x % 3 == 0:
                 row += 1
-                col = 0
+                col = 2
+            y -= 1
+        button = QPushButton("+/-")
+        grid.addWidget(button, 7, 0)
+        button = QPushButton("0")
+        grid.addWidget(button, 7, 1)
+        button = QPushButton(".")
+        grid.addWidget(button, 7, 2)
         self.calc.show()
 
     def setFormattingButtonsEnabled(self, state):
