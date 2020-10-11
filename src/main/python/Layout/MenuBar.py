@@ -1,6 +1,6 @@
 import logging
 
-from PyQt5 import QtWidgets, Qt
+from PyQt5 import QtWidgets, Qt, QtCore
 from PyQt5.QtCore import QDir, QRect
 from PyQt5.QtGui import QPainter, QFont
 from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton, QLabel
@@ -270,11 +270,16 @@ class MenuBar(QMenuBar):
         self.screen = QLabel()
         space = QLabel()
         self.screen.setWordWrap(True)
+        self.screen.setAlignment(QtCore.Qt.AlignRight)
+        # self.screen.setAlignment(QtCore.Qt.AlignVCenter)
         self.screen.setStyleSheet("QLabel"
                                  "{"
+                                 "text-align: center;"
+                                 "font-size: 15pt;"
                                  "border : 1px solid black;"
                                  "background : white;"
                                  "}")
+        self.screen.setFixedHeight(30)
         # output.setGeometry()
         grid.addWidget(self.screen, 0, 0, 5, 4)
         grid.addWidget(space, 4, 4)
@@ -319,6 +324,232 @@ class MenuBar(QMenuBar):
         equals.setFixedHeight(52)
         grid.addWidget(equals, 8, 3, 2, 1)
         self.calc.show()
+
+        minus.clicked.connect(self.action_minus)
+        equals.clicked.connect(self.action_equal)
+        zero.clicked.connect(self.action0)
+        one.clicked.connect(self.action1)
+        two.clicked.connect(self.action2)
+        three.clicked.connect(self.action3)
+        four.clicked.connect(self.action4)
+        five.clicked.connect(self.action5)
+        six.clicked.connect(self.action6)
+        seven.clicked.connect(self.action7)
+        eight.clicked.connect(self.action8)
+        nine.clicked.connect(self.action9)
+        divide.clicked.connect(self.action_div)
+        mult.clicked.connect(self.action_mul)
+        plus.clicked.connect(self.action_plus)
+        dec.clicked.connect(self.action_point)
+        clear.clicked.connect(self.action_clear)
+        delete.clicked.connect(self.action_del)
+
+    def action_plus(self):
+        text = self.screen.text()
+        self.screen.setText(text + " + ")
+
+    def action_equal(self):
+        equation = self.screen.text()
+
+        try:
+            ans = eval(equation)
+            self.screen.setText(str(ans))
+            self.equ = 1
+
+        except:
+            self.screen.setText("Wrong Input")
+
+    def action_plus(self):
+        # appending label text
+        text = self.screen.text()
+        if text == "Wrong Input":
+            text = ""
+        if text != "":
+            if text[len(text) - 1] == ' ':
+                self.screen.setText(text[:len(text) - 3])
+                text = self.screen.text()
+            self.screen.setText(text + " + ")
+        self.equ = 0
+
+    def action_minus(self):
+        # appending label text
+        text = self.screen.text()
+        if text == "Wrong Input":
+            text = ""
+        if text != "":
+            if text[len(text) - 1] == ' ':
+                self.screen.setText(text[:len(text) - 3])
+                text = self.screen.text()
+            self.screen.setText(text + " - ")
+        self.equ = 0
+
+    def action_div(self):
+        # appending label text
+        text = self.screen.text()
+        if text == "Wrong Input":
+            text = ""
+        if text != "":
+            if text[len(text) - 1] == ' ':
+                print("in")
+                self.screen.setText(text[:len(text) - 3])
+                text = self.screen.text()
+            self.screen.setText(text + " / ")
+        self.equ = 0
+
+    def action_mul(self):
+        # appending label text
+        text = self.screen.text()
+        if text == "Wrong Input":
+            text = ""
+        if text != "":
+            if text[len(text) - 1] == ' ':
+                self.screen.setText(text[:len(text) - 3])
+                text = self.screen.text()
+            self.screen.setText(text + " * ")
+        self.equ = 0
+
+    def action_point(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text != "Wrong Input":
+            if text != "":
+                temp = text[len(text) - 1]
+                if temp.isnumeric() == False:
+                    text += "0"
+            else:
+                text += "0"
+            self.screen.setText(text + ".")
+        self.equ = 0
+
+    def action0(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "0")
+        self.equ = 0
+
+    def action1(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "1")
+        self.equ = 0
+
+    def action2(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "2")
+        self.equ = 0
+
+    def action3(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "3")
+        self.equ = 0
+
+    def action4(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "4")
+        self.equ = 0
+
+    def action5(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "5")
+        self.equ = 0
+
+    def action6(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "6")
+        self.equ = 0
+
+    def action7(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "7")
+        self.equ = 0
+
+    def action8(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "8")
+        self.equ = 0
+
+    def action9(self):
+        # appending label text
+        if self.equ == 1:
+            self.screen.setText("")
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        self.screen.setText(text + "9")
+        self.equ = 0
+
+    def action_clear(self):
+        # clearing the label text
+        self.screen.setText("")
+
+    def action_del(self):
+        # clearing a single digit
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        if text != "":
+            if text[len(text) - 1] == ' ':
+                self.screen.setText(text[:len(text) - 3])
+            else:
+                self.screen.setText(text[:len(text) - 1])
+        self.equ = 0
+
 
     def setFormattingButtonsEnabled(self, state):
         """
