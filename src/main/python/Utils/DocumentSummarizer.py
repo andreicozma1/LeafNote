@@ -281,7 +281,6 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-
         try:
             _thread.start_new_thread(getWordEmbeddings,
                                      (app, path_new, should_download, progress_bar, document))
@@ -340,14 +339,14 @@ def ensureDirectory(app, path: str):
             return False
 
 
-def getWordEmbeddings(app, path: str,  should_download=True, progress_bar=None, document=None):
+def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer
     :param app: A reference to the application
     :param path: A path to where the files are or are to be downloaded
     :param should_download: Whether or not to re-download zip
-    :param progress_bar: A tuple holding the dialog and progress bar
+    :param progress_bar: A reference to the progress bar
     :param document: Optionally summarize text at the end of procedure
     :return:
     """
