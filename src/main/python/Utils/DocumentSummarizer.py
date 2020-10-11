@@ -193,7 +193,6 @@ def removeStopwords(sen, stopwords):
 def onSummaryAction(app, document):
     """
     This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
-    :param document: the text to summarize
     :param app: Reference to the application
     :param document: Reference to the document
     :return: Returns nothing
@@ -255,23 +254,19 @@ def dependencyDialogHandler(app, button, document=None):
     existing_path = files_exist(path_existing, path_new)
     if existing_path == None:
         zip_file = 'glove.6B.100d.zip'
-        path_download = path_new
-        if button.text() == "Open":
-            path_download = path_existing
 
-        if not os.path.exists(os.path.join(path_download, zip_file)):
+        if not os.path.exists(os.path.join(path_new, zip_file)):
             logging.info("Missing Files and ZIP. To re-download")
             if button.text() == "Open":
                 logging.info("Dictionaries not found in directory. Prompting user for download")
-                download_dialog = DialogBuilder(app, "Missing Dictionaries",
-                                                "Would you like to download required dictionaries?",
-                                                "The directory selected does not contain the necessary files.")
-                buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-                download_dialog.addButtonBox(buttonBox)
-                if not download_dialog.exec():
-                    logging.info("User chose not to download dictionaries")
-                    return
-            if path_download == path_new and not ensureDirectory(app, path_download):
+                download_dialog = DialogBuilder(app, "Error!",
+                                                "Error - Dictionaries not found!",
+                                                "Please select a different path or download them again.")
+                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+                download_dialog.addButtonBox(button_box)
+                download_dialog.exec()
+                return
+            if not ensureDirectory(app, path_new):
                 return
             should_download = True
         else:
@@ -279,7 +274,7 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
 
         try:
-            _thread.start_new_thread(getWordEmbeddings, (app, path_download, should_download, document))
+            _thread.start_new_thread(getWordEmbeddings, (app, path_new, should_download, document))
         except:
             logging.error("Unable to start thread")
     else:
