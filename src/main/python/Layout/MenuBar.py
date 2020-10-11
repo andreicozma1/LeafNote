@@ -283,7 +283,7 @@ class MenuBar(QMenuBar):
         # output.setGeometry()
         grid.addWidget(self.screen, 0, 0, 5, 4)
         grid.addWidget(space, 4, 4)
-        clear = QPushButton("c")
+        clear = QPushButton("C")
         grid.addWidget(clear, 5, 0)
         divide = QPushButton("/")
         grid.addWidget(divide, 5, 1)
@@ -326,23 +326,42 @@ class MenuBar(QMenuBar):
         self.calc.show()
 
         minus.clicked.connect(self.action_minus)
+        minus.setShortcut("-")
         equals.clicked.connect(self.action_equal)
+        equals.setShortcut("enter")
         zero.clicked.connect(self.action0)
+        zero.setShortcut("0")
         one.clicked.connect(self.action1)
+        one.setShortcut("1")
         two.clicked.connect(self.action2)
+        two.setShortcut("2")
         three.clicked.connect(self.action3)
+        three.setShortcut("3")
         four.clicked.connect(self.action4)
+        four.setShortcut("4")
         five.clicked.connect(self.action5)
+        five.setShortcut("5")
         six.clicked.connect(self.action6)
+        six.setShortcut("6")
         seven.clicked.connect(self.action7)
+        seven.setShortcut("7")
         eight.clicked.connect(self.action8)
+        eight.setShortcut("8")
         nine.clicked.connect(self.action9)
+        nine.setShortcut("9")
         divide.clicked.connect(self.action_div)
+        divide.setShortcut("/")
         mult.clicked.connect(self.action_mul)
+        mult.setShortcut("*")
         plus.clicked.connect(self.action_plus)
+        plus.setShortcut("+")
         dec.clicked.connect(self.action_point)
+        dec.setShortcut(".")
         clear.clicked.connect(self.action_clear)
+        clear.setShortcut("c")
         delete.clicked.connect(self.action_del)
+        delete.setShortcut("backspace")
+        neg.clicked.connect(self.action_neg)
 
     def action_plus(self):
         text = self.screen.text()
@@ -549,6 +568,21 @@ class MenuBar(QMenuBar):
             else:
                 self.screen.setText(text[:len(text) - 1])
         self.equ = 0
+
+    def action_neg(self):
+        text = self.screen.text()
+        if text == "Wrong Input":
+            self.screen.setText("")
+            text = self.screen.text()
+        if text != "":
+            for x in reversed(range(len(text))):
+                if text[x] == " ":
+                    x += 1
+                    text = text[:x] + '-' + text[x:]
+                    self.screen.setText(text)
+                    return
+            text = '-' + text
+            self.screen.setText(text)
 
 
     def setFormattingButtonsEnabled(self, state):
