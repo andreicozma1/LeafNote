@@ -235,7 +235,6 @@ class MenuBar(QMenuBar):
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
-
             DocumentSummarizer.onSummaryAction(app, document)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
