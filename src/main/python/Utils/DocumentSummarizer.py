@@ -255,7 +255,6 @@ def dependencyDialogHandler(app, button, document=None):
     existing_path = files_exist(path_existing, path_new)
 
     if existing_path is None:
-
         zip_file = 'glove.6B.100d.zip'
 
         # prompt the user that they need to download the dependency files
