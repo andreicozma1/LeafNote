@@ -223,11 +223,13 @@ def dependencyDialogHandler(app, button, document=None):
     This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
     :param app: an application reference
     :param button: the button the user selected
+    :document: a reference to the document
     :return:
     """
-
     logging.info("User selected " + button.text())
-    if button.text() == 'Cancel':
+
+    # quit if the user selected cancel
+    if button.text() == '&Cancel':
         return
 
     path_existing = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
@@ -251,9 +253,12 @@ def dependencyDialogHandler(app, button, document=None):
             return None
 
     existing_path = files_exist(path_existing, path_new)
+
     if existing_path is None:
+
         zip_file = 'glove.6B.100d.zip'
 
+        # prompt the user that they need to download the dependency files
         if not os.path.exists(os.path.join(path_new, zip_file)):
             logging.info("Missing Files and ZIP. To re-download")
             if button.text() == "Open":
@@ -273,6 +278,7 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
 
         try:
+            # create loading bar dialog and start the download thread
             progress_bar_dialog = DialogBuilder(app, "Downloading")
             progress_bar = progress_bar_dialog.addProgessBar((0, 100))
             _thread.start_new_thread(getWordEmbeddings,
@@ -289,7 +295,14 @@ def dependencyDialogHandler(app, button, document=None):
             app.summarizer.summarize(document.toPlainText())
 
 
-def ensureDirectory(app, path):
+def ensureDirectory(app, path: str):
+    """
+    This will ensure that the directory we are saving the embedding files into exists.
+    :param app: reference to the application
+    :param path: path to the directory
+    :return:
+    """
+    # if the path doesnt exist make the directory
     if not os.path.exists(path):
         logging.info("Creating WordEmbeddings directory")
         try:
@@ -297,14 +310,18 @@ def ensureDirectory(app, path):
             return True
         except:
             return False
+    # if it does exist prompt the user to clear the directory
     else:
         logging.info("Download path directory already exists")
+
+        # create the dialog to warn the user the dir will be cleared
         clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
                                      "Would you like to clear the contents and proceed?",
                                      "Cancel will stop the download.")
         buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
         clear_dialog.addButtonBox(buttonBox)
 
+        # clear the directory if selected by the user
         if clear_dialog.exec():
             logging.info("User chose to remove all contents")
             files = glob.glob(os.path.join(path, '*'))
