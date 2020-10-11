@@ -47,20 +47,32 @@ class DialogBuilder(QDialog):
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
-    def addProgessBar(self, min_max_range: tuple = (0, 0), initial_value: int = 0,
-                      text_format: str = None, orientation=None, text_direction=None):
-        logging.info("")
+    def addProgressBar(self, min_max_range: tuple = (0, 0), initial_value: int = 0,
+                       text_format: str = None, orientation=None, text_direction=None):
+
+        logging.info("min="+str(min_max_range[0])+";max="+str(min_max_range[1]) + ";initial_value="+str(initial_value))
 
         # create the progress_bar and set its properties
         progress_bar = QProgressBar()
-        progress_bar.setValue(initial_value)
+
+        # closes the dialog if the progress bar is full
+        def checkFinished(value):
+            if value >= progress_bar.maximum():
+                logging.info("Progress bar filled - Closing dialog")
+                self.close()
+
+        progress_bar.valueChanged.connect(checkFinished)
         progress_bar.setRange(min_max_range[0], min_max_range[1])
-        if orientation is not None:
-            progress_bar.setOrientation(orientation)
+        progress_bar.setValue(initial_value)
         if text_format is not None:
             progress_bar.setFormat(text_format)
+        if orientation is not None:
+            progress_bar.setOrientation(orientation)
         if text_direction is not None:
             progress_bar.setTextDirection(text_direction)
+
+
+
 
         # add the progress_bar to the dialog box and return the created object
         self.layout_vertical.addWidget(progress_bar)
