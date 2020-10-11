@@ -263,58 +263,61 @@ class MenuBar(QMenuBar):
     # =====================================================================================
 
     def calculator(self):
-        print("button clicked")
+        self.equ = 0
         self.calc = QWidget()
         grid = QGridLayout()
         self.calc.setLayout(grid)
-        # label = QLabel(self)
-        #
-        # # setting geometry to the label
-        # label.setGeometry(5, 5, 350, 70)
-        #
-        # # creating label multi line
-        # label.setWordWrap(True)
-        #
-        # # setting style sheet to the label
-        # label.setStyleSheet("QLabel"
-        #                          "{"
-        #                          "border : 4px solid black;"
-        #                          "background : white;"
-        #                          "}")
-
-        # setting alignment to the label
-        # self.calc.label.setAlignment(Qt.AlignRight)
-
-        # setting font
-        # self.label.setFont(QFont('Arial', 15))
-        screen = QLabel()
+        self.screen = QLabel()
         space = QLabel()
-        screen.setWordWrap(True)
-        screen.setStyleSheet("QLabel"
+        self.screen.setWordWrap(True)
+        self.screen.setStyleSheet("QLabel"
                                  "{"
                                  "border : 1px solid black;"
                                  "background : white;"
                                  "}")
         # output.setGeometry()
-        grid.addWidget(screen, 0, 0, 4, 3)
-        grid.addWidget(space, 3, 3)
-        row = 4
-        col = 2
-        y = 9
-        for x in range(1, 10):
-            button = QPushButton(f'{y}')
-            grid.addWidget(button, row, col)
-            col -= 1
-            if x % 3 == 0:
-                row += 1
-                col = 2
-            y -= 1
-        button = QPushButton("+/-")
-        grid.addWidget(button, 7, 0)
-        button = QPushButton("0")
-        grid.addWidget(button, 7, 1)
-        button = QPushButton(".")
-        grid.addWidget(button, 7, 2)
+        grid.addWidget(self.screen, 0, 0, 5, 4)
+        grid.addWidget(space, 4, 4)
+        clear = QPushButton("c")
+        grid.addWidget(clear, 5, 0)
+        divide = QPushButton("/")
+        grid.addWidget(divide, 5, 1)
+        mult = QPushButton("*")
+        grid.addWidget(mult, 5, 2)
+        delete = QPushButton("del")
+        grid.addWidget(delete, 5, 3)
+        seven = QPushButton("7")
+        grid.addWidget(seven, 6, 0)
+        eight = QPushButton("8")
+        grid.addWidget(eight, 6, 1)
+        nine = QPushButton("9")
+        grid.addWidget(nine, 6, 2)
+        four = QPushButton("4")
+        grid.addWidget(four, 7, 0)
+        five = QPushButton("5")
+        grid.addWidget(five, 7, 1)
+        six = QPushButton("6")
+        grid.addWidget(six, 7, 2)
+        one = QPushButton("1")
+        grid.addWidget(one, 8, 0)
+        two = QPushButton("2")
+        grid.addWidget(two, 8, 1)
+        three = QPushButton("3")
+        grid.addWidget(three, 8, 2)
+        neg = QPushButton("+/-")
+        grid.addWidget(neg, 9, 0)
+        zero = QPushButton("0")
+        grid.addWidget(zero, 9, 1)
+        dec = QPushButton(".")
+        grid.addWidget(dec, 9, 2)
+        minus = QPushButton("-")
+        grid.addWidget(minus, 6, 3, 1, 1)
+        plus = QPushButton("+")
+        grid.addWidget(plus, 7, 3, 1, 1)
+        equals = QPushButton("=")
+        equals.setFixedWidth(80)
+        equals.setFixedHeight(52)
+        grid.addWidget(equals, 8, 3, 2, 1)
         self.calc.show()
 
     def setFormattingButtonsEnabled(self, state):
