@@ -334,7 +334,7 @@ class File(QPushButton):
     def setUI(self):
         """
         sets up the buttons appearance
-        :return:
+        :return: Returns nothing
         """
         self.setText(self.file_name)
         self.setMinimumHeight(20)
