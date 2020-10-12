@@ -100,7 +100,6 @@ class App(QMainWindow):
         self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
         self.top_bar.show()
 
-
     def setupBottomBar(self):
         # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
@@ -169,7 +168,6 @@ class App(QMainWindow):
 
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
-
 
     def centerWindow(self, app_geom):
         """
