@@ -18,13 +18,15 @@ class CollapsibleWidget(QWidget):
         self.btn_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.btn_toggle.setArrowType(Qt.RightArrow)
         self.btn_toggle.setIconSize(QSize(8, 8))
-        self.btn_toggle.setStyleSheet("QToolButton {border: none;}"
-                                 "QToolButton:hover{color:rgba(0,0,0,0.5)}")
+        self.btn_toggle.setStyleSheet("QToolButton {border: none; font-weight: bold;}"
+                                 "QToolButton:hover{color:rgba(0,0,0,0.7)}")
         self.btn_toggle.pressed.connect(self.on_pressed)
 
         self.content = QWidget()
         self.content.hide()
         self.layout_content = QVBoxLayout(self.content)
+        self.layout_content.setContentsMargins(20,0,0,0)
+        self.layout_content.setSpacing(0)
 
         layout_main.addWidget(self.btn_toggle)
         layout_main.addWidget(self.content)
