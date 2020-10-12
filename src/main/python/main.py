@@ -101,6 +101,7 @@ class App(QMainWindow):
         self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
         self.top_bar.show()
 
+
     def setupBottomBar(self):
         # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
