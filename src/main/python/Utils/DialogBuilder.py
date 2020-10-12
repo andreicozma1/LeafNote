@@ -71,9 +71,6 @@ class DialogBuilder(QDialog):
         if text_direction is not None:
             progress_bar.setTextDirection(text_direction)
 
-
-
-
         # add the progress_bar to the dialog box and return the created object
         self.layout_vertical.addWidget(progress_bar)
         return progress_bar
