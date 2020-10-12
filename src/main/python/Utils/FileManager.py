@@ -327,7 +327,7 @@ class FileManager:
         :return: Returns nothing
         """
         # Get path name from user
-        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.main_path, "")
         if file_name[0] == '':
             logging.info('No File Path Given')
             return

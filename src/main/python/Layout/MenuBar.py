@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Document
+from Elements import Document, Search
 from Layout import DocProps
 
 """
@@ -105,7 +105,7 @@ class MenuBar(QMenuBar):
         return self.menu_file
 
     # =====================================================================================
-    def makeEditMenu(self, app):
+    def makeEditMenu(self, app, document, file_manager):
         """
         Create Edit Menu
         :return: the menu created
@@ -119,6 +119,7 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("")
+            self.search_all = Search.SearchWorkspace(document, file_manager, app.app_props.main_path)
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
