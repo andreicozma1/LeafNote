@@ -4,7 +4,6 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
-from Elements import Search
 from Elements.BottomBar import BottomBar
 from Elements.ColorWidget import Color
 from Elements.ContextMenu import ContextMenu
@@ -170,6 +169,7 @@ class App(QMainWindow):
 
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
+
 
     def centerWindow(self, app_geom):
         """
