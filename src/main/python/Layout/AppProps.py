@@ -27,7 +27,7 @@ class AppProps():
         self.height = 600
 
         # Defines the default path the program opens to
-        self.mainPath = QDir.currentPath()  # Default to current directory
+        self.main_path = QDir.currentPath()  # Default to current directory
 
         self.min_width = .3  # Proportion of screen width
         self.resizable = True
