@@ -14,46 +14,35 @@ class ContextMenu(QWidget):
 
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
-        self.setupElements(vertical_layout)
+        self.setupDetails(vertical_layout)
         vertical_layout.addStretch()
 
-    def setupElements(self, vertical_layout):
+    def setupDetails(self, vertical_layout):
         """
         Adds all the elements of right menu in a vertical layout
         :param vertical_layout: layout to add elements to
         :return: nothing
         """
 
-        vertical_layout.addWidget(CollapsibleWidget("File Details:"))
-
-        def createLabel(text):
-            label = QLabel(text)
+        def createLabel(prop: str):
+            label = QLabel()
             label.setWordWrap(True)
-            # label.setMinimumHeight(label.sizeHint().height())
+            label.setProperty("prop", prop)
             return label
 
-        self.lbl_file = createLabel("Unknown")
-        f = self.lbl_file.font()
-        f.setBold(True)
-        f.setPointSize(20)
-        self.lbl_file.setFont(f)
-        vertical_layout.addWidget(self.lbl_file)
-        self.lbl_formatting_mode = createLabel("Formatting: False")
-        vertical_layout.addWidget(self.lbl_formatting_mode)
-        self.lbl_path = createLabel("Path: ?")
-        vertical_layout.addWidget(self.lbl_path)
-        self.lbl_size = createLabel("Size: ?")
-        vertical_layout.addWidget(self.lbl_size)
-        self.lbl_owner = createLabel("Owner: ?")
-        vertical_layout.addWidget(self.lbl_owner)
-        self.lbl_created = createLabel("Created: ?")
-        vertical_layout.addWidget(self.lbl_created)
-        self.lbl_modified = createLabel("Modified: ?")
-        vertical_layout.addWidget(self.lbl_modified)
-        self.lbl_viewed = createLabel("Viewed: ?")
-        vertical_layout.addWidget(self.lbl_viewed)
+        self.collapsible_metadata = CollapsibleWidget("File Details:")
+        self.collapsible_metadata.addElement(createLabel("Name"))
+        self.collapsible_metadata.addElement(createLabel("Path"))
+        self.collapsible_metadata.addElement(createLabel("Size"))
+        self.collapsible_metadata.addElement(createLabel("Owner"))
+        self.collapsible_metadata.addElement(createLabel("Viewed"))
+        self.collapsible_metadata.addElement(createLabel("Modified"))
+        self.collapsible_metadata.addElement(createLabel("Created"))
+        vertical_layout.addWidget(self.collapsible_metadata)
+        # Initial setup of labels, when no file is open
+        self.updateDetails(None)
 
-    def updateMenu(self, document, path, formattingMode):
+    def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
         :param document: a new reference to the document
@@ -64,19 +53,29 @@ class ContextMenu(QWidget):
         # TODO - use document ref to display info about the document
         info = QFileInfo(path)
         # Get the file info and update all the respective fields
-        file_name = info.fileName() if path is not None else "Unknown"
-        file_path = info.path() if path is not None else "?"
-        file_owner = (str(info.owner())) if path is not None else "?"
-        file_size = (str(round(info.size() / 1000000.0, 2))) if path is not None else "?"
-        file_birthTime = (info.birthTime().toString(self.format_time)) if path is not None else "?"
-        file_lastModified = (info.lastModified().toString(self.format_time)) if path is not None else "?"
-        file_lastRead = (info.lastRead().toString(self.format_time)) if path is not None else "?"
 
-        self.lbl_file.setText(file_name)
-        self.lbl_formatting_mode.setText("Formatting: " + str(formattingMode))
-        self.lbl_path.setText("Path: " + file_path)
-        self.lbl_owner.setText("Owner: " + file_owner)
-        self.lbl_size.setText("Size: " + file_size + " MB")
-        self.lbl_created.setText("Created: " + file_birthTime)
-        self.lbl_modified.setText("Modified: " + file_lastModified)
-        self.lbl_viewed.setText("Read: " + file_lastRead)
+        # Iterate through all properties and fill in metadata labels
+        for i in range(self.collapsible_metadata.layout_content.count()):
+            label = self.collapsible_metadata.layout_content.itemAt(i).widget()
+            prop = label.property("prop")
+
+            if path is None:
+                value = "?"
+            elif prop == "Name":
+                value = info.fileName()
+            elif prop == "Path":
+                value = info.path()
+            elif prop == "Size":
+                value = ((str(round(info.size() / 1000000.0, 2))) + "MB")
+            elif prop == "Owner":
+                value = (str(info.owner()))
+            elif prop == "Viewed":
+                value = (info.lastRead().toString(self.format_time))
+            elif prop == "Modified":
+                value = (info.lastModified().toString(self.format_time))
+            elif prop == "Created":
+                value = (info.birthTime().toString(self.format_time))
+            else:
+                value = "?"
+
+            label.setText(label.property("prop") + ": " + value)

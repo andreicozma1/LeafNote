@@ -126,7 +126,7 @@ class FileManager:
                 document.setText("")
                 document.resetFormatting()
                 state = False
-                self.app.right_menu.updateMenu(document, self.current_document, state)
+                self.app.right_menu.updateDetails(self.current_document)
         # if it does not exist print error messages
         else:
             if path == '':
@@ -197,7 +197,7 @@ class FileManager:
 
         # update the document shown to the user
         document.setText(data)
-        self.app.right_menu.updateMenu(document, path, self.current_document.suffix() == 'lef')
+        self.app.right_menu.updateDetails(path)
         return True
 
     def getFileData(self, path: str) -> str:
