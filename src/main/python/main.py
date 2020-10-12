@@ -1,11 +1,13 @@
 import logging
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements import Search
 from Elements.BottomBar import BottomBar
+from Elements.ColorWidget import Color
+from Elements.ContextMenu import ContextMenu
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
 from Elements.OpenTabsBar import OpenTabsBar
@@ -48,40 +50,68 @@ class App(QMainWindow):
         self.file_manager = FileManager(self)
         self.summarizer = None
 
+        # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
+        layout_main = self.layout.makeMainLayout()
 
+        # Create Document
         self.document = Document(self.doc_props)
+
+        # Create TopBar, depends on Document
+        self.top_bar = TopBar(self.document)
+        self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
+        self.setupTopBar()
+        layout_main.addWidget(self.top_bar)
+
+        # Create Main Workspace
+        self.left_menu = DirectoryViewer(self.document, self.file_manager)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
+        self.right_menu = ContextMenu()
+        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document, self.right_menu)
+        layout_main.addWidget(self.documents_view)
 
-        self.left_menu = DirectoryViewer(self.document, self.file_manager, self.app_props.mainPath)
+        # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self.document)
+        self.setupBottomBar()
+        layout_main.addWidget(self.bottom_bar)
 
+        # Setup System MenuBar
         self.menu_bar = MenuBar(self.document, self.doc_props)
+        self.setupMenuBar()
+        self.menu_bar.show()
+
+        # TODO - fix this function call causing Format Mode button to not have spacer
+        self.updateFormatBtnsState(False)
+
+        self.setup()
+
+    def setupTopBar(self):
+        top_bar_layout = self.top_bar.makeMainLayout()
+        top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
+        top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox(self.doc_props.list_FontSize))
+        top_bar_layout.addWidget(self.top_bar.makeBtnBold())
+        top_bar_layout.addWidget(self.top_bar.makeBtnItal())
+        top_bar_layout.addWidget(self.top_bar.makeBtnStrike())
+        top_bar_layout.addWidget(self.top_bar.makeBtnUnder())
+        top_bar_layout.addWidget(self.top_bar.makeComboFontColor(self.doc_props.color_dict))
+        top_bar_layout.addWidget(self.top_bar.makeClearFormatting())
+        top_bar_layout.addWidget(self.top_bar.makeComboTextAlign(self.doc_props.dict_align))
+        top_bar_layout.addStretch()
+        top_bar_layout.addWidget(self.btn_mode_switch)
+        self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
+        self.top_bar.show()
+
+    def setupBottomBar(self):
+        # TODO Make BottomBar Modular and similar to TopBar above
+        self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
+
+    def setupMenuBar(self):
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
         self.setMenuBar(self.menu_bar)
-        self.menu_bar.show()
-
-        self.top_bar = TopBar(self.document, self.doc_props)
-        self.top_bar.makeComboFontStyleBox()
-        self.top_bar.makeComboFontSizeBox(self.doc_props.list_FontSize)
-        self.top_bar.makeBtnBold()
-        self.top_bar.makeBtnItal()
-        self.top_bar.makeBtnStrike()
-        self.top_bar.makeBtnUnder()
-        self.top_bar.makeComboFontColor()
-        self.top_bar.makeComboTextAlign()
-        self.top_bar.addLayoutSpacer()
-        self.button_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
-        self.top_bar.show()
-
-        # TODO - fix this function call causing Format Mode button to not have spacer
-        self.updateFormatBtnsState(False)
-
-        self.setupLayout()
 
     def setup(self):
         """
@@ -98,11 +128,15 @@ class App(QMainWindow):
             self.setFixedSize(self.app_props.width, self.app_props.height)
 
         self.setCentralWidget(self.layout)
-
         self.show()
 
     def updateFormatBtnsState(self, state: bool):
-        self.button_mode_switch.setChecked(state)
+        """
+        Updates the state of the formatting buttons in TopBar and BottomBar
+        :param state: whether to enable or disable
+        :return:
+        """
+        self.btn_mode_switch.setChecked(state)
         self.top_bar.setFormattingButtonsEnabled(state)
         self.menu_bar.setFormattingButtonsEnabled(state)
 
@@ -136,20 +170,6 @@ class App(QMainWindow):
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
 
-    def setupLayout(self):
-        """
-        sets up the layout within the window
-        :return: returns nothing
-        """
-        logging.info("Setting up layout members")
-        # Setup Layout View
-        self.layout.setTopBar(self.top_bar)
-        self.layout.setBottomBar(self.bottom_bar)
-        # self.layout.setBarOpenTabs(self.bar_open_tabs)
-        self.layout.setBarOpenTabs(Search.Find(self.document))
-        self.layout.setDocument(self.document)
-        self.layout.setLeftMenu(self.left_menu)
-
     def centerWindow(self, app_geom):
         """
         aligns window in the middle of given space
@@ -167,14 +187,18 @@ class App(QMainWindow):
         :param event: item that will be resized
         :return: returns nothing
         """
-        self.layout.updateDimensions(self)
-        return super(QMainWindow, self).resizeEvent(event)
+        self.left_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
+        self.right_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
+        self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
+        return super(QMainWindow, self).resizeEvent(event)
 
 def main():
     logging.info("Starting application")
     appctxt = ApplicationContext()
-    App().setup()
+    App()
     sys.exit(appctxt.app.exec_())
 
 

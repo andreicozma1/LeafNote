@@ -28,7 +28,7 @@ class FileManager:
         """
 
         # get the current text from the document shown to the user
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             data = document.toHtml()
             file_filter = "LeafNote (*.lef)"
         else:
@@ -76,7 +76,7 @@ class FileManager:
             return False
 
         # check if the document is formatted
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             f_info = QFileInfo(new_path)
             if f_info.suffix() != "lef":
                 new_path = os.path.join(f_info.path(), f_info.baseName()) + '.lef'
@@ -126,7 +126,7 @@ class FileManager:
                 document.setText("")
                 document.resetFormatting()
                 state = False
-
+                self.app.right_menu.updateMenu(document, self.current_document, state)
         # if it does not exist print error messages
         else:
             if path == '':
@@ -197,6 +197,7 @@ class FileManager:
 
         # update the document shown to the user
         document.setText(data)
+        self.app.right_menu.updateMenu(document, path, self.current_document.suffix() == 'lef')
         return True
 
     def getFileData(self, path: str) -> str:
@@ -288,11 +289,17 @@ class FileManager:
         formatted_file = self.app.document.toHtml()
 
         # if the current file is none make the user save the file
+        is_new_file = False
         if self.current_document is None:
+            is_new_file = True
             self.saveDocument(document)
 
-        # get teh old file path
+        # get the old file path
         old_path = self.current_document.filePath()
+
+        # if it is a new file open the tab
+        if is_new_file:
+            self.app.bar_open_tabs.addTab(old_path)
 
         # grab the index of the last period or if no period get the length of the string
         try:
@@ -340,8 +347,8 @@ class FileManager:
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
             logging.info("----------------------------------------")
-            logging.info("path: ", key)
-            logging.info("QFileInfo:\n", path)
+            logging.info("path: "+ key)
+            logging.info("QFileInfo: "+ path.absoluteFilePath())
         logging.info("========================================")
 
     def fixBrokenFilePaths(self):

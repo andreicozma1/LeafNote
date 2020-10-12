@@ -1,6 +1,6 @@
 import logging
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 """
@@ -27,7 +27,7 @@ class DirectoryViewer(QTreeView):
         self.fileManager = file_manager
 
         if path is None:
-            path = self.fileManager.app.app_props.mainPath
+            path = QDir.currentPath()
 
         self.model = QFileSystemModel()
         self.updateDirectory(path)
