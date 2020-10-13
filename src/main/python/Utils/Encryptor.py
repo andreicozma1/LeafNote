@@ -13,6 +13,32 @@ class Encryptor(Fernet):
         super(Encryptor, self).__init__(key)
         logging.info("Create Encryptor Class")
 
+    def encryptFile(self, path):
+        """
+        Given a filename (str) and key (bytes), it encrypts the file and write it
+        """
+        with open(path, "rb") as file:
+            # read all file data
+            file_data = file.read()
+        # encrypt data
+        encrypted_data = self.encrypt(file_data)
+        # write the encrypted file
+        with open(path, "wb") as file:
+            file.write(encrypted_data)
+
+    def decryptFile(self, path):
+        """
+        Given a filename (str) and key (bytes), it decrypts the file and write it
+        """
+        with open(path, "rb") as file:
+            # read the encrypted data
+            encrypted_data = file.read()
+        # decrypt data
+        decrypted_data = self.decrypt(encrypted_data)
+        # write the original file
+        with open(path, "wb") as file:
+            file.write(decrypted_data)
+
 
 def onEncryptionAction(app, file_manager):
     def onEncryptBtnClicked(button):
@@ -20,11 +46,11 @@ def onEncryptionAction(app, file_manager):
     def onDecryptBtnClicked(button):
         decryptionDialogHandler(app, file_manager, button)
 
-
-    # TODO - add ability to permanently decrypt directory (delete key and write plain text)
-    # TODO - upon encryption loop through all files in workspace and write encrypted
+    # Check whether the encryptor already exists
     if file_manager.encryptor is None:
-        dialog_encryptor = DialogBuilder(app, "Encryptor",
+        # To encrypt workspace
+        logging.info("Encryptor NOT initialized")
+        dialog_encryptor = DialogBuilder(app, "Crypto - Encrypt",
                                          "Would you like to Encrypt all files in the workspace?",
                                          "Please proceed with caution.")
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
@@ -32,7 +58,9 @@ def onEncryptionAction(app, file_manager):
         dialog_encryptor.addButtonBox(buttons)
         dialog_encryptor.show()
     else:
-        dialog_encryptor = DialogBuilder(app, "Encryptor",
+        # To decrypt workspace
+        logging.info("Encryptor already initialized")
+        dialog_encryptor = DialogBuilder(app, "Crypto - Decrypt",
                                          "Would you like to Decrypt all files in the workspace!",
                                          "Please proceed with caution.")
         buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
@@ -47,16 +75,22 @@ def encryptionDialogHandler(app, file_manager, button):
         key = Fernet.generate_key()
         path_workspace = app.left_menu.model.rootPath()
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
-        with open(path_key, 'wb') as f:
-            f.write(key)
-        logging.debug("Saved key to: " + path_key)
-        file_manager.encryptor = Encryptor(key)
+        try:
+            with open(path_key, 'wb') as f:
+                f.write(key)
+                logging.debug("Saved key to: " + path_key)
+        except:
+            logging.error("Failed to save CRYPTO KEY")
+            return
 
-        logging.info("ENCRYPTING ALL FILES IN WORKSPACE!")
+        file_manager.encryptor = Encryptor(key)
+        logging.info("START ENCRYPT FILES IN WORKSPACE: " + path_workspace)
         for dirpath, dirnames, filenames in os.walk(path_workspace):
             for filename in [f for f in filenames if not f.startswith(".")]:
                 path = os.path.join(dirpath, filename)
-                file_manager.writeFileData(path, file_manager.getFileData(path))
+                file_manager.encryptor.encryptFile(path)
+                logging.info(" - Encrypted: " + path)
+        logging.info("END ENCRYPT FILES IN WORKSPACE: " + path_workspace)
 
     else:
         logging.info("User canceled")
@@ -67,15 +101,13 @@ def decryptionDialogHandler(app, file_manager, button):
         logging.info("User clicked Yes")
 
         path_workspace = app.left_menu.model.rootPath()
-
-        logging.info("DECRYPTING ALL FILES IN WORKSPACE")
+        logging.info("START DECRYPT WORKSPACE: " + path_workspace)
         for dirpath, dirnames, filenames in os.walk(path_workspace):
             for filename in [f for f in filenames if not f.startswith(".")]:
                 path = os.path.join(dirpath, filename)
-                file = open(path, 'w')
-                file_data = file_manager.getFileData(path)
-                file.write(file_data)
-                file.close()
+                file_manager.encryptor.decryptFile(path)
+                logging.info(" - Decrypted: " + path)
+        logging.info("END DECRYPT WORKSPACE: " + path_workspace)
 
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
         if os.path.exists(path_key):

@@ -253,7 +253,7 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
-        self.menu_tools.addAction(makeToolsAction("Crypto", "", onEncryptionAction))
+        self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
 
         # ========= END TOOLS MENU SECTION =========
 

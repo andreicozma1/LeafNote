@@ -209,8 +209,8 @@ class FileManager:
         :return: Returns a string of the read in data
         """
         # open the file with read only privileges
+        logging.info(path)
         file = open(path, 'r')
-
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - " + path)
@@ -223,8 +223,8 @@ class FileManager:
 
         try:
             if self.encryptor is not None:
-                logging.debug("Decrypting data")
-                data = self.app.encryptor.decrypt(data.encode()).decode()
+                data = self.encryptor.decrypt(data.encode()).decode()
+                logging.debug("File was encrypted. Decrypting")
         except:
             logging.info("File wasn't encrypted. Proceeding as normal")
 
@@ -239,12 +239,13 @@ class FileManager:
         :return: Returns nothing
         """
         # open the file with write only privileges
-
+        logging.info(path)
         if self.encryptor is not None:
-            logging.debug("Encrypting data")
+            logging.debug("Writing Encrypted")
             file = open(path, 'wb')
-            data = self.app.encryptor.encrypt(data.encode())
+            data = self.encryptor.encrypt(data.encode())
         else:
+            logging.info("Writing Plain Text")
             file = open(path, 'w')
 
         # check if the file was opened
