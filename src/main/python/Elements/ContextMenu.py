@@ -1,5 +1,3 @@
-import logging
-
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
@@ -106,4 +104,3 @@ class ContextMenu(QWidget):
         else:
             self.summary.hide()
             self.enable_summarizer_btn.show()
-

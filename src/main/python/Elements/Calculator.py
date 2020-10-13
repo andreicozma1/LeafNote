@@ -185,7 +185,7 @@ class Calculator(QWidget):
                         if x == ' ':
                             break
                 temp = text[len(text) - 1]
-                if temp.isnumeric() == False:
+                if not temp.isnumeric():
                     text += "0"
             else:
                 text += "0"

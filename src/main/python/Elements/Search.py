@@ -95,7 +95,7 @@ class SearchFile(QWidget):
         self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
 
         # get required images
-        path = os.path.join("resources", "arrow.ico")
+        path = os.path.join("res", "arrow.ico")
         pixmap = QPixmap(path)
         down_arrow = QIcon(pixmap)
         up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))

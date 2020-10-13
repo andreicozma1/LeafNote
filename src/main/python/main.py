@@ -3,8 +3,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
 from Elements.BottomBar import BottomBar
 from Elements.ContextMenu import ContextMenu
@@ -17,9 +16,7 @@ from Layout.DocProps import DocProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
-from Utils import DocumentSummarizer
 from Utils.DialogBuilder import DialogBuilder
-from Utils.DocumentSummarizer import Summarizer
 from Utils.FileManager import FileManager
 
 logging.basicConfig(
@@ -239,9 +236,9 @@ class App(QMainWindow):
 
 def main():
     logging.info("Starting application")
-    appctxt = ApplicationContext()
+    app = QApplication([])
     App()
-    sys.exit(appctxt.app.exec_())
+    sys.exit(app.exec_())
 
 
 # Starting point of the program

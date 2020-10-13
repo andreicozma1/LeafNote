@@ -2,7 +2,6 @@ import logging
 
 from PyQt5 import QtWidgets, Qt, QtCore
 from PyQt5.QtCore import QDir, QRect
-from PyQt5.QtGui import QPainter, QFont
 from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton, QLabel
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 

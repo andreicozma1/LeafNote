@@ -163,7 +163,7 @@ class TopBar(QWidget):
 
     def makeClearFormatting(self) -> QPushButton:
         # Button to Clear Formatting
-        path_icon = os.path.join("resources", "clear_formatting.ico")
+        path_icon = os.path.join("res", "clear_formatting.ico")
         self.button_clear = QPushButton(self)
         self.button_clear.setIcon(QIcon(path_icon))
         self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
