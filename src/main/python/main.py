@@ -1,7 +1,9 @@
 import logging
+import os
 import sys
 
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
+from PyQt5.uic.properties import QtGui
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements.BottomBar import BottomBar
@@ -66,7 +68,8 @@ class App(QMainWindow):
         self.left_menu = DirectoryViewer(self.document, self.file_manager)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.right_menu = ContextMenu()
-        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document, self.right_menu)
+        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
+                                                              self.right_menu)
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
@@ -186,13 +189,36 @@ class App(QMainWindow):
         :param event: item that will be resized
         :return: returns nothing
         """
-        self.left_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.left_menu.setMinimumWidth(
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
-        self.right_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.right_menu.setMinimumWidth(
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
         return super(QMainWindow, self).resizeEvent(event)
+
+    def closeEvent(self, event):
+        logging.info("User triggered close event")
+        path_workspace = self.left_menu.model.rootPath()
+        path_key = os.path.join(path_workspace, '.leafCryptoKey')
+        if self.file_manager.encryptor is not None and not os.path.exists(path_key):
+            dialog_encryptor = DialogBuilder(self, "Crypto - WARNING",
+                                             "WARNING!! Crypto Key missing!\n"
+                                             "Would you like to decrypt workspace before exiting?",
+                                             "If you don't decrypt your workspace before exiting you will lose access to your files permanently.")
+            buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            dialog_encryptor.addButtonBox(buttons)
+            if dialog_encryptor.exec():
+                logging.info("START DECRYPT WORKSPACE: " + path_workspace)
+                for dirpath, dirnames, filenames in os.walk(path_workspace):
+                    for filename in [f for f in filenames if not f.startswith(".")]:
+                        path = os.path.join(dirpath, filename)
+                        self.file_manager.encryptor.decryptFile(path)
+                        logging.info(" - Decrypted: " + path)
+                logging.info("END DECRYPT WORKSPACE: " + path_workspace)
+
 
 def main():
     logging.info("Starting application")

@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QFileDialog
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
 from Layout import DocProps
+from Utils import Encryptor
 
 """
 all properties and functionalities of the menu bar
@@ -92,14 +93,16 @@ class MenuBar(QMenuBar):
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.menu_file.addAction(makeFileAction("New", "Alt+insert", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
+
+        self.menu_file.addAction(makeFileAction("New", "Alt+Insert", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open", "Ctrl+o", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Folder", "Ctrl+Shift+o", onOpenFolderBtn))
         self.menu_file.addSeparator()
         self.menu_file.addAction(makeFileAction("Save...", "Ctrl+s", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
+        self.menu_file.addAction(makeFileAction("Save As...", "Ctrl+Shift+q", onSaveAsBtn))
+
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
+        self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
         # ========= END FILE MENU SECTION =========
 
         return self.menu_file
@@ -254,6 +257,8 @@ class MenuBar(QMenuBar):
 
         def onSummaryAction():
             DocumentSummarizer.onSummaryAction(app, document)
+        def onEncryptionAction():
+            Encryptor.onEncryptionAction(app, app.file_manager)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
@@ -262,6 +267,7 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
 
         # ========= END TOOLS MENU SECTION =========
 
