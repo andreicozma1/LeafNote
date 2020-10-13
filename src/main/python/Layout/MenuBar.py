@@ -1,11 +1,17 @@
 import logging
 
-from PyQt5.QtWidgets import QFileDialog, QAction, QMenu, QMenuBar, QActionGroup
+from PyQt5 import QtWidgets, Qt, QtCore
+from PyQt5.QtCore import QDir, QRect
+from PyQt5.QtGui import QPainter, QFont
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QPushButton, QLabel
+from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
 from Layout import DocProps
 from Utils import Encryptor
+
+from src.main.python.Elements import Calculator
 
 """
 all properties and functionalities of the menu bar
@@ -253,6 +259,9 @@ class MenuBar(QMenuBar):
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)
 
+        def onCalculatorAction():
+            self.calculator = Calculator.Calculator()
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
@@ -261,6 +270,7 @@ class MenuBar(QMenuBar):
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
         self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
+        self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
