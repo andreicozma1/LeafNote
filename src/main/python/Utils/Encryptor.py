@@ -1,11 +1,10 @@
 import logging
 import os
 
-from PyQt5.QtWidgets import QDialogButtonBox, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QDialogButtonBox
 from cryptography.fernet import Fernet
 
 from Utils.DialogBuilder import DialogBuilder
-from os.path import expanduser
 
 
 class Encryptor(Fernet):
@@ -41,8 +40,10 @@ class Encryptor(Fernet):
 
 
 def onEncryptionAction(app, file_manager):
+    # Helper Functions
     def onEncryptBtnClicked(button):
         encryptionDialogHandler(app, file_manager, button)
+
     def onDecryptBtnClicked(button):
         decryptionDialogHandler(app, file_manager, button)
 
@@ -70,6 +71,12 @@ def onEncryptionAction(app, file_manager):
 
 
 def encryptionDialogHandler(app, file_manager, button):
+    """
+    Checks user input and encrypts workspace if needed
+    :param app: application context
+    :file_manager: file_manager context
+    :button: button clicked reference
+    """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
         key = Fernet.generate_key()
@@ -97,6 +104,12 @@ def encryptionDialogHandler(app, file_manager, button):
 
 
 def decryptionDialogHandler(app, file_manager, button):
+    """
+    Checks user input and decrypts workspace if needed
+    :param app: application context
+    :file_manager: file_manager context
+    :button: button clicked reference
+    """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
 

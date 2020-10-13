@@ -1,8 +1,6 @@
 import logging
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QAction, QMenu, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
@@ -15,10 +13,6 @@ all properties and functionalities of the menu bar
 
 
 class MenuBar(QMenuBar):
-    """
-    Class to hold and customize a QPlainTextEdit Widget
-    """
-
     def __init__(self, document: Document, doc_props: DocProps):
         """
         Sets up the System MenuBar
@@ -47,17 +41,15 @@ class MenuBar(QMenuBar):
 
         def onOpenBtn():
             logging.info("onOpenBtn")
-            # this is opens the file dialogue in the project path
-            home_dir = str(QDir.currentPath())
             # opens a file dialogue for the user to select a file to open
-            file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
+            file_name = QFileDialog.getOpenFileName(app, 'Open file', app.left_menu.model.rootPath())
             # open the chosen file and show the text in the text editor
             file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("onOpenFolderBtn")
             # opens a file dialogue for the user to select a file to open
-            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', str(QDir.currentPath()))
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', app.left_menu.model.rootPath())
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
@@ -78,7 +70,7 @@ class MenuBar(QMenuBar):
 
         def onExitBtn():
             logging.info("onExitBtn")
-            file_manager.closeAll(self.document)
+            file_manager.closeAll(self.doc)
             app.close()
 
         self.menu_file = self.addMenu('&File')
@@ -94,12 +86,12 @@ class MenuBar(QMenuBar):
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
 
-        self.menu_file.addAction(makeFileAction("New", "Alt+Insert", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open", "Ctrl+o", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Folder", "Ctrl+Shift+o", onOpenFolderBtn))
+        self.menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save...", "Ctrl+s", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save As...", "Ctrl+Shift+q", onSaveAsBtn))
+        self.menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
 
         self.menu_file.addSeparator()
         self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
@@ -108,7 +100,7 @@ class MenuBar(QMenuBar):
         return self.menu_file
 
     # =====================================================================================
-    def makeEditMenu(self, app, document, file_manager):
+    def makeEditMenu(self, app, file_manager):
         """
         Create Edit Menu
         :return: the menu created
@@ -122,7 +114,7 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("")
-            self.search_all = Search.SearchWorkspace(document, file_manager, app.app_props.main_path)
+            self.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -245,7 +237,7 @@ class MenuBar(QMenuBar):
         return self.menu_format
 
     # =====================================================================================
-    def makeToolsMenu(self, app, document) -> QMenu:
+    def makeToolsMenu(self, app) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -256,7 +248,8 @@ class MenuBar(QMenuBar):
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
-            DocumentSummarizer.onSummaryAction(app, document)
+            DocumentSummarizer.onSummaryAction(app, self.doc)
+
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)
 

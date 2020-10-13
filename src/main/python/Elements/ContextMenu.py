@@ -58,7 +58,7 @@ class ContextMenu(QWidget):
         for i in range(self.collapsible_metadata.layout_content.count()):
             label = self.collapsible_metadata.layout_content.itemAt(i).widget()
             prop = label.property("prop")
-
+            value: str
             if path is None:
                 value = "?"
             elif prop == "Name":
@@ -77,5 +77,6 @@ class ContextMenu(QWidget):
                 value = (info.birthTime().toString(self.format_time))
             else:
                 value = "?"
-
+            if len(value) == 0:
+                value = "?"
             label.setText(label.property("prop") + ": " + value)
