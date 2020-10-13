@@ -106,7 +106,7 @@ class App(QMainWindow):
 
     def setupMenuBar(self):
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
-        self.menu_bar.makeEditMenu(self)
+        self.menu_bar.makeEditMenu(self, self.document, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Document
+from Elements import Document, Search
 from Layout import DocProps
 
 """
@@ -92,11 +92,11 @@ class MenuBar(QMenuBar):
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
+        self.menu_file.addAction(makeFileAction("New", "Alt+insert", onNewBtn))
         self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
         self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save...", "Ctrl+s", onSaveBtn))
         self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
         self.menu_file.addSeparator()
         self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
@@ -105,13 +105,21 @@ class MenuBar(QMenuBar):
         return self.menu_file
 
     # =====================================================================================
-    def makeEditMenu(self, app):
+    def makeEditMenu(self, app, document, file_manager):
         """
         Create Edit Menu
         :return: the menu created
         """
         logging.info("makeEditMenu")
         self.menu_edit = self.addMenu('&Edit')
+
+        def onFindBtn():
+            logging.info(not self.doc.search.isVisible())
+            self.doc.search.setVisible(not self.doc.search.isVisible())
+
+        def onFindAllBtn():
+            logging.info("")
+            self.search_all = Search.SearchWorkspace(document, file_manager, app.app_props.main_path)
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -129,6 +137,10 @@ class MenuBar(QMenuBar):
         self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
         self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
         self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
+        self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
 
