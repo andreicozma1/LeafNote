@@ -264,6 +264,10 @@ class MenuBar(QMenuBar):
             self.button_t.clicked.connect(self.showTime)
             self.l1.addWidget(self.button_t)
             # ------------------------------#
+            self.done = QPushButton("Add Assignment", self)
+            self.done.clicked.connect(self.doneB)
+            self.l1.addWidget(self.done)
+            # ------------------------------#
             self.pop.show()
 
 
@@ -342,4 +346,15 @@ class MenuBar(QMenuBar):
         """
         :return: New date selected on the calendar
         """
-        ca = self.cal.selectedDate()
+        self.ca = self.cal.selectedDate()
+
+    def doneB(self):
+        title_textbox_val = self.title.text()
+        class_textbox_val = self.clas.text()
+        #TODO time
+        print(title_textbox_val)
+        print(class_textbox_val)
+        print(self.ca)
+        self.title.setText("")
+        self.clas.setText("")
+
