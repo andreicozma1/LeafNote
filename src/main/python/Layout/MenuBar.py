@@ -1,24 +1,18 @@
 import logging
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QAction, QMenu, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
 from Layout import DocProps
 from Utils import Encryptor
 
+
 """
 all properties and functionalities of the menu bar
 """
 
-
 class MenuBar(QMenuBar):
-    """
-    Class to hold and customize a QPlainTextEdit Widget
-    """
-
     def __init__(self, document: Document, doc_props: DocProps):
         """
         Sets up the System MenuBar
