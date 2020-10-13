@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtCore import QDir
 from PyQt5.Qt import QPixmap, QIcon
 import os
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QDateTimeEdit
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -243,13 +243,27 @@ class MenuBar(QMenuBar):
             self.pop = QWidget()
             self.l1 = QVBoxLayout()
             self.pop.setLayout(self.l1)
+            # ------------------------------#
+            self.title = QLineEdit()
+            self.title.setPlaceholderText("Enter assignment title")
+            self.l1.addWidget(self.title)
+            # ------------------------------#
+            self.clas = QLineEdit()
+            self.clas.setPlaceholderText("Enter class")
+            self.l1.addWidget(self.clas)
+            # ------------------------------#
             temp = os.path.join("resources", "calendar.ico")
             pixmap = QPixmap(temp)
             icon = QIcon(pixmap)
-            self.button = QPushButton("", self)
+            self.button = QPushButton("Select a due date", self)
             self.button.setIcon(icon)
             self.button.clicked.connect(self.showCalendar)
             self.l1.addWidget(self.button)
+            #------------------------------#
+            self.button_t = QPushButton("Select a due date time", self)
+            self.button_t.clicked.connect(self.showTime)
+            self.l1.addWidget(self.button_t)
+            # ------------------------------#
             self.pop.show()
 
 
@@ -318,6 +332,11 @@ class MenuBar(QMenuBar):
         self.cal = QCalendarWidget()
         self.cal.setVisible(True)
         self.cal.selectionChanged.connect(self.onSelectedDate)
+
+    def showTime(self):
+        self.ti = QDateTimeEdit()
+        self.ti.setVisible(True)
+
 
     def onSelectedDate(self):
         """
