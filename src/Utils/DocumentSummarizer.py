@@ -13,7 +13,7 @@ import wget as wget
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.Utils.DialogBuilder import DialogBuilder
+from Utils.DialogBuilder import DialogBuilder
 
 """
 This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/

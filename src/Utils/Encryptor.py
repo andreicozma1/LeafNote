@@ -4,7 +4,7 @@ import os
 from PyQt5.QtWidgets import QDialogButtonBox
 from cryptography.fernet import Fernet
 
-from src.Utils.DialogBuilder import DialogBuilder
+from Utils.DialogBuilder import DialogBuilder
 
 
 class Encryptor(Fernet):

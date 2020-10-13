@@ -82,7 +82,7 @@ class BottomBar(QWidget):
         self.button_zoom_reset = QPushButton("100%", self)
         font = self.button_zoom_reset.font()
         font.setPointSize(8)
-        self.button_zoom_reset .setFont(font)
+        self.button_zoom_reset.setFont(font)
         self.button_zoom_reset.setFixedWidth(40)
         self.button_zoom_reset.clicked.connect(self.resetZoom)
         self.button_zoom_reset.setToolTip("Resets zoom to default 100%")

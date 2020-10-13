@@ -4,7 +4,7 @@ import random
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
-from src.Elements.ColorWidget import Color
+from Elements.ColorWidget import Color
 
 """
 contains all properties for tabs in the tab menu
