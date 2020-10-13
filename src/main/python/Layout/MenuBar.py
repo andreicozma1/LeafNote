@@ -7,10 +7,10 @@ from Elements import Document, Search
 from Layout import DocProps
 from Utils import Encryptor
 
-
 """
 all properties and functionalities of the menu bar
 """
+
 
 class MenuBar(QMenuBar):
     def __init__(self, document: Document, doc_props: DocProps):
@@ -249,6 +249,7 @@ class MenuBar(QMenuBar):
 
         def onSummaryAction():
             DocumentSummarizer.onSummaryAction(app, self.doc)
+
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)
 

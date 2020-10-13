@@ -3,12 +3,10 @@ import os
 import sys
 
 from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
-from PyQt5.uic.properties import QtGui
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from Elements.BottomBar import BottomBar
-from Elements.ColorWidget import Color
 from Elements.ContextMenu import ContextMenu
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
@@ -19,7 +17,9 @@ from Layout.DocProps import DocProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
+from Utils import DocumentSummarizer
 from Utils.DialogBuilder import DialogBuilder
+from Utils.DocumentSummarizer import Summarizer
 from Utils.FileManager import FileManager
 
 logging.basicConfig(
@@ -52,7 +52,12 @@ class App(QMainWindow):
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
-        self.summarizer = None
+        # If the dictionaries have been downloaded previously, check persistent settings
+        if self.settings.contains("dictionaryPath"):
+            model = DocumentSummarizer.fillModel(self.settings.value("dictionaryPath"))
+            self.summarizer = Summarizer(model)
+        else:
+            self.summarizer = None
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)

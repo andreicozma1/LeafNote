@@ -240,6 +240,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_new = os.path.join(path_existing, 'WordEmbeddings')
+    app.settings.setValue("dictionaryPath", path_new)
 
     def files_exist(path1: str, path2: str):
         if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
