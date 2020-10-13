@@ -6,7 +6,7 @@ from PyQt5.Qt import QPixmap, QIcon
 import os
 from PyQt5.QtGui import QPainter, QFont
 from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit, QMessageBox, QLabel
-from PyQt5.QtWidgets QFileDialog, QMenuBar, QActionGroup
+from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
