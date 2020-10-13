@@ -138,7 +138,8 @@ class App(QMainWindow):
 
         if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
             logging.debug("Window is not resizable")
-            self.setFixedSize(self.size())
+            if not self.app_props.resizable:
+                self.setFixedSize(self.size())
 
         self.setCentralWidget(self.layout)
         self.show()

@@ -24,6 +24,7 @@ class AppProps():
         self.domain = 'andreicozma.com'
         self.default_width = 800
         self.default_height = 600
+        self.resizable = True
 
         # Defines the default path the program opens to
         self.default_path = QDir.currentPath()  # Default to current directory
