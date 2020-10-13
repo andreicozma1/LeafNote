@@ -1,12 +1,17 @@
+import logging
+
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from Elements.CollapsibleWidget import CollapsibleWidget
+from Utils import DocumentSummarizer
 
 
 class ContextMenu(QWidget):
-    def __init__(self):
+    def __init__(self, app, document):
         super(ContextMenu, self).__init__()
+        self.app = app
+        self.document = document
         # Create main vertical layout
         vertical_layout = QVBoxLayout(self)
         vertical_layout.setContentsMargins(10, 0, 10, 0)
@@ -39,6 +44,22 @@ class ContextMenu(QWidget):
         self.collapsible_metadata.addElement(createLabel("Modified"))
         self.collapsible_metadata.addElement(createLabel("Created"))
         vertical_layout.addWidget(self.collapsible_metadata)
+
+        self.summary = createLabel("Summary")
+        def onSummaryAction():
+            logging.info("Generating Summary")
+            if self.document.summarizer is None:
+                DocumentSummarizer.onSummaryAction(self.app, self.document)
+            if self.document.summarizer is not None:
+                self.app.right_menu.summary.setText(self.document.summarizer.summarize(self.document.toPlainText()))
+
+        self.collapsible_summary = CollapsibleWidget("Summary:")
+        self.createSummaryBtn = QPushButton("Get Summary")
+        self.createSummaryBtn.clicked.connect(onSummaryAction)
+        self.collapsible_summary.addElement(self.createSummaryBtn)
+        self.collapsible_summary.addElement(self.summary)
+        vertical_layout.addWidget(self.collapsible_summary)
+
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
 

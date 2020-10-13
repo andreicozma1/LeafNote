@@ -49,7 +49,6 @@ class App(QMainWindow):
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
         self.file_manager = FileManager(self)
-        self.summarizer = None
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -67,7 +66,7 @@ class App(QMainWindow):
         # Create Main Workspace
         self.left_menu = DirectoryViewer(self.document, self.file_manager)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
-        self.right_menu = ContextMenu()
+        self.right_menu = ContextMenu(self, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
                                                               self.right_menu)
         layout_main.addWidget(self.documents_view)

@@ -26,6 +26,7 @@ class Document(QTextEdit):
         super(Document, self).__init__("")
         logging.info("")
         self.doc_props = doc_props
+        self.summarizer = None
         self.textColor = "black"
 
         if default_text is None:
