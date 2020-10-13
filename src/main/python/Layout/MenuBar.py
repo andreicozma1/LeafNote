@@ -93,14 +93,14 @@ class MenuBar(QMenuBar):
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
+        self.menu_file.addAction(makeFileAction("New", "Alt+Insert", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open", "Ctrl+o", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Folder", "Ctrl+Shift+o", onOpenFolderBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
+        self.menu_file.addAction(makeFileAction("Save...", "Ctrl+s", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save As...", "Ctrl+Shift+q", onSaveAsBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
+        self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
         # ========= END FILE MENU SECTION =========
 
         return self.menu_file
