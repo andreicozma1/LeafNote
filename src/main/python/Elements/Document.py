@@ -1,8 +1,11 @@
 import logging
 
 from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
-from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
+
+from Elements.Search import SearchFile
 
 """
 The active document - area where user types
@@ -28,11 +31,33 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
+        self.search = SearchFile(self)
+
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+        self.initLayout()
+
+    def initLayout(self):
+        """
+        Initializes the layout of document.
+        :return: Returns nothing
+        """
+        # create v box to hold h box and stretch
+        self.layout_main = QVBoxLayout(self)
+        self.layout_main.setContentsMargins(0, 0, 0, 0)
+
+        # creat h box to hold stretch and search
+        self.hbox = QHBoxLayout()
+        self.hbox.setContentsMargins(0, 0, 0, 0)
+        self.hbox.setAlignment(Qt.AlignRight)
+        self.hbox.addWidget(self.search)
+
+        # add the hbox and stretch to align search to top right of screen
+        self.layout_main.addLayout(self.hbox)
+        self.layout_main.addStretch()
 
     def onFontItalChanged(self, state):
         """
