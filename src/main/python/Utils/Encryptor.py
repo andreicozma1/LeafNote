@@ -115,6 +115,7 @@ def decryptionDialogHandler(app, file_manager, button):
             logging.debug("Removed CRYPTO KEY: " + path_key)
         else:
             logging.error("Failed to remove CRYPTO KEY")
+            return
 
         file_manager.encryptor = None
         logging.debug("De-initialized Encryptor")
