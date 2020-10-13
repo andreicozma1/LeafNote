@@ -52,6 +52,7 @@ class App(QMainWindow):
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
+
         # If the dictionaries have been downloaded previously, check persistent settings
         if self.settings.contains("dictionaryPath"):
             model = DocumentSummarizer.fillModel(self.settings.value("dictionaryPath"))
@@ -134,17 +135,17 @@ class App(QMainWindow):
         if self.settings.contains("windowSize"):
             self.resize(self.settings.value("windowSize"))
         else:
-            self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
+            self.setGeometry(0, 0, self.app_props.default_width, self.app_props.default_height)
         if self.settings.contains("windowGeometry"):
             self.setGeometry(self.settings.value("windowGeometry"))
         else:
             self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
 
-        self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
+        self.setMinimumWidth(int(self.top_bar.width()))
 
-        if not self.app_props.resizable:
+        if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
             logging.debug("Window is not resizable")
-            self.setFixedSize(self.app_props.width, self.app_props.height)
+            self.setFixedSize(self.size())
 
         self.setCentralWidget(self.layout)
         self.show()
@@ -207,10 +208,10 @@ class App(QMainWindow):
         :return: returns nothing
         """
         self.left_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.right_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
