@@ -46,6 +46,7 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_metadata)
 
         self.summary = createLabel("Summary")
+
         def onSummaryAction():
             logging.info("Generating Summary")
             if self.document.summarizer is None:
