@@ -128,7 +128,7 @@ class FileManager:
                 document.setText("")
                 document.resetFormatting()
                 state = False
-                self.app.right_menu.updateMenu(document, self.current_document, state)
+                self.app.right_menu.updateDetails(self.current_document)
         # if it does not exist print error messages
         else:
             if path == '':
@@ -199,7 +199,7 @@ class FileManager:
 
         # update the document shown to the user
         document.setText(data)
-        self.app.right_menu.updateMenu(document, path, self.current_document.suffix() == 'lef')
+        self.app.right_menu.updateDetails(path)
         return True
 
     def getFileData(self, path: str) -> str:
@@ -342,7 +342,7 @@ class FileManager:
         :return: Returns nothing
         """
         # Get path name from user
-        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.main_path, "")
         if file_name[0] == '':
             logging.info('No File Path Given')
             return
