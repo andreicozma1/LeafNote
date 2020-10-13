@@ -4,7 +4,6 @@ import glob
 import logging
 import os
 import zipfile
-from os.path import expanduser
 
 import networkx as nx
 import nltk
@@ -65,7 +64,7 @@ class Summarizer:
         # do nothing if there are not words passed
         if not sentences:
             logging.warning("Document has no text")
-            return ""
+            return "No summary available"
 
         # clean the data of unnecessary values
         clean_sentences = self.cleanSentences(sentences)
@@ -234,7 +233,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_existing = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                     expanduser("~"),
+                                                     app.left_menu.model.rootPath(),
                                                      QFileDialog.ShowDirsOnly
                                                      | QFileDialog.DontResolveSymlinks)
     if path_existing == "":
@@ -242,6 +241,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_new = os.path.join(path_existing, 'WordEmbeddings')
+    app.settings.setValue("dictionaryPath", path_new)
 
     def files_exist(path1: str, path2: str):
         if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
@@ -389,10 +389,10 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
     # fill the dictionary with the word embeddings
     model = fillModel(path)
     # create an instance of the summarizer and give it to the application
-    app.summarizer = Summarizer(model)
+    document.summarizer = Summarizer(model)
     # if text was passed in then also perform summary
     if document is not None:
-        app.summarizer.summarize(document.toPlainText())
+        document.summarizer.summarize(document.toPlainText())
 
 
 def fillModel(path):

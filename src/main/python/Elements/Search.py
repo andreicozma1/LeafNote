@@ -16,6 +16,7 @@ class SearchFile(QWidget):
     """
     This is a widget to search for users input in the current document
     """
+
     def __init__(self, document):
         """
         Sets up the search bar widget
@@ -201,6 +202,7 @@ class SearchWorkspace(QWidget):
     """
     Widget that handles searching through the current workspace.
     """
+
     def __init__(self, document, file_manager, path):
         """
         Sets up the widgets properties
@@ -321,6 +323,7 @@ class File(QPushButton):
     """
     This is a button that holds information about the button
     """
+
     def __init__(self, path):
         """
         sets up the buttons properties

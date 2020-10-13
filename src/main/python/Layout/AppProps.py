@@ -21,6 +21,7 @@ class AppProps():
 
         # Defaults
         self.title = 'LeafNote'
+        self.domain = 'andreicozma.com'
         self.left = 0
         self.top = 0
         self.width = 800

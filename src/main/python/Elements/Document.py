@@ -6,6 +6,8 @@ from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
 from Elements.Search import SearchFile
+from Utils import DocumentSummarizer
+from Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types
@@ -18,7 +20,7 @@ class Document(QTextEdit):
     where the text is input and displayed
     """
 
-    def __init__(self, doc_props, default_text: str = ""):
+    def __init__(self, app, doc_props, default_text: str = ""):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -26,7 +28,14 @@ class Document(QTextEdit):
         super(Document, self).__init__("")
         logging.info("")
         self.doc_props = doc_props
+
+        # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
+        if app.settings.contains("dictionaryPath"):
+            model = DocumentSummarizer.fillModel(app.settings.value("dictionaryPath"))
+            if model is not None:
+                self.summarizer = Summarizer(model)
+
         self.textColor = "black"
 
         if default_text is None:

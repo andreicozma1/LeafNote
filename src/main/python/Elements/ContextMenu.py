@@ -45,19 +45,15 @@ class ContextMenu(QWidget):
         self.collapsible_metadata.addElement(createLabel("Created"))
         vertical_layout.addWidget(self.collapsible_metadata)
 
-        self.summary = createLabel("Summary")
-
         def onSummaryAction():
-            logging.info("Generating Summary")
-            if self.document.summarizer is None:
-                DocumentSummarizer.onSummaryAction(self.app, self.document)
-            if self.document.summarizer is not None:
-                self.app.right_menu.summary.setText(self.document.summarizer.summarize(self.document.toPlainText()))
+            DocumentSummarizer.onSummaryAction(self.app, self.document)
 
         self.collapsible_summary = CollapsibleWidget("Summary:")
-        self.createSummaryBtn = QPushButton("Get Summary")
-        self.createSummaryBtn.clicked.connect(onSummaryAction)
-        self.collapsible_summary.addElement(self.createSummaryBtn)
+        self.enable_summarizer_btn = QPushButton("Get Summary")
+        self.enable_summarizer_btn.clicked.connect(onSummaryAction)
+        self.enable_summarizer_btn.setVisible(self.document.summarizer is None)
+        self.collapsible_summary.addElement(self.enable_summarizer_btn)
+        self.summary = createLabel("Summary")
         self.collapsible_summary.addElement(self.summary)
         vertical_layout.addWidget(self.collapsible_summary)
 
@@ -80,7 +76,7 @@ class ContextMenu(QWidget):
         for i in range(self.collapsible_metadata.layout_content.count()):
             label = self.collapsible_metadata.layout_content.itemAt(i).widget()
             prop = label.property("prop")
-
+            value: str
             if path is None:
                 value = "?"
             elif prop == "Name":
@@ -99,5 +95,15 @@ class ContextMenu(QWidget):
                 value = (info.birthTime().toString(self.format_time))
             else:
                 value = "?"
-
+            if len(value) == 0:
+                value = "?"
             label.setText(label.property("prop") + ": " + value)
+
+        if self.document.summarizer is not None:
+            self.summary.show()
+            self.enable_summarizer_btn.hide()
+            self.summary.setText(self.document.summarizer.summarize(self.document.toPlainText()))
+        else:
+            self.summary.hide()
+            self.enable_summarizer_btn.show()
+
