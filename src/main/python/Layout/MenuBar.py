@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtCore import QDir
 from PyQt5.Qt import QPixmap, QIcon
 import os
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QDateTimeEdit
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -264,8 +264,12 @@ class MenuBar(QMenuBar):
             self.button_t.clicked.connect(self.showTime)
             self.l1.addWidget(self.button_t)
             # ------------------------------#
-            self.done = QPushButton("Add Assignment", self)
-            self.done.clicked.connect(self.doneB)
+            self.sa = QPushButton("Add Assignment", self)
+            self.sa.clicked.connect(self.doneB)
+            self.l1.addWidget(self.sa)
+            # ------------------------------#
+            self.done = QPushButton("Done", self)
+            self.done.clicked.connect(self.pop.close)
             self.l1.addWidget(self.done)
             # ------------------------------#
             self.pop.show()
@@ -338,7 +342,7 @@ class MenuBar(QMenuBar):
         self.cal.selectionChanged.connect(self.onSelectedDate)
 
     def showTime(self):
-        self.ti = QDateTimeEdit()
+        self.ti = QTimeEdit()
         self.ti.setVisible(True)
 
 
@@ -346,7 +350,15 @@ class MenuBar(QMenuBar):
         """
         :return: New date selected on the calendar
         """
-        self.ca = self.cal.selectedDate()
+        self.ca = self.cal.selectedDate().toString()
+        print(self.ca)
+        print(self.ca[4:7])
+        print(self.ca[8:10])
+        if len(self.ca) == 14:
+            print(self.ca[10:14])
+        else:
+            print(self.ca[11:15])
+
 
     def doneB(self):
         title_textbox_val = self.title.text()
@@ -357,4 +369,5 @@ class MenuBar(QMenuBar):
         print(self.ca)
         self.title.setText("")
         self.clas.setText("")
+
 
