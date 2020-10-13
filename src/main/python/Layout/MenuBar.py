@@ -243,6 +243,7 @@ class MenuBar(QMenuBar):
             self.l1 = QVBoxLayout()
             self.pop.setLayout(self.l1)
             self.global_trigger = 0
+            self.assignment_global_trigger = 0
             # ------------------------------#
             self.title = QLineEdit()
             self.title.setPlaceholderText("Enter assignment title")
@@ -342,6 +343,7 @@ class MenuBar(QMenuBar):
         self.cal.selectionChanged.connect(self.onSelectedDate)
 
     def showTime(self):
+        self.assignment_global_trigger = 1
         self.ti = QTimeEdit()
         self.ti.setVisible(True)
 
@@ -361,20 +363,30 @@ class MenuBar(QMenuBar):
 
 
     def doneB(self):
-        title_textbox_val = self.title.text()
-        class_textbox_val = self.clas.text()
-        #TODO time
-        print(title_textbox_val)
-        print(class_textbox_val)
-        print(self.ca)
-        self.title.setText("")
-        self.clas.setText("")
-        self.global_trigger = 1
+
+        if self.assignment_global_trigger == 0:
+            if self.global_trigger == 0:
+                self.message_box = QMessageBox()
+                self.message_box.setWindowTitle("Warning!")
+                self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
+                self.message_box.setStandardButtons(QMessageBox.Ok)
+                self.message_box.exec()
+        else:
+            title_textbox_val = self.title.text()
+            class_textbox_val = self.clas.text()
+            #TODO time
+            print(title_textbox_val)
+            print(class_textbox_val)
+            print(self.ca)
+            self.title.setText("")
+            self.clas.setText("")
+            self.global_trigger = 1
 
     def Close(self):
         if self.global_trigger == 0:
             self.message_box = QMessageBox()
-            self.message_box.setText("Are you sure you want to quit without adding any assignemnts?")
+            self.message_box.setWindowTitle("Warning!")
+            self.message_box.setText("Are you sure you want to quit without adding any assignments?")
             self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
             return_value = self.message_box.exec()
             if return_value == QMessageBox.Yes:
