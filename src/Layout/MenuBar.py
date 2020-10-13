@@ -1,21 +1,16 @@
 import logging
 from functools import partial
 
-from PyQt5 import QtWidgets, Qt, QtCore
-from PyQt5.QtCore import QDir, QRect
-from PyQt5.Qt import QPixmap, QIcon
-import os
-from PyQt5.QtGui import QPainter, QFont
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit, QMessageBox, QLabel, QDialogButtonBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
+    QMessageBox
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
-
+import os
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Document, Search
+from Elements import Search, Document, Calculator
 from Layout import DocProps
 from Utils import Encryptor
 from Utils.DialogBuilder import DialogBuilder
-
-from src.main.python.Elements import Calculator
 
 """
 all properties and functionalities of the menu bar

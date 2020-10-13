@@ -59,7 +59,7 @@ class Calculator(QWidget):
         grid.addWidget(neg, 9, 0)
         zero = QPushButton("0")
         grid.addWidget(zero, 9, 1)
-        dec = QPushButton(".")
+        dec = QPushButton("")
         grid.addWidget(dec, 9, 2)
         minus = QPushButton("-")
         grid.addWidget(minus, 6, 3, 1, 1)
@@ -185,7 +185,7 @@ class Calculator(QWidget):
                         if x == ' ':
                             break
                 temp = text[len(text) - 1]
-                if temp.isnumeric() == False:
+                if not temp.isnumeric():
                     text += "0"
             else:
                 text += "0"

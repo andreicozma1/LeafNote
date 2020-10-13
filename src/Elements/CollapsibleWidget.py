@@ -26,7 +26,7 @@ class CollapsibleWidget(QWidget):
         self.content.setStyleSheet("color: rgba(0,0,0,0.7)")
         self.content.hide()
         self.layout_content = QVBoxLayout(self.content)
-        self.layout_content.setContentsMargins(13, 0, 0, 0)
+        self.layout_content.setContentsMargins(13, 0, 13, 0)
         self.layout_content.setSpacing(0)
 
         layout_main.addWidget(self.btn_toggle)

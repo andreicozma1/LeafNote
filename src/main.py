@@ -3,8 +3,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
 from Elements.BottomBar import BottomBar
 from Elements.ContextMenu import ContextMenu
@@ -17,9 +16,7 @@ from Layout.DocProps import DocProps
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
-from Utils import DocumentSummarizer
 from Utils.DialogBuilder import DialogBuilder
-from Utils.DocumentSummarizer import Summarizer
 from Utils.FileManager import FileManager
 
 logging.basicConfig(
@@ -47,7 +44,8 @@ class App(QMainWindow):
         logging.info("Constructor")
 
         # Initialize properties.
-        self.app_props = AppProps()
+        path_res = os.path.dirname(os.path.abspath(__file__))
+        self.app_props = AppProps(path_res)
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
@@ -61,7 +59,7 @@ class App(QMainWindow):
         self.document = Document(self, self.doc_props)
 
         # Create TopBar, depends on Document
-        self.top_bar = TopBar(self.document)
+        self.top_bar = TopBar(self.app_props.path_res, self.document)
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.setupTopBar()
         layout_main.addWidget(self.top_bar)
@@ -76,7 +74,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
-        self.bottom_bar = BottomBar(self.document)
+        self.bottom_bar = BottomBar(self.app_props.path_res, self.document)
         self.setupBottomBar()
         layout_main.addWidget(self.bottom_bar)
 
@@ -239,9 +237,9 @@ class App(QMainWindow):
 
 def main():
     logging.info("Starting application")
-    appctxt = ApplicationContext()
+    app = QApplication([])
     App()
-    sys.exit(appctxt.app.exec_())
+    sys.exit(app.exec_())
 
 
 # Starting point of the program

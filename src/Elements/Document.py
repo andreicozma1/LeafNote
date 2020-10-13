@@ -41,7 +41,7 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        self.search = SearchFile(self)
+        self.search = SearchFile(app.app_props.path_res, self)
 
         self.setText(default_text)
         self.setAutoFillBackground(True)
