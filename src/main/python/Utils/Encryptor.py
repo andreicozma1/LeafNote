@@ -1,11 +1,10 @@
 import logging
 import os
 
-from PyQt5.QtWidgets import QDialogButtonBox, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QDialogButtonBox
 from cryptography.fernet import Fernet
 
 from Utils.DialogBuilder import DialogBuilder
-from os.path import expanduser
 
 
 class Encryptor(Fernet):
@@ -43,6 +42,7 @@ class Encryptor(Fernet):
 def onEncryptionAction(app, file_manager):
     def onEncryptBtnClicked(button):
         encryptionDialogHandler(app, file_manager, button)
+
     def onDecryptBtnClicked(button):
         decryptionDialogHandler(app, file_manager, button)
 

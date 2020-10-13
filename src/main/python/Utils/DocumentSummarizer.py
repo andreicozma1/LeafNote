@@ -4,7 +4,6 @@ import glob
 import logging
 import os
 import zipfile
-from os.path import expanduser
 
 import networkx as nx
 import nltk
@@ -233,7 +232,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_existing = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                     expanduser("~"),
+                                                     app.left_menu.model.rootPath(),
                                                      QFileDialog.ShowDirsOnly
                                                      | QFileDialog.DontResolveSymlinks)
     if path_existing == "":

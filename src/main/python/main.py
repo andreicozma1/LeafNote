@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
 from PyQt5.uic.properties import QtGui
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
@@ -44,10 +45,12 @@ class App(QMainWindow):
         """
         super(QMainWindow, self).__init__()
         logging.info("Constructor")
+
         # Initialize properties.
         self.app_props = AppProps()
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
+        self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
         self.summarizer = None
 
@@ -65,7 +68,8 @@ class App(QMainWindow):
         layout_main.addWidget(self.top_bar)
 
         # Create Main Workspace
-        self.left_menu = DirectoryViewer(self.document, self.file_manager)
+        last_path = self.settings.value("workspacePath")
+        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.right_menu = ContextMenu()
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
@@ -109,10 +113,10 @@ class App(QMainWindow):
 
     def setupMenuBar(self):
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
-        self.menu_bar.makeEditMenu(self, self.document, self.file_manager)
+        self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
-        self.menu_bar.makeToolsMenu(self, self.document)
+        self.menu_bar.makeToolsMenu(self)
         self.setMenuBar(self.menu_bar)
 
     def setup(self):
@@ -122,9 +126,17 @@ class App(QMainWindow):
         """
         logging.info("Setting up Main Window")
         self.setWindowTitle(self.app_props.title)
-        self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
+        if self.settings.contains("windowSize"):
+            self.resize(self.settings.value("windowSize"))
+        else:
+            self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
+        if self.settings.contains("windowGeometry"):
+            self.setGeometry(self.settings.value("windowGeometry"))
+        else:
+            self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
+
         self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
-        self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
+
         if not self.app_props.resizable:
             logging.debug("Window is not resizable")
             self.setFixedSize(self.app_props.width, self.app_props.height)
@@ -201,7 +213,12 @@ class App(QMainWindow):
 
     def closeEvent(self, event):
         logging.info("User triggered close event")
+        self.settings.setValue("windowSize", self.size())
+        self.settings.setValue("windowGeometry", self.geometry())
+
         path_workspace = self.left_menu.model.rootPath()
+        self.settings.setValue("workspacePath", path_workspace)
+
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
         if self.file_manager.encryptor is not None and not os.path.exists(path_key):
             dialog_encryptor = DialogBuilder(self, "Crypto - WARNING",
