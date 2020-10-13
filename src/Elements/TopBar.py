@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy
 
-from Elements import Document
+from src.Elements import Document
 
 """
 all properties of the top bar
@@ -18,13 +18,14 @@ class TopBar(QWidget):
     class that holds the top bar attributes
     """
 
-    def __init__(self, document: Document):
+    def __init__(self, path_res: str, document: Document):
         """
         sets up the top bar and its features
         :return: returns nothing
         """
         super(TopBar, self).__init__()
         logging.info("")
+        self.path_res = path_res
         self.document = document
 
         self.combo_font_style = None
@@ -163,9 +164,9 @@ class TopBar(QWidget):
 
     def makeClearFormatting(self) -> QPushButton:
         # Button to Clear Formatting
-        path_icon = os.path.join("res", "clear_formatting.ico")
+        path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
         self.button_clear = QPushButton(self)
-        self.button_clear.setIcon(QIcon(path_icon))
+        self.button_clear.setIcon(QIcon(path_clear_icon))
         self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
         self.button_clear.setFixedWidth(33)
         self.button_clear.setFocusPolicy(Qt.NoFocus)

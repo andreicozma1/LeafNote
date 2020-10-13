@@ -3,11 +3,10 @@ import logging
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
-import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Document, Search
-from Layout import DocProps
-from Utils import Encryptor
-from src.main.python.Elements import Calculator
+import src.Utils.DocumentSummarizer as DocumentSummarizer
+from src.Elements import Search, Document, Calculator
+from src.Layout import DocProps
+from src.Utils import Encryptor
 
 """
 all properties and functionalities of the menu bar

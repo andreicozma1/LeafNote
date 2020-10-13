@@ -5,9 +5,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
-from Elements.Search import SearchFile
-from Utils import DocumentSummarizer
-from Utils.DocumentSummarizer import Summarizer
+from src.Elements.Search import SearchFile
+from src.Utils import DocumentSummarizer
+from src.Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types

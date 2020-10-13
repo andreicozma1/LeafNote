@@ -5,19 +5,19 @@ import sys
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
-from Elements.BottomBar import BottomBar
-from Elements.ContextMenu import ContextMenu
-from Elements.DirectoryViewer import DirectoryViewer
-from Elements.Document import Document
-from Elements.OpenTabsBar import OpenTabsBar
-from Elements.TopBar import TopBar
-from Layout.AppProps import AppProps
-from Layout.DocProps import DocProps
-from Layout.Layout import Layout
-from Layout.LayoutProps import LayoutProps
-from Layout.MenuBar import MenuBar
-from Utils.DialogBuilder import DialogBuilder
-from Utils.FileManager import FileManager
+from src.Elements.BottomBar import BottomBar
+from src.Elements.ContextMenu import ContextMenu
+from src.Elements.DirectoryViewer import DirectoryViewer
+from src.Elements.Document import Document
+from src.Elements.OpenTabsBar import OpenTabsBar
+from src.Elements.TopBar import TopBar
+from src.Layout.AppProps import AppProps
+from src.Layout.DocProps import DocProps
+from src.Layout.Layout import Layout
+from src.Layout.LayoutProps import LayoutProps
+from src.Layout.MenuBar import MenuBar
+from src.Utils.DialogBuilder import DialogBuilder
+from src.Utils.FileManager import FileManager
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -44,7 +44,7 @@ class App(QMainWindow):
         logging.info("Constructor")
 
         # Initialize properties.
-        self.app_props = AppProps()
+        self.app_props = AppProps(os.path.abspath(__file__))
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
@@ -58,7 +58,7 @@ class App(QMainWindow):
         self.document = Document(self, self.doc_props)
 
         # Create TopBar, depends on Document
-        self.top_bar = TopBar(self.document)
+        self.top_bar = TopBar(self.app_props.path_res, self.document)
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.setupTopBar()
         layout_main.addWidget(self.top_bar)
@@ -73,7 +73,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
-        self.bottom_bar = BottomBar(self.document)
+        self.bottom_bar = BottomBar(self.app_props.path_res, self.document)
         self.setupBottomBar()
         layout_main.addWidget(self.bottom_bar)
 
