@@ -409,7 +409,6 @@ class MenuBar(QMenuBar):
             text = ""
         if text != "":
             if text[len(text) - 1] == ' ':
-                print("in")
                 self.screen.setText(text[:len(text) - 3])
                 text = self.screen.text()
             self.screen.setText(text + " / ")
