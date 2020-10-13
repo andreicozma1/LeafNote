@@ -40,6 +40,7 @@ class Encryptor(Fernet):
 
 
 def onEncryptionAction(app, file_manager):
+    # Helper Functions
     def onEncryptBtnClicked(button):
         encryptionDialogHandler(app, file_manager, button)
 
@@ -70,6 +71,12 @@ def onEncryptionAction(app, file_manager):
 
 
 def encryptionDialogHandler(app, file_manager, button):
+    """
+    Checks user input and encrypts workspace if needed
+    :param app: application context
+    :file_manager: file_manager context
+    :button: button clicked reference
+    """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
         key = Fernet.generate_key()
@@ -97,6 +104,12 @@ def encryptionDialogHandler(app, file_manager, button):
 
 
 def decryptionDialogHandler(app, file_manager, button):
+    """
+    Checks user input and decrypts workspace if needed
+    :param app: application context
+    :file_manager: file_manager context
+    :button: button clicked reference
+    """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
 
