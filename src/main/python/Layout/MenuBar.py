@@ -397,7 +397,7 @@ class MenuBar(QMenuBar):
         if self.assignment_global_trigger == 0:
             if self.global_trigger == 0:
                 self.message_box = QMessageBox()
-                self.message_box.setWindowTitle("Warning!")
+                self.message_box.setWindowTitle("Add Assignment-Warning!")
                 self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
                 self.message_box.setStandardButtons(QMessageBox.Ok)
                 self.message_box.exec()
@@ -415,7 +415,7 @@ class MenuBar(QMenuBar):
     def Close(self):
         if self.global_trigger == 0:
             self.message_box = QMessageBox()
-            self.message_box.setWindowTitle("Warning!")
+            self.message_box.setWindowTitle("Done-Warning!")
             self.message_box.setText("Are you sure you want to quit without adding any assignments?")
             self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
             return_value = self.message_box.exec()
