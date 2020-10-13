@@ -1,7 +1,9 @@
 import logging
 
 from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
+from PyQt5.Qt import QPixmap, QIcon
+import os
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -237,6 +239,21 @@ class MenuBar(QMenuBar):
         def onSummaryAction():
             DocumentSummarizer.onSummaryAction(app, document)
 
+        def dueDateSelection():
+            self.pop = QWidget()
+            self.l1 = QVBoxLayout()
+            self.pop.setLayout(self.l1)
+            temp = os.path.join("resources", "calendar.ico")
+            pixmap = QPixmap(temp)
+            icon = QIcon(pixmap)
+            self.button = QPushButton("", self)
+            self.button.setIcon(icon)
+            self.button.clicked.connect(self.showCalendar)
+            self.l1.addWidget(self.button)
+            self.pop.show()
+
+
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
@@ -244,6 +261,7 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        self.menu_tools.addAction(makeToolsAction("Assignment Due Dates", "", dueDateSelection))
 
         # ========= END TOOLS MENU SECTION =========
 
@@ -291,3 +309,18 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+
+    def showCalendar(self):
+        """
+        Shows a calendar with current date
+        :return: CalendarWidget()
+        """
+        self.cal = QCalendarWidget()
+        self.cal.setVisible(True)
+        self.cal.selectionChanged.connect(self.onSelectedDate)
+
+    def onSelectedDate(self):
+        """
+        :return: New date selected on the calendar
+        """
+        ca = self.cal.selectedDate()
