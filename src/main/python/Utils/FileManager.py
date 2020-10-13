@@ -20,6 +20,8 @@ class FileManager:
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
 
+        self.encryptor = None
+
     def saveDocument(self, document):
         """
         :param document: Reference to the document
@@ -28,7 +30,7 @@ class FileManager:
         """
 
         # get the current text from the document shown to the user
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             data = document.toHtml()
             file_filter = "LeafNote (*.lef)"
         else:
@@ -44,7 +46,8 @@ class FileManager:
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
             # get the entered data
-            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', "", file_filter)
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.left_menu.model.rootPath(),
+                                                    file_filter)
 
             if file_name[0] == '':
                 logging.info("No File Path Given")
@@ -68,7 +71,7 @@ class FileManager:
         :param document: Reference to the document
         :return: Returns if the save as succeeded or not
         """
-        new_path = QFileDialog.getSaveFileName(self.app, 'Save File')[0]
+        new_path = QFileDialog.getSaveFileName(self.app, 'Save File', self.app.left_menu.model.rootPath())[0]
 
         # if the new path is an empty string do nothing
         if new_path == '':
@@ -76,7 +79,7 @@ class FileManager:
             return False
 
         # check if the document is formatted
-        if self.app.button_mode_switch.isChecked():
+        if self.app.btn_mode_switch.isChecked():
             f_info = QFileInfo(new_path)
             if f_info.suffix() != "lef":
                 new_path = os.path.join(f_info.path(), f_info.baseName()) + '.lef'
@@ -119,6 +122,8 @@ class FileManager:
                 if self.current_document.suffix() != 'lef':
                     document.resetFormatting()
                 state = (self.current_document.suffix() == 'lef')
+                self.app.right_menu.updateDetails(self.current_document)
+
 
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
@@ -126,7 +131,7 @@ class FileManager:
                 document.setText("")
                 document.resetFormatting()
                 state = False
-
+                self.app.right_menu.updateDetails(self.current_document)
         # if it does not exist print error messages
         else:
             if path == '':
@@ -197,6 +202,7 @@ class FileManager:
 
         # update the document shown to the user
         document.setText(data)
+        self.app.right_menu.updateDetails(path)
         return True
 
     def getFileData(self, path: str) -> str:
@@ -206,8 +212,8 @@ class FileManager:
         :return: Returns a string of the read in data
         """
         # open the file with read only privileges
+        logging.info(path)
         file = open(path, 'r')
-
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - " + path)
@@ -217,6 +223,13 @@ class FileManager:
         with file:
             data = file.read()
         file.close()
+
+        try:
+            if self.encryptor is not None:
+                data = self.encryptor.decrypt(data.encode()).decode()
+                logging.debug("File was encrypted. Decrypting")
+        except:
+            logging.info("File wasn't encrypted. Proceeding as normal")
 
         return data
 
@@ -229,13 +242,19 @@ class FileManager:
         :return: Returns nothing
         """
         # open the file with write only privileges
-        file = open(path, 'w')
+        logging.info(path)
+        if self.encryptor is not None:
+            logging.debug("Writing Encrypted")
+            file = open(path, 'wb')
+            data = self.encryptor.encrypt(data.encode())
+        else:
+            logging.info("Writing Plain Text")
+            file = open(path, 'w')
 
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - " + path)
             return ''
-
         # write data to the file then close the file
         file.write(data)
         file.close()
@@ -288,11 +307,17 @@ class FileManager:
         formatted_file = self.app.document.toHtml()
 
         # if the current file is none make the user save the file
+        is_new_file = False
         if self.current_document is None:
+            is_new_file = True
             self.saveDocument(document)
 
-        # get teh old file path
+        # get the old file path
         old_path = self.current_document.filePath()
+
+        # if it is a new file open the tab
+        if is_new_file:
+            self.app.bar_open_tabs.addTab(old_path)
 
         # grab the index of the last period or if no period get the length of the string
         try:
@@ -320,7 +345,7 @@ class FileManager:
         :return: Returns nothing
         """
         # Get path name from user
-        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.app_props.mainPath, "")
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.left_menu.model.rootPath())
         if file_name[0] == '':
             logging.info('No File Path Given')
             return
@@ -340,8 +365,8 @@ class FileManager:
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
             logging.info("----------------------------------------")
-            logging.info("path: ", key)
-            logging.info("QFileInfo:\n", path)
+            logging.info("path: " + key)
+            logging.info("QFileInfo: " + path.absoluteFilePath())
         logging.info("========================================")
 
     def fixBrokenFilePaths(self):

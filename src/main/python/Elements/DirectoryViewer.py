@@ -1,7 +1,10 @@
 import logging
+import os
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
+
+from Utils.Encryptor import Encryptor
 
 """
 displays interactive directory on 
@@ -27,7 +30,7 @@ class DirectoryViewer(QTreeView):
         self.fileManager = file_manager
 
         if path is None:
-            path = self.fileManager.app.app_props.mainPath
+            path = QDir.currentPath()
 
         self.model = QFileSystemModel()
         self.updateDirectory(path)
@@ -55,6 +58,17 @@ class DirectoryViewer(QTreeView):
         self.sortByColumn(1, Qt.AscendingOrder)
 
         self.doubleClicked.connect(self.onDoubleClick)
+
+        self.fileManager.encryptor = None
+        # Check for encryption key in Workspace
+        path_key = os.path.join(path, ".leafCryptoKey")
+        if os.path.exists(path_key):
+            logging.debug("Encryption key found! " + path_key)
+            with open(path_key, 'r') as f:
+                key = f.read()
+                self.fileManager.encryptor = Encryptor(key)
+        else:
+            logging.debug("Workspace not encrypted")
 
     def onDoubleClick(self, index):
         """

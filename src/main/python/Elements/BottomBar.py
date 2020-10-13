@@ -1,9 +1,9 @@
 import logging
 import os
+
 from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
 from PyQt5.QtCore import QDate, QDateTime
-
 
 """
 This file alters tools on the Bottom Bar
@@ -33,18 +33,17 @@ class BottomBar(QWidget):
         self.document = document
 
         # sets up the bottom bar
-        self.horizontal_layout = QHBoxLayout()
+        self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        self.setLayout(self.horizontal_layout)
+        self.horizontal_layout.setSpacing(3)
 
         temp = os.path.join("resources", "calendar.ico")
         pixmap = QPixmap(temp)
         icon = QIcon(pixmap)
-        self.calender = QPushButton("",self)
+        self.calender = QPushButton("", self)
         self.calender.setIcon(icon)
         self.calender.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calender)
-
 
         # adds time label
         datetime = QDateTime.currentDateTime()
@@ -115,7 +114,6 @@ class BottomBar(QWidget):
         self.button_zoom_in.setToolTip("Zoom in")
         self.horizontal_layout.addWidget(self.button_zoom_in)
 
-
     def updateWordCount(self):
         """
         Counts number of words and updates number on bottom bar
@@ -140,6 +138,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
@@ -148,6 +147,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
@@ -180,6 +180,7 @@ class BottomBar(QWidget):
         resets the zoom slider when zoom is reset
         :return: returns nothing
         """
+        logging.info("")
         self.zoom_slider.setValue(self.slider_start)
 
     def showTime(self):
