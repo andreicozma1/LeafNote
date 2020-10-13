@@ -39,6 +39,7 @@ class BottomBar(QWidget):
         self.horizontal_layout.setSpacing(3)
 
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
+        print(path_calendar_icon)
         self.calendar = QPushButton("", self)
         self.calendar.setIcon(QIcon(path_calendar_icon))
         self.calendar.clicked.connect(self.showCalendar)

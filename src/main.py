@@ -44,7 +44,8 @@ class App(QMainWindow):
         logging.info("Constructor")
 
         # Initialize properties.
-        self.app_props = AppProps(os.path.abspath(__file__))
+        path_res = os.path.dirname(os.path.abspath(__file__))
+        self.app_props = AppProps(path_res)
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
