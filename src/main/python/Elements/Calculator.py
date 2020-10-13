@@ -316,7 +316,10 @@ class Calculator(QWidget):
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
             else:
-                self.screen.setText(text[:len(text) - 1])
+                if text[len(text) - 2] == "-":
+                    self.screen.setText(text[:len(text) - 2])
+                else:
+                    self.screen.setText(text[:len(text) - 1])
         self.equ = 0
 
     def action_neg(self):
