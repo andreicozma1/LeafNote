@@ -20,6 +20,8 @@ class FileManager:
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
 
+        self.encryptor = None
+
     def saveDocument(self, document):
         """
         :param document: Reference to the document
@@ -219,6 +221,13 @@ class FileManager:
             data = file.read()
         file.close()
 
+        try:
+            if self.encryptor is not None:
+                logging.debug("Decrypting data")
+                data = self.app.encryptor.decrypt(data.encode()).decode()
+        except:
+            logging.info("File wasn't encrypted. Proceeding as normal")
+
         return data
 
     # opens the file at the given path and writes the given data to it
@@ -230,13 +239,18 @@ class FileManager:
         :return: Returns nothing
         """
         # open the file with write only privileges
-        file = open(path, 'w')
+
+        if self.encryptor is not None:
+            logging.debug("Encrypting data")
+            file = open(path, 'wb')
+            data = self.app.encryptor.encrypt(data.encode())
+        else:
+            file = open(path, 'w')
 
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - " + path)
             return ''
-
         # write data to the file then close the file
         file.write(data)
         file.close()
@@ -347,8 +361,8 @@ class FileManager:
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
             logging.info("----------------------------------------")
-            logging.info("path: "+ key)
-            logging.info("QFileInfo: "+ path.absoluteFilePath())
+            logging.info("path: " + key)
+            logging.info("QFileInfo: " + path.absoluteFilePath())
         logging.info("========================================")
 
     def fixBrokenFilePaths(self):

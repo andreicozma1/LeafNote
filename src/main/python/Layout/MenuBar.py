@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QFileDialog
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document
 from Layout import DocProps
+from Utils import Encryptor
 
 """
 all properties and functionalities of the menu bar
@@ -242,6 +243,8 @@ class MenuBar(QMenuBar):
 
         def onSummaryAction():
             DocumentSummarizer.onSummaryAction(app, document)
+        def onEncryptionAction():
+            Encryptor.onEncryptionAction(app, app.file_manager)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
@@ -250,6 +253,7 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        self.menu_tools.addAction(makeToolsAction("Crypto", "", onEncryptionAction))
 
         # ========= END TOOLS MENU SECTION =========
 
