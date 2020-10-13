@@ -122,6 +122,8 @@ class FileManager:
                 if self.current_document.suffix() != 'lef':
                     document.resetFormatting()
                 state = (self.current_document.suffix() == 'lef')
+                self.app.right_menu.updateDetails(self.current_document)
+
 
             # if the open documents IS empty set the current document to none/empty document with no path
             else:

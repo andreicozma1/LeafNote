@@ -1,12 +1,17 @@
+import logging
+
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from Elements.CollapsibleWidget import CollapsibleWidget
+from Utils import DocumentSummarizer
 
 
 class ContextMenu(QWidget):
-    def __init__(self):
+    def __init__(self, app, document):
         super(ContextMenu, self).__init__()
+        self.app = app
+        self.document = document
         # Create main vertical layout
         vertical_layout = QVBoxLayout(self)
         vertical_layout.setContentsMargins(10, 0, 10, 0)
@@ -39,6 +44,19 @@ class ContextMenu(QWidget):
         self.collapsible_metadata.addElement(createLabel("Modified"))
         self.collapsible_metadata.addElement(createLabel("Created"))
         vertical_layout.addWidget(self.collapsible_metadata)
+
+        def onSummaryAction():
+            DocumentSummarizer.onSummaryAction(self.app, self.document)
+
+        self.collapsible_summary = CollapsibleWidget("Summary:")
+        self.enable_summarizer_btn = QPushButton("Get Summary")
+        self.enable_summarizer_btn.clicked.connect(onSummaryAction)
+        self.enable_summarizer_btn.setVisible(self.document.summarizer is None)
+        self.collapsible_summary.addElement(self.enable_summarizer_btn)
+        self.summary = createLabel("Summary")
+        self.collapsible_summary.addElement(self.summary)
+        vertical_layout.addWidget(self.collapsible_summary)
+
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
 
@@ -80,3 +98,12 @@ class ContextMenu(QWidget):
             if len(value) == 0:
                 value = "?"
             label.setText(label.property("prop") + ": " + value)
+
+        if self.document.summarizer is not None:
+            self.summary.show()
+            self.enable_summarizer_btn.hide()
+            self.summary.setText(self.document.summarizer.summarize(self.document.toPlainText()))
+        else:
+            self.summary.hide()
+            self.enable_summarizer_btn.show()
+

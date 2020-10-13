@@ -243,7 +243,7 @@ class MenuBar(QMenuBar):
         return self.menu_format
 
     # =====================================================================================
-    def makeToolsMenu(self, app) -> QMenu:
+    def makeToolsMenu(self, app, document) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -254,7 +254,11 @@ class MenuBar(QMenuBar):
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
-            DocumentSummarizer.onSummaryAction(app, self.doc)
+            logging.info("Generating Summary")
+            if document.summarizer is None:
+                DocumentSummarizer.onSummaryAction(app, document)
+            if document.summarizer is not None:
+                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
 
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)

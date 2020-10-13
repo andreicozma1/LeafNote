@@ -53,19 +53,12 @@ class App(QMainWindow):
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
 
-        # If the dictionaries have been downloaded previously, check persistent settings
-        if self.settings.contains("dictionaryPath"):
-            model = DocumentSummarizer.fillModel(self.settings.value("dictionaryPath"))
-            self.summarizer = Summarizer(model)
-        else:
-            self.summarizer = None
-
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
 
         # Create Document
-        self.document = Document(self.doc_props)
+        self.document = Document(self, self.doc_props)
 
         # Create TopBar, depends on Document
         self.top_bar = TopBar(self.document)
@@ -77,7 +70,7 @@ class App(QMainWindow):
         last_path = self.settings.value("workspacePath")
         self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
-        self.right_menu = ContextMenu()
+        self.right_menu = ContextMenu(self, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
                                                               self.right_menu)
         layout_main.addWidget(self.documents_view)
@@ -122,7 +115,7 @@ class App(QMainWindow):
         self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
-        self.menu_bar.makeToolsMenu(self)
+        self.menu_bar.makeToolsMenu(self, self.document)
         self.setMenuBar(self.menu_bar)
 
     def setup(self):
@@ -145,7 +138,8 @@ class App(QMainWindow):
 
         if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
             logging.debug("Window is not resizable")
-            self.setFixedSize(self.size())
+            if not self.app_props.resizable:
+                self.setFixedSize(self.size())
 
         self.setCentralWidget(self.layout)
         self.show()
