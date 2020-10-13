@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtCore import QDir
 from PyQt5.Qt import QPixmap, QIcon
 import os
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit, QMessageBox, QLabel
 from PyQt5.QtWidgets import QFileDialog
 
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -13,7 +13,6 @@ from Layout import DocProps
 """
 all properties and functionalities of the menu bar
 """
-
 
 class MenuBar(QMenuBar):
     """
@@ -243,6 +242,7 @@ class MenuBar(QMenuBar):
             self.pop = QWidget()
             self.l1 = QVBoxLayout()
             self.pop.setLayout(self.l1)
+            self.global_trigger = 0
             # ------------------------------#
             self.title = QLineEdit()
             self.title.setPlaceholderText("Enter assignment title")
@@ -269,7 +269,7 @@ class MenuBar(QMenuBar):
             self.l1.addWidget(self.sa)
             # ------------------------------#
             self.done = QPushButton("Done", self)
-            self.done.clicked.connect(self.pop.close)
+            self.done.clicked.connect(self.Close)
             self.l1.addWidget(self.done)
             # ------------------------------#
             self.pop.show()
@@ -369,5 +369,19 @@ class MenuBar(QMenuBar):
         print(self.ca)
         self.title.setText("")
         self.clas.setText("")
+        self.global_trigger = 1
+
+    def Close(self):
+        if self.global_trigger == 0:
+            self.message_box = QMessageBox()
+            self.message_box.setText("Are you sure you want to quit without adding any assignemnts?")
+            self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+            return_value = self.message_box.exec()
+            if return_value == QMessageBox.Yes:
+                self.pop.close()
+        else:
+            self.pop.close()
+
+
 
 
