@@ -434,6 +434,12 @@ class MenuBar(QMenuBar):
         text = self.screen.text()
         if text != "Wrong Input":
             if text != "":
+                for x in reversed(text):
+                    if x == '.':
+                        return
+                    else:
+                        if x == ' ':
+                            break
                 temp = text[len(text) - 1]
                 if temp.isnumeric() == False:
                     text += "0"
@@ -581,6 +587,11 @@ class MenuBar(QMenuBar):
                     text = text[:x] + '-' + text[x:]
                     self.screen.setText(text)
                     return
+                else:
+                    if text[x] == '-':
+                        text = text[:x] + text[(x + 1):]
+                        self.screen.setText(text)
+                        return
             text = '-' + text
             self.screen.setText(text)
 
