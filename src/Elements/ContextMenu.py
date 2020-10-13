@@ -1,10 +1,8 @@
-import logging
-
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
-from Elements.CollapsibleWidget import CollapsibleWidget
-from Utils import DocumentSummarizer
+from src.Elements.CollapsibleWidget import CollapsibleWidget
+from src.Utils import DocumentSummarizer
 
 
 class ContextMenu(QWidget):
@@ -49,7 +47,7 @@ class ContextMenu(QWidget):
             DocumentSummarizer.onSummaryAction(self.app, self.document)
 
         self.collapsible_summary = CollapsibleWidget("Summary:")
-        self.enable_summarizer_btn = QPushButton("Get Summary")
+        self.enable_summarizer_btn = QPushButton("Enable Summarizer")
         self.enable_summarizer_btn.clicked.connect(onSummaryAction)
         self.enable_summarizer_btn.setVisible(self.document.summarizer is None)
         self.collapsible_summary.addElement(self.enable_summarizer_btn)
@@ -106,4 +104,3 @@ class ContextMenu(QWidget):
         else:
             self.summary.hide()
             self.enable_summarizer_btn.show()
-

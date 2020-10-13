@@ -5,7 +5,7 @@ if [ -f "$FILE" ]; then
     source "$FILE"
   echo "" &&
     echo "## Starting Application:" &&
-    fbs clean && fbs run
+    python3 src/main.py
 else
   echo "## ERROR: Python Virtual Environment missing!"
   echo " # Please run the setup script first!"

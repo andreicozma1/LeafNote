@@ -4,7 +4,7 @@ import os
 from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
-from Utils.Encryptor import Encryptor
+from src.Utils.Encryptor import Encryptor
 
 """
 displays interactive directory on 

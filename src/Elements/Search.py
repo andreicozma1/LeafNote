@@ -17,7 +17,7 @@ class SearchFile(QWidget):
     This is a widget to search for users input in the current document
     """
 
-    def __init__(self, document):
+    def __init__(self, path_res, document):
         """
         Sets up the search bar widget
         :param document: reference to the document
@@ -25,6 +25,7 @@ class SearchFile(QWidget):
         logging.info("")
         super(SearchFile, self).__init__(document)
         self.document = document
+        self.path_res = path_res
         self.search = ""
         self.flags = QTextDocument.FindFlag(0)
 
@@ -95,7 +96,7 @@ class SearchFile(QWidget):
         self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
 
         # get required images
-        path = os.path.join("resources", "arrow.ico")
+        path = os.path.join(self.path_res, "arrow.ico")
         pixmap = QPixmap(path)
         down_arrow = QIcon(pixmap)
         up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))
