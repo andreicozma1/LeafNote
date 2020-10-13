@@ -5,19 +5,19 @@ import sys
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
-from src.Elements.BottomBar import BottomBar
-from src.Elements.ContextMenu import ContextMenu
-from src.Elements.DirectoryViewer import DirectoryViewer
-from src.Elements.Document import Document
-from src.Elements.OpenTabsBar import OpenTabsBar
-from src.Elements.TopBar import TopBar
-from src.Layout.AppProps import AppProps
-from src.Layout.DocProps import DocProps
-from src.Layout.Layout import Layout
-from src.Layout.LayoutProps import LayoutProps
-from src.Layout.MenuBar import MenuBar
-from src.Utils.DialogBuilder import DialogBuilder
-from src.Utils.FileManager import FileManager
+from Elements.BottomBar import BottomBar
+from Elements.ContextMenu import ContextMenu
+from Elements.DirectoryViewer import DirectoryViewer
+from Elements.Document import Document
+from Elements.OpenTabsBar import OpenTabsBar
+from Elements.TopBar import TopBar
+from Layout.AppProps import AppProps
+from Layout.DocProps import DocProps
+from Layout.Layout import Layout
+from Layout.LayoutProps import LayoutProps
+from Layout.MenuBar import MenuBar
+from Utils.DialogBuilder import DialogBuilder
+from Utils.FileManager import FileManager
 
 logging.basicConfig(
     level=logging.DEBUG,
