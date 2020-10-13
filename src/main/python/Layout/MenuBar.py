@@ -583,6 +583,8 @@ class MenuBar(QMenuBar):
         if text != "":
             for x in reversed(range(len(text))):
                 if text[x] == " ":
+                    if x == len(text) - 1:
+                        return
                     x += 1
                     text = text[:x] + '-' + text[x:]
                     self.screen.setText(text)
