@@ -1,17 +1,19 @@
 import logging
+from functools import partial
 
 from PyQt5 import QtWidgets, Qt, QtCore
 from PyQt5.QtCore import QDir, QRect
 from PyQt5.Qt import QPixmap, QIcon
 import os
 from PyQt5.QtGui import QPainter, QFont
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit, QMessageBox, QLabel
+from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu, QWidget, QGridLayout, QCalendarWidget, QVBoxLayout, QPushButton, QLineEdit, QTimeEdit, QMessageBox, QLabel, QDialogButtonBox
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
 from Elements import Document, Search
 from Layout import DocProps
 from Utils import Encryptor
+from Utils.DialogBuilder import DialogBuilder
 
 from src.main.python.Elements import Calculator
 
@@ -268,41 +270,49 @@ class MenuBar(QMenuBar):
             self.calculator = Calculator.Calculator()
 
         def dueDateSelection():
-            self.pop = QWidget()
-            self.l1 = QVBoxLayout()
-            self.pop.setLayout(self.l1)
-            self.global_trigger = 0
-            self.assignment_global_trigger = 0
-            # ------------------------------#
+            # self.pop = QWidget()
+            # self.l1 = QVBoxLayout()
+            # self.pop.setLayout(self.l1)
+            # self.global_trigger = 0
+            # self.assignment_global_trigger = 0
+            # # ------------------------------#
             self.title = QLineEdit()
-            self.title.setPlaceholderText("Enter assignment title")
-            self.l1.addWidget(self.title)
+            self.title.setPlaceholderText("Title")
+            #self.l1.addWidget(self.title)
             # ------------------------------#
-            self.clas = QLineEdit()
-            self.clas.setPlaceholderText("Enter class")
-            self.l1.addWidget(self.clas)
+            self.description = QLineEdit()
+            self.description.setPlaceholderText("Description")
+            #self.l1.addWidget(self.description)
             # ------------------------------#
             temp = os.path.join("resources", "calendar.ico")
-            pixmap = QPixmap(temp)
-            icon = QIcon(pixmap)
             self.button = QPushButton("Select a due date", self)
-            self.button.setIcon(icon)
-            self.button.clicked.connect(self.showCalendar)
-            self.l1.addWidget(self.button)
-            #------------------------------#
-            self.button_t = QPushButton("Select a due date time", self)
-            self.button_t.clicked.connect(self.showTime)
-            self.l1.addWidget(self.button_t)
-            # ------------------------------#
-            self.sa = QPushButton("Add Assignment", self)
-            self.sa.clicked.connect(self.doneB)
-            self.l1.addWidget(self.sa)
-            # ------------------------------#
-            self.done = QPushButton("Done", self)
-            self.done.clicked.connect(self.Close)
-            self.l1.addWidget(self.done)
-            # ------------------------------#
-            self.pop.show()
+            self.button.setIcon(QIcon(temp))
+            self.button.clicked.connect(partial(self.showCalendar, app))
+            # self.l1.addWidget(self.button)
+            # #------------------------------#
+            # self.button_t = QPushButton("Select a due date time", self)
+            # self.button_t.clicked.connect(self.showTime)
+            # self.l1.addWidget(self.button_t)
+            # # ------------------------------#
+            # self.sa = QPushButton("Add Assignment", self)
+            # self.sa.clicked.connect(self.doneB)
+            # self.l1.addWidget(self.sa)
+            # # ------------------------------#
+            # self.done = QPushButton("Done", self)
+            # self.done.clicked.connect(self.Close)
+            # self.l1.addWidget(self.done)
+            # # ------------------------------#
+            # self.pop.show()
+            self.dialog = DialogBuilder(app, "Add Reminder")
+            self.dialog.addWidget(self.title)
+            self.dialog.addWidget(self.description)
+            self.dialog.addWidget(self.button)
+            self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+            self.dialog.addButtonBox(self.button_box)
+            if self.dialog.exec():
+                print("Clicked Ok")
+            else:
+                print("Clicked cancel")
 
 
 
@@ -363,14 +373,18 @@ class MenuBar(QMenuBar):
             if not a.property("persistent"):
                 a.blockSignals(False)
 
-    def showCalendar(self):
+    def showCalendar(self, app):
         """
         Shows a calendar with current date
         :return: CalendarWidget()
         """
-        self.cal = QCalendarWidget()
-        self.cal.setVisible(True)
-        self.cal.selectionChanged.connect(self.onSelectedDate)
+
+        dialog = DialogBuilder(app, None, None, None)
+        cal = QCalendarWidget()
+        cal.selectionChanged.connect(partial(self.onSelectedDate, dialog, cal))
+        dialog.addWidget(cal)
+        dialog.show()
+
 
     def showTime(self):
         self.assignment_global_trigger = 1
@@ -378,11 +392,11 @@ class MenuBar(QMenuBar):
         self.ti.setVisible(True)
 
 
-    def onSelectedDate(self):
+    def onSelectedDate(self, dialog, cal):
         """
         :return: New date selected on the calendar
         """
-        self.ca = self.cal.selectedDate().toString()
+        self.ca = cal.selectedDate().toString()
         print(self.ca)
         print(self.ca[4:7])
         print(self.ca[8:10])
@@ -390,17 +404,19 @@ class MenuBar(QMenuBar):
             print(self.ca[10:14])
         else:
             print(self.ca[11:15])
+        dialog.close()
 
 
     def doneB(self):
 
         if self.assignment_global_trigger == 0:
             if self.global_trigger == 0:
-                self.message_box = QMessageBox()
-                self.message_box.setWindowTitle("Add Assignment-Warning!")
-                self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
-                self.message_box.setStandardButtons(QMessageBox.Ok)
-                self.message_box.exec()
+                print("t")
+                # self.message_box = QMessageBox()
+                # self.message_box.setWindowTitle("Add Reminder-Warning!")
+                # self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
+                # self.message_box.setStandardButtons(QMessageBox.Ok)
+                # self.message_box.exec()
         else:
             title_textbox_val = self.title.text()
             class_textbox_val = self.clas.text()
