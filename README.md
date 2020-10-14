@@ -33,7 +33,6 @@ If you want to run the application directly from the command line, first follow 
 ```
 Use the run.sh script! (Linux/macOS)
 python3 src\main.py (Windows)
--fbs clean && fbs run-
 ```
 
 ## Create Standalone Installer - Temporarily Unavailable
