@@ -34,7 +34,7 @@ class Summarizer:
         """
         Sets up class variables.
         """
-        logging.info("Created instance of summarizer class")
+        logging.debug("Created instance of summarizer class")
         handlePackageDownloads()
         from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings
@@ -98,6 +98,7 @@ class Summarizer:
         :return: returns the cleaned sentences
         """
         # use regex expression to eliminate all non letter characters
+        logging.debug("")
         clean_sentences = pd.Series(sentences).str.replace("[^a-zA-Z]", " ")
 
         # make alphabets lowercase
@@ -115,6 +116,7 @@ class Summarizer:
         """
         # for each sentence we fetch vectors for their respective words
         # then we take the mean of those vectors to get a consolidated vector for the sentence
+        logging.debug("")
         for i in clean_sentences:
             if len(i) != 0:
                 v = sum([self.word_embeddings.get(w, np.zeros((100,)))
@@ -133,6 +135,7 @@ class Summarizer:
         """
         # for each index in the matrix calculate the cosine similarity
         # for more information on cosine similarity: https://en.wikipedia.org/wiki/Cosine_similarity
+        logging.debug("")
         for i in range(n):
             for j in range(n):
                 if i != j:
@@ -204,7 +207,7 @@ def onSummaryAction(app, document):
 
     # if summarizer has not been created create it
     if document.summarizer is None:
-        logging.info("Doc Summarizer not initialized. Prompting user for dependency download")
+        logging.info("Summarizer NOT initialized. Prompting user for dependency download.")
         # prompt the user to select or Download the word word_embeddings
         download_dialog = DialogBuilder(app, "Dictionaries",
                                         "Would you like to download required dictionaries?",
@@ -215,6 +218,7 @@ def onSummaryAction(app, document):
         download_dialog.exec()
     # if there is already an instance of the summarizer
     else:
+        logging.info("Summarizer is already initialized!")
         return document.summarizer.summarize(document.toPlainText())
 
 
@@ -226,7 +230,7 @@ def dependencyDialogHandler(app, button, document=None):
     :document: a reference to the document
     :return: returns summary
     """
-    logging.info("User selected " + button.text())
+    logging.debug("User selected " + button.text())
 
     # quit if the user selected cancel
     if button.text() == '&Cancel':
@@ -260,9 +264,9 @@ def dependencyDialogHandler(app, button, document=None):
 
         # prompt the user that they need to download the dependency files
         if not os.path.exists(os.path.join(path_new, zip_file)):
-            logging.info("Missing Files and ZIP. To re-download")
+            logging.warning("Missing Files and ZIP. To re-download")
             if button.text() == "Open":
-                logging.info("Dictionaries not found in directory. Prompting user for download")
+                logging.error("Dictionaries not found in directory")
                 download_dialog = DialogBuilder(app, "Error!",
                                                 "Error - Dictionaries not found!",
                                                 "Please select a different path or download them again.")
@@ -274,7 +278,9 @@ def dependencyDialogHandler(app, button, document=None):
                 return
             should_download = True
             # create loading bar dialog and start the download thread
-            progress_bar_dialog = DialogBuilder(app, "Downloading")
+            progress_bar_dialog = DialogBuilder(app, "Download Progress",
+                                                "Downloading Dictionaries...",
+                                                "Please do not close this window")
             progress_bar = progress_bar_dialog.addProgressBar((0, 100))
             progress_bar_dialog.open()
         else:
@@ -284,7 +290,7 @@ def dependencyDialogHandler(app, button, document=None):
 
         try:
             _thread.start_new_thread(getWordEmbeddings,
-                                     (app, path_new, should_download, progress_bar, document))
+                                     (path_new, should_download, progress_bar, document))
         except:
             logging.error("Unable to start thread")
     else:
@@ -306,15 +312,16 @@ def ensureDirectory(app, path: str):
     """
     # if the path doesnt exist make the directory
     if not os.path.exists(path):
-        logging.info("Creating WordEmbeddings directory")
         try:
             os.mkdir(path)
+            logging.info("Created WordEmbeddings directory")
             return True
         except:
+            logging.error("Failed to create WordEmbeddings directory")
             return False
     # if it does exist prompt the user to clear the directory
     else:
-        logging.info("Download path directory already exists")
+        logging.info("Download path directory already exists!")
 
         # create the dialog to warn the user the dir will be cleared
         clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
@@ -330,9 +337,11 @@ def ensureDirectory(app, path: str):
             for f in files:
                 try:
                     os.remove(f)
+                    logging.debug("Removed: " + f)
                 except:
                     dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
                     dialog_fail.show()
+                    logging.error("Error occured removing directory contents")
                     return False
             return True
         else:
@@ -340,7 +349,7 @@ def ensureDirectory(app, path: str):
             return False
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
+def getWordEmbeddings(path: str, should_download: bool = True, progress_bar=None, document=None):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer
@@ -353,26 +362,22 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
     """
     zip_file = 'glove.6B.100d.zip'
     if should_download:
+        # open the progress dialogue
+        logging.info("Started Downloading Word Embeddings")
         if progress_bar is None:
             logging.error("Progress bar is None")
             return
-
-        # open the progress dialogue
-        logging.info("Started Downloading Word Embeddings")
 
         # function to update the progress bar
         def progressBarSignal(current, total, width):
             progress_bar.setValue(current)
             progress_bar.setMaximum(total)
 
-        # Download the actual files
-        logging.info("Started Downloading")
-
         # Download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
         # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
         url = "http://hunterprice.org/files/" + zip_file
         wget.download(url, out=path, bar=progressBarSignal)
-        logging.info("Finished downloading")
+        logging.info("Finished downloading!")
 
     # uncompress the files
     logging.info("Started unzipping")
@@ -384,7 +389,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
         os.remove(os.path.join(path, zip_file))
         logging.info("Deleted zip file")
     except:
-        logging.warning("Error while removing leftover ZIP file")
+        logging.warning("Failed to remove leftover ZIP file")
 
     # fill the dictionary with the word embeddings
     model = fillModel(path)
@@ -401,6 +406,7 @@ def fillModel(path):
     :param path: path to the word embedding files
     :return: Returns a dictionary of word vectors
     """
+    logging.debug("Start fill model - reading dictionaries")
     path = os.path.join(path, "glove.6B.100d")
     path_vocab = path + '.vocab'
     path_npy = path + '.npy'

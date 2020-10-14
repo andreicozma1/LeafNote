@@ -26,15 +26,20 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         super(Document, self).__init__("")
-        logging.info("")
+        logging.debug("")
         self.doc_props = doc_props
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
         if app.settings.contains("dictionaryPath"):
-            model = DocumentSummarizer.fillModel(app.settings.value("dictionaryPath"))
+            path = app.settings.value("dictionaryPath")
+            logging.debug("Saved dictionary path: " + path)
+            model = DocumentSummarizer.fillModel(path)
             if model is not None:
                 self.summarizer = Summarizer(model)
+                logging.info("Saved dictionary path VALID! Successfully created Summarizer!")
+            else:
+                logging.warning("Saved dictionary path INVALID! Summarizer NOT initialized.")
 
         self.textColor = "black"
 
@@ -56,6 +61,7 @@ class Document(QTextEdit):
         :return: Returns nothing
         """
         # create v box to hold h box and stretch
+        logging.debug("")
         self.layout_main = QVBoxLayout(self)
         self.layout_main.setContentsMargins(0, 0, 0, 0)
 
@@ -75,7 +81,7 @@ class Document(QTextEdit):
         :param state: boolean - format true or false
         :return: returns nothing
         """
-        logging.info(str(state))
+        logging.debug(str(state))
         self.setFontItalic(state)
 
     def onFontBoldChanged(self, state):
@@ -84,7 +90,7 @@ class Document(QTextEdit):
         :param state: boolean - format true or false
         :return: returns nothing
         """
-        logging.info(str(QFont.Bold if state else QFont.Normal))
+        logging.debug(str(QFont.Bold if state else QFont.Normal))
         self.setFontWeight(QFont.Bold if state else QFont.Normal)
 
     def onFontUnderChanged(self, state):
@@ -93,7 +99,7 @@ class Document(QTextEdit):
         :param state: boolean - format true or false
         :return: returns nothing
         """
-        logging.info(str(state))
+        logging.debug(str(state))
         self.setFontUnderline(state)
 
     def onFontStrikeChanged(self, state):
@@ -102,7 +108,7 @@ class Document(QTextEdit):
         :param state: boolean - format true or false
         :return: returns nothing
         """
-        logging.info(str(state))
+        logging.debug(str(state))
         font_format = self.currentCharFormat()
         font_format.setFontStrikeOut(state)
         self.setCurrentCharFormat(font_format)
@@ -112,7 +118,7 @@ class Document(QTextEdit):
         Sets the font to the new font
         :return: returns nothing
         """
-        logging.info(state)
+        logging.debug(state)
         self.setCurrentFont(state)
 
     def onFontSizeChanged(self, state):
@@ -120,7 +126,7 @@ class Document(QTextEdit):
         Sets the current sets the font size from the ComboBox
         :return: returns nothing
         """
-        logging.info(state)
+        logging.debug(state)
         self.setFontPointSize(int(state))
 
     def onTextAlignmentChanged(self, state):
@@ -128,7 +134,7 @@ class Document(QTextEdit):
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.info(list(self.doc_props.dict_align.keys())[state])
+        logging.debug(list(self.doc_props.dict_align.keys())[state])
         self.setAlignment(list(self.doc_props.dict_align.values())[state])
         self.currentCharFormatChanged.emit(self.currentCharFormat())
 
@@ -137,6 +143,7 @@ class Document(QTextEdit):
         Opens the color widget and checks for a valid color then sets document font color
         :return: returns nothing
         """
+        logging.debug("")
         color = QColorDialog.getColor()
 
         if color.isValid():
@@ -148,7 +155,7 @@ class Document(QTextEdit):
         :param index: the location of color in the color_dict
         :return: returns nothing
         """
-        logging.info(index)
+        logging.debug(index)
         color_list: list = list(self.doc_props.color_dict.values())
         self.setTextColor(QColor(color_list[index]))
 
@@ -158,7 +165,7 @@ class Document(QTextEdit):
         :param color: color the background will be set to
         :return: returns nothing
         """
-        logging.info(color)
+        logging.debug(color)
         palette = self.palette()
         # Set color for window focused
         palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
@@ -174,7 +181,7 @@ class Document(QTextEdit):
         :param color: color the text box will be set to
         :return: return nothing
         """
-        logging.info(color)
+        logging.debug(color)
         palette = self.palette()
         palette.setColor(QPalette.Text, QColor(color))
         self.setPalette(palette)
@@ -190,7 +197,7 @@ class Document(QTextEdit):
         Clears formatting on text
         :return: returns nothing
         """
-        logging.info("")
+        logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
         cursor.setCharFormat(QtGui.QTextCharFormat())

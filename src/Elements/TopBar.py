@@ -40,9 +40,6 @@ class TopBar(QWidget):
         self.combo_text_align = None
         self.dict_text_align = None
 
-        if self.document is not None:
-            self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-            self.document.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
     def makeMainLayout(self):
         """
