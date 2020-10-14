@@ -54,6 +54,8 @@ class App(QMainWindow):
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
+        self.setCentralWidget(self.layout)
+        # self.show()
 
         # Create Document
         self.document = Document(self, self.doc_props)
@@ -143,8 +145,9 @@ class App(QMainWindow):
             if not self.app_props.resizable:
                 self.setFixedSize(self.size())
 
-        self.setCentralWidget(self.layout)
         self.show()
+
+
 
     def updateFormatBtnsState(self, state: bool):
         """
