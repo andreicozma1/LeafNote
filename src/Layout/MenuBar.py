@@ -115,6 +115,10 @@ class MenuBar(QMenuBar):
             logging.info("")
             self.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
 
+        def onFindAndReplaceBtn():
+            logging.info("")
+            self.replace = Search.FindAndReplace(self.doc)
+
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
             edit_action = QAction(name, app)
@@ -134,6 +138,7 @@ class MenuBar(QMenuBar):
         self.menu_edit.addSeparator()
         self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+        self.menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
 
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
