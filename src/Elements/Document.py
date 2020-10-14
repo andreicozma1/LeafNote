@@ -205,4 +205,4 @@ class Document(QTextEdit):
         logging.info(state)
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.list_title[state])
+        cursor.setCharFormat(self.doc_props.dict_title_style[state])

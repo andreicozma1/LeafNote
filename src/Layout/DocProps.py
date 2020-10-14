@@ -69,11 +69,11 @@ class DocProps():
         heading4.setFontPointSize(12)
         heading4.setForeground(QColor('darkgray'))
 
-        self.list_title = {}
-        self.list_title["Normal text"] = normal
-        self.list_title["Title"] = title
-        self.list_title["Subtitle"] = subtitle
-        self.list_title["Header 1"] = heading1
-        self.list_title["Header 2"] = heading2
-        self.list_title["Header 3"] = heading3
-        self.list_title["Header 4"] = heading4
+        self.dict_title_style = {}
+        self.dict_title_style["Normal text"] = normal
+        self.dict_title_style["Title"] = title
+        self.dict_title_style["Subtitle"] = subtitle
+        self.dict_title_style["Header 1"] = heading1
+        self.dict_title_style["Header 2"] = heading2
+        self.dict_title_style["Header 3"] = heading3
+        self.dict_title_style["Header 4"] = heading4

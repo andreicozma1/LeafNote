@@ -28,9 +28,10 @@ class TopBar(QWidget):
         self.path_res = path_res
         self.document = document
 
+        self.combo_title_style = None
+        self.dict_title_style = None
         self.combo_font_style = None
         self.combo_font_size = None
-        self.list_title = None
         self.list_font_size = None
         self.button_bold = None
         self.button_ital = None
@@ -58,17 +59,14 @@ class TopBar(QWidget):
 
         return horizontal_layout
 
-    def makeTitleStyleBox(self, list_title: list) -> QComboBox:
-        # ComboBox for font sizes
+    def makeTitleStyleBox(self, dict_title_style: list) -> QComboBox:
+        # ComboBox for title style
         self.combo_title_style = QComboBox(self)
-        self.list_title = list_title
-        self.combo_title_style.setToolTip('Various Title options')
-        self.combo_title_style.addItems(self.list_title)
-        self.combo_title_style.setFixedWidth(100)
+        self.dict_title_style = dict_title_style
+        self.combo_title_style.setToolTip('Styles')
+        self.combo_title_style.addItems(self.dict_title_style)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
-        # self.combo_title_style.setCurrentIndex(self.list_title.index)
-        # self.combo_title_style.setCurrentFont(self.document.currentFont())
         return self.combo_title_style
 
     def makeComboFontStyleBox(self) -> QFontComboBox:
@@ -232,6 +230,9 @@ class TopBar(QWidget):
         for a in self.children():
             if not a.property("persistent"):
                 a.blockSignals(True)
+
+        #TODO: check if self.list_title is not none then set qcombobox to current cursor selection
+
         # Update the font style displayed
         if self.combo_font_style is not None:
             self.combo_font_style.setCurrentFont(self.document.currentFont())
