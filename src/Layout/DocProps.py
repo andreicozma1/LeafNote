@@ -1,6 +1,7 @@
 import logging
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCharFormat, QColor
 
 """
 holds the class with the document properties
@@ -43,4 +44,41 @@ class DocProps():
             'Right': Qt.AlignRight,
             'Center': Qt.AlignCenter,
             'Justify': Qt.AlignJustify
+        }
+
+        # code works with makeTitleStyleBox in TopBar.py
+
+        # Default style for normal text
+        normal = QTextCharFormat()
+
+        # Default style for title
+        title = QTextCharFormat()
+        title.setFontPointSize(26)
+        # Default style for subtitle
+        subtitle = QTextCharFormat()
+        subtitle.setFontPointSize(15)
+        subtitle.setForeground(QColor('darkgray'))
+        # Default style for heading 1
+        heading1 = QTextCharFormat()
+        heading1.setFontPointSize(20)
+        # Default style for heading 2
+        heading2 = QTextCharFormat()
+        heading2.setFontPointSize(16)
+        # Default style for heading 3
+        heading3 = QTextCharFormat()
+        heading3.setFontPointSize(14)
+        heading3.setForeground(QColor('gray'))
+        # Default style for heading 4
+        heading4 = QTextCharFormat()
+        heading4.setFontPointSize(12)
+        heading4.setForeground(QColor('darkgray'))
+        # creates dictionary to set the text format to the selected title style in the QComboBox
+        self.dict_title_style = {
+            "Normal Text": normal,
+            "Title": title,
+            "Subtitle": subtitle,
+            "Header 1": heading1,
+            "Header 2": heading2,
+            "Header 3": heading3,
+            "Header 4": heading4,
         }

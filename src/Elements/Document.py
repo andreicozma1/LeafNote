@@ -2,7 +2,7 @@ import logging
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
 from Elements.Search import SearchFile
@@ -203,3 +203,14 @@ class Document(QTextEdit):
         cursor.setCharFormat(QtGui.QTextCharFormat())
         cursor.clearSelection()
         self.setTextCursor(cursor)
+
+    def onTitleStyleChanged(self, state):
+        """
+        Sets the font to the new font
+        :return: returns nothing
+        """
+        logging.info(state)
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+        cursor.setCharFormat(self.doc_props.dict_title_style[state])
+        self.setCurrentCharFormat(self.doc_props.dict_title_style[state])
