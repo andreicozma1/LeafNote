@@ -3,7 +3,7 @@ from functools import partial
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
-    QMessageBox
+    QMessageBox, QComboBox, QDateTimeEdit
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 import os
 import Utils.DocumentSummarizer as DocumentSummarizer
@@ -279,12 +279,13 @@ class MenuBar(QMenuBar):
             self.description.setPlaceholderText("Description")
             #self.l1.addWidget(self.description)
             # ------------------------------#
-            temp = os.path.join("resources", "calendar.ico")
+            temp = os.path.join("res", "calendar.ico")
             self.button = QPushButton("Select a due date", self)
             self.button.setIcon(QIcon(temp))
             self.button.clicked.connect(partial(self.showCalendar, app))
             # self.l1.addWidget(self.button)
-            # #------------------------------#
+            #------------------------------#
+            self.hour_cb = QTimeEdit()
             # self.button_t = QPushButton("Select a due date time", self)
             # self.button_t.clicked.connect(self.showTime)
             # self.l1.addWidget(self.button_t)
@@ -302,10 +303,13 @@ class MenuBar(QMenuBar):
             self.dialog.addWidget(self.title)
             self.dialog.addWidget(self.description)
             self.dialog.addWidget(self.button)
+            self.dialog.addWidget(self.hour_cb)
             self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
             self.dialog.addButtonBox(self.button_box)
             if self.dialog.exec():
-                print("Clicked Ok")
+                print(self.hour_cb.text())
+                print(self.title.text())
+                print(self.description.text())
             else:
                 print("Clicked cancel")
 
@@ -319,7 +323,7 @@ class MenuBar(QMenuBar):
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
         self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        self.menu_tools.addAction(makeToolsAction("Assignment Due Dates", "", dueDateSelection))
+        self.menu_tools.addAction(makeToolsAction("Reminders", "", dueDateSelection))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 
         # ========= END TOOLS MENU SECTION =========
@@ -392,6 +396,7 @@ class MenuBar(QMenuBar):
         :return: New date selected on the calendar
         """
         self.ca = cal.selectedDate().toString()
+        self.button.setText(self.ca)
         print(self.ca)
         print(self.ca[4:7])
         print(self.ca[8:10])
