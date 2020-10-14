@@ -1,12 +1,12 @@
 import logging
 
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QAction, QMenuBar, QActionGroup, QMenu
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Document
+from Elements import Search, Document, Calculator
 from Layout import DocProps
+from Utils import Encryptor
 
 """
 all properties and functionalities of the menu bar
@@ -14,10 +14,6 @@ all properties and functionalities of the menu bar
 
 
 class MenuBar(QMenuBar):
-    """
-    Class to hold and customize a QPlainTextEdit Widget
-    """
-
     def __init__(self, document: Document, doc_props: DocProps):
         """
         Sets up the System MenuBar
@@ -46,17 +42,15 @@ class MenuBar(QMenuBar):
 
         def onOpenBtn():
             logging.info("onOpenBtn")
-            # this is opens the file dialogue in the project path
-            home_dir = str(QDir.currentPath())
             # opens a file dialogue for the user to select a file to open
-            file_name = QFileDialog.getOpenFileName(app, 'Open file', home_dir)
+            file_name = QFileDialog.getOpenFileName(app, 'Open file', app.left_menu.model.rootPath())
             # open the chosen file and show the text in the text editor
             file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("onOpenFolderBtn")
             # opens a file dialogue for the user to select a file to open
-            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', str(QDir.currentPath()))
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', app.left_menu.model.rootPath())
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
@@ -77,7 +71,7 @@ class MenuBar(QMenuBar):
 
         def onExitBtn():
             logging.info("onExitBtn")
-            file_manager.closeAll(self.document)
+            file_manager.closeAll(self.doc)
             app.close()
 
         self.menu_file = self.addMenu('&File')
@@ -92,26 +86,36 @@ class MenuBar(QMenuBar):
         new_file_act = QAction("&New...", app)
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
-        self.menu_file.addAction(makeFileAction("New", "", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open", "", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Folder", "", onOpenFolderBtn))
+
+        self.menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
+        self.menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
+        self.menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save...", "", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save As...", "", onSaveAsBtn))
+        self.menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
+        self.menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
+
         self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Exit", "", onExitBtn))
+        self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
         # ========= END FILE MENU SECTION =========
 
         return self.menu_file
 
     # =====================================================================================
-    def makeEditMenu(self, app):
+    def makeEditMenu(self, app, file_manager):
         """
         Create Edit Menu
         :return: the menu created
         """
         logging.info("makeEditMenu")
         self.menu_edit = self.addMenu('&Edit')
+
+        def onFindBtn():
+            logging.info(not self.doc.search.isVisible())
+            self.doc.search.setVisible(not self.doc.search.isVisible())
+
+        def onFindAllBtn():
+            logging.info("")
+            self.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -129,6 +133,10 @@ class MenuBar(QMenuBar):
         self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
         self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
         self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        self.menu_edit.addSeparator()
+        self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
+        self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
 
@@ -241,7 +249,17 @@ class MenuBar(QMenuBar):
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
-            DocumentSummarizer.onSummaryAction(app, document)
+            logging.info("Generating Summary")
+            if document.summarizer is None:
+                DocumentSummarizer.onSummaryAction(app, document)
+            if document.summarizer is not None:
+                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+
+        def onEncryptionAction():
+            Encryptor.onEncryptionAction(app, app.file_manager)
+
+        def onCalculatorAction():
+            self.calculator = Calculator.Calculator()
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
@@ -250,6 +268,8 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
+        self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 
         # ========= END TOOLS MENU SECTION =========
 

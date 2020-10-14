@@ -1,8 +1,13 @@
 import logging
 
 from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
-from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
+
+from Elements.Search import SearchFile
+from Utils import DocumentSummarizer
+from Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types
@@ -15,7 +20,7 @@ class Document(QTextEdit):
     where the text is input and displayed
     """
 
-    def __init__(self, doc_props, default_text: str = ""):
+    def __init__(self, app, doc_props, default_text: str = ""):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -23,16 +28,46 @@ class Document(QTextEdit):
         super(Document, self).__init__("")
         logging.info("")
         self.doc_props = doc_props
+
+        # If the dictionaries have been downloaded previously, check persistent settings
+        self.summarizer = None
+        if app.settings.contains("dictionaryPath"):
+            model = DocumentSummarizer.fillModel(app.settings.value("dictionaryPath"))
+            if model is not None:
+                self.summarizer = Summarizer(model)
+
         self.textColor = "black"
 
         if default_text is None:
             default_text = "You can type here."
+
+        self.search = SearchFile(app.app_props.path_res, self)
 
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+        self.initLayout()
+
+    def initLayout(self):
+        """
+        Initializes the layout of document.
+        :return: Returns nothing
+        """
+        # create v box to hold h box and stretch
+        self.layout_main = QVBoxLayout(self)
+        self.layout_main.setContentsMargins(0, 0, 0, 0)
+
+        # creat h box to hold stretch and search
+        self.hbox = QHBoxLayout()
+        self.hbox.setContentsMargins(0, 0, 0, 0)
+        self.hbox.setAlignment(Qt.AlignRight)
+        self.hbox.addWidget(self.search)
+
+        # add the hbox and stretch to align search to top right of screen
+        self.layout_main.addLayout(self.hbox)
+        self.layout_main.addStretch()
 
     def onFontItalChanged(self, state):
         """

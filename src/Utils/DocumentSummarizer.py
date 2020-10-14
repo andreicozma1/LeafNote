@@ -4,7 +4,6 @@ import glob
 import logging
 import os
 import zipfile
-from os.path import expanduser
 
 import networkx as nx
 import nltk
@@ -53,6 +52,7 @@ class Summarizer:
         This will take in text and the size of a summary and generate a summary of the text.
         :param text: text from a document.
         :param summary_size: the number of sentences in the summary
+        :return: Returns a string of the summary
         """
         logging.info("Starting to generate summary")
 
@@ -64,7 +64,7 @@ class Summarizer:
         # do nothing if there are not words passed
         if not sentences:
             logging.warning("Document has no text")
-            return ""
+            return "No summary available"
 
         # clean the data of unnecessary values
         clean_sentences = self.cleanSentences(sentences)
@@ -203,7 +203,7 @@ def onSummaryAction(app, document):
         dependencyDialogHandler(app, button, document)
 
     # if summarizer has not been created create it
-    if app.summarizer is None:
+    if document.summarizer is None:
         logging.info("Doc Summarizer not initialized. Prompting user for dependency download")
         # prompt the user to select or Download the word word_embeddings
         download_dialog = DialogBuilder(app, "Dictionaries",
@@ -215,7 +215,7 @@ def onSummaryAction(app, document):
         download_dialog.exec()
     # if there is already an instance of the summarizer
     else:
-        logging.info(app.summarizer.summarize(document.toPlainText()))
+        return document.summarizer.summarize(document.toPlainText())
 
 
 def dependencyDialogHandler(app, button, document=None):
@@ -224,7 +224,7 @@ def dependencyDialogHandler(app, button, document=None):
     :param app: an application reference
     :param button: the button the user selected
     :document: a reference to the document
-    :return:
+    :return: returns summary
     """
     logging.info("User selected " + button.text())
 
@@ -233,7 +233,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_existing = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                     expanduser("~"),
+                                                     app.left_menu.model.rootPath(),
                                                      QFileDialog.ShowDirsOnly
                                                      | QFileDialog.DontResolveSymlinks)
     if path_existing == "":
@@ -241,6 +241,7 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     path_new = os.path.join(path_existing, 'WordEmbeddings')
+    app.settings.setValue("dictionaryPath", path_new)
 
     def files_exist(path1: str, path2: str):
         if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
@@ -293,9 +294,9 @@ def dependencyDialogHandler(app, button, document=None):
         # fill the dictionary with the word embeddings
         model = fillModel(existing_path)
         # create an instance of the summarizer and give it to the application
-        app.summarizer = Summarizer(model)
+        document.summarizer = Summarizer(model)
         if document is not None:
-            app.summarizer.summarize(document.toPlainText())
+            app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
 
 
 def ensureDirectory(app, path: str):
@@ -390,10 +391,10 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
     # fill the dictionary with the word embeddings
     model = fillModel(path)
     # create an instance of the summarizer and give it to the application
-    app.summarizer = Summarizer(model)
+    document.summarizer = Summarizer(model)
     # if text was passed in then also perform summary
     if document is not None:
-        app.summarizer.summarize(document.toPlainText())
+        document.summarizer.summarize(document.toPlainText())
 
 
 def fillModel(path):

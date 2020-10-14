@@ -1,11 +1,11 @@
 import logging
+import os
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QWidget, QVBoxLayout
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
+from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
 from Elements.BottomBar import BottomBar
-from Elements.ColorWidget import Color
 from Elements.ContextMenu import ContextMenu
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
@@ -42,35 +42,39 @@ class App(QMainWindow):
         """
         super(QMainWindow, self).__init__()
         logging.info("Constructor")
+
         # Initialize properties.
-        self.app_props = AppProps()
+        path_res = os.path.dirname(os.path.abspath(__file__))
+        self.app_props = AppProps(path_res)
         self.layout_props = LayoutProps()
         self.doc_props = DocProps()
+        self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
-        self.summarizer = None
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
 
         # Create Document
-        self.document = Document(self.doc_props)
+        self.document = Document(self, self.doc_props)
 
         # Create TopBar, depends on Document
-        self.top_bar = TopBar(self.document)
+        self.top_bar = TopBar(self.app_props.path_res, self.document)
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.setupTopBar()
         layout_main.addWidget(self.top_bar)
 
         # Create Main Workspace
-        self.left_menu = DirectoryViewer(self.document, self.file_manager)
+        last_path = self.settings.value("workspacePath")
+        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
-        self.right_menu = ContextMenu()
-        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document, self.right_menu)
+        self.right_menu = ContextMenu(self, self.document)
+        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
+                                                              self.right_menu)
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
-        self.bottom_bar = BottomBar(self.document)
+        self.bottom_bar = BottomBar(self.app_props.path_res, self.document)
         self.setupBottomBar()
         layout_main.addWidget(self.bottom_bar)
 
@@ -106,7 +110,7 @@ class App(QMainWindow):
 
     def setupMenuBar(self):
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
-        self.menu_bar.makeEditMenu(self)
+        self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
@@ -119,12 +123,21 @@ class App(QMainWindow):
         """
         logging.info("Setting up Main Window")
         self.setWindowTitle(self.app_props.title)
-        self.setGeometry(self.app_props.left, self.app_props.top, self.app_props.width, self.app_props.height)
-        self.setMinimumWidth(int(self.app_props.min_width * QDesktopWidget().availableGeometry().width()))
-        self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
-        if not self.app_props.resizable:
+        if self.settings.contains("windowSize"):
+            self.resize(self.settings.value("windowSize"))
+        else:
+            self.setGeometry(0, 0, self.app_props.default_width, self.app_props.default_height)
+        if self.settings.contains("windowGeometry"):
+            self.setGeometry(self.settings.value("windowGeometry"))
+        else:
+            self.centerWindow(self.frameGeometry())  # Must be called after setting geometry
+
+        self.setMinimumWidth(int(self.top_bar.width()))
+
+        if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
             logging.debug("Window is not resizable")
-            self.setFixedSize(self.app_props.width, self.app_props.height)
+            if not self.app_props.resizable:
+                self.setFixedSize(self.size())
 
         self.setCentralWidget(self.layout)
         self.show()
@@ -186,19 +199,47 @@ class App(QMainWindow):
         :param event: item that will be resized
         :return: returns nothing
         """
-        self.left_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.left_menu.setMinimumWidth(
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
-        self.right_menu.setMinimumWidth(int(self.width() * self.layout_props.min_menu_width * (self.app_props.width / self.width())))
+        self.right_menu.setMinimumWidth(
+            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
         return super(QMainWindow, self).resizeEvent(event)
 
+    def closeEvent(self, event):
+        logging.info("User triggered close event")
+        self.settings.setValue("windowSize", self.size())
+        self.settings.setValue("windowGeometry", self.geometry())
+
+        path_workspace = self.left_menu.model.rootPath()
+        self.settings.setValue("workspacePath", path_workspace)
+
+        path_key = os.path.join(path_workspace, '.leafCryptoKey')
+        if self.file_manager.encryptor is not None and not os.path.exists(path_key):
+            dialog_encryptor = DialogBuilder(self, "Crypto - WARNING",
+                                             "WARNING!! Crypto Key missing!\n"
+                                             "Would you like to decrypt workspace before exiting?",
+                                             "If you don't decrypt your workspace before exiting you will lose access to your files permanently.")
+            buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            dialog_encryptor.addButtonBox(buttons)
+            if dialog_encryptor.exec():
+                logging.info("START DECRYPT WORKSPACE: " + path_workspace)
+                for dirpath, dirnames, filenames in os.walk(path_workspace):
+                    for filename in [f for f in filenames if not f.startswith(".")]:
+                        path = os.path.join(dirpath, filename)
+                        self.file_manager.encryptor.decryptFile(path)
+                        logging.info(" - Decrypted: " + path)
+                logging.info("END DECRYPT WORKSPACE: " + path_workspace)
+
+
 def main():
     logging.info("Starting application")
-    appctxt = ApplicationContext()
+    app = QApplication([])
     App()
-    sys.exit(appctxt.app.exec_())
+    sys.exit(app.exec_())
 
 
 # Starting point of the program

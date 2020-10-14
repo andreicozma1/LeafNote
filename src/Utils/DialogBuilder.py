@@ -50,7 +50,8 @@ class DialogBuilder(QDialog):
     def addProgressBar(self, min_max_range: tuple = (0, 0), initial_value: int = 0,
                        text_format: str = None, orientation=None, text_direction=None):
 
-        logging.info("min="+str(min_max_range[0])+";max="+str(min_max_range[1]) + ";initial_value="+str(initial_value))
+        logging.info(
+            "min=" + str(min_max_range[0]) + ";max=" + str(min_max_range[1]) + ";initial_value=" + str(initial_value))
 
         # create the progress_bar and set its properties
         progress_bar = QProgressBar()

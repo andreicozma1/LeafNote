@@ -1,4 +1,4 @@
-![Sample app icon](linux/128.png)
+![Sample app icon](128.png)
 
 This directory contains the icons that are displayed for your app. Feel free to
 change them.
