@@ -115,23 +115,19 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
-
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
-
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
                     document.resetFormatting()
                 state = (self.current_document.suffix() == 'lef')
-                self.app.right_menu.updateDetails(self.current_document)
-
-
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
                 document.setText("")
                 document.resetFormatting()
                 state = False
-                self.app.right_menu.updateDetails(self.current_document)
+
+            self.app.right_menu.updateDetails(self.current_document)
         # if it does not exist print error messages
         else:
             if path == '':

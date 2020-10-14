@@ -397,7 +397,7 @@ def initializeSummarizer(path, app, document, update_right_menu=False):
         if document is not None:
             document.summarizer = Summarizer(model)
             if update_right_menu:
-                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+                app.right_menu.updateSummary()
         else:
             logging.warning("Document is None - Not initializing Summarizer!")
     else:
