@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel
 class FindAndReplace(QWidget):
     def __init__(self, document):
         """
-        Initalize the widget
+        Initialize the widget
         """
         logging.info("")
         super(FindAndReplace, self).__init__()

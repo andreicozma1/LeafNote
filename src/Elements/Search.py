@@ -104,8 +104,9 @@ class SearchFile(QWidget):
         self.horizontal_layout.addWidget(self.line)
 
         # add the find replace menu
-        self.elipses = createSearchBtn("", "Find and replace", self.onFindAndReplace, False)
-        self.elipses.setIcon(QIcon(QPixmap(os.path.join(self.path_res, "ellipses.ico")).transformed(QTransform().scale(0.1, 0.1))))
+        self.elipses = createSearchBtn("o\no\no", "Find and replace", self.onFindAndReplace, False)
+        self.elipses.setStyleSheet("font-size: 5px; font-weight: bolder; fill: rgb(0,0,0)")
+        # self.elipses.setIcon(QIcon(QPixmap(os.path.join(self.path_res, "ellipses.ico")).transformed(QTransform().scale(0.1, 0.1))))
         self.horizontal_layout.addWidget(self.elipses)
 
         # exit find button
