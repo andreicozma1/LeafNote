@@ -213,7 +213,6 @@ class TopBar(QWidget):
         # Block signals
         a: QWidget
         for a in self.children():
-            print(a.toolTip())
             if not a.property("persistent"):
                 a.blockSignals(True)
         # Update the font style displayed
