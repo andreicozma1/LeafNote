@@ -4,7 +4,7 @@ from functools import partial
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QFileInfo
-from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform
+from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea, QCheckBox
 
 from Elements.Replace import FindAndReplace
@@ -105,7 +105,7 @@ class SearchFile(QWidget):
 
         # add the find replace menu
         self.elipses = createSearchBtn("o\no\no", "Find and replace", self.onFindAndReplace, False)
-        self.elipses.setStyleSheet("font-size: 5px; font-weight: bolder; fill: rgb(0,0,0)")
+        self.elipses.setFont(QFont("Default", 4, QFont.Black))
         # self.elipses.setIcon(QIcon(QPixmap(os.path.join(self.path_res, "ellipses.ico")).transformed(QTransform().scale(0.1, 0.1))))
         self.horizontal_layout.addWidget(self.elipses)
 
