@@ -11,10 +11,18 @@ from Elements import Search, Document, Calculator
 from Layout import DocProps
 from Utils import Encryptor
 from Utils.DialogBuilder import DialogBuilder
+from time import time
 
 """
 all properties and functionalities of the menu bar
 """
+class Reminders():
+    def __init__(self, key, date, time, title, description):
+        self.key = key
+        self.date = date
+        self.time = time
+        self.title = title
+        self.description = description
 
 class MenuBar(QMenuBar):
     def __init__(self, document: Document, doc_props: DocProps):
@@ -27,6 +35,7 @@ class MenuBar(QMenuBar):
         self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
+        self.rem_list = list()
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -307,11 +316,19 @@ class MenuBar(QMenuBar):
             self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
             self.dialog.addButtonBox(self.button_box)
             if self.dialog.exec():
-                print(self.hour_cb.text())
-                print(self.title.text())
-                print(self.description.text())
+                if self.title.text():
+                    print(self.hour_cb.text())
+                    print(self.title.text())
+                    print(self.description.text())
+                    milliseconds = int(time() * 1000)
+                    self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
+                    self.rem_list.append(self.reminder_node)
             else:
                 print("Clicked cancel")
+
+            print("Printing Class")
+            print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time, self.reminder_node.title, self.reminder_node.description)
+
 
 
 
@@ -405,40 +422,41 @@ class MenuBar(QMenuBar):
         else:
             print(self.ca[11:15])
         dialog.close()
+        return self.ca
 
 
-    def doneB(self):
-
-        if self.assignment_global_trigger == 0:
-            if self.global_trigger == 0:
-                print("t")
-                # self.message_box = QMessageBox()
-                # self.message_box.setWindowTitle("Add Reminder-Warning!")
-                # self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
-                # self.message_box.setStandardButtons(QMessageBox.Ok)
-                # self.message_box.exec()
-        else:
-            title_textbox_val = self.title.text()
-            class_textbox_val = self.clas.text()
-            #TODO time
-            print(title_textbox_val)
-            print(class_textbox_val)
-            print(self.ca)
-            self.title.setText("")
-            self.clas.setText("")
-            self.global_trigger = 1
-
-    def Close(self):
-        if self.global_trigger == 0:
-            self.message_box = QMessageBox()
-            self.message_box.setWindowTitle("Done-Warning!")
-            self.message_box.setText("Are you sure you want to quit without adding any assignments?")
-            self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
-            return_value = self.message_box.exec()
-            if return_value == QMessageBox.Yes:
-                self.pop.close()
-        else:
-            self.pop.close()
+    # def doneB(self):
+    #
+    #     if self.assignment_global_trigger == 0:
+    #         if self.global_trigger == 0:
+    #             print("t")
+    #             # self.message_box = QMessageBox()
+    #             # self.message_box.setWindowTitle("Add Reminder-Warning!")
+    #             # self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
+    #             # self.message_box.setStandardButtons(QMessageBox.Ok)
+    #             # self.message_box.exec()
+    #     else:
+    #         title_textbox_val = self.title.text()
+    #         class_textbox_val = self.clas.text()
+    #         #TODO time
+    #         print(title_textbox_val)
+    #         print(class_textbox_val)
+    #         print(self.ca)
+    #         self.title.setText("")
+    #         self.clas.setText("")
+    #         self.global_trigger = 1
+    #
+    # def Close(self):
+    #     if self.global_trigger == 0:
+    #         self.message_box = QMessageBox()
+    #         self.message_box.setWindowTitle("Done-Warning!")
+    #         self.message_box.setText("Are you sure you want to quit without adding any assignments?")
+    #         self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+    #         return_value = self.message_box.exec()
+    #         if return_value == QMessageBox.Yes:
+    #             self.pop.close()
+    #     else:
+    #         self.pop.close()
 
 
 
