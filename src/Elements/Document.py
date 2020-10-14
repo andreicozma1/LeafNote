@@ -206,3 +206,4 @@ class Document(QTextEdit):
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         cursor.setCharFormat(self.doc_props.dict_title_style[state])
+        self.setCurrentCharFormat(self.doc_props.dict_title_style[state])
