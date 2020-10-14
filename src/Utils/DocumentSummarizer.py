@@ -278,8 +278,8 @@ def dependencyDialogHandler(app, button, document=None):
                 return
             should_download = True
             # create loading bar dialog and start the download thread
-            progress_bar_dialog = DialogBuilder(app, "Downloading",
-                                                "Downloading Necessary Files...",
+            progress_bar_dialog = DialogBuilder(app, "Download Progress",
+                                                "Downloading Dictionaries...",
                                                 "Please do not close this window")
             progress_bar = progress_bar_dialog.addProgressBar((0, 100))
             progress_bar_dialog.open()
