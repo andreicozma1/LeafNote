@@ -33,13 +33,7 @@ class Document(QTextEdit):
         self.summarizer = None
         if app.settings.contains("dictionaryPath"):
             path = app.settings.value("dictionaryPath")
-            logging.debug("Saved dictionary path: " + path)
-            model = DocumentSummarizer.createModel(path)
-            if model is not None:
-                self.summarizer = Summarizer(model)
-                logging.info("Saved dictionary path VALID! Successfully created Summarizer!")
-            else:
-                logging.warning("Saved dictionary path INVALID! Summarizer NOT initialized.")
+            DocumentSummarizer.initializeSummarizer(path, app, self)
 
         self.textColor = "black"
 
