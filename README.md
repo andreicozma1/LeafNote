@@ -10,7 +10,7 @@ cd 0x432d2d
 ```
 
 ## Install Dependencies
-Recommended: Use the *setup.sh* script (Linux and macOS only)!   
+-  Recommended: Use the *setup.sh* script (Linux and macOS only)!   
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
