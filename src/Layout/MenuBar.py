@@ -36,6 +36,8 @@ class MenuBar(QMenuBar):
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
         self.rem_list = list()
+        self.trigger = 0
+        self.reminder_node = Reminders(None,None,None,None,None)
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -317,20 +319,27 @@ class MenuBar(QMenuBar):
             self.dialog.addButtonBox(self.button_box)
             if self.dialog.exec():
                 if self.title.text():
-                    print(self.hour_cb.text())
-                    print(self.title.text())
-                    print(self.description.text())
+                    self.trigger = 1
+                    #print(self.hour_cb.text())
+                    #print(self.title.text())
+                    #print(self.description.text())
                     milliseconds = int(time() * 1000)
-                    self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
+                    #self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
+                    self.reminder_node.key = milliseconds
+                    self.reminder_node.date = self.ca
+                    self.reminder_node.time = self.hour_cb.text()
+                    self.reminder_node.title = self.title.text()
+                    self.reminder_node.description = self.description.text()
+                    print("Printing Class")
+                    print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time,
+                          self.reminder_node.title, self.reminder_node.description)
                     self.rem_list.append(self.reminder_node)
             else:
                 print("Clicked cancel")
 
-            print("Printing Class")
-            print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time, self.reminder_node.title, self.reminder_node.description)
 
-
-
+        # print("Printing Class")
+        # print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time, self.reminder_node.title, self.reminder_node.description)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
