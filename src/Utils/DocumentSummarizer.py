@@ -222,87 +222,6 @@ def onSummaryAction(app, document):
         return document.summarizer.summarize(document.toPlainText())
 
 
-def dependencyDialogHandler(app, button, document=None):
-    """
-    This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
-    :param app: an application reference
-    :param button: the button the user selected
-    :document: a reference to the document
-    :return: returns summary
-    """
-    logging.debug("User selected " + button.text())
-
-    # quit if the user selected cancel
-    if button.text() == '&Cancel':
-        return
-
-    path_existing = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                     app.left_menu.model.rootPath(),
-                                                     QFileDialog.ShowDirsOnly
-                                                     | QFileDialog.DontResolveSymlinks)
-    if path_existing == "":
-        logging.info("User Cancelled File Dialog")
-        return
-
-    path_new = os.path.join(path_existing, 'WordEmbeddings')
-    app.settings.setValue("dictionaryPath", path_new)
-
-    def files_exist(path1: str, path2: str):
-        if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path1, 'glove.6B.100d.npy')):
-            return path1
-        elif os.path.exists(os.path.join(path2, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path2, 'glove.6B.100d.npy')):
-            return path2
-        else:
-            return None
-
-    existing_path = files_exist(path_existing, path_new)
-
-    if existing_path is None:
-        zip_file = 'glove.6B.100d.zip'
-
-        # prompt the user that they need to download the dependency files
-        if not os.path.exists(os.path.join(path_new, zip_file)):
-            logging.warning("Missing Files and ZIP. To re-download")
-            if button.text() == "Open":
-                logging.error("Dictionaries not found in directory")
-                download_dialog = DialogBuilder(app, "Error!",
-                                                "Error - Dictionaries not found!",
-                                                "Please select a different path or download them again.")
-                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
-                download_dialog.addButtonBox(button_box)
-                download_dialog.exec()
-                return
-            if not ensureDirectory(app, path_new):
-                return
-            should_download = True
-            # create loading bar dialog and start the download thread
-            progress_bar_dialog = DialogBuilder(app, "Download Progress",
-                                                "Downloading Dictionaries...",
-                                                "Please do not close this window")
-            progress_bar = progress_bar_dialog.addProgressBar((0, 100))
-            progress_bar_dialog.open()
-        else:
-            logging.info("Found ZIP: " + zip_file + ". No need for re-download")
-            should_download = False
-            progress_bar = None
-
-        try:
-            _thread.start_new_thread(getWordEmbeddings,
-                                     (path_new, should_download, progress_bar, document))
-        except:
-            logging.error("Unable to start thread")
-    else:
-        logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
-        # fill the dictionary with the word embeddings
-        model = fillModel(existing_path)
-        # create an instance of the summarizer and give it to the application
-        document.summarizer = Summarizer(model)
-        if document is not None:
-            app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
-
-
 def ensureDirectory(app, path: str):
     """
     This will ensure that the directory we are saving the embedding files into exists.
@@ -349,7 +268,83 @@ def ensureDirectory(app, path: str):
             return False
 
 
-def getWordEmbeddings(path: str, should_download: bool = True, progress_bar=None, document=None):
+def dependencyDialogHandler(app, button, document=None):
+    """
+    This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
+    :param app: an application reference
+    :param button: the button the user selected
+    :document: a reference to the document
+    :return: returns summary
+    """
+    logging.debug("User selected " + button.text())
+
+    # quit if the user selected cancel
+    if button.text() == '&Cancel':
+        return
+
+    path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
+                                                   app.left_menu.model.rootPath(),
+                                                   QFileDialog.ShowDirsOnly
+                                                   | QFileDialog.DontResolveSymlinks)
+    if path_parent == "":
+        logging.info("User Cancelled File Dialog")
+        return
+
+    path_child = os.path.join(path_parent, 'WordEmbeddings')
+
+    def files_exist(path1: str, path2: str):
+        if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
+                os.path.join(path1, 'glove.6B.100d.npy')):
+            return path1
+        elif os.path.exists(os.path.join(path2, 'glove.6B.100d.vocab')) and os.path.exists(
+                os.path.join(path2, 'glove.6B.100d.npy')):
+            return path2
+        else:
+            return None
+
+    existing_path = files_exist(path_parent, path_child)
+
+    if existing_path is None:
+        zip_file = 'glove.6B.100d.zip'
+
+        # prompt the user that they need to download the dependency files
+        if not os.path.exists(os.path.join(path_child, zip_file)):
+            logging.warning("Missing Files and ZIP. To re-download")
+            if button.text() == "Open":
+                logging.error("Dictionaries not found in directory")
+                download_dialog = DialogBuilder(app, "Error!",
+                                                "Error - Dictionaries not found!",
+                                                "Please select a different path or download them again.")
+                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+                download_dialog.addButtonBox(button_box)
+                download_dialog.exec()
+                return
+            if not ensureDirectory(app, path_child):
+                return
+            should_download = True
+            # create loading bar dialog and start the download thread
+            progress_bar_dialog = DialogBuilder(app, "Download Progress",
+                                                "Downloading Dictionaries...",
+                                                "Please do not close this window")
+            progress_bar = progress_bar_dialog.addProgressBar((0, 100))
+            progress_bar_dialog.open()
+        else:
+            logging.info("Found ZIP: " + zip_file + ". No need for re-download")
+            should_download = False
+            progress_bar = None
+
+        try:
+            _thread.start_new_thread(getWordEmbeddings,
+                                     (app, path_child, should_download, progress_bar, document))
+        except:
+            logging.error("Unable to start thread")
+    else:
+        logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
+        # fill the dictionary with the word embeddings
+        initializeSummarizer(existing_path, app, document, True)
+
+
+def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer
@@ -391,16 +386,25 @@ def getWordEmbeddings(path: str, should_download: bool = True, progress_bar=None
     except:
         logging.warning("Failed to remove leftover ZIP file")
 
-    # fill the dictionary with the word embeddings
-    model = fillModel(path)
-    # create an instance of the summarizer and give it to the application
-    document.summarizer = Summarizer(model)
-    # if text was passed in then also perform summary
-    if document is not None:
-        document.summarizer.summarize(document.toPlainText())
+    initializeSummarizer(path, app, document, True)
 
 
-def fillModel(path):
+def initializeSummarizer(path, app, document, update_right_menu=False):
+    model = createModel(path)
+    if model is not None:
+        # create an instance of the summarizer and give it to the application
+        app.settings.setValue("dictionaryPath", path)
+        if document is not None:
+            document.summarizer = Summarizer(model)
+            if update_right_menu:
+                app.right_menu.updateSummary()
+        else:
+            logging.warning("Document is None - Not initializing Summarizer!")
+    else:
+        logging.error("Model ERROR - Failed to initialize Summarizer!")
+
+
+def createModel(path):
     """
     takes the path to the word embedding files and fills a dictionary with the (word: word vector) pairs
     :param path: path to the word embedding files

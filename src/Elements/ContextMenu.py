@@ -97,6 +97,9 @@ class ContextMenu(QWidget):
                 value = "?"
             label.setText(label.property("prop") + ": " + value)
 
+        self.updateSummary()
+
+    def updateSummary(self):
         if self.document.summarizer is not None:
             self.summary.show()
             self.enable_summarizer_btn.hide()
