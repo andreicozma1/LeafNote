@@ -30,8 +30,9 @@ pip3 install -r requirements.txt
 
 ## Run Program Directly
 If you want to run the application directly from the command line, first follow the previous steps then run this command.
+-  Recommended: Use the *run.sh* script (Linux and macOS only)!   
 ```
-Use the run.sh script! (Linux/macOS)
+python3 src/main.py (Linux/macOS)
 python3 src\main.py (Windows)
 ```
 
