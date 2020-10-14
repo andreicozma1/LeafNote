@@ -290,7 +290,7 @@ def dependencyDialogHandler(app, button, document=None):
 
         try:
             _thread.start_new_thread(getWordEmbeddings,
-                                     (app, path_new, should_download, progress_bar, document))
+                                     (path_new, should_download, progress_bar, document))
         except:
             logging.error("Unable to start thread")
     else:
@@ -349,7 +349,7 @@ def ensureDirectory(app, path: str):
             return False
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
+def getWordEmbeddings(path: str, should_download: bool = True, progress_bar=None, document=None):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer
@@ -406,7 +406,7 @@ def fillModel(path):
     :param path: path to the word embedding files
     :return: Returns a dictionary of word vectors
     """
-    logging.debug("")
+    logging.debug("Start fill model - reading dictionaries")
     path = os.path.join(path, "glove.6B.100d")
     path_vocab = path + '.vocab'
     path_npy = path + '.npy'
