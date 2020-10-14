@@ -102,6 +102,8 @@ class App(QMainWindow):
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
         self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
+        self.document.selectionChanged.connect(self.top_bar.updateFormatOnSelectionChange)
+        self.document.currentCharFormatChanged.connect(self.top_bar.updateFormatOnSelectionChange)
         self.top_bar.show()
 
     def setupBottomBar(self):
@@ -114,6 +116,8 @@ class App(QMainWindow):
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
+        self.document.selectionChanged.connect(self.menu_bar.updateFormatOnSelectionChange)
+        self.document.currentCharFormatChanged.connect(self.menu_bar.updateFormatOnSelectionChange)
         self.setMenuBar(self.menu_bar)
 
     def setup(self):

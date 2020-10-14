@@ -25,8 +25,6 @@ class MenuBar(QMenuBar):
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
 
-        self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
-        self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager, bar_open_tabs):

@@ -40,9 +40,6 @@ class TopBar(QWidget):
         self.combo_text_align = None
         self.dict_text_align = None
 
-        if self.document is not None:
-            self.document.selectionChanged.connect(self.updateFormatOnSelectionChange)
-            self.document.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
 
     def makeMainLayout(self):
         """
@@ -216,6 +213,7 @@ class TopBar(QWidget):
         # Block signals
         a: QWidget
         for a in self.children():
+            print(a.toolTip())
             if not a.property("persistent"):
                 a.blockSignals(True)
         # Update the font style displayed
