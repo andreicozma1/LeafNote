@@ -30,6 +30,7 @@ class TopBar(QWidget):
 
         self.combo_font_style = None
         self.combo_font_size = None
+        self.list_title = None
         self.list_font_size = None
         self.button_bold = None
         self.button_ital = None
@@ -56,6 +57,19 @@ class TopBar(QWidget):
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         return horizontal_layout
+
+    def makeTitleStyleBox(self, list_title: list) -> QComboBox:
+        # ComboBox for font sizes
+        self.combo_title_style = QComboBox(self)
+        self.list_title = list_title
+        self.combo_title_style.setToolTip('Various Title options')
+        self.combo_title_style.addItems(self.list_title)
+        self.combo_title_style.setFixedWidth(100)
+        self.combo_title_style.setFocusPolicy(Qt.NoFocus)
+        self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
+        # self.combo_title_style.setCurrentIndex(self.list_title.index)
+        # self.combo_title_style.setCurrentFont(self.document.currentFont())
+        return self.combo_title_style
 
     def makeComboFontStyleBox(self) -> QFontComboBox:
         # ComboBox for font sizes

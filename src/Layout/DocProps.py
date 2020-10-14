@@ -1,6 +1,7 @@
 import logging
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCharFormat, QColor
 
 """
 holds the class with the document properties
@@ -44,3 +45,35 @@ class DocProps():
             'Center': Qt.AlignCenter,
             'Justify': Qt.AlignJustify
         }
+
+        normal = QTextCharFormat()
+
+        title = QTextCharFormat()
+        title.setFontPointSize(26)
+
+        subtitle = QTextCharFormat()
+        subtitle.setFontPointSize(15)
+        subtitle.setForeground(QColor('darkgray'))
+
+        heading1 = QTextCharFormat()
+        heading1.setFontPointSize(20)
+
+        heading2 = QTextCharFormat()
+        heading2.setFontPointSize(16)
+
+        heading3 = QTextCharFormat()
+        heading3.setFontPointSize(14)
+        heading3.setForeground(QColor('gray'))
+
+        heading4 = QTextCharFormat()
+        heading4.setFontPointSize(12)
+        heading4.setForeground(QColor('darkgray'))
+
+        self.list_title = {}
+        self.list_title["Normal text"] = normal
+        self.list_title["Title"] = title
+        self.list_title["Subtitle"] = subtitle
+        self.list_title["Header 1"] = heading1
+        self.list_title["Header 2"] = heading2
+        self.list_title["Header 3"] = heading3
+        self.list_title["Header 4"] = heading4
