@@ -17,8 +17,9 @@ from time import time
 all properties and functionalities of the menu bar
 """
 class Reminders():
-    def __init__(self, key, date, time, title, description):
+    def __init__(self, key,sort, date, time, title, description):
         self.key = key
+        self.sort_key = sort
         self.date = date
         self.time = time
         self.title = title
@@ -37,7 +38,7 @@ class MenuBar(QMenuBar):
         self.setNativeMenuBar(False)
         self.rem_list = list()
         self.trigger = 0
-        self.reminder_node = Reminders(None,None,None,None,None)
+        self.reminder_node = Reminders(None,None,None,None,None,None)
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -326,14 +327,18 @@ class MenuBar(QMenuBar):
                     milliseconds = int(time() * 1000)
                     #self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
                     self.reminder_node.key = milliseconds
+                    sort_key_string = self.ca + self.hour_cb.text()
+                    sort_key_string = sort_key_string.replace(" ", "")
+                    self.reminder_node.sort_key = sort_key_string
                     self.reminder_node.date = self.ca
                     self.reminder_node.time = self.hour_cb.text()
                     self.reminder_node.title = self.title.text()
                     self.reminder_node.description = self.description.text()
                     print("Printing Class")
-                    print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time,
+                    print(self.reminder_node.key, self.reminder_node.sort_key, self.reminder_node.date, self.reminder_node.time,
                           self.reminder_node.title, self.reminder_node.description)
                     self.rem_list.append(self.reminder_node)
+                    #print(self.rem_list)
             else:
                 print("Clicked cancel")
 
@@ -423,13 +428,13 @@ class MenuBar(QMenuBar):
         """
         self.ca = cal.selectedDate().toString()
         self.button.setText(self.ca)
-        print(self.ca)
-        print(self.ca[4:7])
-        print(self.ca[8:10])
-        if len(self.ca) == 14:
-            print(self.ca[10:14])
-        else:
-            print(self.ca[11:15])
+        # print(self.ca)
+        # print(self.ca[4:7])
+        # print(self.ca[8:10])
+        # if len(self.ca) == 14:
+        #     print(self.ca[10:14])
+        # else:
+        #     print(self.ca[11:15])
         dialog.close()
         return self.ca
 
