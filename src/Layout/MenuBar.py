@@ -1,6 +1,5 @@
 import logging
 from functools import partial
-
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
     QMessageBox, QComboBox, QDateTimeEdit
@@ -327,8 +326,11 @@ class MenuBar(QMenuBar):
                     milliseconds = int(time() * 1000)
                     #self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
                     self.reminder_node.key = milliseconds
-                    sort_key_string = self.ca + self.hour_cb.text()
+                    time_temp = self.hour_cb.text()
+                    sort_key_string = self.ca + "-" + self.convert24(time_temp)
                     sort_key_string = sort_key_string.replace(" ", "")
+                    sort_key_string = sort_key_string.replace("-", "")
+                    sort_key_string = sort_key_string.replace(":", "")
                     self.reminder_node.sort_key = sort_key_string
                     self.reminder_node.date = self.ca
                     self.reminder_node.time = self.hour_cb.text()
@@ -338,13 +340,8 @@ class MenuBar(QMenuBar):
                     print(self.reminder_node.key, self.reminder_node.sort_key, self.reminder_node.date, self.reminder_node.time,
                           self.reminder_node.title, self.reminder_node.description)
                     self.rem_list.append(self.reminder_node)
-                    #print(self.rem_list)
             else:
                 print("Clicked cancel")
-
-
-        # print("Printing Class")
-        # print(self.reminder_node.key, self.reminder_node.date, self.reminder_node.time, self.reminder_node.title, self.reminder_node.description)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
@@ -426,7 +423,7 @@ class MenuBar(QMenuBar):
         """
         :return: New date selected on the calendar
         """
-        self.ca = cal.selectedDate().toString()
+        self.ca = cal.selectedDate().toString("yyyy-MM-dd")
         self.button.setText(self.ca)
         # print(self.ca)
         # print(self.ca[4:7])
@@ -438,39 +435,32 @@ class MenuBar(QMenuBar):
         dialog.close()
         return self.ca
 
+    def convert24(self, str1):
 
-    # def doneB(self):
-    #
-    #     if self.assignment_global_trigger == 0:
-    #         if self.global_trigger == 0:
-    #             print("t")
-    #             # self.message_box = QMessageBox()
-    #             # self.message_box.setWindowTitle("Add Reminder-Warning!")
-    #             # self.message_box.setText("You must set a due date, time, title, and class before adding an assignment")
-    #             # self.message_box.setStandardButtons(QMessageBox.Ok)
-    #             # self.message_box.exec()
-    #     else:
-    #         title_textbox_val = self.title.text()
-    #         class_textbox_val = self.clas.text()
-    #         #TODO time
-    #         print(title_textbox_val)
-    #         print(class_textbox_val)
-    #         print(self.ca)
-    #         self.title.setText("")
-    #         self.clas.setText("")
-    #         self.global_trigger = 1
-    #
-    # def Close(self):
-    #     if self.global_trigger == 0:
-    #         self.message_box = QMessageBox()
-    #         self.message_box.setWindowTitle("Done-Warning!")
-    #         self.message_box.setText("Are you sure you want to quit without adding any assignments?")
-    #         self.message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
-    #         return_value = self.message_box.exec()
-    #         if return_value == QMessageBox.Yes:
-    #             self.pop.close()
-    #     else:
-    #         self.pop.close()
+        if(str1[1] == ":"):
+            str1 = "0" + str1
+
+
+        # Checking if last two elements of time
+        # is AM and first two elements are 12
+        if str1[-2:] == "AM" and str1[:2] == "12":
+            return "00" + str1[2:-2]
+
+            # remove the AM
+        elif str1[-2:] == "AM":
+            return str1[:-2]
+
+            # Checking if last two elements of time
+        # is PM and first two elements are 12
+        elif str1[-2:] == "PM" and str1[:2] == "12":
+            return str1[:-2]
+
+        else:
+            # add 12 to hours and remove PM
+            return str(int(str1[:2]) + 12) + str1[2:6]
+
+
+
 
 
 
