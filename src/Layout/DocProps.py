@@ -46,29 +46,39 @@ class DocProps():
             'Justify': Qt.AlignJustify
         }
 
+        # code works with makeTitleStyleBox in TopBar.py
+
+        # Default style for normal text
         normal = QTextCharFormat()
 
+        # Default style for title
         title = QTextCharFormat()
         title.setFontPointSize(26)
 
+        # Default style for subtitle
         subtitle = QTextCharFormat()
         subtitle.setFontPointSize(15)
         subtitle.setForeground(QColor('darkgray'))
 
+        # Default style for heading 1
         heading1 = QTextCharFormat()
         heading1.setFontPointSize(20)
 
+        # Default style for heading 2
         heading2 = QTextCharFormat()
         heading2.setFontPointSize(16)
 
+        # Default style for heading 3
         heading3 = QTextCharFormat()
         heading3.setFontPointSize(14)
         heading3.setForeground(QColor('gray'))
 
+        # Default style for heading 4
         heading4 = QTextCharFormat()
         heading4.setFontPointSize(12)
         heading4.setForeground(QColor('darkgray'))
 
+        # creates dictionary to set the text format to the selected title style in the QComboBox
         self.dict_title_style = {}
         self.dict_title_style["Normal text"] = normal
         self.dict_title_style["Title"] = title
