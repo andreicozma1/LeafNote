@@ -34,7 +34,7 @@ class Document(QTextEdit):
         if app.settings.contains("dictionaryPath"):
             path = app.settings.value("dictionaryPath")
             logging.debug("Saved dictionary path: " + path)
-            model = DocumentSummarizer.fillModel(path)
+            model = DocumentSummarizer.createModel(path)
             if model is not None:
                 self.summarizer = Summarizer(model)
                 logging.info("Saved dictionary path VALID! Successfully created Summarizer!")
