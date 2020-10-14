@@ -341,7 +341,7 @@ def dependencyDialogHandler(app, button, document=None):
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
         # fill the dictionary with the word embeddings
-        initializeSummarizer(existing_path, app, document)
+        initializeSummarizer(existing_path, app, document, True)
 
 
 def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
@@ -386,17 +386,18 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
     except:
         logging.warning("Failed to remove leftover ZIP file")
 
-    initializeSummarizer(path, app, document)
+    initializeSummarizer(path, app, document, True)
 
 
-def initializeSummarizer(path, app, document):
+def initializeSummarizer(path, app, document, update_right_menu=False):
     model = createModel(path)
     if model is not None:
         # create an instance of the summarizer and give it to the application
         app.settings.setValue("dictionaryPath", path)
         if document is not None:
             document.summarizer = Summarizer(model)
-            app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+            if update_right_menu:
+                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
         else:
             logging.warning("Document is None - Not initializing Summarizer!")
     else:
