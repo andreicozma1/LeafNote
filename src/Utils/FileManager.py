@@ -117,6 +117,7 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
+                # get File data will never return None here because the document had to already be opened to get to this point
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
@@ -174,6 +175,8 @@ class FileManager:
 
             # retrieve the text from the file you are attempting to open
             data = self.getFileData(path)
+            if data is None:
+                return False
 
             # appends the path to the list of open documents and sets it to the current document
             self.open_documents[path] = QFileInfo(path)
@@ -189,6 +192,9 @@ class FileManager:
         else:
             # get the data from the file and set the current document
             data = self.getFileData(path)
+            if data is None:
+                return False
+
             self.current_document = self.open_documents[path]
             self.app.bar_open_tabs.active = self.app.bar_open_tabs.open_tabs[path]
             logging.info("Document Already Open - " + path)
@@ -203,7 +209,7 @@ class FileManager:
         self.app.right_menu.updateDetails(path)
         return True
 
-    def getFileData(self, path: str) -> str:
+    def getFileData(self, path: str):
         """
         This retrieves the data from the file at the specified path.
         :param path: The path to read data from
@@ -215,7 +221,7 @@ class FileManager:
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - " + path)
-            return ''
+            return None
 
         # read all data then close file
         with file:
@@ -229,7 +235,7 @@ class FileManager:
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok)
                 corrupted_file.addButtonBox(button_box)
                 corrupted_file.exec()
-                return ''
+                return None
         file.close()
 
         try:
