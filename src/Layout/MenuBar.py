@@ -28,7 +28,6 @@ class MenuBar(QMenuBar):
         self.setNativeMenuBar(False)
         self.rem_list = list()
         self.trigger = 0
-        #self.reminder_node = Reminders(None,None,None,None,None,None)
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -325,10 +324,3 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-
-
-
-
-
-
-

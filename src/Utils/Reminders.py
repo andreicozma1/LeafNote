@@ -1,21 +1,15 @@
 import os
 from functools import partial
 from time import time
-
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCalendarWidget, QPushButton, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
     QLabel
-
 from Utils.DialogBuilder import DialogBuilder
-
-
-#parent->setStyleSheet("*:hover {background: red}");
 
 class Reminder(QWidget):
     def __init__(self, key, sort, date, time, title, description):
         super().__init__()
         vertical_layout = QVBoxLayout(self)
-        #self.setLayout(vertical_layout)
         show_title = QLabel(title)
         show_date = QLabel(date + "," + time)
         show_desc = QLabel(description)
@@ -29,13 +23,11 @@ class Reminder(QWidget):
         self.title = title
         self.description = description
 
-
 class Reminders():
     def __init__(self, app, settings):
         self.app = app
         self.settings = settings
         self.rem_list = list()
-        self.counter = 0
 
     def addReminder(self, reminder: Reminder):
         self.rem_list.append(reminder)
@@ -45,8 +37,6 @@ class Reminders():
         pass
 
     def showDialog(self):
-        selected_date = None
-
         title = QLineEdit()
         title.setPlaceholderText("Title")
         # ------------------------------#
@@ -61,7 +51,6 @@ class Reminders():
         self.dialog.addWidget(title)
         self.dialog.addWidget(description)
         self.dialog.addWidget(cal)
-        #self.dialog.addWidget(self.button)
         self.dialog.addWidget(hour_cb)
         self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.dialog.addButtonBox(self.button_box)
@@ -78,8 +67,7 @@ class Reminders():
                 print("Printing Class")
                 print(reminder_node.key, reminder_node.sort_key, reminder_node.date,reminder_node.time,reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
-                self.app.right_menu.collapsible_reminders.addElement(self.rem_list[self.counter])
-                self.counter+= 1
+                self.app.right_menu.collapsible_reminders.addElement(reminder_node)
         else:
             print("Clicked cancel")
 
