@@ -2,7 +2,9 @@ import logging
 import os
 
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
+
+from Utils import DialogBuilder
 
 
 class FileManager:
@@ -25,7 +27,6 @@ class FileManager:
     def saveDocument(self, document):
         """
         :param document: Reference to the document
-        :param isFormatted: Boolean value if the document is formatted
         :return: Returns whether or not a tab needs to be opened
         """
 
@@ -39,9 +40,32 @@ class FileManager:
 
         # if a file has already been opened write to the file
         if self.current_document is not None:
-            self.writeFileData(self.current_document.absoluteFilePath(), data)
-            logging.info("Saved File -" + self.current_document.absoluteFilePath())
-            return False
+            # if the file that was being worked on has been moved externally
+            if not os.path.exists(self.current_document.absoluteFilePath()):
+                logging.warning("File not found")
+                file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                                    "File not found",
+                                                                    "File not found",
+                                                                    "The original file has been moved/deleted "
+                                                                    "externally. Would you like to save a current "
+                                                                    "copy of the file?")
+                button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+                file_not_found_dialog.addButtonBox(button_box)
+
+                # if the user chose to save the document
+                if file_not_found_dialog.exec():
+                    logging.info("User chose to save the file.")
+                    return self.saveAsDocument(document)
+
+                # if the user chose not to save the file
+                else:
+                    logging.info("User chose NOT to save the file.")
+                    self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
+                    return False
+            else:
+                self.writeFileData(self.current_document.absoluteFilePath(), data)
+                logging.info("Saved File -" + self.current_document.absoluteFilePath())
+                return True
 
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
@@ -93,6 +117,10 @@ class FileManager:
         # now write to the new_path
         self.writeFileData(new_path, data)
 
+        # add the document to the dict of documents
+        self.open_documents[new_path] = QFileInfo(new_path)
+        self.current_document = self.open_documents[new_path]
+
         # open the document with its new text
         self.openDocument(document, new_path)
 
@@ -120,6 +148,7 @@ class FileManager:
                 if self.current_document.suffix() != 'lef':
                     document.resetFormatting()
                 state = (self.current_document.suffix() == 'lef')
+
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None

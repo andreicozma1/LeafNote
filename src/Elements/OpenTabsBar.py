@@ -70,7 +70,6 @@ class OpenTabsBar(QWidget):
         """
         removes object from layout and destroys it
         :param path: path to file being displayed
-        :param closeDocument: if the document is closed in file manager
         :param save: if the document is saved
         :return: returns nothing
         """
