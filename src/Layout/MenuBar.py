@@ -25,7 +25,6 @@ class MenuBar(QMenuBar):
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
 
-
     # =====================================================================================
     def makeFileMenu(self, app, file_manager, bar_open_tabs):
         """

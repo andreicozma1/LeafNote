@@ -42,7 +42,6 @@ class TopBar(QWidget):
         self.combo_text_align = None
         self.dict_text_align = None
 
-
     def makeMainLayout(self):
         """
         You can get the layout generated with self.layout()
@@ -228,7 +227,7 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.blockSignals(True)
 
-        #TODO: check if self.list_title is not none then set qcombobox to current cursor selection
+        # TODO: check if self.list_title is not none then set qcombobox to current cursor selection
 
         # Update the font style displayed
         if self.combo_font_style is not None:

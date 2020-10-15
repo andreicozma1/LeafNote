@@ -5,9 +5,10 @@ from functools import partial
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QFileInfo
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea, QCheckBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea
 
 from Elements.Replace import FindAndReplace
+
 
 ############################################################################
 # SEARCH CURRENT FILE
@@ -311,6 +312,3 @@ class File(QPushButton):
         """
         self.setText(self.file_name)
         self.setMinimumHeight(20)
-
-
-

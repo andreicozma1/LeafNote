@@ -172,6 +172,7 @@ class FindAndReplace(QWidget):
             btn = QPushButton(title)
             btn.clicked.connect(signal)
             return btn
+
         self.actions_hbox.addWidget(createActionBtn("Replace", self.onReplace))
         self.actions_hbox.addWidget(createActionBtn("Replace all", self.onReplaceAll))
         self.actions_hbox.addWidget(createActionBtn("Previous", self.onPrevious))

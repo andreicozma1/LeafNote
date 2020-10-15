@@ -148,8 +148,6 @@ class App(QMainWindow):
 
         self.show()
 
-
-
     def updateFormatBtnsState(self, state: bool):
         """
         Updates the state of the formatting buttons in TopBar and BottomBar
