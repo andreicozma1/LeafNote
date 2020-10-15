@@ -57,7 +57,6 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_summary)
 
         self.collapsible_reminders = CollapsibleWidget("Reminders:")
-        self.collapsible_reminders.addElement(Reminder(132131232, 123456, "Title", "Date", "Description", "Temp"))
         vertical_layout.addWidget(self.collapsible_reminders)
 
 
