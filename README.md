@@ -10,7 +10,7 @@ cd 0x432d2d
 ```
 
 ## Install Dependencies
-Recommended: Use the setup script (Linux and macOS only)!  
+-  Recommended: Use the *setup.sh* script (Linux and macOS only)!   
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
@@ -30,18 +30,20 @@ pip3 install -r requirements.txt
 
 ## Run Program Directly
 If you want to run the application directly from the command line, first follow the previous steps then run this command.
+-  Recommended: Use the *run.sh* script (Linux and macOS only)!   
 ```
-fbs clean && fbs run
+python3 src/main.py (Linux/macOS)
+python3 src\main.py (Windows)
 ```
 
-## Create Standalone Installer
+## Create Standalone Installer - Temporarily Unavailable
 If you would like to download the application, first follow the previous steps then run this command to create the installer package. 
 ```
 fbs freeze && fbs installer 
 ```
 This will create the packages and save them into the target folder.
 
-## Install
+## Install - Temporarily Unavailable
 In order to install the application onto your system use the following commands depending on your operating system.
 
 - Linux 
