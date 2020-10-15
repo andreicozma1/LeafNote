@@ -365,8 +365,8 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
 
         # function to update the progress bar
         def progressBarSignal(current, total, width):
-            progress_bar.setValue(current)
             progress_bar.setMaximum(total)
+            progress_bar.setValue(current)
 
         # Download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
         # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
