@@ -1,9 +1,9 @@
 import logging
 import os
 
-from PyQt5.Qt import Qt, QTimer, QIcon
-from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QCalendarWidget
+from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
+from PyQt5.QtCore import QDate, QDateTime
 
 """
 This file alters tools on the Bottom Bar
