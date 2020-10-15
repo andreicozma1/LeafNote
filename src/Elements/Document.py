@@ -2,12 +2,11 @@ import logging
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
 from Elements.Search import SearchFile
 from Utils import DocumentSummarizer
-from Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types
@@ -41,6 +40,8 @@ class Document(QTextEdit):
             default_text = "You can type here."
 
         self.search = SearchFile(app.app_props.path_res, self)
+        self.search_all = None
+        self.find_and_replace = None
 
         self.setText(default_text)
         self.setAutoFillBackground(True)

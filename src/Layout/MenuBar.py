@@ -1,18 +1,20 @@
 import logging
-
-from PyQt5.QtWidgets import QAction, QMenu
+from functools import partial
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
+    QMessageBox, QComboBox, QDateTimeEdit
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
-
+import os
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator
+from Elements import Search, Document, Calculator, Replace
 from Layout import DocProps
 from Utils import Encryptor
+from Utils.DialogBuilder import DialogBuilder
+from time import time
 
 """
 all properties and functionalities of the menu bar
 """
-
-
 class MenuBar(QMenuBar):
     def __init__(self, document: Document, doc_props: DocProps):
         """
@@ -24,7 +26,6 @@ class MenuBar(QMenuBar):
         self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
-
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager, bar_open_tabs):
@@ -112,7 +113,11 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("")
-            self.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+            self.doc.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+
+        def onFindAndReplaceBtn():
+            logging.info("")
+            self.doc.find_and_replace = Replace.FindAndReplace(self.doc)
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -133,6 +138,7 @@ class MenuBar(QMenuBar):
         self.menu_edit.addSeparator()
         self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+        self.menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
 
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
@@ -258,6 +264,9 @@ class MenuBar(QMenuBar):
         def onCalculatorAction():
             self.calculator = Calculator.Calculator()
 
+        def onRemindersAction():
+            app.reminders.showDialog()
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
@@ -266,6 +275,7 @@ class MenuBar(QMenuBar):
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
         self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
+        self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 
         # ========= END TOOLS MENU SECTION =========
