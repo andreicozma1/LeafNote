@@ -252,7 +252,7 @@ def ensureDirectory(app, path: str):
         # clear the directory if selected by the user
         if clear_dialog.exec():
             logging.info("User chose to remove all contents")
-            files = glob.glob(os.path.join(path, '*'))
+            files = glob.glob(os.path.abspath(os.path.join(path, '*')))
             for f in files:
                 try:
                     os.remove(f)
@@ -290,14 +290,14 @@ def dependencyDialogHandler(app, button, document=None):
         logging.info("User Cancelled File Dialog")
         return
 
-    path_child = os.path.join(path_parent, 'WordEmbeddings')
+    path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
     def files_exist(path1: str, path2: str):
-        if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path1, 'glove.6B.100d.npy')):
+        if os.path.exists(os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
+                os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
-        elif os.path.exists(os.path.join(path2, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path2, 'glove.6B.100d.npy')):
+        elif os.path.exists(os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
+                os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
         else:
             return None
@@ -308,7 +308,7 @@ def dependencyDialogHandler(app, button, document=None):
         zip_file = 'glove.6B.100d.zip'
 
         # prompt the user that they need to download the dependency files
-        if not os.path.exists(os.path.join(path_child, zip_file)):
+        if not os.path.exists(os.path.abspath(os.path.join(path_child, zip_file))):
             logging.warning("Missing Files and ZIP. To re-download")
             if button.text() == "Open":
                 logging.error("Dictionaries not found in directory")
@@ -376,12 +376,12 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
 
     # uncompress the files
     logging.info("Started unzipping")
-    with zipfile.ZipFile(os.path.join(path, zip_file), 'r') as zip_ref:
+    with zipfile.ZipFile(os.path.abspath(os.path.join(path, zip_file)), 'r') as zip_ref:
         zip_ref.extractall(path)
     logging.info("Finished unzipping")
 
     try:  # delete the compressed file
-        os.remove(os.path.join(path, zip_file))
+        os.remove(os.path.abspath(os.path.join(path, zip_file)))
         logging.info("Deleted zip file")
     except:
         logging.warning("Failed to remove leftover ZIP file")
@@ -411,7 +411,7 @@ def createModel(path):
     :return: Returns a dictionary of word vectors
     """
     logging.debug("Start fill model - reading dictionaries")
-    path = os.path.join(path, "glove.6B.100d")
+    path = os.path.abspath(os.path.join(path, "glove.6B.100d"))
     path_vocab = path + '.vocab'
     path_npy = path + '.npy'
 
