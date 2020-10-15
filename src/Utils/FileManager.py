@@ -2,7 +2,9 @@ import logging
 import os
 
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
+
+from Utils.DialogBuilder import DialogBuilder
 
 
 class FileManager:
@@ -217,7 +219,17 @@ class FileManager:
 
         # read all data then close file
         with file:
-            data = file.read()
+            try:
+                data = file.read()
+            except:
+                corrupted_file = DialogBuilder(self.app,
+                                               "File Corrupted",
+                                               "Could not open the selected file.",
+                                               "")
+                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+                corrupted_file.addButtonBox(button_box)
+                corrupted_file.exec()
+                return ''
         file.close()
 
         try:
