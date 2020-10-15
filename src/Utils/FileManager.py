@@ -1,11 +1,10 @@
 import logging
 import os
 
-from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QFileInfo, QFileDevice
 from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
 
 from Utils import DialogBuilder
-
 
 
 class FileManager:
@@ -22,6 +21,7 @@ class FileManager:
         self.app = app
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user
+        self.file_opened_time = None  # last_access - the time when the file was opened
 
         self.encryptor = None
 
@@ -51,7 +51,7 @@ class FileManager:
                                                                     "The original file has been moved/deleted "
                                                                     "externally. Would you like to save a current "
                                                                     "copy of the file?")
-                button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+                button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
                 file_not_found_dialog.addButtonBox(button_box)
 
                 self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
@@ -66,6 +66,23 @@ class FileManager:
                     logging.info("User chose NOT to save the file.")
                     return False
             else:
+                # if the file has been modified since the document was opened
+                if self.file_opened_time is not None and self.file_opened_time < os.path.getmtime(
+                        self.current_document.absoluteFilePath()):
+                    file_not_up_to_date_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                                             "File not up to date",
+                                                                             "File not up to date",
+                                                                             "The file has been externally modified. Would you like to keep your changes?")
+                    button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+                    file_not_up_to_date_dialog.addButtonBox(button_box)
+                    if file_not_up_to_date_dialog.exec():
+                        logging.debug("User chose to keep their changes")
+                    else:
+                        logging.debug("User chose to update to file saved on disk")
+                        data = self.getFileData(self.current_document.absoluteFilePath())
+                        self.writeFileData(self.current_document.absoluteFilePath(), data)
+                        self.openDocument(document, self.current_document.absoluteFilePath(), False)
+                        return True
                 self.writeFileData(self.current_document.absoluteFilePath(), data)
                 logging.info("Saved File -" + self.current_document.absoluteFilePath())
                 return True
@@ -85,6 +102,7 @@ class FileManager:
         # append the newly created file to the dict of open docs and set it to the curr document
         self.open_documents[path] = QFileInfo(path)
         self.current_document = self.open_documents[path]
+        self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
 
         # if the file had been moved or deleted while editing
         if file_missing:
@@ -125,6 +143,7 @@ class FileManager:
         # add the document to the dict of documents
         self.open_documents[new_path] = QFileInfo(new_path)
         self.current_document = self.open_documents[new_path]
+        self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
 
         # open the document with its new text
         self.openDocument(document, new_path)
@@ -148,6 +167,8 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
+                self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
+
                 # get File data will never return None here because the document had to already be opened to get to this point
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
@@ -158,6 +179,8 @@ class FileManager:
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
+                self.file_opened_time = None
+
                 document.setText("")
                 document.resetFormatting()
                 state = False
@@ -182,11 +205,13 @@ class FileManager:
         """
         logging.info("closeAll")
         self.current_document = None
+        self.file_opened_time = None
+
         self.open_documents.clear()
         document.setText("")
         self.app.updateFormatBtnsState(False)
 
-    def openDocument(self, document, path: str):
+    def openDocument(self, document, path: str, save:bool = True):
         """
         This will open the file with the given path and display it on the document
         :param document:
@@ -194,7 +219,7 @@ class FileManager:
         :return: returns whether or not the open succeeded
         """
         # if there is already a file open save before the Document's text is overwritten
-        if self.current_document is not None:
+        if save and self.current_document is not None:
             self.saveDocument(document)
 
         # if the document is not already open
@@ -213,6 +238,7 @@ class FileManager:
             # appends the path to the list of open documents and sets it to the current document
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
+            self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
 
             # if the file is not opened in the open tabs bar open it
             if path not in self.app.bar_open_tabs.open_tabs:
@@ -228,6 +254,8 @@ class FileManager:
                 return False
 
             self.current_document = self.open_documents[path]
+            self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
+
             self.app.bar_open_tabs.active = self.app.bar_open_tabs.open_tabs[path]
             logging.info("Document Already Open - " + path)
 
@@ -260,10 +288,10 @@ class FileManager:
             try:
                 data = file.read()
             except:
-                corrupted_file = DialogBuilder(self.app,
-                                               "File Corrupted",
-                                               "Could not open the selected file.",
-                                               "")
+                corrupted_file = DialogBuilder.DialogBuilder(self.app,
+                                                             "File Corrupted",
+                                                             "Could not open the selected file.",
+                                                             "")
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok)
                 corrupted_file.addButtonBox(button_box)
                 corrupted_file.exec()
