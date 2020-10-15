@@ -85,9 +85,11 @@ class FileManager:
         self.open_documents[path] = QFileInfo(path)
         self.current_document = self.open_documents[path]
 
-        # if the file had bee
+        # if the file had been moved or deleted while editing
         if file_missing:
             document.setText(data)
+            self.app.bar_open_tabs.addTab(path)
+
         logging.info("Saved File - " + path)
         return True
 

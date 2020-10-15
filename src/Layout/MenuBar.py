@@ -59,13 +59,12 @@ class MenuBar(QMenuBar):
         def onSaveBtn():
             logging.info("onSaveBtn")
             if file_manager.saveDocument(self.doc):
-                logging.info("Created tab")
-                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
+                logging.debug("Saved Document Completed.")
 
         def onSaveAsBtn():
             logging.info("saveAsFile")
             if file_manager.saveAsDocument(self.doc):
-                logging.info("Created tab")
+                logging.debug("Saved As Document Completed.")
 
         def onExitBtn():
             logging.info("onExitBtn")

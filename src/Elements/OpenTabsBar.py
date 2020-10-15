@@ -81,15 +81,16 @@ class OpenTabsBar(QWidget):
             self.file_manager.saveDocument(self.document)
         self.file_manager.closeDocument(self.document, path)
 
-        # pop the closed tab from the open tab dic
-        self.open_tabs.pop(path)
-        tab.deleteLater()
+        if path in self.open_tabs:
+            # pop the closed tab from the open tab dic
+            self.open_tabs.pop(path)
+            tab.deleteLater()
 
-        # set the active tab
-        if self.file_manager.current_document is None:
-            self.active_tab = None
-        else:
-            self.active_tab = self.open_tabs[self.file_manager.current_document.absoluteFilePath()]
+            # set the active tab
+            if self.file_manager.current_document is None:
+                self.active_tab = None
+            else:
+                self.active_tab = self.open_tabs[self.file_manager.current_document.absoluteFilePath()]
 
     def getTabCount(self):
         """
