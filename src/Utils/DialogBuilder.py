@@ -1,5 +1,6 @@
 import logging
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox, QProgressBar
 
 
@@ -14,7 +15,11 @@ class DialogBuilder(QDialog):
         self.setWindowTitle(text_window)
         self.layout_vertical = QVBoxLayout(self)
         self.label_title = QLabel(text_title)
+        if text_title is None:
+            self.label_title.setHidden(True)
         self.label_message = QLabel(text_msg)
+        if text_msg is None:
+            self.label_message.setHidden(True)
 
         self.setup()
 
@@ -26,16 +31,20 @@ class DialogBuilder(QDialog):
         font.setBold(True)
         self.label_title.setFont(font)
 
+        self.setWindowModality(Qt.WindowModal)
+
         self.layout_vertical.addWidget(self.label_title)
         self.layout_vertical.addWidget(self.label_message)
 
     def setTitleText(self, text: str):
         logging.info(text)
         self.label_title.setText(text)
+        self.label_title.setHidden(False)
 
     def setMsgText(self, text: str):
         logging.info(text)
         self.label_message.setText(text)
+        self.label_message.setHidden(False)
 
     def addWidget(self, widget: QWidget):
         logging.info("")

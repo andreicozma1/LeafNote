@@ -2,12 +2,11 @@ import logging
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
 from Elements.Search import SearchFile
 from Utils import DocumentSummarizer
-from Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types
