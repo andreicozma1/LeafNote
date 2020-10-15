@@ -29,6 +29,7 @@ class FileManager:
         :param document: Reference to the document
         :return: Returns whether or not a tab needs to be opened
         """
+        file_missing = False
 
         # get the current text from the document shown to the user
         if self.app.btn_mode_switch.isChecked():
@@ -52,42 +53,43 @@ class FileManager:
                 button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
                 file_not_found_dialog.addButtonBox(button_box)
 
+                self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
+
                 # if the user chose to save the document
                 if file_not_found_dialog.exec():
                     logging.info("User chose to save the file.")
-                    return self.saveAsDocument(document)
+                    file_missing = True
 
                 # if the user chose not to save the file
                 else:
                     logging.info("User chose NOT to save the file.")
-                    self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
                     return False
             else:
                 self.writeFileData(self.current_document.absoluteFilePath(), data)
                 logging.info("Saved File -" + self.current_document.absoluteFilePath())
                 return True
 
-        # if a file has not been opened yet prompt the user for a file name then write to that file
-        else:
-            # get the entered data
-            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.left_menu.model.rootPath(),
-                                                    file_filter)
+        # get the entered data
+        file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.left_menu.model.rootPath(),
+                                                file_filter)
 
-            if file_name[0] == '':
-                logging.info("No File Path Given")
-                return False
+        if file_name[0] == '':
+            logging.info("No File Path Given")
+            return False
 
-            path = file_name[0]
+        path = file_name[0]
+        # write the text in the document shown to the user to the given file path
+        self.writeFileData(path, data)
 
-            # write the text in the document shown to the user to the given file path
-            self.writeFileData(path, data)
+        # append the newly created file to the dict of open docs and set it to the curr document
+        self.open_documents[path] = QFileInfo(path)
+        self.current_document = self.open_documents[path]
 
-            # append the newly created file to the dict of open docs and set it to the curr document
-            self.open_documents[path] = QFileInfo(path)
-            self.current_document = self.open_documents[path]
-
-            logging.info("Saved File - " + path)
-            return True
+        # if the file had bee
+        if file_missing:
+            document.setText(data)
+        logging.info("Saved File - " + path)
+        return True
 
     def saveAsDocument(self, document):
         """
