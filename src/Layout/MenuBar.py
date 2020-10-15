@@ -26,8 +26,6 @@ class MenuBar(QMenuBar):
         self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
-        self.rem_list = list()
-        self.trigger = 0
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)

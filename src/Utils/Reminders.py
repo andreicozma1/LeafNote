@@ -7,6 +7,9 @@ from PyQt5.QtWidgets import QCalendarWidget, QPushButton, QLineEdit, QTimeEdit, 
 from Utils.DialogBuilder import DialogBuilder
 
 class Reminder(QWidget):
+    """
+    This is the reminder node class. It contains each individualy traits of a reminder to allow it to be added to the right bar.
+    """
     def __init__(self, key, sort, date, time, title, description):
         super().__init__()
         vertical_layout = QVBoxLayout(self)
@@ -24,6 +27,9 @@ class Reminder(QWidget):
         self.description = description
 
 class Reminders():
+    """
+    This is a class of reminders. It sets up the Reminder dialog as well as adds the reminders to the right menu
+    """
     def __init__(self, app, settings):
         self.app = app
         self.settings = settings
@@ -72,7 +78,10 @@ class Reminders():
             print("Clicked cancel")
 
     def convert24(self, str1):
-
+        """
+        :param str1: This is a time that we are converting from normal time to 24 hour time
+        :return:
+        """
         if(str1[1] == ":"):
             str1 = "0" + str1
 
