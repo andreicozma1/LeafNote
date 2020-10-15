@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
 
 from Elements.Search import SearchFile
 from Utils import DocumentSummarizer
-from Utils.DocumentSummarizer import Summarizer
 
 """
 The active document - area where user types
@@ -26,14 +25,13 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         super(Document, self).__init__("")
-        logging.debug("")
+        logging.debug("Creating document")
         self.doc_props = doc_props
+        self.app = app
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
-        if app.settings.contains("dictionaryPath"):
-            path = app.settings.value("dictionaryPath")
-            DocumentSummarizer.initializeSummarizer(path, app, self)
+        self.initSummarizer(self.app.settings.value("dictionaryPath"), False)
 
         self.textColor = "black"
 
@@ -70,6 +68,40 @@ class Document(QTextEdit):
         # add the hbox and stretch to align search to top right of screen
         self.layout_main.addLayout(self.hbox)
         self.layout_main.addStretch()
+
+    def initSummarizer(self, dict_path, summarize=False):
+        if dict_path is None:
+            dp_handler = DocumentSummarizer.DependencyHandler(self.app)
+            dict_path = dp_handler.getExistingPath()
+            if dict_path is None:
+                dp_handler.handleNewDownload(dp_handler.getDownloadPath(), self.initSummarizer)
+                return
+
+        self.initSummarizerFromPath(dict_path, summarize)
+
+    def initSummarizerFromPath(self, dict_path, summarize):
+        logging.info("Attempt Initialize Summarizer - path: " + dict_path)
+        model = DocumentSummarizer.Model(dict_path).createModel()
+        if model is not None:
+            # create an instance of the summarizer and give it to the application
+            self.app.settings.setValue("dictionaryPath", dict_path)
+            self.summarizer = DocumentSummarizer.Summarizer(model)
+            if summarize:
+                self.updateRightMenu()
+            return True
+        else:
+            logging.error("Model ERROR - Failed to initialize Summarizer!")
+            return False
+
+    def summarize(self):
+        if self.summarizer is None:
+            logging.error("Summarizer is not initialized")
+            return None
+        summary = self.summarizer.summarize(self.toPlainText())
+        return summary
+
+    def updateRightMenu(self):
+        self.app.right_menu.updateSummary(self.summarize())
 
     def onFontItalChanged(self, state):
         """

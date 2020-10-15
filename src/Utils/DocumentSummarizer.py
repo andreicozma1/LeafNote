@@ -35,7 +35,7 @@ class Summarizer:
         Sets up class variables.
         """
         logging.debug("Created instance of summarizer class")
-        handlePackageDownloads()
+        self.handlePackageDownloads()
         from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings
         self.sentence_vectors = []
@@ -87,7 +87,7 @@ class Summarizer:
                                         for i, s in enumerate(sentences)), reverse=True)
         # self.ranked_sentences = self.ranked_sentences[:]
         self.ranked_sentences = [s[1] for s in self.ranked_sentences]
-        self.summary = sentToText(self.ranked_sentences[:summary_size])
+        self.summary = self.sentToText(self.ranked_sentences[:summary_size])
         logging.info("Finished generating summary")
         return self.summary
 
@@ -105,7 +105,7 @@ class Summarizer:
         clean_sentences = [s.lower() for s in clean_sentences]
 
         # eliminate all stop words from the sentences
-        clean_sentences = [removeStopwords(sent.split(), self.stopwords) for sent in clean_sentences]
+        clean_sentences = [self.removeStopwords(sent.split(), self.stopwords) for sent in clean_sentences]
         return clean_sentences
 
     def createWordVectors(self, clean_sentences):
@@ -143,70 +143,104 @@ class Summarizer:
                         cosine_similarity(self.sentence_vectors[i].reshape(1, 100),
                                           self.sentence_vectors[j].reshape(1, 100))[0, 0]
 
+    #################################################################
+    # HELPER FUNCTIONS
 
-#################################################################
-# HELPER FUNCTIONS
+    def sentToText(self, text, separator=' '):
+        """
+        converts a list of sentences into one string separated by a user value
+        :param text: a list of sentences
+        :param separator: the separator between the sentences
+        :return: returns a string holding the concatenated sentences.
+        """
+        sentence = ""
+        for s in text:
+            sentence += str(s) + str(separator)
+        return sentence
 
-def sentToText(text, separator=' '):
-    """
-    converts a list of sentences into one string separated by a user value
-    :param text: a list of sentences
-    :param separator: the separator between the sentences
-    :return: returns a string holding the concatenated sentences.
-    """
-    sentence = ""
-    for s in text:
-        sentence += str(s) + str(separator)
-    return sentence
+    def handlePackageDownloads(self):
+        """
+        this downloads the nltk packages in the nltk module needed for this file
+        :return: Returns nothing
+        """
+        try:
+            nltk.data.find('corpora/stopwords')
+        except LookupError:
+            logging.info("Downloading nltk stopwords")
+            nltk.download('stopwords')
 
+        try:
+            nltk.data.find('tokenizers/punkt')
+        except LookupError:
+            logging.info("Downloading nltk punkt")
+            nltk.download('punkt')
 
-def handlePackageDownloads():
-    """
-    this downloads the nltk packages in the nltk module needed for this file
-    :return: Returns nothing
-    """
-    try:
-        nltk.data.find('corpora/stopwords')
-    except LookupError:
-        logging.info("Downloading nltk stopwords")
-        nltk.download('stopwords')
+    def removeStopwords(self, sen, stopwords):
+        """
+        this will remove all stopwords from a given sentence and return the new cleaned sentence
+        the sentence must be a list of words: ["this", "is", "a", "sentence"]
+        :param sen: the sentence to be cleaned
+        :param stopwords: the list of stopwords to remove
+        :return: Returns the cleaned sentence
+        """
+        new_sent = " ".join([i for i in sen if i not in stopwords])
+        return new_sent
 
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except LookupError:
-        logging.info("Downloading nltk punkt")
-        nltk.download('punkt')
+class Model():
+    def __init__(self, path):
+        """
+        takes the path to the word embedding files and fills a dictionary with the (word: word vector) pairs
+        :param path: path to the word embedding files
+        :return: Returns a dictionary of word vectors
+        """
+        super().__init__()
+        logging.debug("Creating model from " + path)
+        path = os.path.join(path, "glove.6B.100d")
+        self.path_vocab = path + '.vocab'
+        self.path_npy = path + '.npy'
 
+    def createModel(self):
+        # check to make sure the glove files exist
+        if not os.path.exists(self.path_vocab):
+            logging.error('Path does not exist - ' + self.path_vocab)
+            return None
+        # check to make sure the glove files exist
+        if not os.path.exists(self.path_npy):
+            logging.error('Path does not exist - ' + self.path_npy)
+            return None
 
-def removeStopwords(sen, stopwords):
-    """
-    this will remove all stopwords from a given sentence and return the new cleaned sentence
-    the sentence must be a list of words: ["this", "is", "a", "sentence"]
-    :param sen: the sentence to be cleaned
-    :param stopwords: the list of stopwords to remove
-    :return: Returns the cleaned sentence
-    """
-    new_sent = " ".join([i for i in sen if i not in stopwords])
-    return new_sent
+            # read the files into a python dict
+        logging.info("Attempting to read dictionary contents")
+        with codecs.open(self.path_vocab, 'r', 'utf-8') as f_in:
+            index2word = [line.strip() for line in f_in]
+        wv = np.load(self.path_npy)
+        model = {}
+        for i, w in enumerate(index2word):
+            model[w] = wv[i]
+        logging.info("Finished reading dictionary contents")
+        return model
 
 
 #################################################################
 # HANDLING DOWNLOADS
 
-def onSummaryAction(app, document):
-    """
-    This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
-    :param app: Reference to the application
-    :param document: Reference to the document
-    :return: Returns nothing
-    """
+class DependencyHandler:
+    def __init__(self, app):
+        """
+        This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
+        :param app: Reference to the application
+        :param document: Reference to the document
+        :return: Returns nothing
+        """
+        self.app = app
+        self.existing_path = None
+        self.download_path = None
+        # The action that gets called when the user selects a button on the prompt
+        def onDialogButtonClicked(button):
+            self.dependencyDialogHandler(app, button)
 
-    # The action that gets called when the user selects a button on the prompt
-    def onDialogButtonClicked(button):
-        dependencyDialogHandler(app, button, document)
+        # if summarizer has not been created create it
 
-    # if summarizer has not been created create it
-    if document.summarizer is None:
         logging.info("Summarizer NOT initialized. Prompting user for dependency download.")
         # prompt the user to select or Download the word word_embeddings
         download_dialog = DialogBuilder(app, "Dictionaries",
@@ -216,114 +250,73 @@ def onSummaryAction(app, document):
         download_dialog.addButtonBox(buttonBox)
         buttonBox.clicked.connect(onDialogButtonClicked)
         download_dialog.exec()
-    # if there is already an instance of the summarizer
-    else:
-        logging.info("Summarizer is already initialized!")
-        return document.summarizer.summarize(document.toPlainText())
+        # if there is already an instance of the summarizer
 
+    def dependencyDialogHandler(self, app, button):
+        """
+        This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
+        :param app: an application reference
+        :param button: the button the user selected
+        :document: a reference to the document
+        :return: returns summary
+        """
+        logging.debug("User selected " + button.text())
 
-def ensureDirectory(app, path: str):
-    """
-    This will ensure that the directory we are saving the embedding files into exists.
-    :param app: reference to the application
-    :param path: path to the directory
-    :return: Returns true on success and false otherwise
-    """
-    # if the path doesnt exist make the directory
-    if not os.path.exists(path):
-        try:
-            os.mkdir(path)
-            logging.info("Created WordEmbeddings directory")
-            return True
-        except:
-            logging.error("Failed to create WordEmbeddings directory")
-            return False
-    # if it does exist prompt the user to clear the directory
-    else:
-        logging.info("Download path directory already exists!")
+        # quit if the user selected cancel
+        if button.text() == '&Cancel':
+            return
 
-        # create the dialog to warn the user the dir will be cleared
-        clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
-                                     "Would you like to clear the contents and proceed?",
-                                     "Cancel will stop the download.")
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-        clear_dialog.addButtonBox(buttonBox)
+        path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
+                                                       app.left_menu.model.rootPath(),
+                                                       QFileDialog.ShowDirsOnly
+                                                       | QFileDialog.DontResolveSymlinks)
+        if path_parent == "":
+            logging.info("User Cancelled File Dialog")
+            return
 
-        # clear the directory if selected by the user
-        if clear_dialog.exec():
-            logging.info("User chose to remove all contents")
-            files = glob.glob(os.path.join(path, '*'))
-            for f in files:
-                try:
-                    os.remove(f)
-                    logging.debug("Removed: " + f)
-                except:
-                    dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
-                    dialog_fail.show()
-                    logging.error("Error occured removing directory contents")
-                    return False
-            return True
-        else:
-            logging.info("User chose not to clear directory. Exiting download")
-            return False
+        path_child = os.path.join(path_parent, 'WordEmbeddings')
+        if button.text() == "Open":
+            logging.error("Dictionaries not found in directory")
+            download_dialog = DialogBuilder(self.app, "Error!",
+                                            "Error - Dictionaries not found!",
+                                            "Please select a different path or download them again.")
+            button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+            download_dialog.addButtonBox(button_box)
+            download_dialog.exec()
+            return
 
+        self.download_path = path_child
 
-def dependencyDialogHandler(app, button, document=None):
-    """
-    This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
-    :param app: an application reference
-    :param button: the button the user selected
-    :document: a reference to the document
-    :return: returns summary
-    """
-    logging.debug("User selected " + button.text())
+        def files_exist(path1: str, path2: str):
+            if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
+                    os.path.join(path1, 'glove.6B.100d.npy')):
+                return path1
+            elif os.path.exists(os.path.join(path2, 'glove.6B.100d.vocab')) and os.path.exists(
+                    os.path.join(path2, 'glove.6B.100d.npy')):
+                return path2
+            else:
+                return None
 
-    # quit if the user selected cancel
-    if button.text() == '&Cancel':
-        return
+        self.existing_path = files_exist(path_parent, path_child)
 
-    path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                   app.left_menu.model.rootPath(),
-                                                   QFileDialog.ShowDirsOnly
-                                                   | QFileDialog.DontResolveSymlinks)
-    if path_parent == "":
-        logging.info("User Cancelled File Dialog")
-        return
+    def getExistingPath(self):
+        return self.existing_path
 
-    path_child = os.path.join(path_parent, 'WordEmbeddings')
+    def getDownloadPath(self):
+        return self.download_path
 
-    def files_exist(path1: str, path2: str):
-        if os.path.exists(os.path.join(path1, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path1, 'glove.6B.100d.npy')):
-            return path1
-        elif os.path.exists(os.path.join(path2, 'glove.6B.100d.vocab')) and os.path.exists(
-                os.path.join(path2, 'glove.6B.100d.npy')):
-            return path2
-        else:
-            return None
-
-    existing_path = files_exist(path_parent, path_child)
-
-    if existing_path is None:
+    def handleNewDownload(self, path_child, callback):
         zip_file = 'glove.6B.100d.zip'
 
         # prompt the user that they need to download the dependency files
         if not os.path.exists(os.path.join(path_child, zip_file)):
             logging.warning("Missing Files and ZIP. To re-download")
-            if button.text() == "Open":
-                logging.error("Dictionaries not found in directory")
-                download_dialog = DialogBuilder(app, "Error!",
-                                                "Error - Dictionaries not found!",
-                                                "Please select a different path or download them again.")
-                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
-                download_dialog.addButtonBox(button_box)
-                download_dialog.exec()
-                return
-            if not ensureDirectory(app, path_child):
+
+            if not self.ensureDirectory(self.app, path_child):
                 return
             should_download = True
             # create loading bar dialog and start the download thread
-            progress_bar_dialog = DialogBuilder(app, "Download Progress",
+            progress_bar_dialog = DialogBuilder(self.app, "Download Progress",
                                                 "Downloading Dictionaries...",
                                                 "Please do not close this window")
             progress_bar = progress_bar_dialog.addProgressBar((0, 100))
@@ -334,104 +327,97 @@ def dependencyDialogHandler(app, button, document=None):
             progress_bar = None
 
         try:
-            _thread.start_new_thread(getWordEmbeddings,
-                                     (app, path_child, should_download, progress_bar, document))
+            _thread.start_new_thread(self.downloadHandler,
+                                     (path_child, callback, should_download, progress_bar))
         except:
             logging.error("Unable to start thread")
-    else:
-        logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
-        # fill the dictionary with the word embeddings
-        initializeSummarizer(existing_path, app, document, True)
+
+    def downloadHandler(self, path: str, callback, should_download: bool = True, progress_bar=None, ):
+        """
+        This will download the necessary files for Summarizer then create the word embedding model and create
+        an instance of the summarizer
+        :param app: A reference to the application
+        :param path: A path to where the files are or are to be downloaded
+        :param should_download: Whether or not to re-download zip
+        :param progress_bar: A reference to the progress bar
+        :param document: Optionally summarize text at the end of procedure
+        :return:
+        """
+        zip_file = 'glove.6B.100d.zip'
+        if should_download:
+            # open the progress dialogue
+            logging.info("Started Downloading Word Embeddings")
+            if progress_bar is None:
+                logging.error("Progress bar is None")
+                return
+
+            # function to update the progress bar
+            def progressBarSignal(current, total, width):
+                progress_bar.setValue(current)
+                progress_bar.setMaximum(total)
+
+            # Download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
+            # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
+            url = "http://hunterprice.org/files/" + zip_file
+            wget.download(url, out=path, bar=progressBarSignal)
+            logging.info("Finished downloading!")
+
+        # uncompress the files
+        logging.info("Started unzipping")
+        with zipfile.ZipFile(os.path.join(path, zip_file), 'r') as zip_ref:
+            zip_ref.extractall(path)
+        logging.info("Finished unzipping")
+
+        try:  # delete the compressed file
+            os.remove(os.path.join(path, zip_file))
+            logging.info("Deleted zip file")
+        except:
+            logging.warning("Failed to remove leftover ZIP file")
+
+        callback(path, True)
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
-    """
-    This will download the necessary files for Summarizer then create the word embedding model and create
-    an instance of the summarizer
-    :param app: A reference to the application
-    :param path: A path to where the files are or are to be downloaded
-    :param should_download: Whether or not to re-download zip
-    :param progress_bar: A reference to the progress bar
-    :param document: Optionally summarize text at the end of procedure
-    :return:
-    """
-    zip_file = 'glove.6B.100d.zip'
-    if should_download:
-        # open the progress dialogue
-        logging.info("Started Downloading Word Embeddings")
-        if progress_bar is None:
-            logging.error("Progress bar is None")
-            return
-
-        # function to update the progress bar
-        def progressBarSignal(current, total, width):
-            progress_bar.setValue(current)
-            progress_bar.setMaximum(total)
-
-        # Download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
-        # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
-        url = "http://hunterprice.org/files/" + zip_file
-        wget.download(url, out=path, bar=progressBarSignal)
-        logging.info("Finished downloading!")
-
-    # uncompress the files
-    logging.info("Started unzipping")
-    with zipfile.ZipFile(os.path.join(path, zip_file), 'r') as zip_ref:
-        zip_ref.extractall(path)
-    logging.info("Finished unzipping")
-
-    try:  # delete the compressed file
-        os.remove(os.path.join(path, zip_file))
-        logging.info("Deleted zip file")
-    except:
-        logging.warning("Failed to remove leftover ZIP file")
-
-    initializeSummarizer(path, app, document, True)
-
-
-def initializeSummarizer(path, app, document, update_right_menu=False):
-    model = createModel(path)
-    if model is not None:
-        # create an instance of the summarizer and give it to the application
-        app.settings.setValue("dictionaryPath", path)
-        if document is not None:
-            document.summarizer = Summarizer(model)
-            if update_right_menu:
-                app.right_menu.updateSummary()
+    def ensureDirectory(self, app, path: str):
+        """
+        This will ensure that the directory we are saving the embedding files into exists.
+        :param app: reference to the application
+        :param path: path to the directory
+        :return: Returns true on success and false otherwise
+        """
+        # if the path doesnt exist make the directory
+        if not os.path.exists(path):
+            try:
+                os.mkdir(path)
+                logging.info("Created WordEmbeddings directory")
+                return True
+            except:
+                logging.error("Failed to create WordEmbeddings directory")
+                return False
+        # if it does exist prompt the user to clear the directory
         else:
-            logging.warning("Document is None - Not initializing Summarizer!")
-    else:
-        logging.error("Model ERROR - Failed to initialize Summarizer!")
+            logging.info("Download path directory already exists!")
 
+            # create the dialog to warn the user the dir will be cleared
+            clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
+                                         "Would you like to clear the contents and proceed?",
+                                         "Cancel will stop the download.")
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            clear_dialog.addButtonBox(buttonBox)
 
-def createModel(path):
-    """
-    takes the path to the word embedding files and fills a dictionary with the (word: word vector) pairs
-    :param path: path to the word embedding files
-    :return: Returns a dictionary of word vectors
-    """
-    logging.debug("Start fill model - reading dictionaries")
-    path = os.path.join(path, "glove.6B.100d")
-    path_vocab = path + '.vocab'
-    path_npy = path + '.npy'
-
-    # check to make sure the glove files exist
-    if not os.path.exists(path_vocab):
-        logging.error('Path does not exist - ' + path_vocab)
-        return
-
-    # check to make sure the glove files exist
-    if not os.path.exists(path_npy):
-        logging.error('Path does not exist - ' + path_npy)
-        return
-
-    # read the files into a python dict
-    logging.info("Attempting to read dictionary contents")
-    with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
-        index2word = [line.strip() for line in f_in]
-    wv = np.load(path_npy)
-    model = {}
-    for i, w in enumerate(index2word):
-        model[w] = wv[i]
-    logging.info("Finished reading dictionary contents")
-    return model
+            # clear the directory if selected by the user
+            if clear_dialog.exec():
+                logging.info("User chose to remove all contents")
+                files = glob.glob(os.path.join(path, '*'))
+                for f in files:
+                    try:
+                        os.remove(f)
+                        logging.debug("Removed: " + f)
+                    except:
+                        dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
+                        dialog_fail.show()
+                        logging.error("Error occured removing directory contents")
+                        return False
+                return True
+            else:
+                logging.info("User chose not to clear directory. Exiting download")
+                return False

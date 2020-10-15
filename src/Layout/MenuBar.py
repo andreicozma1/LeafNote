@@ -254,9 +254,9 @@ class MenuBar(QMenuBar):
         def onSummaryAction():
             logging.info("Generating Summary")
             if document.summarizer is None:
-                DocumentSummarizer.onSummaryAction(app, document)
-            if document.summarizer is not None:
-                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+                document.initSummarizer(None, True)
+            else:
+                document.updateRightMenu()
 
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)
