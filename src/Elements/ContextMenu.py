@@ -1,5 +1,3 @@
-import logging
-
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
@@ -19,16 +17,15 @@ class ContextMenu(QWidget):
 
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
-        self.initUI(vertical_layout)
+        self.setupDetails(vertical_layout)
         vertical_layout.addStretch()
 
-    def initUI(self, vertical_layout):
+    def setupDetails(self, vertical_layout):
         """
         Adds all the elements of right menu in a vertical layout
         :param vertical_layout: layout to add elements to
         :return: nothing
         """
-        logging.debug("Setting up menu")
 
         def createLabel(prop: str):
             label = QLabel()
@@ -47,12 +44,7 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_metadata)
 
         def onSummaryAction():
-            logging.info("Generating Summary")
-            if self.document.summarizer is None:
-                self.document.initSummarizer(None, True)
-            else:
-                self.document.updateRightMenu()
-
+            DocumentSummarizer.onSummaryAction(self.app, self.document)
 
         self.collapsible_summary = CollapsibleWidget("Summary:")
         self.enable_summarizer_btn = QPushButton("Enable Summarizer")
@@ -77,7 +69,7 @@ class ContextMenu(QWidget):
         # TODO - use document ref to display info about the document
         info = QFileInfo(path)
         # Get the file info and update all the respective fields
-        logging.debug("Updating Metadata")
+
         # Iterate through all properties and fill in metadata labels
         for i in range(self.collapsible_metadata.layout_content.count()):
             label = self.collapsible_metadata.layout_content.itemAt(i).widget()
@@ -105,14 +97,13 @@ class ContextMenu(QWidget):
                 value = "?"
             label.setText(label.property("prop") + ": " + value)
 
-        self.updateSummary(self.document.summarize())
+        self.updateSummary()
 
-    def updateSummary(self, summary):
-        logging.debug("Updating Summary")
-        if summary is not None:
+    def updateSummary(self):
+        if self.document.summarizer is not None:
             self.summary.show()
             self.enable_summarizer_btn.hide()
-            self.summary.setText(summary)
+            self.summary.setText(self.document.summarizer.summarize(self.document.toPlainText()))
         else:
             self.summary.hide()
             self.enable_summarizer_btn.show()
