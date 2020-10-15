@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator
+from Elements import Search, Document, Calculator, Replace
 from Layout import DocProps
 from Utils import Encryptor
 
@@ -113,7 +113,11 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("")
-            self.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+            self.doc.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+
+        def onFindAndReplaceBtn():
+            logging.info("")
+            self.doc.find_and_replace = Replace.FindAndReplace(self.doc)
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
@@ -134,6 +138,7 @@ class MenuBar(QMenuBar):
         self.menu_edit.addSeparator()
         self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+        self.menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
 
         # ========= END EDIT MENU SECTION =========
         return self.menu_edit
