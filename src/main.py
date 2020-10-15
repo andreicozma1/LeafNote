@@ -18,6 +18,7 @@ from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
+from Utils.Reminders import Reminders
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -50,6 +51,7 @@ class App(QMainWindow):
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
+        self.reminders = Reminders(self, self.settings)
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)

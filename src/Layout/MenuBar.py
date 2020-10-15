@@ -15,15 +15,6 @@ from time import time
 """
 all properties and functionalities of the menu bar
 """
-class Reminders():
-    def __init__(self, key,sort, date, time, title, description):
-        self.key = key
-        self.sort_key = sort
-        self.date = date
-        self.time = time
-        self.title = title
-        self.description = description
-
 class MenuBar(QMenuBar):
     def __init__(self, document: Document, doc_props: DocProps):
         """
@@ -37,7 +28,7 @@ class MenuBar(QMenuBar):
         self.setNativeMenuBar(False)
         self.rem_list = list()
         self.trigger = 0
-        self.reminder_node = Reminders(None,None,None,None,None,None)
+        #self.reminder_node = Reminders(None,None,None,None,None,None)
 
         self.doc.selectionChanged.connect(self.updateFormatOnSelectionChange)
         self.doc.currentCharFormatChanged.connect(self.updateFormatOnSelectionChange)
@@ -275,73 +266,8 @@ class MenuBar(QMenuBar):
         def onCalculatorAction():
             self.calculator = Calculator.Calculator()
 
-        def dueDateSelection():
-            # self.pop = QWidget()
-            # self.l1 = QVBoxLayout()
-            # self.pop.setLayout(self.l1)
-            # self.global_trigger = 0
-            # self.assignment_global_trigger = 0
-            # # ------------------------------#
-            self.title = QLineEdit()
-            self.title.setPlaceholderText("Title")
-            #self.l1.addWidget(self.title)
-            # ------------------------------#
-            self.description = QLineEdit()
-            self.description.setPlaceholderText("Description")
-            #self.l1.addWidget(self.description)
-            # ------------------------------#
-            temp = os.path.join("res", "calendar.ico")
-            self.button = QPushButton("Select a due date", self)
-            self.button.setIcon(QIcon(temp))
-            self.button.clicked.connect(partial(self.showCalendar, app))
-            # self.l1.addWidget(self.button)
-            #------------------------------#
-            self.hour_cb = QTimeEdit()
-            # self.button_t = QPushButton("Select a due date time", self)
-            # self.button_t.clicked.connect(self.showTime)
-            # self.l1.addWidget(self.button_t)
-            # # ------------------------------#
-            # self.sa = QPushButton("Add Assignment", self)
-            # self.sa.clicked.connect(self.doneB)
-            # self.l1.addWidget(self.sa)
-            # # ------------------------------#
-            # self.done = QPushButton("Done", self)
-            # self.done.clicked.connect(self.Close)
-            # self.l1.addWidget(self.done)
-            # # ------------------------------#
-            # self.pop.show()
-            self.dialog = DialogBuilder(app, "Add Reminder")
-            self.dialog.addWidget(self.title)
-            self.dialog.addWidget(self.description)
-            self.dialog.addWidget(self.button)
-            self.dialog.addWidget(self.hour_cb)
-            self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
-            self.dialog.addButtonBox(self.button_box)
-            if self.dialog.exec():
-                if self.title.text():
-                    self.trigger = 1
-                    #print(self.hour_cb.text())
-                    #print(self.title.text())
-                    #print(self.description.text())
-                    milliseconds = int(time() * 1000)
-                    #self.reminder_node = Reminders(milliseconds,self.ca,self.hour_cb.text(), self.title.text(), self.description.text())
-                    self.reminder_node.key = milliseconds
-                    time_temp = self.hour_cb.text()
-                    sort_key_string = self.ca + "-" + self.convert24(time_temp)
-                    sort_key_string = sort_key_string.replace(" ", "")
-                    sort_key_string = sort_key_string.replace("-", "")
-                    sort_key_string = sort_key_string.replace(":", "")
-                    self.reminder_node.sort_key = sort_key_string
-                    self.reminder_node.date = self.ca
-                    self.reminder_node.time = self.hour_cb.text()
-                    self.reminder_node.title = self.title.text()
-                    self.reminder_node.description = self.description.text()
-                    print("Printing Class")
-                    print(self.reminder_node.key, self.reminder_node.sort_key, self.reminder_node.date, self.reminder_node.time,
-                          self.reminder_node.title, self.reminder_node.description)
-                    self.rem_list.append(self.reminder_node)
-            else:
-                print("Clicked cancel")
+        def onRemindersAction():
+            app.reminders.showDialog()
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
@@ -351,7 +277,7 @@ class MenuBar(QMenuBar):
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
         self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        self.menu_tools.addAction(makeToolsAction("Reminders", "", dueDateSelection))
+        self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 
         # ========= END TOOLS MENU SECTION =========
@@ -399,65 +325,6 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-
-    def showCalendar(self, app):
-        """
-        Shows a calendar with current date
-        :return: CalendarWidget()
-        """
-
-        dialog = DialogBuilder(app, None, None, None)
-        cal = QCalendarWidget()
-        cal.selectionChanged.connect(partial(self.onSelectedDate, dialog, cal))
-        dialog.addWidget(cal)
-        dialog.show()
-
-
-    def showTime(self):
-        self.assignment_global_trigger = 1
-        self.ti = QTimeEdit()
-        self.ti.setVisible(True)
-
-
-    def onSelectedDate(self, dialog, cal):
-        """
-        :return: New date selected on the calendar
-        """
-        self.ca = cal.selectedDate().toString("yyyy-MM-dd")
-        self.button.setText(self.ca)
-        # print(self.ca)
-        # print(self.ca[4:7])
-        # print(self.ca[8:10])
-        # if len(self.ca) == 14:
-        #     print(self.ca[10:14])
-        # else:
-        #     print(self.ca[11:15])
-        dialog.close()
-        return self.ca
-
-    def convert24(self, str1):
-
-        if(str1[1] == ":"):
-            str1 = "0" + str1
-
-
-        # Checking if last two elements of time
-        # is AM and first two elements are 12
-        if str1[-2:] == "AM" and str1[:2] == "12":
-            return "00" + str1[2:-2]
-
-            # remove the AM
-        elif str1[-2:] == "AM":
-            return str1[:-2]
-
-            # Checking if last two elements of time
-        # is PM and first two elements are 12
-        elif str1[-2:] == "PM" and str1[:2] == "12":
-            return str1[:-2]
-
-        else:
-            # add 12 to hours and remove PM
-            return str(int(str1[:2]) + 12) + str1[2:6]
 
 
 
