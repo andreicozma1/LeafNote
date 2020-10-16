@@ -2,33 +2,33 @@ import logging
 import os
 from functools import partial
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt, QFileInfo
-from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea
-
-from Elements.Replace import FindAndReplace
+from PyQt5.QtCore import Qt, QFileInfo, QRegExp
+from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea, QShortcut
 
 
 ############################################################################
 # SEARCH CURRENT FILE
 
 
-class SearchFile(QWidget):
+class Search(QWidget):
     """
     This is a widget to search for users input in the current document
     """
 
-    def __init__(self, path_res, document):
+    def __init__(self, search_and_replace, document, path_res):
         """
         Sets up the search bar widget
         :param document: reference to the document
         """
         logging.info("")
-        super(SearchFile, self).__init__(document)
+        super(Search, self).__init__()
+        self.search_and_replace = search_and_replace
         self.document = document
         self.path_res = path_res
         self.search = ""
+        self.current = 0
+        self.total = 0
         self.flags = QTextDocument.FindFlag(0)
 
         self.initUI()
@@ -43,13 +43,9 @@ class SearchFile(QWidget):
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
         self.horizontal_layout.setAlignment(Qt.AlignLeft)
-        self.horizontal_layout.setSpacing(0)
+        self.horizontal_layout.setSpacing(3)
 
-        # set the background
-        palette = self.palette()
-        palette.setColor(QtGui.QPalette.Window, QtGui.QColor('#dadada'))
-        self.setPalette(palette)
-        self.setAutoFillBackground(True)
+        # -----------------------------------------------------------
 
         # add the qLineEdit
         self.search_bar = QLineEdit()
@@ -59,21 +55,18 @@ class SearchFile(QWidget):
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
         self.horizontal_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
 
-        # # add label to count occurrences
-        # self.occurances = QLabel("0 Results")
-        # self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
-        # self.occurances.setContentsMargins(10, 0, 0, 0)
-        # self.horizontal_layout.addWidget(self.occurances)
+        # -----------------------------------------------------------
+
+        # add label to count occurrences
+        self.occurances = QLabel("0/0")
+        self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
+        self.occurances.setContentsMargins(10, 0, 0, 0)
+        self.occurances.setContentsMargins(10, 0, 0, 0)
+        self.horizontal_layout.addWidget(self.occurances)
+
+        # -----------------------------------------------------------
 
         def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
-            """
-            this funciton will create a customized q push button
-            :param title: title of the button
-            :param tool_tip: tooltip of the button
-            :param on_click: the signal function of the button
-            :param is_checkable: sets the is checkable property
-            :return: Returns the newly created q push button
-            """
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
             btn.setToolTip(tool_tip)
@@ -83,85 +76,117 @@ class SearchFile(QWidget):
             btn.clicked.connect(on_click)
             return btn
 
+        # add the case sensitive option
+        self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
+        self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C), self.case_sensitive)
+        self.case_sensitive_shortcut.activated.connect(self.onCaseSensitiveSearchSelect)
+        self.horizontal_layout.addWidget(self.case_sensitive, 0, Qt.AlignLeft)
+
+        # add the case sensitive option
+        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
+        self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
+        self.whole_word_shortcut.activated.connect(self.onWholeWordSearchSelect)
+        self.horizontal_layout.addWidget(self.whole_word, 0, Qt.AlignLeft)
+
+        # add the case sensitive option
+        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
+        self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
+        self.regex_search_shortcut.activated.connect(self.onRegexSearchSelect)
+        self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
+
+        # -----------------------------------------------------------
+
         # get required images
         path = os.path.join(self.path_res, "arrow.ico")
         pixmap = QPixmap(path)
         down_arrow = QIcon(pixmap)
         up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))
-
         # add the previous occurrence option
-        self.previous_occurrence = createSearchBtn("", "Previous occurrence", self.onPreviousOccurrenceSelect, False)
+        self.previous_occurrence = createSearchBtn("", "Previous Occurrence", self.onPreviousOccurrenceSelect, False)
+        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return), self.previous_occurrence)
+        self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
         self.previous_occurrence.setIcon(up_arrow)
         self.horizontal_layout.addWidget(self.previous_occurrence)
 
         # add the next occurrence option
-        self.next_occurrence = createSearchBtn("", "Next occurrence", self.onNextOccurrenceSelect, False)
+        self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect, False)
+        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
+        self.next_occurrence_shortcut.activated.connect(self.onNextOccurrenceSelect)
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
-        # add a spacer
-        self.line = QLabel('|')
-        self.line.setStyleSheet("color: rgba(0,0,0,.5)")
-        self.horizontal_layout.addWidget(self.line)
+        # -----------------------------------------------------------
 
-        # add the find replace menu
-        self.elipses = createSearchBtn("o\no\no", "Find and replace", self.onFindAndReplace, False)
-        self.elipses.setFont(QFont("Default", 4, QFont.Black))
-        # self.elipses.setIcon(QIcon(QPixmap(os.path.join(self.path_res, "ellipses.ico")).transformed(QTransform().scale(0.1, 0.1))))
-        self.horizontal_layout.addWidget(self.elipses)
+        self.horizontal_layout.addStretch()
 
-        # exit find button
-        self.exit = createSearchBtn("x", "Close Search", self.close, False)
-        self.horizontal_layout.addWidget(self.exit)
+        # -----------------------------------------------------------
 
-        # self.setFixedWidth()
-        self.setFixedHeight(self.height())
+        # exit button
+        self.close_search = createSearchBtn("x", "Close Search Bar", self.search_and_replace.closeSearchAndReplace)
+        self.close_search_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self.close_search)
+        self.close_search_shortcut.activated.connect(self.search_and_replace.closeSearchAndReplace)
+        self.horizontal_layout.addWidget(self.close_search)
+
+    def onCaseSensitiveSearchSelect(self):
+        if self.regex_search.isChecked():
+            self.case_sensitive.setChecked(False)
+        self.onChanged(self.search_bar.text())
+
+    def onWholeWordSearchSelect(self):
+        if self.regex_search.isChecked():
+            self.whole_word.setChecked(False)
+        self.onChanged(self.search_bar.text())
+
+    def onRegexSearchSelect(self):
+        if self.regex_search.isChecked():
+            self.case_sensitive.setChecked(False)
+            self.whole_word.setChecked(False)
+        self.onChanged(self.search_bar.text())
 
     def onPreviousOccurrenceSelect(self):
-        """
-        defines what happens when the user searches for the previous selection with the up arrow button
-        :return: Returns nothing
-        """
-        logging.debug(self.document.find(self.search, self.flags | QTextDocument.FindBackward))
+        logging.info(self.document.find(self.search, self.flags | QTextDocument.FindBackward))
+        if self.current - 1 >= 1:
+            self.current = self.current - 1
+            self.occurances.setText(str(self.current)+'/'+str(self.total))
 
     def onNextOccurrenceSelect(self):
-        """
-        defines what happens when the user searches for the next selection with the down arrow button
-        :return: Returns nothing
-        """
-        logging.debug(self.document.find(self.search, self.flags))
+        logging.info(self.document.find(self.search, self.flags))
+        if self.current + 1 <= self.total:
+            self.current = self.current + 1
+            self.occurances.setText(str(self.current) + '/' + str(self.total))
 
-    def onFindAndReplace(self):
-        self.document.find_and_replace = FindAndReplace(self.document)
-        self.document.find_and_replace.find_bar.setText(self.search_bar.text())
-
-        # self.document.find_and_replace.onChanged(self.search_bar.text())
-        self.close()
+    def onCloseSearch(self):
+        self.search_and_replace.replace.setVisible(False)
+        self.setVisible(False)
 
     def onChanged(self, search):
-        """
-        When the text is changed reset and query for the new search phrase
-        :param search: The phrase to search for
-        :return: Returns nothing
-        """
-
         logging.info(search)
         self.search = search
 
         # update the number of occurrences of the search
-        if search != "":
-            self.occurances.setText(str(self.document.toPlainText().count(search)) + " Results")
+        self.total = self.document.toPlainText().count(search)
+        if self.total == 0:
+            self.current = 0
         else:
-            self.occurances.setText("0 Results")
+            self.current = 1
+
+        self.occurances.setText(str(self.current)+'/'+str(self.total))
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
         cursor.setPosition(0)
         self.document.setTextCursor(cursor)
-
         # set up the default search flags
         self.flags = QTextDocument.FindFlag(0)
-
+        # if search is case sensitive
+        if self.case_sensitive.isChecked():
+            self.flags = self.flags | QTextDocument.FindCaseSensitively
+        # if search is whole word sensitive
+        if self.whole_word.isChecked():
+            self.flags = self.flags | QTextDocument.FindWholeWords
+        # if the user IS searching for regex
+        if self.regex_search.isChecked():
+            self.search = QRegExp(self.search)
         logging.info(self.document.find(self.search, self.flags))
 
 
