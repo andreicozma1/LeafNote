@@ -205,7 +205,7 @@ class MenuBar(QMenuBar):
 
         clear_format = QAction("Clear Format", app)
         clear_format.setShortcut("Ctrl+0")
-        clear_format.triggered.connect(self.doc.resetFormatting)
+        clear_format.triggered.connect(self.doc.clearSelectionFormatting)
         self.menu_format.addAction(clear_format)
 
         act_color_picker = QAction("Color Picker", app)

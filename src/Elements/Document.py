@@ -1,7 +1,7 @@
 import logging
 
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
@@ -160,9 +160,9 @@ class Document(QTextEdit):
     def fontStrike(self) -> bool:
         return self.currentCharFormat().fontStrikeOut()
 
-    def resetFormatting(self):
+    def clearAllFormatting(self):
         """
-        Clears formatting on text
+        Clears formatting on all text
         :return: returns nothing
         """
         logging.debug("")
@@ -171,6 +171,13 @@ class Document(QTextEdit):
         cursor.setCharFormat(QtGui.QTextCharFormat())
         cursor.clearSelection()
         self.setTextCursor(cursor)
+
+    def clearSelectionFormatting(self):
+        """
+        Clears formatting on selected text
+        :return: returns nothing
+        """
+        self.setCurrentCharFormat(QTextCharFormat())
 
     def onTitleStyleChanged(self, state):
         """

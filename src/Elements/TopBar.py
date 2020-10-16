@@ -178,7 +178,7 @@ class TopBar(QWidget):
         self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
         self.button_clear.setFixedWidth(33)
         self.button_clear.setFocusPolicy(Qt.NoFocus)
-        self.button_clear.clicked.connect(self.document.resetFormatting)
+        self.button_clear.clicked.connect(self.document.clearSelectionFormatting)
         return self.button_clear
 
     def makeComboTextAlign(self, dict_align: dict) -> QComboBox:

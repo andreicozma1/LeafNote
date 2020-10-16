@@ -121,13 +121,13 @@ class FileManager:
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
-                    document.resetFormatting()
+                    document.clearAllFormatting()
                 state = (self.current_document.suffix() == 'lef')
             # if the open documents IS empty set the current document to none/empty document with no path
             else:
                 self.current_document = None
                 document.setText("")
-                document.resetFormatting()
+                document.clearAllFormatting()
                 state = False
 
             self.app.right_menu.updateDetails(self.current_document)
@@ -201,7 +201,7 @@ class FileManager:
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         if self.current_document.suffix() != 'lef':
-            document.resetFormatting()
+            document.clearAllFormatting()
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
 
         # update the document shown to the user
@@ -310,7 +310,7 @@ class FileManager:
         self.openDocument(document, new_path)
 
         # converting back from a formatted file. Reset all formatting and button selections
-        document.resetFormatting()
+        document.clearAllFormatting()
 
     def toLef(self, document):
         """
