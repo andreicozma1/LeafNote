@@ -223,7 +223,7 @@ class MenuBar(QMenuBar):
             return align_action
 
         def onTextAlignmentChanged(state):
-            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
+            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_text_aligns.keys()).index(state.text()))
 
         self.menu_format.addSeparator()
         # Action Group for Alignments options (Exclusive picks)
@@ -231,7 +231,7 @@ class MenuBar(QMenuBar):
         self.group_align.triggered.connect(onTextAlignmentChanged)
 
         def getName(index: int):
-            return list(self.doc_props.dict_align.keys())[index]
+            return list(self.doc_props.dict_text_aligns.keys())[index]
 
         # Add alignment options to the group
         self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
@@ -318,9 +318,11 @@ class MenuBar(QMenuBar):
         alignment = self.doc.alignment()
         for action in self.group_align.actions():
             action.setChecked(False)
-            index = list(self.doc_props.dict_align.values()).index(alignment)
-            if action.text() == list(self.doc_props.dict_align.keys())[index]:
-                action.setChecked(True)
+            align_list = list(self.doc_props.dict_text_aligns.values())
+            if alignment in align_list:
+                index = align_list.index(alignment)
+                if action.text() == list(self.doc_props.dict_text_aligns.keys())[index]:
+                    action.setChecked(True)
         # Unblock signals
         a: QAction
         for a in self.menu_format.actions():

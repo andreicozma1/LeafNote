@@ -43,67 +43,67 @@ class Document(QTextEdit):
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
 
-    def onFontItalChanged(self, state):
+    def onFontItalChanged(self, is_italic: bool):
         """
         Sets the font to italic
-        :param state: boolean - format true or false
+        :param is_italic: boolean - format true or false
         :return: returns nothing
         """
-        logging.debug(str(state))
-        self.setFontItalic(state)
+        logging.debug(str(is_italic))
+        self.setFontItalic(is_italic)
 
-    def onFontBoldChanged(self, state):
+    def onFontBoldChanged(self, is_bold: bool):
         """
         Sets the font to bold
-        :param state: boolean - format true or false
+        :param is_bold: boolean - format true or false
         :return: returns nothing
         """
-        logging.debug(str(QFont.Bold if state else QFont.Normal))
-        self.setFontWeight(QFont.Bold if state else QFont.Normal)
+        logging.debug(str(QFont.Bold if is_bold else QFont.Normal))
+        self.setFontWeight(QFont.Bold if is_bold else QFont.Normal)
 
-    def onFontUnderChanged(self, state):
+    def onFontUnderChanged(self, is_underline: bool):
         """
         Sets the font to underlined
-        :param state: boolean - format true or false
+        :param is_underline: boolean - format true or false
         :return: returns nothing
         """
-        logging.debug(str(state))
-        self.setFontUnderline(state)
+        logging.debug(str(is_underline))
+        self.setFontUnderline(is_underline)
 
-    def onFontStrikeChanged(self, state):
+    def onFontStrikeChanged(self, is_strike: bool):
         """
         Sets the font to strike
-        :param state: boolean - format true or false
+        :param is_strike: boolean - format true or false
         :return: returns nothing
         """
-        logging.debug(str(state))
+        logging.debug(str(is_strike))
         font_format = self.currentCharFormat()
-        font_format.setFontStrikeOut(state)
+        font_format.setFontStrikeOut(is_strike)
         self.setCurrentCharFormat(font_format)
 
-    def onFontStyleChanged(self, state):
+    def onFontStyleChanged(self, font_str: str):
         """
         Sets the font to the new font
         :return: returns nothing
         """
-        logging.debug(state)
-        self.setCurrentFont(state)
+        logging.debug(font_str)
+        self.setCurrentFont(font_str)
 
-    def onFontSizeChanged(self, state):
+    def onFontSizeChanged(self, point_size_str: str):
         """
         Sets the current sets the font size from the ComboBox
         :return: returns nothing
         """
-        logging.debug(state)
-        self.setFontPointSize(int(state))
+        logging.debug(point_size_str)
+        self.setFontPointSize(int(point_size_str))
 
-    def onTextAlignmentChanged(self, state):
+    def onTextAlignmentChanged(self, align_str: str):
         """
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.debug(list(self.doc_props.dict_align.keys())[state])
-        self.setAlignment(list(self.doc_props.dict_align.values())[state])
+        logging.debug(list(self.doc_props.dict_text_aligns.keys())[align_str])
+        self.setAlignment(list(self.doc_props.dict_text_aligns.values())[align_str])
         self.currentCharFormatChanged.emit(self.currentCharFormat())
 
     def openColorDialog(self):
@@ -117,47 +117,47 @@ class Document(QTextEdit):
         if color.isValid():
             self.setTextColor(color)
 
-    def onTextColorChanged(self, index):
+    def onTextColorChanged(self, color_index:int):
         """
         set the color the user selects to the text
-        :param index: the location of color in the color_dict
+        :param color_index: the location of color in the color_dict
         :return: returns nothing
         """
-        logging.debug(index)
-        color_list: list = list(self.doc_props.color_dict.values())
-        self.setTextColor(QColor(color_list[index]))
+        logging.debug(color_index)
+        color_list: list = list(self.doc_props.dict_colors.values())
+        self.setTextColor(QColor(color_list[color_index]))
 
-    def setBackgroundColor(self, color: str):
+    def setBackgroundColor(self, color_str: str):
         """
         Set the background color of the QPlainTextEdit Widget
-        :param color: color the background will be set to
+        :param color_str: color the background will be set to
         :return: returns nothing
         """
-        logging.debug(color)
+        logging.debug(color_str)
         palette = self.palette()
         # Set color for window focused
-        palette.setColor(QPalette.Active, QPalette.Base, QColor(color))
+        palette.setColor(QPalette.Active, QPalette.Base, QColor(color_str))
         # Set color for window out of focus
-        palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color))
+        palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color_str))
 
         self.setPalette(palette)
         # self.setBackgroundVisible(False)
 
-    def setTextColorByString(self, color: str):
+    def setTextColorByString(self, color_str: str):
         """
         sets the text box to designated color
-        :param color: color the text box will be set to
+        :param color_str: color the text box will be set to
         :return: return nothing
         """
-        logging.debug(color)
+        logging.debug(color_str)
         palette = self.palette()
-        palette.setColor(QPalette.Text, QColor(color))
+        palette.setColor(QPalette.Text, QColor(color_str))
         self.setPalette(palette)
 
-    def fontBold(self):
+    def fontBold(self) -> bool:
         return self.fontWeight() == QFont.Bold
 
-    def fontStrike(self):
+    def fontStrike(self) -> bool:
         return self.currentCharFormat().fontStrikeOut()
 
     def resetFormatting(self):
@@ -180,5 +180,5 @@ class Document(QTextEdit):
         logging.info(state)
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.dict_title_style[state])
-        self.setCurrentCharFormat(self.doc_props.dict_title_style[state])
+        cursor.setCharFormat(self.doc_props.dict_title_styles[state])
+        self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
