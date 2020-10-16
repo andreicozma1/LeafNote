@@ -83,7 +83,7 @@ class TopBar(QWidget):
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
         self.combo_font_size.setCurrentIndex(self.list_font_size.index(str(self.document.font().pointSize())))
-        self.combo_font_size.currentIndexChanged.connect(self.document.onFontSizeChanged)
+        self.combo_font_size.currentTextChanged.connect(self.document.onFontSizeChanged)
         return self.combo_font_size
 
     def makeBtnBold(self) -> QPushButton:
@@ -234,9 +234,10 @@ class TopBar(QWidget):
             self.combo_font_style.setCurrentFont(self.document.currentFont())
         # Update the font size displayed
         if self.combo_font_size is not None:
-            size = int(self.document.fontPointSize())
+            size = int(self.document.currentCharFormat().fontPointSize())
             if size != 0:
-                self.combo_font_size.setCurrentIndex(self.list_font_size.index(str(size)))
+                size_index = self.list_font_size.index(str(size))
+                self.combo_font_size.setCurrentIndex(size_index)
         # Update extra formatting options
         if self.button_ital is not None:
             self.button_ital.setChecked(self.document.fontItalic())
@@ -249,7 +250,10 @@ class TopBar(QWidget):
         # Update the text alignment
         if self.combo_text_align is not None:
             align = self.document.alignment()
-            self.combo_text_align.setCurrentIndex(list(self.dict_align.values()).index(align))
+            align_list = list(self.dict_align.values())
+            if align in align_list:
+                align_index = align_list.index(align)
+                self.combo_text_align.setCurrentIndex(align_index)
         # Unblock signals
         a: QWidget
         for a in self.children():
