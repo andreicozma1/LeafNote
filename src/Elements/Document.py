@@ -177,7 +177,12 @@ class Document(QTextEdit):
         Clears formatting on selected text
         :return: returns nothing
         """
-        self.setCurrentCharFormat(QTextCharFormat())
+        cursor = self.textCursor()
+        if cursor.hasSelection() == False:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            cursor.setCharFormat(QTextCharFormat())
+        else:
+            self.setCurrentCharFormat(QTextCharFormat())
 
     def onTitleStyleChanged(self, state):
         """
