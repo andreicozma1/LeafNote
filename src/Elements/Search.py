@@ -27,6 +27,8 @@ class Search(QWidget):
         self.document = document
         self.path_res = path_res
         self.search = ""
+        self.current = 0
+        self.total = 0
         self.flags = QTextDocument.FindFlag(0)
 
         self.initUI()
@@ -56,7 +58,7 @@ class Search(QWidget):
         # -----------------------------------------------------------
 
         # add label to count occurrences
-        self.occurances = QLabel("0 Results")
+        self.occurances = QLabel("0/0")
         self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
         self.occurances.setContentsMargins(10, 0, 0, 0)
         self.occurances.setContentsMargins(10, 0, 0, 0)
@@ -143,10 +145,15 @@ class Search(QWidget):
 
     def onPreviousOccurrenceSelect(self):
         logging.info(self.document.find(self.search, self.flags | QTextDocument.FindBackward))
+        if self.current - 1 >= 1:
+            self.current = self.current - 1
+            self.occurances.setText(str(self.current)+'/'+str(self.total))
 
     def onNextOccurrenceSelect(self):
         logging.info(self.document.find(self.search, self.flags))
-        # when text is entered in search through the document
+        if self.current + 1 <= self.total:
+            self.current = self.current + 1
+            self.occurances.setText(str(self.current) + '/' + str(self.total))
 
     def onCloseSearch(self):
         self.search_and_replace.replace.setVisible(False)
@@ -157,10 +164,13 @@ class Search(QWidget):
         self.search = search
 
         # update the number of occurrences of the search
-        if search != "":
-            self.occurances.setText(str(self.document.toPlainText().count(search)) + " Results")
+        self.total = self.document.toPlainText().count(search)
+        if self.total == 0:
+            self.current = 0
         else:
-            self.occurances.setText("0 Results")
+            self.current = 1
+
+        self.occurances.setText(str(self.current)+'/'+str(self.total))
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
