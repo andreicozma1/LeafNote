@@ -34,6 +34,8 @@ class Reminders():
         self.app = app
         self.settings = settings
         self.rem_list = list()
+        self.temp_list = list()
+        self.app.settings.beginGroup("Reminders")
 
     def addReminder(self, reminder: Reminder):
         self.rem_list.append(reminder)
@@ -73,6 +75,8 @@ class Reminders():
                 print("Printing Class")
                 print(reminder_node.key, reminder_node.sort_key, reminder_node.date,reminder_node.time,reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
+                #self.temp_list.append(reminder_node)
+                #self.app.settings.setValue(reminder_node.key, self.temp_list)
                 self.app.right_menu.collapsible_reminders.addElement(reminder_node)
         else:
             print("Clicked cancel")
