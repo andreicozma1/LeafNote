@@ -1,20 +1,18 @@
 import logging
-from functools import partial
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
-    QMessageBox, QComboBox, QDateTimeEdit
+
+from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
-import os
+
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator, Replace
+from Elements import Search, Document, Calculator
 from Layout import DocProps
 from Utils import Encryptor
-from Utils.DialogBuilder import DialogBuilder
-from time import time
 
 """
 all properties and functionalities of the menu bar
 """
+
+
 class MenuBar(QMenuBar):
     def __init__(self, document: Document, doc_props: DocProps):
         """
@@ -109,8 +107,10 @@ class MenuBar(QMenuBar):
         self.menu_edit = self.addMenu('&Edit')
 
         def onFindBtn():
-            logging.info(not self.doc.search.isVisible())
-            self.doc.search.setVisible(not self.doc.search.isVisible())
+            logging.info(not app.search_and_replace.search.isVisible())
+            if app.search_and_replace.replace.isVisible():
+                app.search_and_replace.replace.setVisible(False)
+            app.search_and_replace.search.setVisible(not app.search_and_replace.search.isVisible())
 
         def onFindAllBtn():
             logging.info("")
@@ -118,7 +118,9 @@ class MenuBar(QMenuBar):
 
         def onFindAndReplaceBtn():
             logging.info("")
-            self.doc.find_and_replace = Replace.FindAndReplace(self.doc)
+            app.search_and_replace.replace.setVisible(not app.search_and_replace.replace.isVisible())
+            if app.search_and_replace.replace.isVisible():
+                app.search_and_replace.search.setVisible(True)
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:

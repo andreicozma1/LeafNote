@@ -1,11 +1,9 @@
 import logging
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
-from PyQt5.QtWidgets import QColorDialog, QTextEdit, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
-from Elements.Search import SearchFile
 from Utils import DocumentSummarizer
 
 """
@@ -39,10 +37,6 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        self.search = SearchFile(app.app_props.path_res, self)
-        self.search_all = None
-        self.find_and_replace = None
-
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
@@ -55,20 +49,21 @@ class Document(QTextEdit):
         Initializes the layout of document.
         :return: Returns nothing
         """
-        # create v box to hold h box and stretch
-        logging.debug("")
-        self.layout_main = QVBoxLayout(self)
-        self.layout_main.setContentsMargins(0, 0, 0, 0)
-
-        # creat h box to hold stretch and search
-        self.hbox = QHBoxLayout()
-        self.hbox.setContentsMargins(0, 0, 0, 0)
-        self.hbox.setAlignment(Qt.AlignRight)
-        self.hbox.addWidget(self.search)
-
-        # add the hbox and stretch to align search to top right of screen
-        self.layout_main.addLayout(self.hbox)
-        self.layout_main.addStretch()
+        pass
+        # # create v box to hold h box and stretch
+        # logging.debug("")
+        # self.layout_main = QVBoxLayout(self)
+        # self.layout_main.setContentsMargins(0, 0, 0, 0)
+        #
+        # # creat h box to hold stretch and search_and_replace
+        # self.hbox = QHBoxLayout()
+        # self.hbox.setContentsMargins(0, 0, 0, 0)
+        # self.hbox.setAlignment(Qt.AlignRight)
+        # self.hbox.addWidget(self.search_and_replace)
+        #
+        # # add the hbox and stretch to align search_and_replace to top right of screen
+        # self.layout_main.addLayout(self.hbox)
+        # self.layout_main.addStretch()
 
     def onFontItalChanged(self, state):
         """

@@ -10,6 +10,7 @@ from Elements.ContextMenu import ContextMenu
 from Elements.DirectoryViewer import DirectoryViewer
 from Elements.Document import Document
 from Elements.OpenTabsBar import OpenTabsBar
+from Elements.SearchAndReplace import SearchAndReplace
 from Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.DocProps import DocProps
@@ -72,9 +73,10 @@ class App(QMainWindow):
         last_path = self.settings.value("workspacePath")
         self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
+        self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
-                                                              self.right_menu)
+                                                              self.right_menu, self.search_and_replace)
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
