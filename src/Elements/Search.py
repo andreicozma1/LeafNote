@@ -3,8 +3,8 @@ import os
 from functools import partial
 
 from PyQt5.QtCore import Qt, QFileInfo, QRegExp
-from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea
+from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QVBoxLayout, QScrollArea, QShortcut
 
 
 ############################################################################
@@ -41,7 +41,7 @@ class Search(QWidget):
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
         self.horizontal_layout.setAlignment(Qt.AlignLeft)
-        self.horizontal_layout.setSpacing(0)
+        self.horizontal_layout.setSpacing(3)
 
         # -----------------------------------------------------------
 
@@ -76,12 +76,20 @@ class Search(QWidget):
 
         # add the case sensitive option
         self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
+        self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C), self.case_sensitive)
+        self.case_sensitive_shortcut.activated.connect(self.onCaseSensitiveSearchSelect)
         self.horizontal_layout.addWidget(self.case_sensitive, 0, Qt.AlignLeft)
+
         # add the case sensitive option
         self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
+        self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
+        self.whole_word_shortcut.activated.connect(self.onWholeWordSearchSelect)
         self.horizontal_layout.addWidget(self.whole_word, 0, Qt.AlignLeft)
+
         # add the case sensitive option
         self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
+        self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
+        self.regex_search_shortcut.activated.connect(self.onRegexSearchSelect)
         self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
 
         # -----------------------------------------------------------
@@ -93,10 +101,15 @@ class Search(QWidget):
         up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))
         # add the previous occurrence option
         self.previous_occurrence = createSearchBtn("", "Previous Occurrence", self.onPreviousOccurrenceSelect, False)
+        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return), self.previous_occurrence)
+        self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
         self.previous_occurrence.setIcon(up_arrow)
         self.horizontal_layout.addWidget(self.previous_occurrence)
+
         # add the next occurrence option
         self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect, False)
+        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
+        self.next_occurrence_shortcut.activated.connect(self.onNextOccurrenceSelect)
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
@@ -108,6 +121,8 @@ class Search(QWidget):
 
         # exit button
         self.close_search = createSearchBtn("x", "Close Search Bar", self.search_and_replace.closeSearchAndReplace)
+        self.close_search_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self.close_search)
+        self.close_search_shortcut.activated.connect(self.search_and_replace.closeSearchAndReplace)
         self.horizontal_layout.addWidget(self.close_search)
 
     def onCaseSensitiveSearchSelect(self):

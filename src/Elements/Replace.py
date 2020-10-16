@@ -25,7 +25,7 @@ class Replace(QWidget):
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
         self.horizontal_layout.setAlignment(Qt.AlignLeft)
-        self.horizontal_layout.setSpacing(0)
+        self.horizontal_layout.setSpacing(3)
 
         # -----------------------------------------------------------
 
