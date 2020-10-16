@@ -59,7 +59,7 @@ class Replace(QWidget):
         cursor = self.document.textCursor()
         if cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())
-        self.document.search_and_replace.search.onNextOccurrenceSelect()
+        self.search_and_replace.search.onNextOccurrenceSelect()
 
     def onReplaceAll(self):
         """
@@ -68,5 +68,5 @@ class Replace(QWidget):
         cursor = self.document.textCursor()
         while cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())
-            self.document.search_and_replace.search.onNextOccurrenceSelect()
+            self.search_and_replace.search.onNextOccurrenceSelect()
             cursor = self.document.textCursor()
