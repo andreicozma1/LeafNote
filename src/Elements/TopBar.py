@@ -59,17 +59,18 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         self.dict_title_style = dict_title_style
-        self.dict_title_style["Update Normal Text"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Title"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Subtitle"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Header 1"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Header 2"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Header 3"] = self.document.updateTitleStyle
-        self.dict_title_style["Update Header 4"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Normal Text"] = None
+        self.dict_title_style["Update Title"] = None
+        self.dict_title_style["Update Subtitle"] = None
+        self.dict_title_style["Update Header 1"] = None
+        self.dict_title_style["Update Header 2"] = None
+        self.dict_title_style["Update Header 3"] = None
+        self.dict_title_style["Update Header 4"] = None
+        self.dict_title_style["Reset to Default"] = None
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
-        self.combo_title_style.setMaxVisibleItems(14)
+        self.combo_title_style.setMaxVisibleItems(15)
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
 

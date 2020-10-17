@@ -178,15 +178,26 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         logging.info(state)
-        if state[0] != "U":
+        if state[0] != "U" and state[0] != "R":
             cursor = self.textCursor()
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             cursor.setCharFormat(self.doc_props.dict_title_styles[state])
             self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
-        else:
+        elif state[0] == "U":
             self.updateTitleStyle(state[7:])
+        else:
+            self.resetTitleStyle()
 
     def updateTitleStyle(self, state):
         logging.info(state)
         cursor = self.textCursor()
         self.doc_props.dict_title_styles[state] = cursor.charFormat()
+
+    def resetTitleStyle(self):
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Title"] = self.doc_props.title
+        self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
+        self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
+        self.doc_props.dict_title_styles["Header 2"] = self.doc_props.heading2
+        self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
+        self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
