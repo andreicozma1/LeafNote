@@ -97,7 +97,6 @@ class App(QMainWindow):
     def setupTopBar(self):
         top_bar_layout = self.top_bar.makeMainLayout()
         top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
-        top_bar_layout.addWidget(self.top_bar.testButton())
         top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
         top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox(self.doc_props.list_font_sizes))
         top_bar_layout.addWidget(self.top_bar.makeBtnBold())

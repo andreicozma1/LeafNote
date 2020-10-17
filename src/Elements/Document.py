@@ -178,13 +178,15 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         logging.info(state)
-        cursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.dict_title_styles[state])
-        self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        if state[0] != "U":
+            cursor = self.textCursor()
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            cursor.setCharFormat(self.doc_props.dict_title_styles[state])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        else:
+            self.updateTitleStyle(state[7:])
 
-    def updateTitleStyle(self):
-        # logging.info(state)
+    def updateTitleStyle(self, state):
+        logging.info(state)
         cursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        self.doc_props.dict_title_styles["Normal Text"] = cursor.charFormat()
+        self.doc_props.dict_title_styles[state] = cursor.charFormat()

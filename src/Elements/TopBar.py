@@ -59,26 +59,19 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         self.dict_title_style = dict_title_style
+        self.dict_title_style["Update Normal Text"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Title"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Subtitle"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Header 1"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Header 2"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Header 3"] = self.document.updateTitleStyle
+        self.dict_title_style["Update Header 4"] = self.document.updateTitleStyle
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
+        self.combo_title_style.setMaxVisibleItems(14)
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
-
-    #test button
-
-    def testButton(self) -> QPushButton:
-        # Button press to make text bold
-        self.button_test = QPushButton("t", self)
-        self.button_test.setToolTip('test button to update normal text to match current formatting')
-        self.button_test.setFixedWidth(33)
-        self.button_test.setStyleSheet("QPushButton { font:Bold }")
-        self.button_test.setCheckable(False)
-        self.button_test.setFocusPolicy(Qt.NoFocus)
-        self.button_test.clicked.connect(self.document.updateTitleStyle)
-        return self.button_test
-
-    #end of test button
 
     def makeComboFontStyleBox(self) -> QFontComboBox:
         # ComboBox for font sizes
