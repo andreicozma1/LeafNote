@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QCalendarWidget
 
 class Calendar(QCalendarWidget):
     def __init__(self):
-        super(QCalendarWidget, self).__init__()
+        super(Calendar, self).__init__()
 
         self.setStyleSheet("#qt_calendar_navigationbar"
                            "{"
