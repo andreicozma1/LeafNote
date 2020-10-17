@@ -41,19 +41,20 @@ class BottomBar(QWidget):
 
         self.setStyleSheet("font-size: 14px")
 
+        # Create Calendar Button
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
         self.calendar = QPushButton("", self)
         self.calendar.setIcon(QIcon(path_calendar_icon))
         self.calendar.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calendar)
-        # adds time label
-        datetime = QDateTime.currentDateTime()
-        self.current_time1 = QLabel()
 
-        self.horizontal_layout.addWidget(self.current_time1)
+        # Create date-time label
+        self.label_time = QLabel()
+        self.horizontal_layout.addWidget(self.label_time)
         timer = QTimer(self)
         timer.timeout.connect(self.updateTime)
         timer.start(1000)
+        self.updateTime()
 
         self.horizontal_layout.addStretch()
         # sets default settings for word counter
@@ -183,7 +184,7 @@ class BottomBar(QWidget):
         :return: returns current time
         """
         datetime = QDateTime.currentDateTime()
-        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.label_time.setText(datetime.toString(Qt.DefaultLocaleShortDate))
 
     def showCalendar(self):
         """
@@ -193,9 +194,3 @@ class BottomBar(QWidget):
         self.cal = QCalendarWidget()
         self.cal.setVisible(True)
         self.cal.selectionChanged.connect(self.onSelectedDate)
-
-    def onSelectedDate(self):
-        """
-        :return: New date selected on the calendar
-        """
-        ca = self.cal.selectedDate()
