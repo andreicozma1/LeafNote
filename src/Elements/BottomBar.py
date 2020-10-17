@@ -2,6 +2,7 @@ import logging
 import os
 
 from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
 from PyQt5.QtCore import QDate, QDateTime
 
@@ -38,37 +39,29 @@ class BottomBar(QWidget):
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
 
+        self.setStyleSheet("font-size: 14px")
+
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
         self.calendar = QPushButton("", self)
         self.calendar.setIcon(QIcon(path_calendar_icon))
         self.calendar.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calendar)
-
         # adds time label
         datetime = QDateTime.currentDateTime()
         self.current_time1 = QLabel()
-        font = self.current_time1.font()
-        font.setPointSize(8)
-        self.current_time1.setFont(font)
-        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+
         self.horizontal_layout.addWidget(self.current_time1)
         timer = QTimer(self)
-        timer.timeout.connect(self.showTime)
+        timer.timeout.connect(self.updateTime)
         timer.start(1000)
 
         self.horizontal_layout.addStretch()
         # sets default settings for word counter
         self.label_wc = QLabel("0 Words")
-        font = self.label_wc.font()
-        font.setPointSize(8)
-        self.label_wc.setFont(font)
         self.horizontal_layout.addWidget(self.label_wc)
 
         # sets default settings for character counter
         self.label_cc = QLabel("0 Characters")
-        font = self.label_cc.font()
-        font.setPointSize(8)
-        self.label_cc.setFont(font)
         self.horizontal_layout.addWidget(self.label_cc)
 
         self.horizontal_layout.addStretch()
@@ -79,9 +72,6 @@ class BottomBar(QWidget):
 
         # Zoom reset button
         self.button_zoom_reset = QPushButton("100%", self)
-        font = self.button_zoom_reset.font()
-        font.setPointSize(8)
-        self.button_zoom_reset.setFont(font)
         self.button_zoom_reset.setFixedWidth(40)
         self.button_zoom_reset.clicked.connect(self.resetZoom)
         self.button_zoom_reset.setToolTip("Resets zoom to default 100%")
@@ -187,7 +177,7 @@ class BottomBar(QWidget):
         logging.info("")
         self.zoom_slider.setValue(self.slider_start)
 
-    def showTime(self):
+    def updateTime(self):
         """
         Updates current time displayed on current_time label
         :return: returns current time
