@@ -108,9 +108,6 @@ class Calculator(QWidget):
         delete.setShortcut("backspace")
         neg.clicked.connect(self.action_neg)
 
-    def action_plus(self):
-        text = self.screen.text()
-        self.screen.setText(text + " + ")
 
     def action_equal(self):
         equation = self.screen.text()
