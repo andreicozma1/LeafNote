@@ -42,7 +42,7 @@ class App(QMainWindow):
         creates the window and its attributes
         :return: returns nothing
         """
-        super(QMainWindow, self).__init__()
+        super(App, self).__init__()
         logging.info("Constructor")
 
         # Initialize properties.
