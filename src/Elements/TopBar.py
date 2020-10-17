@@ -65,6 +65,21 @@ class TopBar(QWidget):
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
 
+    #test button
+
+    def testButton(self) -> QPushButton:
+        # Button press to make text bold
+        self.button_test = QPushButton("t", self)
+        self.button_test.setToolTip('test button to update normal text to match current formatting')
+        self.button_test.setFixedWidth(33)
+        self.button_test.setStyleSheet("QPushButton { font:Bold }")
+        self.button_test.setCheckable(False)
+        self.button_test.setFocusPolicy(Qt.NoFocus)
+        self.button_test.clicked.connect(self.document.updateTitleStyle)
+        return self.button_test
+
+    #end of test button
+
     def makeComboFontStyleBox(self) -> QFontComboBox:
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox(self)

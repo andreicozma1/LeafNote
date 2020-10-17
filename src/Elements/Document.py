@@ -182,3 +182,9 @@ class Document(QTextEdit):
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         cursor.setCharFormat(self.doc_props.dict_title_styles[state])
         self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+
+    def updateTitleStyle(self):
+        # logging.info(state)
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+        self.doc_props.dict_title_styles["Normal Text"] = cursor.charFormat()
