@@ -1,9 +1,13 @@
 import logging
 import os
 
-from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
-from PyQt5.QtCore import QDate, QDateTime
+from PyQt5.Qt import Qt, QTimer, QIcon
+from PyQt5.QtCore import QDateTime, QSettings, QDate
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox
+
+from Elements.Calendar import Calendar
+from Utils.DialogBuilder import DialogBuilder
 
 """
 This file alters tools on the Bottom Bar
@@ -22,53 +26,54 @@ class BottomBar(QWidget):
     the bottom bar
     """
 
-    def __init__(self, path_res: str, document):
+    def __init__(self, app, document, settings: QSettings, path_res: str):
         """
         Creates the bottom bar
         :param document: the document the bottom bar will be altering
         :return: returns nothing
         """
         super(BottomBar, self).__init__()
-        logging.info("")
-        self.path_res = path_res
+        logging.info("Initialized BottomBar")
+        self.app = app
         self.document = document
+        self.settings = settings
+        self.path_res = path_res
 
-        # sets up the bottom bar
+        # Sets up the layout of the bottom bar
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
 
+        # Set global font size
+        font_default = QFont()
+        font_default.setPointSize(8)
+
+        # Create Calendar Button
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
         self.calendar = QPushButton("", self)
         self.calendar.setIcon(QIcon(path_calendar_icon))
         self.calendar.clicked.connect(self.showCalendar)
         self.horizontal_layout.addWidget(self.calendar)
 
-        # adds time label
-        datetime = QDateTime.currentDateTime()
-        self.current_time1 = QLabel()
-        font = self.current_time1.font()
-        font.setPointSize(8)
-        self.current_time1.setFont(font)
-        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
-        self.horizontal_layout.addWidget(self.current_time1)
+        # Create date-time label
+        self.label_time = QLabel()
+        self.label_time.setFont(font_default)
+        self.horizontal_layout.addWidget(self.label_time)
         timer = QTimer(self)
-        timer.timeout.connect(self.showTime)
+        timer.timeout.connect(self.updateTime)
         timer.start(1000)
+        self.updateTime()
 
         self.horizontal_layout.addStretch()
-        # sets default settings for word counter
+
+        # Create Word Counter
         self.label_wc = QLabel("0 Words")
-        font = self.label_wc.font()
-        font.setPointSize(8)
-        self.label_wc.setFont(font)
+        self.label_wc.setFont(font_default)
         self.horizontal_layout.addWidget(self.label_wc)
 
-        # sets default settings for character counter
+        # Create Character Counter
         self.label_cc = QLabel("0 Characters")
-        font = self.label_cc.font()
-        font.setPointSize(8)
-        self.label_cc.setFont(font)
+        self.label_cc.setFont(font_default)
         self.horizontal_layout.addWidget(self.label_cc)
 
         self.horizontal_layout.addStretch()
@@ -79,9 +84,7 @@ class BottomBar(QWidget):
 
         # Zoom reset button
         self.button_zoom_reset = QPushButton("100%", self)
-        font = self.button_zoom_reset.font()
-        font.setPointSize(8)
-        self.button_zoom_reset.setFont(font)
+        self.button_zoom_reset.setFont(font_default)
         self.button_zoom_reset.setFixedWidth(40)
         self.button_zoom_reset.clicked.connect(self.resetZoom)
         self.button_zoom_reset.setToolTip("Resets zoom to default 100%")
@@ -187,25 +190,40 @@ class BottomBar(QWidget):
         logging.info("")
         self.zoom_slider.setValue(self.slider_start)
 
-    def showTime(self):
+    def updateTime(self):
         """
         Updates current time displayed on current_time label
         :return: returns current time
         """
         datetime = QDateTime.currentDateTime()
-        self.current_time1.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.label_time.setText(datetime.toString(Qt.TextDate))
 
     def showCalendar(self):
         """
         Shows a calendar with current date
         :return: CalendarWidget()
         """
-        self.cal = QCalendarWidget()
-        self.cal.setVisible(True)
-        self.cal.selectionChanged.connect(self.onSelectedDate)
+        logging.debug("Showing calendar")
+        calendar = Calendar()
 
-    def onSelectedDate(self):
-        """
-        :return: New date selected on the calendar
-        """
-        ca = self.cal.selectedDate()
+        setting_hint = "hints/showCalendarReminderHint"
+        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True
+        logging.info(setting_hint + ": " + str(should_show_hint))
+        if should_show_hint:
+            hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Select a date to create a Reminder!")
+            hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
+            hint.show()
+            self.settings.setValue(setting_hint, not should_show_hint)
+
+        def onCalendarReminder():
+            date: QDate = calendar.selectedDate()
+            logging.info(date.toString("MM-dd-yyyy"))
+            self.app.reminders.showDialog(calendar, False, date)
+
+        calendar.selectionChanged.connect(onCalendarReminder)
+
+        self.dialog = DialogBuilder()
+        self.dialog.addWidget(calendar)
+        self.dialog.layout().setContentsMargins(0, 0, 0, 0)
+        self.dialog.setFixedHeight(400)
+        self.dialog.show()
