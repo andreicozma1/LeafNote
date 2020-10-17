@@ -52,7 +52,6 @@ class App(QMainWindow):
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
-        self.reminders = Reminders(self, self.settings)
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -79,6 +78,7 @@ class App(QMainWindow):
                                                               self.right_menu, self.search_and_replace)
         layout_main.addWidget(self.documents_view)
 
+        self.reminders = Reminders(self, self.settings)
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self.app_props.path_res, self.document)
         self.setupBottomBar()
@@ -243,7 +243,6 @@ class App(QMainWindow):
                         self.file_manager.encryptor.decryptFile(path)
                         logging.info(" - Decrypted: " + path)
                 logging.info("END DECRYPT WORKSPACE: " + path_workspace)
-
 
 def main():
     logging.info("Starting application")

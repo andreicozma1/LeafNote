@@ -20,6 +20,7 @@ class ContextMenu(QWidget):
 
         self.setupDetails(vertical_layout)
         vertical_layout.addStretch()
+        self.temp = 1
 
     def setupDetails(self, vertical_layout):
         """
@@ -57,9 +58,9 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_summary)
 
         self.collapsible_reminders = CollapsibleWidget("Reminders:")
-        self.add_reminder_btn = QPushButton("Add Reminder")
-        self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog)
-        self.collapsible_reminders.addElement(self.add_reminder_btn)
+        # self.add_reminder_btn = QPushButton("Add Reminder")
+        # self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog)
+        # self.collapsible_reminders.addElement(self.add_reminder_btn)
         vertical_layout.addWidget(self.collapsible_reminders)
 
 
@@ -115,3 +116,4 @@ class ContextMenu(QWidget):
         else:
             self.summary.hide()
             self.enable_summarizer_btn.show()
+

@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QCalendarWidget, QPushButton, QLineEdit, QTimeEdit, 
     QLabel
 from Utils.DialogBuilder import DialogBuilder
 
+
 class Reminder(QWidget):
     """
     This is the reminder node class. It contains each individualy traits of a reminder to allow it to be added to the right bar.
@@ -35,7 +36,11 @@ class Reminders():
         self.settings = settings
         self.rem_list = list()
         self.temp_list = list()
+        self.tlist = list()
+        self.trigger = 0
         self.app.settings.beginGroup("Reminders")
+        self.dict_key = {}
+        self.setReminder()
 
     def addReminder(self, reminder: Reminder):
         self.rem_list.append(reminder)
@@ -45,6 +50,7 @@ class Reminders():
         pass
 
     def showDialog(self):
+        #self.setReminder()
         title = QLineEdit()
         title.setPlaceholderText("Title")
         # ------------------------------#
@@ -64,6 +70,7 @@ class Reminders():
         self.dialog.addButtonBox(self.button_box)
         if self.dialog.exec():
             if title.text():
+                self.trigger = 1
                 selected_date = cal.selectedDate().toString("yyyy-MM-dd")
                 milliseconds = int(time() * 1000)
                 time_temp = hour_cb.text()
@@ -74,12 +81,59 @@ class Reminders():
                 reminder_node = Reminder(milliseconds,sort_key_string, selected_date, hour_cb.text(), title.text(), description.text())
                 print("Printing Class")
                 print(reminder_node.key, reminder_node.sort_key, reminder_node.date,reminder_node.time,reminder_node.title, reminder_node.description)
+
                 self.rem_list.append(reminder_node)
-                #self.temp_list.append(reminder_node)
-                #self.app.settings.setValue(reminder_node.key, self.temp_list)
+                self.temp_list.append(reminder_node.sort_key)
+                self.temp_list.append(reminder_node.date)
+                self.temp_list.append(reminder_node.time)
+                self.temp_list.append(reminder_node.title)
+                self.temp_list.append(reminder_node.description)
+                #self.app.settings.setValue("reminders", self.dict_key)
+                self.app.settings.setValue(str(reminder_node.key), self.temp_list)
+                #self.app.settings.setValue(str(reminder_node.key), self.dict_key)
+
+                #self.temp_list.clear()
+                print(self.app.settings.value("reminders"))
+                #print(self.app.settings.fileName())
                 self.app.right_menu.collapsible_reminders.addElement(reminder_node)
+                #self.app.right_menu.collapsible_reminders.addElement(self.app.settings.setValue(str(reminder_node.key), self.temp_list))
         else:
             print("Clicked cancel")
+
+    def setReminder(self):
+        print("setReminder")
+        print(self.app.settings.allKeys())
+        self.tlist = list(self.app.settings.allKeys())
+
+        for i in range(3):
+            self.tlist.pop(len(self.tlist) - 1)
+        print(self.tlist)
+        for i in self.tlist:
+            reminder_dict = self.app.settings.value(i)
+            tb_reminder = Reminder(None, reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3], reminder_dict[4])
+            self.app.right_menu.collapsible_reminders.addElement(tb_reminder)
+
+
+            # count = 0
+            # for i in self.tlist:
+            #     self.app.settings.remove(i)
+            #     count += 1
+            #     if count is 1:
+            #         break
+            # print(self.app.settings.allKeys())
+
+           # print(self.app.settings.value())
+            #key_list = list(self.dict_key.keys())
+            # for i in key_list:
+            #     print(self.app.settings.value(i))
+
+    def deleteKeys(self, int, tlist):
+        count = 0
+        for i in tlist:
+            self.app.settings.remove(i)
+            count += 1
+            if count is int:
+                break
 
     def convert24(self, str1):
         """
