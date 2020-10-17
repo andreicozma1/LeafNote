@@ -203,6 +203,7 @@ class BottomBar(QWidget):
         Shows a calendar with current date
         :return: CalendarWidget()
         """
+        logging.debug("Showing calendar")
         calendar = Calendar()
 
         setting_hint = "hints/showCalendarReminderHint"
