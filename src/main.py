@@ -79,6 +79,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.documents_view)
 
         self.reminders = Reminders(self, self.settings)
+
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self.app_props.path_res, self.document)
         self.setupBottomBar()

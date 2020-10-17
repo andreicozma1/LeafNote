@@ -37,6 +37,7 @@ class Reminders():
         self.rem_list = list()
         self.temp_list = list()
         self.tlist = list()
+        self.datelist = list()
         self.trigger = 0
         self.app.settings.beginGroup("Reminders")
         self.dict_key = {}
@@ -82,7 +83,7 @@ class Reminders():
                 print("Printing Class")
                 print(reminder_node.key, reminder_node.sort_key, reminder_node.date,reminder_node.time,reminder_node.title, reminder_node.description)
 
-                self.rem_list.append(reminder_node)
+                #self.rem_list.append(reminder_node)
                 self.temp_list.append(reminder_node.sort_key)
                 self.temp_list.append(reminder_node.date)
                 self.temp_list.append(reminder_node.time)
@@ -111,7 +112,21 @@ class Reminders():
         for i in self.tlist:
             reminder_dict = self.app.settings.value(i)
             tb_reminder = Reminder(None, reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3], reminder_dict[4])
-            self.app.right_menu.collapsible_reminders.addElement(tb_reminder)
+            self.rem_list.append(tb_reminder)
+            self.datelist.append(reminder_dict[0])
+            #self.app.right_menu.collapsible_reminders.addElement(tb_reminder)
+        self.datelist.sort()
+
+        for i in self.datelist:
+            for j in self.rem_list:
+                rem_temp = Reminder(None, None, "", "", None, None)
+                rem_temp = j
+                if i == rem_temp.sort_key:
+                      self.app.right_menu.collapsible_reminders.addElement(rem_temp)
+
+    #def addReminderInShowDialog(self, reminder: Reminder):
+
+        #print(self.datelist)
 
 
             # count = 0

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from Elements.CollapsibleWidget import CollapsibleWidget
 from Utils import DocumentSummarizer
-from Utils.Reminders import Reminder
+from Utils.Reminders import Reminder, Reminders
 
 
 class ContextMenu(QWidget):
@@ -58,9 +58,9 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_summary)
 
         self.collapsible_reminders = CollapsibleWidget("Reminders:")
-        # self.add_reminder_btn = QPushButton("Add Reminder")
-        # self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog)
-        # self.collapsible_reminders.addElement(self.add_reminder_btn)
+        self.add_reminder_btn = QPushButton("Add Reminder")
+        #self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog)
+        self.collapsible_reminders.addElement(self.add_reminder_btn)
         vertical_layout.addWidget(self.collapsible_reminders)
 
 
