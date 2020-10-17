@@ -217,7 +217,7 @@ class App(QMainWindow):
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
-        return super(QMainWindow, self).resizeEvent(event)
+        return super(App, self).resizeEvent(event)
 
     def closeEvent(self, event):
         logging.info("User triggered close event")
