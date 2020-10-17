@@ -1,10 +1,11 @@
 import logging
 import os
+from functools import partial
 
-from PyQt5.Qt import Qt, QTime, QTimer, QPixmap, QIcon
+from PyQt5.Qt import Qt, QTimer, QIcon
+from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
-from PyQt5.QtCore import QDate, QDateTime
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QCalendarWidget, QDialogButtonBox
 
 from Utils.DialogBuilder import DialogBuilder
 
@@ -25,23 +26,26 @@ class BottomBar(QWidget):
     the bottom bar
     """
 
-    def __init__(self, path_res: str, document):
+    def __init__(self, document, settings: QSettings, path_res: str):
         """
         Creates the bottom bar
         :param document: the document the bottom bar will be altering
         :return: returns nothing
         """
         super(BottomBar, self).__init__()
-        logging.info("")
-        self.path_res = path_res
+        logging.info("Initialized BottomBar")
         self.document = document
+        self.settings = settings
+        self.path_res = path_res
 
-        # sets up the bottom bar
+        # Sets up the layout of the bottom bar
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
 
-        self.setStyleSheet("font-size: 15px")
+        # Set global font size
+        font_default = QFont()
+        font_default.setPointSize(8)
 
         # Create Calendar Button
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
@@ -52,6 +56,7 @@ class BottomBar(QWidget):
 
         # Create date-time label
         self.label_time = QLabel()
+        self.label_time.setFont(font_default)
         self.horizontal_layout.addWidget(self.label_time)
         timer = QTimer(self)
         timer.timeout.connect(self.updateTime)
@@ -59,12 +64,15 @@ class BottomBar(QWidget):
         self.updateTime()
 
         self.horizontal_layout.addStretch()
-        # sets default settings for word counter
+
+        # Create Word Counter
         self.label_wc = QLabel("0 Words")
+        self.label_wc.setFont(font_default)
         self.horizontal_layout.addWidget(self.label_wc)
 
-        # sets default settings for character counter
+        # Create Character Counter
         self.label_cc = QLabel("0 Characters")
+        self.label_cc.setFont(font_default)
         self.horizontal_layout.addWidget(self.label_cc)
 
         self.horizontal_layout.addStretch()
@@ -75,6 +83,7 @@ class BottomBar(QWidget):
 
         # Zoom reset button
         self.button_zoom_reset = QPushButton("100%", self)
+        self.button_zoom_reset.setFont(font_default)
         self.button_zoom_reset.setFixedWidth(40)
         self.button_zoom_reset.clicked.connect(self.resetZoom)
         self.button_zoom_reset.setToolTip("Resets zoom to default 100%")
@@ -193,10 +202,23 @@ class BottomBar(QWidget):
         Shows a calendar with current date
         :return: CalendarWidget()
         """
+
         calendar = QCalendarWidget()
+
+        def onSelectionChanged(selection: QDate):
+            logging.info(selection)
+            setting_hint = "hints/showCalendarReminderHint"
+            logging.info(setting_hint + ": " + str(self.settings.value(setting_hint)))
+            if not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True:
+                hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Double-click a date to create a Reminder!")
+                hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
+                hint.show()
+                self.settings.setValue(setting_hint, True)
+
+        calendar.selectionChanged.connect(partial(onSelectionChanged, calendar.selectedDate()))
 
         self.dialog = DialogBuilder()
         self.dialog.addWidget(calendar)
+        self.dialog.layout().setContentsMargins(0, 0, 0, 0)
+        self.dialog.setMinimumHeight(400)
         self.dialog.show()
-
-        # self.cal.selectionChanged.connect(self.onSelectedDate)
