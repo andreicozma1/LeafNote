@@ -80,7 +80,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
-        self.bottom_bar = BottomBar(self.document, self.settings, self.app_props.path_res)
+        self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
         self.setupBottomBar()
         layout_main.addWidget(self.bottom_bar)
 

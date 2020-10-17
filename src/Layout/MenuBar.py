@@ -268,7 +268,7 @@ class MenuBar(QMenuBar):
             self.calculator = Calculator.Calculator()
 
         def onRemindersAction():
-            app.reminders.showDialog()
+            app.reminders.showDialog(app)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)

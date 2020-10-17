@@ -1,12 +1,12 @@
 import logging
 import os
-from functools import partial
 
 from PyQt5.Qt import Qt, QTimer, QIcon
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QCalendarWidget, QDialogButtonBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox
 
+from Elements.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
 
 """
@@ -26,7 +26,7 @@ class BottomBar(QWidget):
     the bottom bar
     """
 
-    def __init__(self, document, settings: QSettings, path_res: str):
+    def __init__(self, app, document, settings: QSettings, path_res: str):
         """
         Creates the bottom bar
         :param document: the document the bottom bar will be altering
@@ -34,6 +34,7 @@ class BottomBar(QWidget):
         """
         super(BottomBar, self).__init__()
         logging.info("Initialized BottomBar")
+        self.app = app
         self.document = document
         self.settings = settings
         self.path_res = path_res
@@ -202,23 +203,26 @@ class BottomBar(QWidget):
         Shows a calendar with current date
         :return: CalendarWidget()
         """
+        calendar = Calendar()
 
-        calendar = QCalendarWidget()
+        setting_hint = "hints/showCalendarReminderHint"
+        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True
+        logging.info(setting_hint + ": " + str(should_show_hint))
+        if should_show_hint:
+            hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Select a date to create a Reminder!")
+            hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
+            hint.show()
+            self.settings.setValue(setting_hint, not should_show_hint)
 
-        def onSelectionChanged(selection: QDate):
-            logging.info(selection)
-            setting_hint = "hints/showCalendarReminderHint"
-            logging.info(setting_hint + ": " + str(self.settings.value(setting_hint)))
-            if not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True:
-                hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Double-click a date to create a Reminder!")
-                hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
-                hint.show()
-                self.settings.setValue(setting_hint, True)
+        def onCalendarReminder():
+            date: QDate = calendar.selectedDate()
+            logging.info(date.toString("MM-dd-yyyy"))
+            self.app.reminders.showDialog(calendar, False, date)
 
-        calendar.selectionChanged.connect(partial(onSelectionChanged, calendar.selectedDate()))
+        calendar.selectionChanged.connect(onCalendarReminder)
 
         self.dialog = DialogBuilder()
         self.dialog.addWidget(calendar)
         self.dialog.layout().setContentsMargins(0, 0, 0, 0)
-        self.dialog.setMinimumHeight(400)
+        self.dialog.setFixedHeight(400)
         self.dialog.show()
