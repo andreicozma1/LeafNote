@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButton
 
 
 class DialogBuilder(QDialog):
-    def __init__(self, blocked_widget, text_window: str = None, text_title: str = None, text_msg: str = None):
+    def __init__(self, blocked_widget=None, text_window: str = None, text_title: str = None, text_msg: str = None):
         super(DialogBuilder, self).__init__(blocked_widget)
         logging.info("")
 

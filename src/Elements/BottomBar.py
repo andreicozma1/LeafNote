@@ -6,6 +6,8 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QVBoxLayout, QCalendarWidget, QGridLayout
 from PyQt5.QtCore import QDate, QDateTime
 
+from Utils.DialogBuilder import DialogBuilder
+
 """
 This file alters tools on the Bottom Bar
 of the text editor.
@@ -39,7 +41,7 @@ class BottomBar(QWidget):
         self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(3)
 
-        self.setStyleSheet("font-size: 14px")
+        self.setStyleSheet("font-size: 15px")
 
         # Create Calendar Button
         path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
@@ -184,13 +186,17 @@ class BottomBar(QWidget):
         :return: returns current time
         """
         datetime = QDateTime.currentDateTime()
-        self.label_time.setText(datetime.toString(Qt.DefaultLocaleShortDate))
+        self.label_time.setText(datetime.toString(Qt.TextDate))
 
     def showCalendar(self):
         """
         Shows a calendar with current date
         :return: CalendarWidget()
         """
-        self.cal = QCalendarWidget()
-        self.cal.setVisible(True)
-        self.cal.selectionChanged.connect(self.onSelectedDate)
+        calendar = QCalendarWidget()
+
+        self.dialog = DialogBuilder()
+        self.dialog.addWidget(calendar)
+        self.dialog.show()
+
+        # self.cal.selectionChanged.connect(self.onSelectedDate)
