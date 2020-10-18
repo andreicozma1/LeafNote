@@ -14,6 +14,6 @@ jobs:
     steps:
     - name: Assign NEW issues
       uses: srggrs/assign-one-project-github-action@1.2.0
-      if: github.event.action == 'opened'
+      if: github.event.action == 'opened'|| github.event.action == 'reopened'
       with:
         project: 'https://github.com/UTK-CS340-Fall-2020/0x432d2d/projects/1'
