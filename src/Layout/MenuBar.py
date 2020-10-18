@@ -3,8 +3,10 @@ import logging
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
+import Layout.SearchReplace.SearchWorkspace
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Widgets import Search, Calculator
+from Widgets import Calculator
+from Layout.Utils import SearchDoc
 from Layout.Elements import Document
 from Layout import DocProps
 from Utils import Encryptor
@@ -117,7 +119,7 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("")
-            self.doc.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+            self.doc.search_all = Layout.SearchReplace.SearchWorkspace.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
 
         def onFindAndReplaceBtn():
             logging.info("")
