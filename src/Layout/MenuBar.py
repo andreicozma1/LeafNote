@@ -264,8 +264,7 @@ class MenuBar(QMenuBar):
                     app.right_menu.summary.setText(document.summarizer.summarize(selection))
                 else:
                     app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
-            app.right_menu.collapsible_summary.btn_toggle.setChecked(False)
-            app.right_menu.collapsible_summary.on_pressed()
+            app.right_menu.collapsible_summary.expand()
 
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)

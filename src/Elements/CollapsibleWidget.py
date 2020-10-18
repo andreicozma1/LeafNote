@@ -37,5 +37,13 @@ class CollapsibleWidget(QWidget):
         self.btn_toggle.setArrowType(Qt.RightArrow if checked else Qt.DownArrow)
         self.content.setVisible(False if checked else True)
 
+    def collapse(self):
+        self.btn_toggle.setChecked(True)
+        self.on_pressed()
+
+    def expand(self):
+        self.btn_toggle.setChecked(False)
+        self.on_pressed()
+
     def addElement(self, widget: QWidget):
         self.layout_content.addWidget(widget)
