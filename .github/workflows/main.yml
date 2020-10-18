@@ -1,4 +1,4 @@
-name: Auto Assign to Project(s)
+name: Auto Assign to Project
 
 on:
   issues:
@@ -10,10 +10,11 @@ env:
 jobs:
   assign_one_project:
     runs-on: ubuntu-latest
-    name: Assign to One Project
+    name: Assign to Project
     steps:
-    - name: Assign NEW issues and NEW pull requests to project 2
+    - name: Assign NEW issues Project
       uses: srggrs/assign-one-project-github-action@1.2.0
       if: github.event.action == 'opened'
       with:
         project: 'https://github.com/UTK-CS340-Fall-2020/0x432d2d/projects/1'
+        column_name: 'To Do'
