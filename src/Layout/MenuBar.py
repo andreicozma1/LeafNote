@@ -259,7 +259,12 @@ class MenuBar(QMenuBar):
             if document.summarizer is None:
                 DocumentSummarizer.onSummaryAction(app, document)
             if document.summarizer is not None:
-                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+                selection = document.textCursor().selectedText()
+                if selection != "":
+                    app.right_menu.summary.setText(document.summarizer.summarize(selection))
+                else:
+                    app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+            app.right_menu.collapsible_summary.expand()
 
         def onEncryptionAction():
             Encryptor.onEncryptionAction(app, app.file_manager)

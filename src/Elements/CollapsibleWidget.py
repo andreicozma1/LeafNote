@@ -20,7 +20,7 @@ class CollapsibleWidget(QWidget):
         self.btn_toggle.setIconSize(QSize(8, 8))
         self.btn_toggle.setStyleSheet("QToolButton {border: none; font-weight: bold;}"
                                       "QToolButton:hover{color:rgba(0,0,0,0.7)}")
-        self.btn_toggle.pressed.connect(self.on_pressed)
+        self.btn_toggle.pressed.connect(self.toggle)
 
         self.content = QWidget()
         self.content.setStyleSheet("color: rgba(0,0,0,0.7)")
@@ -32,10 +32,18 @@ class CollapsibleWidget(QWidget):
         layout_main.addWidget(self.btn_toggle)
         layout_main.addWidget(self.content)
 
-    def on_pressed(self):
+    def toggle(self):
         checked = self.btn_toggle.isChecked()
         self.btn_toggle.setArrowType(Qt.RightArrow if checked else Qt.DownArrow)
         self.content.setVisible(False if checked else True)
+
+    def collapse(self):
+        self.btn_toggle.setChecked(True)
+        self.toggle()
+
+    def expand(self):
+        self.btn_toggle.setChecked(False)
+        self.toggle()
 
     def addElement(self, widget: QWidget):
         self.layout_content.addWidget(widget)
