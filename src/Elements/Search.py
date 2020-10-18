@@ -111,7 +111,7 @@ class Search(QWidget):
         # add the next occurrence option
         self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect, False)
         self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
-        self.next_occurrence_shortcut.activated.connect(self.onNextOccurrenceSelect)
+        self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
         self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 

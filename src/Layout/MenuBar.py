@@ -111,6 +111,8 @@ class MenuBar(QMenuBar):
             if app.search_and_replace.replace.isVisible():
                 app.search_and_replace.replace.setVisible(False)
             app.search_and_replace.search.setVisible(not app.search_and_replace.search.isVisible())
+            if app.search_and_replace.search.isVisible():
+                app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():
             logging.info("")
@@ -121,6 +123,8 @@ class MenuBar(QMenuBar):
             app.search_and_replace.replace.setVisible(not app.search_and_replace.replace.isVisible())
             if app.search_and_replace.replace.isVisible():
                 app.search_and_replace.search.setVisible(True)
+            if app.search_and_replace.search.isVisible():
+                app.search_and_replace.search.search_bar.setFocus()
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
