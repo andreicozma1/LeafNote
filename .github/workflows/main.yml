@@ -5,7 +5,7 @@ on:
     types: [opened, reopened]
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 jobs:
   assign_one_project:
@@ -17,3 +17,4 @@ jobs:
       if: github.event.action == 'opened'|| github.event.action == 'reopened'
       with:
         project: 'https://github.com/UTK-CS340-Fall-2020/0x432d2d/projects/1'
+        column_name: 'To Do'
