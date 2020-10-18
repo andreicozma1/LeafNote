@@ -48,7 +48,17 @@ class SearchAndReplace(QWidget):
 
     def closeSearchAndReplace(self):
         """
-
+        hides both search and replace widgets
         """
         self.search.setVisible(False)
         self.replace.setVisible(False)
+
+    def nextOccurrence(self):
+        """
+        When enter is clicked replaces the current selection if the replace is isVisible
+        If replace is not visible and search is visible move to the next occurrence
+        """
+        if self.replace.isVisible():
+            self.replace.onReplace()
+        elif self.search.isVisible():
+            self.search.onNextOccurrenceSelect()
