@@ -1,8 +1,8 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from Elements.Replace import Replace
-from Elements.Search import Search
+from Widgets.Replace import Replace
+from Widgets.Search import Search
 
 
 class SearchAndReplace(QWidget):

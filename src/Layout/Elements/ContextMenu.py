@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
-from Elements.CollapsibleWidget import CollapsibleWidget
+from Widgets.CollapsibleWidget import CollapsibleWidget
 from Utils import DocumentSummarizer
 from Utils.Reminders import Reminder
 

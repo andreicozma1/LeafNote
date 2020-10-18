@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator
+from Widgets import Search, Calculator
+from Layout.Elements import Document
 from Layout import DocProps
 from Utils import Encryptor
 

@@ -3,7 +3,7 @@ import logging
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from Elements.Tab import Tab
+from Widgets.Tab import Tab
 
 """
 when one or more file is open it

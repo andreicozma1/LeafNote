@@ -5,13 +5,13 @@ import sys
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
-from Elements.BottomBar import BottomBar
-from Elements.ContextMenu import ContextMenu
-from Elements.DirectoryViewer import DirectoryViewer
-from Elements.Document import Document
-from Elements.OpenTabsBar import OpenTabsBar
-from Elements.SearchAndReplace import SearchAndReplace
-from Elements.TopBar import TopBar
+from Layout.Elements.BottomBar import BottomBar
+from Layout.Elements.ContextMenu import ContextMenu
+from Widgets.DirectoryViewer import DirectoryViewer
+from Layout.Elements.Document import Document
+from Layout.Elements.OpenTabsBar import OpenTabsBar
+from Widgets.SearchAndReplace import SearchAndReplace
+from Layout.Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.DocProps import DocProps
 from Layout.Layout import Layout

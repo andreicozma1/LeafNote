@@ -5,7 +5,7 @@ from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QCalendarWidget, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
     QLabel, QPlainTextEdit
 
-from Elements.Calendar import Calendar
+from Widgets.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
 
 
