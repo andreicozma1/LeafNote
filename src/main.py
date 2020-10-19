@@ -138,6 +138,7 @@ class App(QMainWindow):
             self.resize(self.settings.value("windowSize"))
         else:
             self.setGeometry(0, 0, self.app_props.default_width, self.app_props.default_height)
+
         if self.settings.contains("windowGeometry"):
             self.setGeometry(self.settings.value("windowGeometry"))
         else:
@@ -145,8 +146,9 @@ class App(QMainWindow):
 
         self.setMinimumWidth(int(self.top_bar.width()))
 
-        if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
-            logging.debug("Window is not resizable")
+        setting_resizable = not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False
+        logging.debug("Resizable - %s" % str(setting_resizable))
+        if setting_resizable:
             if not self.app_props.resizable:
                 self.setFixedSize(self.size())
 

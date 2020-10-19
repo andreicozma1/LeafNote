@@ -136,7 +136,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Zoom In")
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
@@ -145,7 +145,7 @@ class BottomBar(QWidget):
         Setting the value of the slider calls the changeValue function to perform the appropriate calculations
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Zoom Out")
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
@@ -178,7 +178,7 @@ class BottomBar(QWidget):
         resets the zoom slider when zoom is reset
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Reset Zoom")
         self.zoom_slider.setValue(self.slider_start)
 
     def updateTime(self):

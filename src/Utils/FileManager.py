@@ -52,7 +52,7 @@ class FileManager:
                                                     file_filter)
 
             if file_name[0] == '':
-                logging.info("No File Path Given")
+                logging.warning("No File Path Given")
                 return False
 
             path = file_name[0]
@@ -77,7 +77,7 @@ class FileManager:
 
         # if the new path is an empty string do nothing
         if new_path == '':
-            logging.info("No New File Path Given")
+            logging.warning("No New File Path Given")
             return False
 
         # check if the document is formatted
@@ -108,7 +108,6 @@ class FileManager:
         :param path: path to the document that needs to be closed
         :return: Returns whether or not the document is formatted
         """
-        state = None
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
@@ -139,8 +138,7 @@ class FileManager:
                 logging.info("File Is Not Open - " + path)
             state = False
 
-        if state is not None:
-            self.app.updateFormatBtnsState(state)
+        self.app.updateFormatBtnsState(state)
 
     def closeAll(self, document):
         """
@@ -216,7 +214,7 @@ class FileManager:
         :return: Returns a string of the read in data
         """
         # open the file with read only privileges
-        logging.info(path)
+        logging.debug(path)
         file = open(path, 'r')
         # check if the file was opened
         if file.closed:
@@ -256,18 +254,18 @@ class FileManager:
         :return: Returns nothing
         """
         # open the file with write only privileges
-        logging.info(path)
+        logging.debug(path)
         if self.encryptor is not None:
             logging.debug("Writing Encrypted")
             file = open(path, 'wb')
             data = self.encryptor.encrypt(data.encode())
         else:
-            logging.info("Writing Plain Text")
+            logging.debug("Writing Plain Text")
             file = open(path, 'w')
 
         # check if the file was opened
         if file.closed:
-            logging.info("Could Not Open File - " + path)
+            logging.warning("Could Not Open File - " + path)
             return ''
         # write data to the file then close the file
         file.write(data)
@@ -361,14 +359,14 @@ class FileManager:
         # Get path name from user
         file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.left_menu.model.rootPath())
         if file_name[0] == '':
-            logging.info('No File Path Given')
+            logging.warning('No File Path Given')
             return
-        path = file_name[0]
 
+        path = file_name[0]
+        logging.info('Creating NewFile - ' + path)
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(document, path)
-        logging.info(' Created NewFile - ' + path)
 
     def printAll(self):
         """

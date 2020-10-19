@@ -193,7 +193,7 @@ class Search(QWidget):
         # if the user IS searching for regex
         if self.regex_search.isChecked():
             self.search = QRegExp(self.search)
-        logging.info(self.document.find(self.search, self.flags))
+        self.document.find(self.search, self.flags)
 
 ############################################################################
 # SEARCH CURRENT WORKSPACE

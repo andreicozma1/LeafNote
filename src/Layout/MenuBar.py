@@ -110,11 +110,14 @@ class MenuBar(QMenuBar):
         self.menu_edit = self.addMenu('&Edit')
 
         def onFindBtn():
-            logging.info("Clicked Find Action - %s" % str(app.search_and_replace.replace.isVisible()))
-            if app.search_and_replace.replace.isVisible():
+            state_replace = app.search_and_replace.replace.isVisible()
+            logging.info("Clicked Find Action - %s" % str(state_replace))
+            if state_replace:
                 app.search_and_replace.replace.setVisible(False)
-            app.search_and_replace.search.setVisible(not app.search_and_replace.search.isVisible())
-            if app.search_and_replace.search.isVisible():
+
+            state_search = app.search_and_replace.search.isVisible()
+            app.search_and_replace.search.setVisible(not state_search)
+            if state_search:
                 app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():
@@ -122,11 +125,12 @@ class MenuBar(QMenuBar):
             self.doc.search_all = SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
 
         def onFindAndReplaceBtn():
-            logging.info("Clicked Find and Replace Action - %s" % str(app.search_and_replace.replace.isVisible()))
-            app.search_and_replace.replace.setVisible(not app.search_and_replace.replace.isVisible())
+            state_replace = app.search_and_replace.replace.isVisible()
+            logging.info("Clicked Find and Replace Action - %s" % str(state_replace))
+            # Toggle Find and Replace
+            app.search_and_replace.replace.setVisible(not state_replace)
             if app.search_and_replace.replace.isVisible():
                 app.search_and_replace.search.setVisible(True)
-            if app.search_and_replace.search.isVisible():
                 app.search_and_replace.search.search_bar.setFocus()
 
         # ========= START EDIT MENU SECTION =========
