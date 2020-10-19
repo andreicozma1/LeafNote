@@ -25,7 +25,8 @@ jobs:
         cat output.txt
         cat output.txt | grep -i rated > result.txt
         export MESSAGE_ENV=$(xargs < result.txt)
-        echo “::set-env name=MESSAGE::$MESSAGE_ENV”
+        echo $MESSAGE_ENV
+        echo "::set-env name=MESSAGE::\"$MESSAGE_ENV\""
     - name: Comment PR
       uses: unsplash/comment-on-pr@master
       env:
