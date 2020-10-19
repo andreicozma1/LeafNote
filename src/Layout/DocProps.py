@@ -75,10 +75,18 @@ class DocProps():
         # creates dictionary to set the text format to the selected title style in the QComboBox
         self.dict_title_styles = {
             "Normal Text": self.normal,
+            "Update Normal Text": None,
             "Title": self.title,
+            "Update Title": self.title,
             "Subtitle": self.subtitle,
+            "Update Subtitle": None,
             "Header 1": self.heading1,
+            "Update Header 1": None,
             "Header 2": self.heading2,
+            "Update Header 2": None,
             "Header 3": self.heading3,
+            "Update Header 3": None,
             "Header 4": self.heading4,
+            "Update Header 4": None,
+            "Reset to Default": None,
         }

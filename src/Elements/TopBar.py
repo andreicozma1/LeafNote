@@ -2,9 +2,10 @@ import logging
 import os
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy, QAbstractItemView, \
+    QListView
 
 from Elements import Document
 
@@ -58,19 +59,32 @@ class TopBar(QWidget):
     def makeTitleStyleBox(self, dict_title_style: list) -> QComboBox:
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
+        view = QListView(self.combo_title_style)
+        view.setStyleSheet("QListView::item { height : 18 px }")
+        self.combo_title_style.setView(view)
         self.dict_title_style = dict_title_style
-        self.dict_title_style["Update Normal Text"] = None
-        self.dict_title_style["Update Title"] = None
-        self.dict_title_style["Update Subtitle"] = None
-        self.dict_title_style["Update Header 1"] = None
-        self.dict_title_style["Update Header 2"] = None
-        self.dict_title_style["Update Header 3"] = None
-        self.dict_title_style["Update Header 4"] = None
-        self.dict_title_style["Reset to Default"] = None
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
+        for x in range(view.model().rowCount()):
+            if x % 2 == 0:
+                font = QFont()
+                font.setWeight(QFont.Bold)
+                self.combo_title_style.setItemData(x, font, Qt.FontRole)
+            else:
+                font = QFont()
+                color = QBrush()
+                font.setItalic(True)
+                color.setColor(QColor("gray"))
+                self.combo_title_style.setItemData(x, font, Qt.FontRole)
+                self.combo_title_style.setItemData(x, color, Qt.ForegroundRole)
+        for x in range(2, 23, 3):
+            size = QSize()
+            size.setHeight(7)
+            separator = QStandardItem()
+            separator.setSizeHint(size)
+            view.model().insertRow(x, separator)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
-        self.combo_title_style.setMaxVisibleItems(15)
+        self.combo_title_style.setMaxVisibleItems(view.model().rowCount())
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
 
@@ -236,7 +250,7 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.blockSignals(True)
 
-        # TODO: check if self.list_title is not none then set qcombobox to current cursor selection
+        # TODO: check if self.combo_title_style is not none then set qcombobox to current cursor selection
 
         # Update the font style displayed
         if self.combo_font_style is not None:
