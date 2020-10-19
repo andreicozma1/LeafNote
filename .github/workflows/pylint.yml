@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    name: "Testing"
+
     runs-on: ubuntu-latest
     
     steps:
@@ -26,3 +26,10 @@ jobs:
           echo "An error occurred while running pylint." >&2
           exit 1
         fi
+    - name: comment PR
+      uses: unsplash/comment-on-pr@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: "Check out this message!"
+        check_for_duplicate_msg: false  # OPTIONAL 
