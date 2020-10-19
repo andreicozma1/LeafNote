@@ -21,11 +21,7 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        python3 -m pylint src > output.txt
-        echo $? > code.txt
-        
-        
-        
+        python3 -m pylint src > output.txt || echo $? > code.txt
         cat output.txt
         cat code.txt | xargs pylint-exit --error-fail
         if [ $? -ne 0 ]; then
