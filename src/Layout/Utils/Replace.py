@@ -10,7 +10,7 @@ class Replace(QWidget):
         Initialize the widget
         """
         super(Replace, self).__init__()
-        logging.debug("Createing Replace Widget")
+        logging.debug("Creating Replace Widget")
 
         self.search_and_replace = search_and_replace
         self.document = document

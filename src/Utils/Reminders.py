@@ -2,11 +2,11 @@ import logging
 from time import time
 
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QCalendarWidget, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
+from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
     QLabel, QPlainTextEdit
 
-from Widgets.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
+from Widgets.Calendar import Calendar
 
 
 class Reminder(QWidget):
@@ -37,6 +37,7 @@ class Reminders():
     """
 
     def __init__(self, app, settings):
+        logging.debug("Creating Reminders")
         self.app = app
         self.settings = settings
         self.rem_list = list()

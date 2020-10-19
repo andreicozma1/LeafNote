@@ -3,9 +3,8 @@ import logging
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
-from Widgets.CollapsibleWidget import CollapsibleWidget
 from Utils import DocumentSummarizer
-from Utils.Reminders import Reminder
+from Widgets.CollapsibleWidget import CollapsibleWidget
 
 
 class ContextMenu(QWidget):
@@ -61,7 +60,6 @@ class ContextMenu(QWidget):
 
         self.collapsible_reminders = CollapsibleWidget("Reminders:")
         vertical_layout.addWidget(self.collapsible_reminders)
-
 
         # Initial setup of labels, when no file is open
         self.updateDetails(None)

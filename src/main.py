@@ -5,21 +5,21 @@ import sys
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
-from Layout.Elements.BottomBar import BottomBar
-from Layout.Elements.ContextMenu import ContextMenu
-from Widgets.DirectoryViewer import DirectoryViewer
-from Layout.Elements.Document import Document
-from Layout.Elements.TabsBar.OpenTabsBar import OpenTabsBar
-from Layout.Elements.SearchAndReplace import SearchAndReplace
-from Layout.Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.DocProps import DocProps
+from Layout.Elements.BottomBar import BottomBar
+from Layout.Elements.ContextMenu import ContextMenu
+from Layout.Elements.Document import Document
+from Layout.Elements.SearchAndReplace import SearchAndReplace
+from Layout.Elements.TabsBar.OpenTabsBar import OpenTabsBar
+from Layout.Elements.TopBar import TopBar
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
 from Utils.Reminders import Reminders
+from Widgets.DirectoryViewer import DirectoryViewer
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -43,7 +43,7 @@ class App(QMainWindow):
         :return: returns nothing
         """
         super(App, self).__init__()
-        logging.info("Starting Application")
+        logging.debug("Creating Application")
 
         # Initialize properties.
         path_res = os.path.dirname(os.path.abspath(__file__))
@@ -58,7 +58,6 @@ class App(QMainWindow):
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
         self.setCentralWidget(self.layout)
-        # self.show()
 
         # Create Document
         self.document = Document(self, self.doc_props)
@@ -92,7 +91,8 @@ class App(QMainWindow):
         # TODO - fix this function call causing Format Mode button to not have spacer
         self.updateFormatBtnsState(False)
 
-        self.setup()
+        self.setupProperties()
+        self.show()
 
     def setupTopBar(self):
         top_bar_layout = self.top_bar.makeMainLayout()
@@ -127,12 +127,12 @@ class App(QMainWindow):
         self.document.currentCharFormatChanged.connect(self.menu_bar.updateFormatOnSelectionChange)
         self.setMenuBar(self.menu_bar)
 
-    def setup(self):
+    def setupProperties(self):
         """
         sets up the window
         :return: returns nothing
         """
-        logging.info("Setting up Main Window")
+        logging.info("Setting up Main Window Geometry")
         self.setWindowTitle(self.app_props.title)
         if self.settings.contains("windowSize"):
             self.resize(self.settings.value("windowSize"))
@@ -149,8 +149,6 @@ class App(QMainWindow):
             logging.debug("Window is not resizable")
             if not self.app_props.resizable:
                 self.setFixedSize(self.size())
-
-        self.show()
 
     def updateFormatBtnsState(self, state: bool):
         """
@@ -246,7 +244,7 @@ class App(QMainWindow):
 
 
 def main():
-    logging.info("Starting Application")
+    logging.info("Main Function")
     app = QApplication([])
     App()
     sys.exit(app.exec_())

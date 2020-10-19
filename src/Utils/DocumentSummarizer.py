@@ -427,12 +427,12 @@ def createModel(path):
         return
 
     # read the files into a python dict
-    logging.info("Attempting to read dictionary contents")
+    logging.debug("Attempting to read dictionary contents")
     with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
     wv = np.load(path_npy)
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
-    logging.info("Finished reading dictionary contents")
+    logging.debug("Finished reading dictionary contents")
     return model

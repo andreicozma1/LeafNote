@@ -117,7 +117,7 @@ class Document(QTextEdit):
         if color.isValid():
             self.setTextColor(color)
 
-    def onTextColorChanged(self, color_index:int):
+    def onTextColorChanged(self, color_index: int):
         """
         set the color the user selects to the text
         :param color_index: the location of color in the color_dict

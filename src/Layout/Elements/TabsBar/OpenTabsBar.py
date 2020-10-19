@@ -99,5 +99,3 @@ class OpenTabsBar(QWidget):
         """
         logging.info(str(self.horizontal_layout.count()))
         return self.layout().count()
-
-

@@ -5,6 +5,7 @@ from functools import partial
 from PyQt5.QtCore import Qt, QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea, QPushButton
 
+
 class File(QPushButton):
     """
     This is a button that holds information about the button
@@ -27,6 +28,7 @@ class File(QPushButton):
         """
         self.setText(self.file_name)
         self.setMinimumHeight(20)
+
 
 class SearchWorkspace(QWidget):
     """

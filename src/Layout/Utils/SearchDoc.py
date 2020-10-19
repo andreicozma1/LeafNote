@@ -1,7 +1,7 @@
 import logging
 import os
 
-from PyQt5.QtCore import Qt, QFileInfo, QRegExp
+from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QShortcut
 
@@ -152,7 +152,7 @@ class Search(QWidget):
         self.document.find(self.search, self.flags | QTextDocument.FindBackward)
         if self.current - 1 >= 1:
             self.current = self.current - 1
-            self.occurances.setText(str(self.current)+'/'+str(self.total))
+            self.occurances.setText(str(self.current) + '/' + str(self.total))
 
     def onNextOccurrenceSelect(self):
         logging.info("Clicked Next")
@@ -176,7 +176,7 @@ class Search(QWidget):
         else:
             self.current = 1
 
-        self.occurances.setText(str(self.current)+'/'+str(self.total))
+        self.occurances.setText(str(self.current) + '/' + str(self.total))
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
@@ -195,9 +195,5 @@ class Search(QWidget):
             self.search = QRegExp(self.search)
         logging.info(self.document.find(self.search, self.flags))
 
-
 ############################################################################
 # SEARCH CURRENT WORKSPACE
-
-
-

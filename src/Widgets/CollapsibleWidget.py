@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import QWidget, QToolButton, QVBoxLayout
 class CollapsibleWidget(QWidget):
     def __init__(self, title: str = ""):
         super(CollapsibleWidget, self).__init__()
-        logging.debug("Creating CollapsibleWidget")
+        logging.debug("Creating CollapsibleWidget - %s" % title)
+        self.title = title
 
         layout_main = QVBoxLayout(self)
         layout_main.setContentsMargins(0, 0, 0, 0)
@@ -35,18 +36,18 @@ class CollapsibleWidget(QWidget):
         layout_main.addWidget(self.content)
 
     def toggle(self):
-        logging.info("Toggling")
+        logging.info("Toggling - %s" % self.title)
         checked = self.btn_toggle.isChecked()
         self.btn_toggle.setArrowType(Qt.RightArrow if checked else Qt.DownArrow)
         self.content.setVisible(False if checked else True)
 
     def collapse(self):
-        logging.info("Collapsing")
+        logging.info("Collapsing - %s" % self.title)
         self.btn_toggle.setChecked(True)
         self.toggle()
 
     def expand(self):
-        logging.info("Expanding")
+        logging.info("Expanding - %s" % self.title)
         self.btn_toggle.setChecked(False)
         self.toggle()
 

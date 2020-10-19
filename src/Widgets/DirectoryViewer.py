@@ -69,7 +69,7 @@ class DirectoryViewer(QTreeView):
                 key = f.read()
                 self.fileManager.encryptor = Encryptor(key)
         else:
-            logging.debug("Workspace not encrypted")
+            logging.info("Workspace not encrypted")
 
     def onDoubleClick(self, index):
         """

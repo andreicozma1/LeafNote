@@ -21,13 +21,14 @@ class Layout(QWidget):
         :return: returns nothing
         """
         super().__init__()
-        logging.debug("Creating Main Application Layout")
+        logging.info("Creating Main Application Layout")
 
         # Init variables
         self.app_props = appProps
         self.layout_props = layoutProps
 
     def makeMainLayout(self):
+        logging.debug("Creating Layout - Vertical")
         # Main layout of the application. Holds the top bar, main horizontal layout, as well as the bottom bar
         main_layout = QVBoxLayout()  # this defines the QWidget as the parent for the layout
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -36,6 +37,8 @@ class Layout(QWidget):
         return main_layout
 
     def makeHSplitterLayout(self, left_menu, bar_open_tabs, document, right_menu, search_and_replace):
+        logging.debug("Creating Layout - Horizontal")
+
         horizontal_workspace = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
         horizontal_workspace.setHandleWidth(self.layout_props.splitter_width)
 

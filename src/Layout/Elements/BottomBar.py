@@ -6,8 +6,9 @@ from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox
 
-from Widgets.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
+from Widgets.Calendar import Calendar
+
 
 class BottomBar(QWidget):
     """
