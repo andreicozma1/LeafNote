@@ -1,8 +1,10 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from Elements.Replace import Replace
-from Elements.Search import Search
+from Layout.Utils.Replace import Replace
+from Layout.Utils.SearchDoc import Search
 
 
 class SearchAndReplace(QWidget):
@@ -16,7 +18,8 @@ class SearchAndReplace(QWidget):
         :param path_res: the path to the resources
         :param document: the document
         """
-        super(SearchAndReplace, self).__init__()
+        super().__init__()
+        logging.debug("Creating Search and Replace")
         self.path_res = path_res
         self.document = document
 

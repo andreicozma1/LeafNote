@@ -2,19 +2,21 @@ import logging
 from time import time
 
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QCalendarWidget, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
+from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
     QLabel, QPlainTextEdit
 
-from Elements.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
+from Widgets.Calendar import Calendar
 
 
 class Reminder(QWidget):
     """
-    This is the reminder node class. It contains each individualy traits of a reminder to allow it to be added to the right bar.
+    This is the reminder node class. It contains each individually
+    traits of a reminder to allow it to be added to the right bar.
     """
 
     def __init__(self, key, sort, date, time, title, description):
+        # noinspection PyCompatibility
         super().__init__()
         vertical_layout = QVBoxLayout(self)
         show_title = QLabel(title)
@@ -31,25 +33,34 @@ class Reminder(QWidget):
         self.description = description
 
 
-class Reminders():
+class Reminders:
     """
-    This is a class of reminders. It sets up the Reminder dialog as well as adds the reminders to the right menu
+    This is a class of reminders. It sets up the Reminder
+     dialog as well as adds the reminders to the right menu
     """
 
     def __init__(self, app, settings):
+        logging.debug("Creating Reminders")
         self.app = app
         self.settings = settings
         self.rem_list = list()
 
     def addReminder(self, reminder: Reminder):
+        """
+        """
         self.rem_list.append(reminder)
 
     def removeReminder(self, reminder: Reminder):
+        """
+        """
         # TODO remove reminder from list
         pass
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
+        """
+        """
         # Set the default date format
+        # noinspection PyCompatibility
         format_date: str = "MM-dd-yyyy"
         title = QLineEdit()
         title.setPlaceholderText("Title")
@@ -59,6 +70,8 @@ class Reminders():
         description.setMaximumHeight(120)
 
         def limitCharCount():
+            """
+            """
             # Limits the number of characters in description box
             text_content = description.toPlainText()
             length = len(text_content)
@@ -86,7 +99,11 @@ class Reminders():
 
         # Update dialog title based off selected date
         def updateTitle():
+            """
+            """
+            # noinspection PyCompatibility
             new_date: QDate = cal.selectedDate()
+            # noinspection PyCompatibility
             str_date: str = new_date.toString(format_date)
             logging.debug("Update title " + str_date)
             dialog.setTitleText(str_date)
@@ -125,10 +142,12 @@ class Reminders():
                 sort_key_string = sort_key_string.replace(" ", "")
                 sort_key_string = sort_key_string.replace("-", "")
                 sort_key_string = sort_key_string.replace(":", "")
-                reminder_node = Reminder(milliseconds, sort_key_string, selected_date, hour_cb.text(), title.text(),
+                reminder_node = Reminder(milliseconds, sort_key_string, selected_date,
+                                         hour_cb.text(), title.text(),
                                          description.text())
                 print("Printing Class")
-                print(reminder_node.key, reminder_node.sort_key, reminder_node.date, reminder_node.time,
+                print(reminder_node.key, reminder_node.sort_key, reminder_node.date,
+                      reminder_node.time,
                       reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
                 self.app.right_menu.collapsible_reminders.addElement(reminder_node)
@@ -140,7 +159,7 @@ class Reminders():
         :param str1: This is a time that we are converting from normal time to 24 hour time
         :return:
         """
-        if (str1[1] == ":"):
+        if str1[1] == ":":
             str1 = "0" + str1
 
         # Checking if last two elements of time

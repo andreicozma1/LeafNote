@@ -5,12 +5,16 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton
 
 
 class Replace(QWidget):
+    """
+    """
+
     def __init__(self, search_and_replace, document):
         """
         Initialize the widget
         """
-        logging.info("")
-        super(Replace, self).__init__()
+        super().__init__()
+        logging.debug("Creating Replace Widget")
+
         self.search_and_replace = search_and_replace
         self.document = document
 
@@ -22,6 +26,8 @@ class Replace(QWidget):
         sets up the layout and properties for the qwidget
         """
         # create the overarching hbox layout of the widget
+        logging.debug("Setting up UI")
+
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
         self.horizontal_layout.setAlignment(Qt.AlignLeft)
@@ -34,12 +40,15 @@ class Replace(QWidget):
         self.replace_bar.setContentsMargins(0, 0, 0, 0)
         self.replace_bar.setFixedWidth(200)
         self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
-        self.horizontal_layout.addWidget(self.replace_bar, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.replace_bar, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
 
         # create actions buttons
         def createActionBtn(title, signal):
+            """
+            Constructor for actions
+            """
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
             btn.clicked.connect(signal)
@@ -56,6 +65,7 @@ class Replace(QWidget):
         """
         Replaces the current selection of the search string with the replace string
         """
+        logging.info("Clicked Replace")
         cursor = self.document.textCursor()
         if cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())
@@ -65,6 +75,7 @@ class Replace(QWidget):
         """
         Replaces all occurrences of the search string with the replace string
         """
+        logging.info("Clicked Replace All")
         cursor = self.document.textCursor()
         while cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())

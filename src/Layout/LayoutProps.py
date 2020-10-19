@@ -5,7 +5,7 @@ holds the class with the layout properties
 """
 
 
-class LayoutProps():
+class LayoutProps:
     """
     class has the default layout properties
     """
@@ -15,7 +15,7 @@ class LayoutProps():
         the default properties for the layout
         :return: returns nothing
         """
-        logging.info("Setting up Layout Properties")
+        logging.debug("Setting up Layout Props")
 
         self.min_doc_width = .4
         self.min_menu_width = .2
