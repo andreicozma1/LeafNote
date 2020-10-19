@@ -27,11 +27,6 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-"""
-all the code comes together to set up the GUI
-"""
-
-
 class App(QMainWindow):
     """
     puts all the pieces of code together to get finished application
@@ -255,6 +250,8 @@ class App(QMainWindow):
                         self.file_manager.encryptor.decryptFile(path)
                         logging.info(" - Decrypted: " + path)
                 logging.info("END DECRYPT WORKSPACE: " + path_workspace)
+
+        return super(App, self).closeEvent(event)
 
 
 def main():
