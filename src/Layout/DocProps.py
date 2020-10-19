@@ -8,7 +8,7 @@ holds the class with the document properties
 """
 
 
-class DocProps():
+class DocProps:
     """
     class has the default document properties
     """

@@ -134,7 +134,8 @@ class BottomBar(QWidget):
 
     def onZoomInClicked(self):
         """
-        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        Setting the value of the slider calls the changeValue
+        function to perform the appropriate calculations
         :return: returns nothing
         """
         logging.info("On Zoom In")
@@ -143,7 +144,8 @@ class BottomBar(QWidget):
 
     def onZoomOutClicked(self):
         """
-        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        Setting the value of the slider calls the changeValue
+         function to perform the appropriate calculations
         :return: returns nothing
         """
         logging.info("On Zoom Out")
@@ -210,6 +212,9 @@ class BottomBar(QWidget):
             self.settings.setValue(setting_hint, not should_show_hint)
 
         def onCalendarReminder():
+            """
+            """
+            # noinspection PyCompatibility
             date: QDate = calendar.selectedDate()
             logging.info(date.toString("MM-dd-yyyy"))
             self.app.reminders.showDialog(calendar, False, date)

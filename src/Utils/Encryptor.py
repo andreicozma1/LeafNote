@@ -8,6 +8,9 @@ from Utils.DialogBuilder import DialogBuilder
 
 
 class Encryptor(Fernet):
+    """
+    """
+
     def __init__(self, key):
         super(Encryptor, self).__init__(key)
         logging.debug("Creating Encryptor")
@@ -40,11 +43,18 @@ class Encryptor(Fernet):
 
 
 def onEncryptionAction(app, file_manager):
+    """
+    """
+
     # Helper Functions
     def onEncryptBtnClicked(button):
+        """
+        """
         encryptionDialogHandler(app, file_manager, button)
 
     def onDecryptBtnClicked(button):
+        """
+        """
         decryptionDialogHandler(app, file_manager, button)
 
     # Check whether the encryptor already exists
@@ -86,7 +96,8 @@ def encryptionDialogHandler(app, file_manager, button):
             with open(path_key, 'wb') as f:
                 f.write(key)
                 logging.debug("Saved key to: " + path_key)
-        except:
+        except OSError as e:
+            logging.exception(e)
             logging.error("Failed to save CRYPTO KEY")
             return
 

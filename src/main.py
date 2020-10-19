@@ -97,6 +97,8 @@ class App(QMainWindow):
         self.show()
 
     def setupTopBar(self):
+        """
+        """
         top_bar_layout = self.top_bar.makeMainLayout()
         top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
         top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
@@ -116,10 +118,14 @@ class App(QMainWindow):
         self.top_bar.show()
 
     def setupBottomBar(self):
+        """
+        """
         # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
+        """
+        """
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
@@ -176,22 +182,20 @@ class App(QMainWindow):
         if state is True:
             convert_dialog = DialogBuilder(self, "Enable Formatting",
                                            "Would you like to convert this file?",
-                                           "This file needs to be converted to use enriched text formatting features\n"
+                                           "This file needs to be converted to use"
+                                           " enriched text formatting features\n"
                                            "Selecting 'Yes' will convert the original "
                                            "file to the enriched text file format.")
-            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-            convert_dialog.addButtonBox(buttonBox)
+            button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(button_box)
             if convert_dialog.exec():
                 logging.info("User converted file to Proprietary Format")
-                # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.file_manager.toLef(self.document)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
                 self.updateFormatBtnsState(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
-            # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
-
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
 
@@ -225,6 +229,8 @@ class App(QMainWindow):
         return super(App, self).resizeEvent(event)
 
     def closeEvent(self, event):
+        """
+        """
         logging.info("User triggered close event")
         self.settings.setValue("windowSize", self.size())
         self.settings.setValue("windowGeometry", self.geometry())
@@ -237,7 +243,8 @@ class App(QMainWindow):
             dialog_encryptor = DialogBuilder(self, "Crypto - WARNING",
                                              "WARNING!! Crypto Key missing!\n"
                                              "Would you like to decrypt workspace before exiting?",
-                                             "If you don't decrypt your workspace before exiting you will lose access to your files permanently.")
+                                             "If you don't decrypt your workspace before exiting"
+                                             "you will lose access to your files permanently.")
             buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             dialog_encryptor.addButtonBox(buttons)
             if dialog_encryptor.exec():
@@ -251,6 +258,8 @@ class App(QMainWindow):
 
 
 def main():
+    """
+    """
     logging.info("Main Function")
     app = QApplication([])
     App()

@@ -56,6 +56,9 @@ class TopBar(QWidget):
         return horizontal_layout
 
     def makeTitleStyleBox(self, dict_title_style: list) -> QComboBox:
+        """
+        Create Title Style Drop Down
+        """
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         self.dict_title_style = dict_title_style
@@ -66,6 +69,9 @@ class TopBar(QWidget):
         return self.combo_title_style
 
     def makeComboFontStyleBox(self) -> QFontComboBox:
+        """
+        Create Font Style DropDown
+        """
         # ComboBox for font sizes
         self.combo_font_style = QFontComboBox(self)
         self.combo_font_style.setToolTip('Change font')
@@ -75,6 +81,9 @@ class TopBar(QWidget):
         return self.combo_font_style
 
     def makeComboFontSizeBox(self, list_font_size: list) -> QComboBox:
+        """
+        Create Font Size Dropdown
+        """
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
         self.list_font_size = list_font_size
@@ -88,6 +97,9 @@ class TopBar(QWidget):
         return self.combo_font_size
 
     def makeBtnBold(self) -> QPushButton:
+        """
+        Create Bold Btn
+        """
         # Button press to make text bold
         self.button_bold = QPushButton("B", self)
         self.button_bold.setToolTip('Bold your text. "Ctrl+B"')
@@ -99,6 +111,9 @@ class TopBar(QWidget):
         return self.button_bold
 
     def makeBtnItal(self) -> QPushButton:
+        """
+        Create Ital Btn
+        """
         # Button press to make text italic
         self.button_ital = QPushButton("I", self)
         self.button_ital.setToolTip('Italicise your text. "Ctrl+I"')
@@ -110,6 +125,9 @@ class TopBar(QWidget):
         return self.button_ital
 
     def makeBtnStrike(self) -> QPushButton:
+        """
+        Create Strike Btn
+        """
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
         self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
@@ -125,6 +143,9 @@ class TopBar(QWidget):
         return self.button_strike
 
     def makeBtnUnder(self) -> QPushButton:
+        """
+        Create Underline Button
+        """
         # Button press to underline text
         self.button_under = QPushButton("U", self)
         self.button_under.setToolTip('Underline your text. "Ctrl+U"')
@@ -136,19 +157,25 @@ class TopBar(QWidget):
         return self.button_under
 
     def makeComboFontColor(self, color_dict: dict) -> QComboBox:
+        """
+        Create Font Color Dropdown
+        """
         # Button to change text color
         self.combo_text_color = QComboBox(self)
         self.dict_color = color_dict
         color_list = self.dict_color.values()
 
         def updateTextColor(index):
-            self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
-                                                " QComboBox { background-color: " +
-                                                list(color_list)[index] + ";" +
-                                                "            border: 1px solid gray;"
-                                                "            border-radius: 5px;"
-                                                "            selection-background-color: rgba(0,0,0,0.2)}"
-                                                " QComboBox QAbstractItemView { min-width:30px; }")
+            """
+            Updates styles for font color
+            """
+            style = "QComboBox::drop-down { border: 0px;}" \
+                    "QComboBox { background-color: " + list(color_list)[index] + ";" + \
+                    "border: 1px solid gray;" \
+                    "border-radius: 5px;" \
+                    "selection-background-color: rgba(0,0,0,0.2)}" \
+                    "QComboBox QAbstractItemView { min-width:30px; }"
+            self.combo_text_color.setStyleSheet(style)
 
         self.combo_text_color.setFixedWidth(35)
         self.combo_text_color.setFixedHeight(20)
@@ -162,17 +189,20 @@ class TopBar(QWidget):
         self.combo_text_color.currentIndexChanged.connect(updateTextColor)
         self.combo_text_color.setFocusPolicy(Qt.NoFocus)
         self.combo_text_color.setToolTip("Change Text color.")
-        self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
-                                            " QComboBox { background-color: black;"
+        self.combo_text_color.setStyleSheet("QComboBox::drop-down { border: 0px;}"
+                                            "QComboBox { background-color: black;"
                                             "            border: 1px solid gray;"
                                             "            border-radius: 5px;"
-                                            "            selection-background-color: rgba(0,0,0,0.2)}"
-                                            " QComboBox QAbstractItemView { min-width:30px; }")
+                                            "selection-background-color: rgba(0,0,0,0.2)} "
+                                            "QComboBox QAbstractItemView { min-width:30px; }")
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         return self.combo_text_color
 
     def makeClearFormatting(self) -> QPushButton:
+        """
+        Create Clear Formatting Button
+        """
         # Button to Clear Formatting
         path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
         self.button_clear = QPushButton(self)
@@ -184,6 +214,9 @@ class TopBar(QWidget):
         return self.button_clear
 
     def makeComboTextAlign(self, dict_align: dict) -> QComboBox:
+        """
+        Create Text Alignment Dropdown
+        """
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
         self.dict_align = dict_align
@@ -195,6 +228,9 @@ class TopBar(QWidget):
         return self.combo_text_align
 
     def makeBtnFormatMode(self, callback) -> QPushButton:
+        """
+        Create Enable Format Mode Button
+        """
         # Mode Switching button to the very right (after stretch)
         button_mode_switch = QPushButton("Formatting Mode", self)
 
@@ -214,6 +250,7 @@ class TopBar(QWidget):
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
+        # noinspection PyCompatibility
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -225,6 +262,7 @@ class TopBar(QWidget):
         :return: returns nothing
         """
         # Block signals
+        # noinspection PyCompatibility
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -258,6 +296,7 @@ class TopBar(QWidget):
                 align_index = align_list.index(align)
                 self.combo_text_align.setCurrentIndex(align_index)
         # Unblock signals
+        # noinspection PyCompatibility
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):

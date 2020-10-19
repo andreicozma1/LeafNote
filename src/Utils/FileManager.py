@@ -9,7 +9,8 @@ from Utils.DialogBuilder import DialogBuilder
 
 class FileManager:
     """
-    FileManger handles everything associated with communicating with files. It handles all of the opening, closing,
+    FileManger handles everything associated with communicating with files.
+    It handles all of the opening, closing,
     and saving needed for the project.
     """
 
@@ -19,15 +20,16 @@ class FileManager:
         """
         logging.debug("Creating File Manager")
         self.app = app
-        self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
-        self.current_document = None  # current_document - the current document that is displayed to the user
+        self.open_documents = {}
+        # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
+        self.current_document = None
+        # current_document - the current document that is displayed to the user
 
         self.encryptor = None
 
     def saveDocument(self, document):
         """
         :param document: Reference to the document
-        :param isFormatted: Boolean value if the document is formatted
         :return: Returns whether or not a tab needs to be opened
         """
 
@@ -119,13 +121,15 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
-                # get File data will never return None here because the document had to already be opened to get to this point
+                # get File data will never return None here because the document
+                # had to already be opened to get to this point
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
                     document.clearAllFormatting()
                 state = (self.current_document.suffix() == 'lef')
-            # if the open documents IS empty set the current document to none/empty document with no path
+            # if the open documents IS empty set the current document
+            # to none/empty document with no path
             else:
                 self.current_document = None
                 document.setText("")
@@ -228,7 +232,7 @@ class FileManager:
         with file:
             try:
                 data = file.read()
-            except:
+            except OSError as e:
                 corrupted_file = DialogBuilder(self.app,
                                                "File Corrupted",
                                                "Could not open the selected file.",
@@ -236,6 +240,8 @@ class FileManager:
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok)
                 corrupted_file.addButtonBox(button_box)
                 corrupted_file.exec()
+                logging.exception(e)
+                logging.error("File could not be opened!")
                 return None
         file.close()
 
@@ -243,7 +249,7 @@ class FileManager:
             if self.encryptor is not None:
                 data = self.encryptor.decrypt(data.encode()).decode()
                 logging.debug("File was encrypted. Decrypting")
-        except:
+        except OSError:
             logging.info("File wasn't encrypted. Proceeding as normal")
 
         return data

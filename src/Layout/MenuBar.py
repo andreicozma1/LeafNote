@@ -16,6 +16,9 @@ all properties and functionalities of the menu bar
 
 
 class MenuBar(QMenuBar):
+    """
+    """
+
     def __init__(self, document: Document, doc_props: DocProps):
         """
         Sets up the System MenuBar
@@ -37,10 +40,14 @@ class MenuBar(QMenuBar):
         logging.debug("makeFileMenu")
 
         def onNewBtn():
+            """
+            """
             logging.info("Clicked New Action")
             file_manager.newFile(self.doc)
 
         def onOpenBtn():
+            """
+            """
             logging.info("Clicked Open Action")
             # opens a file dialogue for the user to select a file to open
             file_name = QFileDialog.getOpenFileName(app, 'Open file',
@@ -49,6 +56,8 @@ class MenuBar(QMenuBar):
             file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
+            """
+            """
             logging.info("Clicked Open Folder Action")
             # opens a file dialogue for the user to select a file to open
             folder_name = QFileDialog.getExistingDirectory(app, 'Open folder',
@@ -61,17 +70,23 @@ class MenuBar(QMenuBar):
 
         # this saves the current file that is shown in the self.doc
         def onSaveBtn():
+            """
+            """
             logging.info("Clicked Save Action")
             if file_manager.saveDocument(self.doc):
                 logging.info("Created tab")
                 bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
 
         def onSaveAsBtn():
+            """
+            """
             logging.info("Clicked Save As Action")
             if file_manager.saveAsDocument(self.doc):
                 logging.info("Created tab")
 
         def onExitBtn():
+            """
+            """
             logging.info("Clicked Exit Action")
             file_manager.closeAll(self.doc)
             app.close()
@@ -80,6 +95,8 @@ class MenuBar(QMenuBar):
 
         # ========= START FILE MENU SECTION =========
         def makeFileAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             file_action = QAction(name, app)
             file_action.setShortcut(shortcut)
             file_action.triggered.connect(signal)
@@ -112,6 +129,8 @@ class MenuBar(QMenuBar):
         self.menu_edit = self.addMenu('&Edit')
 
         def onFindBtn():
+            """
+            """
             state_replace = app.search_and_replace.replace.isVisible()
             logging.info("Clicked Find Action - %s" % str(state_replace))
             if state_replace:
@@ -123,11 +142,15 @@ class MenuBar(QMenuBar):
                 app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():
+            """
+            """
             logging.info("Clicked Find All Action")
             self.doc.search_all = SearchWorkspace(self.doc, file_manager,
                                                   app.left_menu.model.rootPath())
 
         def onFindAndReplaceBtn():
+            """
+            """
             state_replace = app.search_and_replace.replace.isVisible()
             logging.info("Clicked Find and Replace Action - %s" % str(state_replace))
             # Toggle Find and Replace
@@ -138,6 +161,8 @@ class MenuBar(QMenuBar):
 
         # ========= START EDIT MENU SECTION =========
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             edit_action = QAction(name, app)
             edit_action.setShortcut(shortcut)
             edit_action.triggered.connect(signal)
@@ -171,6 +196,8 @@ class MenuBar(QMenuBar):
 
         # ========= START VIEW MENU SECTION =========
         def makeViewAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             view_action = QAction(name, app)
             view_action.setShortcut(shortcut)
             view_action.triggered.connect(signal)
@@ -193,6 +220,8 @@ class MenuBar(QMenuBar):
 
         # ========= START FONT STYLES SECTION =========
         def makeStyleAction(name: str, shortcut: str, signal, docref) -> QAction:
+            """
+            """
             style_action = QAction(name, app)
             style_action.setShortcut(shortcut)
             style_action.setCheckable(True)
@@ -233,6 +262,8 @@ class MenuBar(QMenuBar):
 
         # ========= START ALIGNMENT SECTION =========
         def makeAlignAction(name: str, shortcut: str, default: bool = False) -> QAction:
+            """
+            """
             align_action = QAction(name, app)
             align_action.setShortcut(shortcut)
             align_action.setCheckable(True)
@@ -240,6 +271,8 @@ class MenuBar(QMenuBar):
             return align_action
 
         def onTextAlignmentChanged(state):
+            """
+            """
             self.doc.onTextAlignmentChanged(
                 list(self.doc_props.dict_text_aligns.keys()).index(state.text()))
 
@@ -249,6 +282,8 @@ class MenuBar(QMenuBar):
         self.group_align.triggered.connect(onTextAlignmentChanged)
 
         def getName(index: int):
+            """
+            """
             return list(self.doc_props.dict_text_aligns.keys())[index]
 
         # Add alignment options to the group
@@ -273,6 +308,8 @@ class MenuBar(QMenuBar):
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
+            """
+            """
             logging.info("Clicked Summary Action")
             if document.summarizer is None:
                 DocumentSummarizer.onSummaryAction(app, document)
@@ -286,18 +323,26 @@ class MenuBar(QMenuBar):
             app.right_menu.collapsible_summary.expand()
 
         def onEncryptionAction():
+            """
+            """
             logging.info("Clicked Encryptor Action")
             Encryptor.onEncryptionAction(app, app.file_manager)
 
         def onCalculatorAction():
+            """
+            """
             logging.info("Clicked Calculator Action")
             self.calculator = Calculator.Calculator()
 
         def onRemindersAction():
+            """
+            """
             logging.info("Clicked Reminders Action")
             app.reminders.showDialog(app)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
             tools_action.triggered.connect(signal)
@@ -323,6 +368,7 @@ class MenuBar(QMenuBar):
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -334,6 +380,7 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         # Block signals
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -352,6 +399,7 @@ class MenuBar(QMenuBar):
                 if action.text() == list(self.doc_props.dict_text_aligns.keys())[index]:
                     action.setChecked(True)
         # Unblock signals
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):

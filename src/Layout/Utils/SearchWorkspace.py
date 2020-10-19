@@ -30,6 +30,15 @@ class File(QPushButton):
         self.setMinimumHeight(20)
 
 
+def getAllfiles(path):
+    """
+    returns a list of all files from the given path down the tree
+    :param path: a path to the directory to get all files from
+    :return: returns a list of files in the given directory
+    """
+    return [os.path.join(r, file) for r, d, f in os.walk(path) for file in f]
+
+
 class SearchWorkspace(QWidget):
     """
     Widget that handles searching through the current workspace.
@@ -72,7 +81,7 @@ class SearchWorkspace(QWidget):
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
 
         # create the layout to hold the search results
-        self.vertical_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
+        self.vertical_layout.addWidget(self.search_bar, alignment=Qt.AlignLeft)
 
         # create the scroll area to display the search results
         self.scroll = QScrollArea()
@@ -104,7 +113,7 @@ class SearchWorkspace(QWidget):
         self.clearSearchResults()
 
         # get a list of all files in the workspace
-        files = self.getAllfiles(self.path)
+        files = getAllfiles(self.path)
 
         # for each file in the list open it and look for the search word
         for f in files:
@@ -116,7 +125,7 @@ class SearchWorkspace(QWidget):
                     try:
                         # get the files text
                         data = file.read()
-                    except:
+                    except Exception:
                         logging.error("Could not read " + f)
 
                 # if the search phrase is in the file add a button to the scroll area
@@ -125,14 +134,6 @@ class SearchWorkspace(QWidget):
                     item.clicked.connect(partial(self.onItemClicked, item))
                     self.search_results.addWidget(item)
                 file.close()
-
-    def getAllfiles(self, path):
-        """
-        returns a list of all files from the given path down the tree
-        :param path: a path to the directory to get all files from
-        :return: returns a list of files in the given directory
-        """
-        return [os.path.join(r, file) for r, d, f in os.walk(path) for file in f]
 
     def onItemClicked(self, btn):
         """

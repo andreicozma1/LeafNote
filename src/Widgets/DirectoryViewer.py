@@ -6,15 +6,11 @@ from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 from Utils.Encryptor import Encryptor
 
-"""
-displays interactive directory on 
-left side of text editor
-"""
-
 
 class DirectoryViewer(QTreeView):
     """
-    displays a directory
+    displays interactive directory on
+    left side of text editor
     """
 
     def __init__(self, document, file_manager, path=None):

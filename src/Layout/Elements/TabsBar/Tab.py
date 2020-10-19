@@ -16,7 +16,6 @@ class Tab(Color):
         """
         creates a tab for specific file
         :param tab_bar: bar where the tabs will be stored
-        :param file_manager: instance of FileManager class - manages all file communication
         :param path: path to file being displayed
         :return: returns nothing
         """

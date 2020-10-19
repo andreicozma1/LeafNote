@@ -54,7 +54,7 @@ class Search(QWidget):
         self.search_bar.textChanged[str].connect(self.onChanged)
         self.search_bar.setFixedWidth(200)
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
-        self.horizontal_layout.addWidget(self.search_bar, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.search_bar, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
 
@@ -68,6 +68,8 @@ class Search(QWidget):
         # -----------------------------------------------------------
 
         def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
+            """
+            """
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
             btn.setToolTip(tool_tip)
@@ -82,19 +84,19 @@ class Search(QWidget):
         self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C),
                                                  self.case_sensitive)
         self.case_sensitive_shortcut.activated.connect(self.onCaseSensitiveSearchSelect)
-        self.horizontal_layout.addWidget(self.case_sensitive, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.case_sensitive, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
         self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
         self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
         self.whole_word_shortcut.activated.connect(self.onWholeWordSearchSelect)
-        self.horizontal_layout.addWidget(self.whole_word, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.whole_word, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
         self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
         self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
         self.regex_search_shortcut.activated.connect(self.onRegexSearchSelect)
-        self.horizontal_layout.addWidget(self.regex_search, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
 
@@ -134,18 +136,24 @@ class Search(QWidget):
         self.horizontal_layout.addWidget(self.close_search)
 
     def onCaseSensitiveSearchSelect(self):
+        """
+        """
         logging.info("Clicked Case Sensitive")
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
         self.onChanged(self.search_bar.text())
 
     def onWholeWordSearchSelect(self):
+        """
+        """
         logging.info("Clicked Whole Word")
         if self.regex_search.isChecked():
             self.whole_word.setChecked(False)
         self.onChanged(self.search_bar.text())
 
     def onRegexSearchSelect(self):
+        """
+        """
         logging.info("Clicked Regex")
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
@@ -153,25 +161,33 @@ class Search(QWidget):
         self.onChanged(self.search_bar.text())
 
     def onPreviousOccurrenceSelect(self):
+        """
+        """
         logging.info("Clicked Previous")
         self.document.find(self.search, self.flags | QTextDocument.FindBackward)
         if self.current - 1 >= 1:
-            self.current = self.current - 1
+            self.current -= 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
     def onNextOccurrenceSelect(self):
+        """
+        """
         logging.info("Clicked Next")
         self.document.find(self.search, self.flags)
         if self.current + 1 <= self.total:
-            self.current = self.current + 1
+            self.current += 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
     def onCloseSearch(self):
+        """
+        """
         logging.info("Clicked Close")
         self.search_and_replace.replace.setVisible(False)
         self.setVisible(False)
 
     def onChanged(self, search):
+        """
+        """
         self.search = search
 
         # update the number of occurrences of the search

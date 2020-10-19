@@ -8,6 +8,9 @@ from Widgets.CollapsibleWidget import CollapsibleWidget
 
 
 class ContextMenu(QWidget):
+    """
+    """
+
     def __init__(self, app, document):
         super(ContextMenu, self).__init__()
         logging.debug("Creating Context Menu")
@@ -31,6 +34,8 @@ class ContextMenu(QWidget):
         """
 
         def createLabel(prop: str):
+            """
+            """
             label = QLabel()
             label.setWordWrap(True)
             label.setProperty("prop", prop)
@@ -47,6 +52,8 @@ class ContextMenu(QWidget):
         vertical_layout.addWidget(self.collapsible_metadata)
 
         def onSummaryAction():
+            """
+            """
             DocumentSummarizer.onSummaryAction(self.app, self.document)
 
         self.collapsible_summary = CollapsibleWidget("Summary:")
@@ -67,9 +74,7 @@ class ContextMenu(QWidget):
     def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
-        :param document: a new reference to the document
         :param path: path of the file
-        :param formattingMode: whether the file is in formatting mode
         :return: nothing
         """
         # TODO - use document ref to display info about the document
@@ -80,6 +85,7 @@ class ContextMenu(QWidget):
         for i in range(self.collapsible_metadata.layout_content.count()):
             label = self.collapsible_metadata.layout_content.itemAt(i).widget()
             prop = label.property("prop")
+            # noinspection PyCompatibility
             value: str
             if path is None:
                 value = "?"
@@ -106,6 +112,8 @@ class ContextMenu(QWidget):
         self.updateSummary()
 
     def updateSummary(self):
+        """
+        """
         if self.document.summarizer is not None:
             self.summary.show()
             self.enable_summarizer_btn.hide()

@@ -33,7 +33,7 @@ class OpenTabsBar(QWidget):
         self.active_tab = None
         self.open_tabs = {}
 
-        # crate the hbox layout
+        # crate the horizontal layout
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
         self.horizontal_layout.setSpacing(self.layout_props.bar_tabs_spacing)
@@ -48,6 +48,9 @@ class OpenTabsBar(QWidget):
         self.horizontal_layout.addStretch()
 
     def openTab(self, tab):
+        """
+        Opens a tab
+        """
         self.active_tab = tab
         self.file_manager.openDocument(self.document, tab.path)
 
@@ -70,7 +73,6 @@ class OpenTabsBar(QWidget):
         """
         removes object from layout and destroys it
         :param path: path to file being displayed
-        :param closeDocument: if the document is closed in file manager
         :param save: if the document is saved
         :return: returns nothing
         """

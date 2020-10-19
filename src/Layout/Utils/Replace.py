@@ -5,6 +5,9 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton
 
 
 class Replace(QWidget):
+    """
+    """
+
     def __init__(self, search_and_replace, document):
         """
         Initialize the widget
@@ -37,12 +40,15 @@ class Replace(QWidget):
         self.replace_bar.setContentsMargins(0, 0, 0, 0)
         self.replace_bar.setFixedWidth(200)
         self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
-        self.horizontal_layout.addWidget(self.replace_bar, 0, Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.replace_bar, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
 
         # create actions buttons
         def createActionBtn(title, signal):
+            """
+            Constructor for actions
+            """
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
             btn.clicked.connect(signal)
