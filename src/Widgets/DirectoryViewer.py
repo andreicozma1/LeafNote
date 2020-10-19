@@ -20,7 +20,7 @@ class DirectoryViewer(QTreeView):
         :param path: default path to file being displayed
         :return: returns nothing
         """
-        super(DirectoryViewer, self).__init__()
+        super().__init__()
         logging.debug("Creating Directory Viewer")
 
         self.document = document

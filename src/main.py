@@ -27,6 +27,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
+
 class App(QMainWindow):
     """
     puts all the pieces of code together to get finished application
@@ -37,7 +38,7 @@ class App(QMainWindow):
         creates the window and its attributes
         :return: returns nothing
         """
-        super(App, self).__init__()
+        super().__init__()
         logging.debug("Creating Application")
 
         # Initialize properties.
@@ -221,7 +222,7 @@ class App(QMainWindow):
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
-        return super(App, self).resizeEvent(event)
+        return super().resizeEvent(event)
 
     def closeEvent(self, event):
         """
@@ -251,7 +252,7 @@ class App(QMainWindow):
                         logging.info(" - Decrypted: " + path)
                 logging.info("END DECRYPT WORKSPACE: " + path_workspace)
 
-        return super(App, self).closeEvent(event)
+        return super().closeEvent(event)
 
 
 def main():

@@ -12,7 +12,7 @@ class ContextMenu(QWidget):
     """
 
     def __init__(self, app, document):
-        super(ContextMenu, self).__init__()
+        super().__init__()
         logging.debug("Creating Context Menu")
         self.app = app
         self.document = document

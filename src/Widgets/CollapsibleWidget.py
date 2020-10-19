@@ -9,7 +9,7 @@ class CollapsibleWidget(QWidget):
     """
 
     def __init__(self, title: str = ""):
-        super(CollapsibleWidget, self).__init__()
+        super().__init__()
         logging.debug("Creating CollapsibleWidget - %s" % title)
         self.title = title
 

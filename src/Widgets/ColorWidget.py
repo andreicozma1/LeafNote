@@ -17,7 +17,7 @@ class Color(QWidget):
         :param color: the color widget will be set to
         :return: returns nothing
         """
-        super(Color, self).__init__()
+        super().__init__()
         self.setAutoFillBackground(True)
 
         palette = self.palette()

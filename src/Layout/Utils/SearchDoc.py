@@ -20,7 +20,7 @@ class Search(QWidget):
         Sets up the search bar widget
         :param document: reference to the document
         """
-        super(Search, self).__init__()
+        super().__init__()
         logging.debug("Created Search Widget")
 
         self.search_and_replace = search_and_replace

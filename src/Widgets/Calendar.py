@@ -8,7 +8,7 @@ class Calendar(QCalendarWidget):
     """
 
     def __init__(self):
-        super(Calendar, self).__init__()
+        super().__init__()
         logging.debug("Creating Calendar")
 
         self.setStyleSheet("#qt_calendar_navigationbar"

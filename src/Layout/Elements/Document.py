@@ -22,7 +22,7 @@ class Document(QTextEdit):
         creates the default layout of the text document
         :return: returns nothing
         """
-        super(Document, self).__init__("")
+        super().__init__("")
         logging.debug("Creating Document")
         self.doc_props = doc_props
 

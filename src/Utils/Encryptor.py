@@ -12,7 +12,7 @@ class Encryptor(Fernet):
     """
 
     def __init__(self, key):
-        super(Encryptor, self).__init__(key)
+        super().__init__(key)
         logging.debug("Creating Encryptor")
 
     def encryptFile(self, path):

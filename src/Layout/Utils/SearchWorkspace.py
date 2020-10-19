@@ -16,7 +16,7 @@ class File(QPushButton):
         sets up the buttons properties
         :param path: the file the button is representing
         """
-        super(File, self).__init__()
+        super().__init__()
         self.path = path
         self.file_name = QFileInfo(path).fileName()
         self.initUI()
@@ -51,7 +51,7 @@ class SearchWorkspace(QWidget):
         :param file_manager: reference to the file manager
         :param path: path of the current workspace
         """
-        super(SearchWorkspace, self).__init__()
+        super().__init__()
         logging.debug("Creating Search Workspace")
 
         self.document = document

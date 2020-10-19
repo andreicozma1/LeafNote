@@ -18,7 +18,7 @@ class SearchAndReplace(QWidget):
         :param path_res: the path to the resources
         :param document: the document
         """
-        super(SearchAndReplace, self).__init__()
+        super().__init__()
         logging.debug("Creating Search and Replace")
         self.path_res = path_res
         self.document = document

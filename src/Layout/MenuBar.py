@@ -24,7 +24,7 @@ class MenuBar(QMenuBar):
         Sets up the System MenuBar
         :return: returns nothing
         """
-        super(MenuBar, self).__init__()
+        super().__init__()
         logging.debug("Creating MenuBar")
 
         self.doc = document

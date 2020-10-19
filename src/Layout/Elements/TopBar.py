@@ -23,7 +23,7 @@ class TopBar(QWidget):
         sets up the top bar and its features
         :return: returns nothing
         """
-        super(TopBar, self).__init__()
+        super().__init__()
         logging.debug("Creating Top Bar")
         self.path_res = path_res
         self.document = document

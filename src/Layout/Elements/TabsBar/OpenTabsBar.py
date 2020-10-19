@@ -1,15 +1,15 @@
+"""
+when one or more file is open it
+will show the file tabs under the
+top bar
+"""
+
 import logging
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from Layout.Elements.TabsBar.Tab import Tab
-
-"""
-when one or more file is open it
-will show the file tabs under the
-top bar
-"""
 
 
 class OpenTabsBar(QWidget):
@@ -24,7 +24,7 @@ class OpenTabsBar(QWidget):
         :param layout_props: properties for the layout - dimensions
         :return: returns nothing
         """
-        super(OpenTabsBar, self).__init__()
+        super().__init__()
         logging.debug("Creating Open Tabs Bar")
 
         self.document = document

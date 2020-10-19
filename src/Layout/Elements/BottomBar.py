@@ -23,7 +23,7 @@ class BottomBar(QWidget):
         :param document: the document the bottom bar will be altering
         :return: returns nothing
         """
-        super(BottomBar, self).__init__()
+        super().__init__()
         logging.debug("Creating Bottom Bar")
         self.app = app
         self.document = document

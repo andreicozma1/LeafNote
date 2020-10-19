@@ -12,7 +12,7 @@ class Replace(QWidget):
         """
         Initialize the widget
         """
-        super(Replace, self).__init__()
+        super().__init__()
         logging.debug("Creating Replace Widget")
 
         self.search_and_replace = search_and_replace

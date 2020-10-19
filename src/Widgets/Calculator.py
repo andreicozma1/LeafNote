@@ -9,7 +9,7 @@ class Calculator(QWidget):
     """
 
     def __init__(self):
-        super(Calculator, self).__init__()
+        super().__init__()
         self.calculator()
         self.show()
 
