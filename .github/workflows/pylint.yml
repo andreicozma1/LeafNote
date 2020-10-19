@@ -21,7 +21,13 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        python3 -m pylint src || pylint-exit --error-fail $?
+        python3 -m pylint src > output.txt
+        echo $? > code.txt
+        
+        
+        
+        cat output.txt
+        cat code.txt | xargs pylint-exit --error-fail
         if [ $? -ne 0 ]; then
           echo "An error occurred while running pylint." >&2
           exit 1
@@ -31,5 +37,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        msg: "Check out this message!"
+        msg: cat output.txt | grep -i rated
         check_for_duplicate_msg: false  # OPTIONAL 
