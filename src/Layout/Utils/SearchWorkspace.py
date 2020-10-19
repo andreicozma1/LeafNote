@@ -125,7 +125,8 @@ class SearchWorkspace(QWidget):
                     try:
                         # get the files text
                         data = file.read()
-                    except Exception:
+                    except OSError as e:
+                        logging.exception(e)
                         logging.error("Could not read " + f)
 
                 # if the search phrase is in the file add a button to the scroll area

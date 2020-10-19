@@ -65,7 +65,7 @@ class TopBar(QWidget):
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
-        self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
+        self.combo_title_style.text.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
 
     def makeComboFontStyleBox(self) -> QFontComboBox:

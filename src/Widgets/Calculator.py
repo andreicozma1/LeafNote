@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QPushButton
 
@@ -122,7 +124,8 @@ class Calculator(QWidget):
             self.screen.setText(str(ans))
             self.equ = 1
 
-        except Exception:
+        except SyntaxError as e:
+            logging.exception(e)
             self.screen.setText("Wrong Input")
 
     def action_plus(self):

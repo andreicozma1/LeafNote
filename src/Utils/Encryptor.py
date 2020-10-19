@@ -84,8 +84,8 @@ def encryptionDialogHandler(app, file_manager, button):
     """
     Checks user input and encrypts workspace if needed
     :param app: application context
-    :file_manager: file_manager context
-    :button: button clicked reference
+    :param file_manager: file_manager context
+    :param button: button clicked reference
     """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
@@ -118,8 +118,8 @@ def decryptionDialogHandler(app, file_manager, button):
     """
     Checks user input and decrypts workspace if needed
     :param app: application context
-    :file_manager: file_manager context
-    :button: button clicked reference
+    :param file_manager: file_manager context
+    :param button: button clicked reference
     """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")

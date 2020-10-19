@@ -280,11 +280,11 @@ def ensureDirectory(app, path: str):
 
 def dependencyDialogHandler(app, button, document=None):
     """
-    This will handle the users choice for the Download prompt
-     the user will select where they want to find/Download the files
+    This will handle the users choice for the Download prompt the user will select where they
+    want to find/Download the files
     :param app: an application reference
     :param button: the button the user selected
-    :document: a reference to the document
+    :param document: document reference
     :return: returns summary
     """
     logging.debug("User selected " + button.text())
@@ -305,14 +305,15 @@ def dependencyDialogHandler(app, button, document=None):
 
     def files_exist(path1: str, path2: str):
         """
+        Checks if the files exist within any of the 2 directories
         """
         if os.path.exists(
                 os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
+            os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
         elif os.path.exists(
                 os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
+            os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
         else:
             return None
@@ -387,6 +388,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
             """
             Change the progress bar
             """
+            logging.debug("Progress: %s out of %s ... width %s" % current, total, width)
             progress_bar.setMaximum(total)
             progress_bar.setValue(current)
 
