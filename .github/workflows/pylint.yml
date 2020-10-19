@@ -23,15 +23,19 @@ jobs:
       run: |
         python3 -m pylint src > output.txt || echo $? > code.txt
         cat output.txt
-        cat code.txt | xargs pylint-exit --error-fail
-        if [ $? -ne 0 ]; then
-          echo "An error occurred while running pylint." >&2
-          exit 1
-        fi
+        cat output.txt | grep -i rated > result.txt
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MESSAGE: $(cat result.txt)  
       with:
-        msg: cat output.txt | grep -i rated
+        msg: echo $MESSAGE 
         check_for_duplicate_msg: false  # OPTIONAL 
+    - name: Return
+      run:
+        cat code.txt | xargs pylint-exit --error-fail
+        if [ $? -ne 0 ]; then
+          echo "An error occurred while running pylint." >&2
+          exit 1
+        fi 
