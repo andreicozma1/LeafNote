@@ -11,8 +11,6 @@ jobs:
   assign_one_project:
     runs-on: ubuntu-latest
     name: Assign to Project
-=======
->>>>>>> 674f920cea56f4e6d72d9fb4f9ee9e79005a557e:.github/workflows/auto_assign.yml
       uses: srggrs/assign-one-project-github-action@1.2.0
       if: github.event.action == 'opened'|| github.event.action == 'reopened'
       with:
