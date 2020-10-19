@@ -3,10 +3,6 @@ import os
 
 from PyQt5.QtCore import QDir
 
-"""
-Application properties
-"""
-
 
 class AppProps:
     """

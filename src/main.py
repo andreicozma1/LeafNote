@@ -214,11 +214,11 @@ class App(QMainWindow):
         """
         self.left_menu.setMinimumWidth(
             int(self.width() * self.layout_props.min_menu_width * (
-                        self.app_props.default_width / self.width())))
+                    self.app_props.default_width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.right_menu.setMinimumWidth(
             int(self.width() * self.layout_props.min_menu_width * (
-                        self.app_props.default_width / self.width())))
+                    self.app_props.default_width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 

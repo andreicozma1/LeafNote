@@ -216,8 +216,8 @@ class BottomBar(QWidget):
 
         calendar.selectionChanged.connect(onCalendarReminder)
 
-        self.dialog = DialogBuilder()
-        self.dialog.addWidget(calendar)
-        self.dialog.layout().setContentsMargins(0, 0, 0, 0)
-        self.dialog.setFixedHeight(400)
-        self.dialog.show()
+        dialog = DialogBuilder()
+        dialog.addWidget(calendar)
+        dialog.layout().setContentsMargins(0, 0, 0, 0)
+        dialog.setFixedHeight(400)
+        dialog.show()

@@ -298,11 +298,11 @@ def dependencyDialogHandler(app, button, document=None):
     def files_exist(path1: str, path2: str):
         if os.path.exists(
                 os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
+            os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
         elif os.path.exists(
                 os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
+            os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
         else:
             return None
