@@ -3,11 +3,10 @@ import logging
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
-import Utils.DocumentSummarizer as DocumentSummarizer
 from Layout import DocProps
 from Layout.Elements import Document
 from Layout.Utils.SearchWorkspace import SearchWorkspace
-from Utils import Encryptor
+from Utils import Encryptor, EquationEditor, DocumentSummarizer
 from Widgets import Calculator
 
 """
@@ -340,6 +339,9 @@ class MenuBar(QMenuBar):
             logging.info("Clicked Reminders Action")
             app.reminders.showDialog(app)
 
+        def onEquationEditorAction():
+            self.equation_editor = EquationEditor.EquationEditor(document)
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             """
             """
@@ -353,6 +355,7 @@ class MenuBar(QMenuBar):
             makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
         self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        self.menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
