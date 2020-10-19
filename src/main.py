@@ -9,8 +9,8 @@ from Layout.Elements.BottomBar import BottomBar
 from Layout.Elements.ContextMenu import ContextMenu
 from Widgets.DirectoryViewer import DirectoryViewer
 from Layout.Elements.Document import Document
-from Layout.Elements.OpenTabsBar import OpenTabsBar
-from Layout.Utils.SearchAndReplace import SearchAndReplace
+from Layout.Elements.TabsBar.OpenTabsBar import OpenTabsBar
+from Layout.Elements.SearchAndReplace import SearchAndReplace
 from Layout.Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.DocProps import DocProps

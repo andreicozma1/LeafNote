@@ -5,7 +5,7 @@ from functools import partial
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea
 
-from Layout.SearchReplace.Search import File
+from Layout.Utils.SearchDoc import File
 
 
 class SearchWorkspace(QWidget):
