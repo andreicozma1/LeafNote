@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator
+from Elements import Search, Document, Calculator, EquationEditor
 from Layout import DocProps
 from Utils import Encryptor
 
@@ -279,6 +279,9 @@ class MenuBar(QMenuBar):
         def onRemindersAction():
             app.reminders.showDialog(app)
 
+        def onEquationEditorAction():
+            self.equation_editor = EquationEditor.EquationEditor(document)
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
@@ -289,6 +292,7 @@ class MenuBar(QMenuBar):
         self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
         self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        self.menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
