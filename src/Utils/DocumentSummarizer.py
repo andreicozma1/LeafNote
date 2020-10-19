@@ -106,7 +106,8 @@ class Summarizer:
         clean_sentences = [s.lower() for s in clean_sentences]
 
         # eliminate all stop words from the sentences
-        clean_sentences = [removeStopwords(sent.split(), self.stopwords) for sent in clean_sentences]
+        clean_sentences = [removeStopwords(sent.split(), self.stopwords) for sent in
+                           clean_sentences]
         return clean_sentences
 
     def createWordVectors(self, clean_sentences):
@@ -213,7 +214,8 @@ def onSummaryAction(app, document):
         download_dialog = DialogBuilder(app, "Dictionaries",
                                         "Would you like to download required dictionaries?",
                                         "If you have already downloaded them previously click open to select the location on disk.")
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
         download_dialog.addButtonBox(buttonBox)
         buttonBox.clicked.connect(onDialogButtonClicked)
         download_dialog.exec()
@@ -294,10 +296,12 @@ def dependencyDialogHandler(app, button, document=None):
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
     def files_exist(path1: str, path2: str):
-        if os.path.exists(os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
+        if os.path.exists(
+                os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
                 os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
-        elif os.path.exists(os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
+        elif os.path.exists(
+                os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
                 os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
         else:
@@ -345,7 +349,8 @@ def dependencyDialogHandler(app, button, document=None):
         initializeSummarizer(existing_path, app, document, True)
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
+def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None,
+                      document=None):
     """
     This will download the necessary files for Summarizer then create the word embedding model and create
     an instance of the summarizer

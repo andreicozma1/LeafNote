@@ -126,10 +126,12 @@ class Reminders():
                 sort_key_string = sort_key_string.replace(" ", "")
                 sort_key_string = sort_key_string.replace("-", "")
                 sort_key_string = sort_key_string.replace(":", "")
-                reminder_node = Reminder(milliseconds, sort_key_string, selected_date, hour_cb.text(), title.text(),
+                reminder_node = Reminder(milliseconds, sort_key_string, selected_date,
+                                         hour_cb.text(), title.text(),
                                          description.text())
                 print("Printing Class")
-                print(reminder_node.key, reminder_node.sort_key, reminder_node.date, reminder_node.time,
+                print(reminder_node.key, reminder_node.sort_key, reminder_node.date,
+                      reminder_node.time,
                       reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
                 self.app.right_menu.collapsible_reminders.addElement(reminder_node)

@@ -43,14 +43,16 @@ class MenuBar(QMenuBar):
         def onOpenBtn():
             logging.info("Clicked Open Action")
             # opens a file dialogue for the user to select a file to open
-            file_name = QFileDialog.getOpenFileName(app, 'Open file', app.left_menu.model.rootPath())
+            file_name = QFileDialog.getOpenFileName(app, 'Open file',
+                                                    app.left_menu.model.rootPath())
             # open the chosen file and show the text in the text editor
             file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
             logging.info("Clicked Open Folder Action")
             # opens a file dialogue for the user to select a file to open
-            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', app.left_menu.model.rootPath())
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder',
+                                                           app.left_menu.model.rootPath())
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
@@ -122,7 +124,8 @@ class MenuBar(QMenuBar):
 
         def onFindAllBtn():
             logging.info("Clicked Find All Action")
-            self.doc.search_all = SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+            self.doc.search_all = SearchWorkspace(self.doc, file_manager,
+                                                  app.left_menu.model.rootPath())
 
         def onFindAndReplaceBtn():
             state_replace = app.search_and_replace.replace.isVisible()
@@ -201,11 +204,14 @@ class MenuBar(QMenuBar):
         self.group_style.setExclusive(False)
         act_bold = makeStyleAction("Bold", "Ctrl+B", self.doc.onFontBoldChanged, self.doc.fontBold)
         self.group_style.addAction(act_bold)
-        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged, self.doc.fontItalic)
+        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged,
+                                   self.doc.fontItalic)
         self.group_style.addAction(act_ital)
-        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged, self.doc.fontStrike)
+        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged,
+                                   self.doc.fontStrike)
         self.group_style.addAction(act_strk)
-        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged, self.doc.fontUnderline)
+        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged,
+                                   self.doc.fontUnderline)
         self.group_style.addAction(act_undr)
         # Add all actions in group to Style Menu
         self.menu_format.addActions(self.group_style.actions())
@@ -234,7 +240,8 @@ class MenuBar(QMenuBar):
             return align_action
 
         def onTextAlignmentChanged(state):
-            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_text_aligns.keys()).index(state.text()))
+            self.doc.onTextAlignmentChanged(
+                list(self.doc_props.dict_text_aligns.keys()).index(state.text()))
 
         self.menu_format.addSeparator()
         # Action Group for Alignments options (Exclusive picks)
@@ -274,7 +281,8 @@ class MenuBar(QMenuBar):
                 if selection != "":
                     app.right_menu.summary.setText(document.summarizer.summarize(selection))
                 else:
-                    app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+                    app.right_menu.summary.setText(
+                        document.summarizer.summarize(document.toPlainText()))
             app.right_menu.collapsible_summary.expand()
 
         def onEncryptionAction():
@@ -296,7 +304,8 @@ class MenuBar(QMenuBar):
             return tools_action
 
         self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
-        self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
+        self.menu_tools.addAction(
+            makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
         self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
 

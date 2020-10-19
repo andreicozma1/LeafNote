@@ -36,10 +36,12 @@ class Layout(QWidget):
         self.setLayout(main_layout)
         return main_layout
 
-    def makeHSplitterLayout(self, left_menu, bar_open_tabs, document, right_menu, search_and_replace):
+    def makeHSplitterLayout(self, left_menu, bar_open_tabs, document, right_menu,
+                            search_and_replace):
         logging.debug("Creating Layout - Horizontal")
 
-        horizontal_workspace = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
+        horizontal_workspace = QSplitter(
+            QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
         horizontal_workspace.setHandleWidth(self.layout_props.splitter_width)
 
         horizontal_workspace.addWidget(left_menu)

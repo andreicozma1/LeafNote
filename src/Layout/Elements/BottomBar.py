@@ -128,7 +128,8 @@ class BottomBar(QWidget):
         Counts number of characters and updates number on bottom bar
         :return: returns nothing
         """
-        char_count = len(self.document.toPlainText()) - len(self.document.toPlainText().split(" ")) + 1
+        char_count = len(self.document.toPlainText()) - len(
+            self.document.toPlainText().split(" ")) + 1
         self.label_cc.setText(str(char_count) + " Characters")
 
     def onZoomInClicked(self):
@@ -198,10 +199,12 @@ class BottomBar(QWidget):
         calendar = Calendar()
 
         setting_hint = "hints/showCalendarReminderHint"
-        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True
+        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(
+            setting_hint) is True
         logging.info(setting_hint + ": " + str(should_show_hint))
         if should_show_hint:
-            hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Select a date to create a Reminder!")
+            hint = DialogBuilder(calendar, "Setting Reminders",
+                                 "Hint: Select a date to create a Reminder!")
             hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
             hint.show()
             self.settings.setValue(setting_hint, not should_show_hint)

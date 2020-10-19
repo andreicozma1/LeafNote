@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButton
 
 
 class DialogBuilder(QDialog):
-    def __init__(self, blocked_widget=None, text_window: str = None, text_title: str = None, text_msg: str = None):
+    def __init__(self, blocked_widget=None, text_window: str = None, text_title: str = None,
+                 text_msg: str = None):
         super(DialogBuilder, self).__init__(blocked_widget)
         logging.debug("Init DialogBuilder")
 
@@ -60,7 +61,8 @@ class DialogBuilder(QDialog):
                        text_format: str = None, orientation=None, text_direction=None):
 
         logging.info(
-            "min=" + str(min_max_range[0]) + ";max=" + str(min_max_range[1]) + ";initial_value=" + str(initial_value))
+            "min=" + str(min_max_range[0]) + ";max=" + str(
+                min_max_range[1]) + ";initial_value=" + str(initial_value))
 
         # create the progress_bar and set its properties
         progress_bar = QProgressBar()

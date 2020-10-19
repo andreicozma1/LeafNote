@@ -82,7 +82,8 @@ class TopBar(QWidget):
         self.combo_font_size.addItems(self.list_font_size)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
-        self.combo_font_size.setCurrentIndex(self.list_font_size.index(str(self.document.font().pointSize())))
+        self.combo_font_size.setCurrentIndex(
+            self.list_font_size.index(str(self.document.font().pointSize())))
         self.combo_font_size.currentTextChanged.connect(self.document.onFontSizeChanged)
         return self.combo_font_size
 
@@ -142,7 +143,8 @@ class TopBar(QWidget):
 
         def updateTextColor(index):
             self.combo_text_color.setStyleSheet(" QComboBox::drop-down { border: 0px;}"
-                                                " QComboBox { background-color: " + list(color_list)[index] + ";" +
+                                                " QComboBox { background-color: " +
+                                                list(color_list)[index] + ";" +
                                                 "            border: 1px solid gray;"
                                                 "            border-radius: 5px;"
                                                 "            selection-background-color: rgba(0,0,0,0.2)}"
@@ -197,7 +199,8 @@ class TopBar(QWidget):
         button_mode_switch = QPushButton("Formatting Mode", self)
 
         button_mode_switch.setToolTip("Enable Document Formatting")
-        button_mode_switch.setProperty("persistent", True)  # Used to keep button enabled in setFormattingMode
+        button_mode_switch.setProperty("persistent",
+                                       True)  # Used to keep button enabled in setFormattingMode
         button_mode_switch.setCheckable(True)
         button_mode_switch.setFocusPolicy(Qt.NoFocus)
         button_mode_switch.clicked.connect(callback)

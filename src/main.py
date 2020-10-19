@@ -74,8 +74,10 @@ class App(QMainWindow):
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
-        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
-                                                              self.right_menu, self.search_and_replace)
+        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
+                                                              self.document,
+                                                              self.right_menu,
+                                                              self.search_and_replace)
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
@@ -146,7 +148,8 @@ class App(QMainWindow):
 
         self.setMinimumWidth(int(self.top_bar.width()))
 
-        setting_resizable = not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False
+        setting_resizable = not self.settings.contains("windowResizable") or self.settings.value(
+            "windowResizable") is False
         logging.debug("Resizable - %s" % str(setting_resizable))
         if setting_resizable:
             if not self.app_props.resizable:
@@ -210,10 +213,12 @@ class App(QMainWindow):
         :return: returns nothing
         """
         self.left_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (
+                        self.app_props.default_width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.right_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (
+                        self.app_props.default_width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 

@@ -27,7 +27,8 @@ class Tab(Color):
 
         self.tab_bar = tab_bar
         self.path = path
-        self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic
+        self.f_name = QFileInfo(
+            self.path).fileName()  # grab substring of just the file name w/o path for asthetic
 
         # create horizontal layout for the tab
         self.horizontal_layout = QHBoxLayout()
@@ -43,7 +44,8 @@ class Tab(Color):
         self.btn_close.setText("x")
         self.btn_close.setToolTip("Close tab")
         self.btn_close.setContentsMargins(0, 0, 0, 0)
-        self.btn_close.setStyleSheet("background-color: transparent; text-align: center; font-size: 14px")
+        self.btn_close.setStyleSheet(
+            "background-color: transparent; text-align: center; font-size: 14px")
         self.btn_close.released.connect(self.closeTab)
         self.horizontal_layout.addWidget(self.btn_close)
 

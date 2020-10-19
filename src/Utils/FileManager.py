@@ -48,7 +48,8 @@ class FileManager:
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
             # get the entered data
-            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.left_menu.model.rootPath(),
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save file',
+                                                    self.app.left_menu.model.rootPath(),
                                                     file_filter)
 
             if file_name[0] == '':
@@ -73,7 +74,8 @@ class FileManager:
         :param document: Reference to the document
         :return: Returns if the save as succeeded or not
         """
-        new_path = QFileDialog.getSaveFileName(self.app, 'Save File', self.app.left_menu.model.rootPath())[0]
+        new_path = \
+        QFileDialog.getSaveFileName(self.app, 'Save File', self.app.left_menu.model.rootPath())[0]
 
         # if the new path is an empty string do nothing
         if new_path == '':
@@ -357,7 +359,8 @@ class FileManager:
         :return: Returns nothing
         """
         # Get path name from user
-        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.left_menu.model.rootPath())
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file',
+                                                self.app.left_menu.model.rootPath())
         if file_name[0] == '':
             logging.warning('No File Path Given')
             return
