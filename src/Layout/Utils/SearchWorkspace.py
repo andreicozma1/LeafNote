@@ -2,11 +2,31 @@ import logging
 import os
 from functools import partial
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea
+from PyQt5.QtCore import Qt, QFileInfo
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea, QPushButton
 
-from Layout.Utils.SearchDoc import File
+class File(QPushButton):
+    """
+    This is a button that holds information about the button
+    """
 
+    def __init__(self, path):
+        """
+        sets up the buttons properties
+        :param path: the file the button is representing
+        """
+        super(File, self).__init__()
+        self.path = path
+        self.file_name = QFileInfo(path).fileName()
+        self.initUI()
+
+    def initUI(self):
+        """
+        sets up the buttons appearance
+        :return: Returns nothing
+        """
+        self.setText(self.file_name)
+        self.setMinimumHeight(20)
 
 class SearchWorkspace(QWidget):
     """
@@ -21,6 +41,8 @@ class SearchWorkspace(QWidget):
         :param path: path of the current workspace
         """
         super(SearchWorkspace, self).__init__()
+        logging.debug("Creating Search Workspace")
+
         self.document = document
         self.file_manager = file_manager
         self.path = path

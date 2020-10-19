@@ -24,7 +24,7 @@ class TopBar(QWidget):
         :return: returns nothing
         """
         super(TopBar, self).__init__()
-        logging.info("")
+        logging.debug("Creating Top Bar")
         self.path_res = path_res
         self.document = document
 

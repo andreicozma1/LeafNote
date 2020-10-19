@@ -23,7 +23,8 @@ class Tab(Color):
         # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super(Tab, self).__init__(color)
-        logging.info("")
+        logging.debug("Creating Tab")
+
         self.tab_bar = tab_bar
         self.path = path
         self.f_name = QFileInfo(self.path).fileName()  # grab substring of just the file name w/o path for asthetic

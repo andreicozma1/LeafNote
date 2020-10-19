@@ -23,7 +23,7 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         super(Document, self).__init__("")
-        logging.debug("")
+        logging.debug("Creating Document")
         self.doc_props = doc_props
 
         # If the dictionaries have been downloaded previously, check persistent settings

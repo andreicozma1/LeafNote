@@ -34,7 +34,8 @@ class Summarizer:
         """
         Sets up class variables.
         """
-        logging.debug("Created instance of summarizer class")
+        logging.debug("Creating Document Summarizer")
+
         handlePackageDownloads()
         from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings

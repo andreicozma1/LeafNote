@@ -23,7 +23,8 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         super(MenuBar, self).__init__()
-        logging.info("")
+        logging.debug("Creating MenuBar")
+
         self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)

@@ -10,7 +10,7 @@ from Utils.DialogBuilder import DialogBuilder
 class Encryptor(Fernet):
     def __init__(self, key):
         super(Encryptor, self).__init__(key)
-        logging.info("Create Encryptor Class")
+        logging.debug("Creating Encryptor")
 
     def encryptFile(self, path):
         """

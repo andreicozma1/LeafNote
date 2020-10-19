@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
@@ -9,6 +11,7 @@ from Utils.Reminders import Reminder
 class ContextMenu(QWidget):
     def __init__(self, app, document):
         super(ContextMenu, self).__init__()
+        logging.debug("Creating Context Menu")
         self.app = app
         self.document = document
         # Create main vertical layout

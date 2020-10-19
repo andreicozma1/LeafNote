@@ -18,7 +18,7 @@ class DocProps():
         the default properties for the document
         :return: returns nothing
         """
-        logging.info("Setting up Document Properties")
+        logging.debug("Setting up Doc Props")
 
         # Font sizes available in the TopBar
         self.font_size_default = 12

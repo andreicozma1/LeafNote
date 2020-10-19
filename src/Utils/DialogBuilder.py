@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButton
 class DialogBuilder(QDialog):
     def __init__(self, blocked_widget=None, text_window: str = None, text_title: str = None, text_msg: str = None):
         super(DialogBuilder, self).__init__(blocked_widget)
-        logging.info("")
+        logging.debug("Init DialogBuilder")
 
         if text_window is None:
             text_window = "Dialog"

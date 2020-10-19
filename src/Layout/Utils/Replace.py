@@ -9,8 +9,9 @@ class Replace(QWidget):
         """
         Initialize the widget
         """
-        logging.info("")
         super(Replace, self).__init__()
+        logging.debug("Createing Replace Widget")
+
         self.search_and_replace = search_and_replace
         self.document = document
 
@@ -22,6 +23,8 @@ class Replace(QWidget):
         sets up the layout and properties for the qwidget
         """
         # create the overarching hbox layout of the widget
+        logging.debug("Setting up UI")
+
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
         self.horizontal_layout.setAlignment(Qt.AlignLeft)
@@ -56,6 +59,7 @@ class Replace(QWidget):
         """
         Replaces the current selection of the search string with the replace string
         """
+        logging.info("Clicked Replace")
         cursor = self.document.textCursor()
         if cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())
@@ -65,6 +69,7 @@ class Replace(QWidget):
         """
         Replaces all occurrences of the search string with the replace string
         """
+        logging.info("Clicked Replace All")
         cursor = self.document.textCursor()
         while cursor.hasSelection():
             cursor.insertText(self.replace_bar.text())

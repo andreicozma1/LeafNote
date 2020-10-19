@@ -17,7 +17,7 @@ class FileManager:
         """
         Initializes the 'FileManager' object. It sets up all of the class variables.
         """
-        logging.info("")
+        logging.debug("Creating File Manager")
         self.app = app
         self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
         self.current_document = None  # current_document - the current document that is displayed to the user

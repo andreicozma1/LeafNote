@@ -21,7 +21,7 @@ class Layout(QWidget):
         :return: returns nothing
         """
         super().__init__()
-        logging.info("")
+        logging.debug("Creating Main Application Layout")
 
         # Init variables
         self.app_props = appProps

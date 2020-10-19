@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
@@ -17,6 +19,7 @@ class SearchAndReplace(QWidget):
         :param document: the document
         """
         super(SearchAndReplace, self).__init__()
+        logging.debug("Creating Search and Replace")
         self.path_res = path_res
         self.document = document
 

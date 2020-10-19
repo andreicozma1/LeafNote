@@ -9,16 +9,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, 
 from Widgets.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
 
-"""
-This file alters tools on the Bottom Bar
-of the text editor.
-    This includes:
-        Word count
-        Character count
-        Zoom feature
-"""
-
-
 class BottomBar(QWidget):
     """
     BottomBar sets up the bottom bar when called in Main.py
@@ -33,7 +23,7 @@ class BottomBar(QWidget):
         :return: returns nothing
         """
         super(BottomBar, self).__init__()
-        logging.info("Initialized BottomBar")
+        logging.debug("Creating Bottom Bar")
         self.app = app
         self.document = document
         self.settings = settings

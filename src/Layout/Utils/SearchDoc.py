@@ -20,8 +20,9 @@ class Search(QWidget):
         Sets up the search bar widget
         :param document: reference to the document
         """
-        logging.info("")
         super(Search, self).__init__()
+        logging.debug("Created Search Widget")
+
         self.search_and_replace = search_and_replace
         self.document = document
         self.path_res = path_res
@@ -38,6 +39,7 @@ class Search(QWidget):
         Sets up the layout of the search widget
         :return: Returns nothing
         """
+        logging.debug("Setting up UI")
         # create the overarching hbox layout of the widget
         self.horizontal_layout = QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(2, 0, 0, 0)
@@ -127,39 +129,44 @@ class Search(QWidget):
         self.horizontal_layout.addWidget(self.close_search)
 
     def onCaseSensitiveSearchSelect(self):
+        logging.info("Clicked Case Sensitive")
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
         self.onChanged(self.search_bar.text())
 
     def onWholeWordSearchSelect(self):
+        logging.info("Clicked Whole Word")
         if self.regex_search.isChecked():
             self.whole_word.setChecked(False)
         self.onChanged(self.search_bar.text())
 
     def onRegexSearchSelect(self):
+        logging.info("Clicked Regex")
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
             self.whole_word.setChecked(False)
         self.onChanged(self.search_bar.text())
 
     def onPreviousOccurrenceSelect(self):
-        logging.info(self.document.find(self.search, self.flags | QTextDocument.FindBackward))
+        logging.info("Clicked Previous")
+        self.document.find(self.search, self.flags | QTextDocument.FindBackward)
         if self.current - 1 >= 1:
             self.current = self.current - 1
             self.occurances.setText(str(self.current)+'/'+str(self.total))
 
     def onNextOccurrenceSelect(self):
-        logging.info(self.document.find(self.search, self.flags))
+        logging.info("Clicked Next")
+        self.document.find(self.search, self.flags)
         if self.current + 1 <= self.total:
             self.current = self.current + 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
     def onCloseSearch(self):
+        logging.info("Clicked Close")
         self.search_and_replace.replace.setVisible(False)
         self.setVisible(False)
 
     def onChanged(self, search):
-        logging.info(search)
         self.search = search
 
         # update the number of occurrences of the search
@@ -193,25 +200,4 @@ class Search(QWidget):
 # SEARCH CURRENT WORKSPACE
 
 
-class File(QPushButton):
-    """
-    This is a button that holds information about the button
-    """
 
-    def __init__(self, path):
-        """
-        sets up the buttons properties
-        :param path: the file the button is representing
-        """
-        super(File, self).__init__()
-        self.path = path
-        self.file_name = QFileInfo(path).fileName()
-        self.initUI()
-
-    def initUI(self):
-        """
-        sets up the buttons appearance
-        :return: Returns nothing
-        """
-        self.setText(self.file_name)
-        self.setMinimumHeight(20)

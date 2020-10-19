@@ -25,7 +25,7 @@ class OpenTabsBar(QWidget):
         :return: returns nothing
         """
         super(OpenTabsBar, self).__init__()
-        logging.info("")
+        logging.debug("Creating Open Tabs Bar")
 
         self.document = document
         self.file_manager = file_manager

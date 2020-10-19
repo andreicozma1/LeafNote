@@ -25,7 +25,8 @@ class DirectoryViewer(QTreeView):
         :return: returns nothing
         """
         super(DirectoryViewer, self).__init__()
-        logging.info("")
+        logging.debug("Creating Directory Viewer")
+
         self.document = document
         self.fileManager = file_manager
 

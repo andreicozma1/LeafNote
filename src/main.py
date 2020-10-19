@@ -43,7 +43,7 @@ class App(QMainWindow):
         :return: returns nothing
         """
         super(App, self).__init__()
-        logging.info("Constructor")
+        logging.info("Starting Application")
 
         # Initialize properties.
         path_res = os.path.dirname(os.path.abspath(__file__))
@@ -246,7 +246,7 @@ class App(QMainWindow):
 
 
 def main():
-    logging.info("Starting application")
+    logging.info("Starting Application")
     app = QApplication([])
     App()
     sys.exit(app.exec_())
