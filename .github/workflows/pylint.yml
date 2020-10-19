@@ -24,11 +24,12 @@ jobs:
         python3 -m pylint src > output.txt || echo $? > code.txt
         cat output.txt
         cat output.txt | grep -i rated > result.txt
+        export MESSAGE_ENV=$(xargs < result.txt)
+        echo “::set-env name=MESSAGE::$MESSAGE_ENV”
     - name: Comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        MESSAGE: $(cat result.txt)  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         msg: ${{ env.MESSAGE }}
         check_for_duplicate_msg: false  # OPTIONAL 
