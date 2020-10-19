@@ -13,18 +13,18 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install dependencies
+    - name: Install Deps
       run: |
         python3 -m pip install --upgrade pip
         pip install pylint
         pip install pylint-exit
         pip install -r requirements.txt
-    - name: Analysing the code with pylint
+    - name: Analyse Code
       run: |
         python3 -m pylint src > output.txt || echo $? > code.txt
         cat output.txt
         cat output.txt | grep -i rated > result.txt
-    - name: comment PR
+    - name: Comment PR
       uses: unsplash/comment-on-pr@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,7 +35,3 @@ jobs:
     - name: Return
       run:
         cat code.txt | xargs pylint-exit --error-fail
-        if [ $? -ne 0 ]; then
-          echo "An error occurred while running pylint." >&2
-          exit 1
-        fi 
