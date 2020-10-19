@@ -10,7 +10,9 @@ env:
 jobs:
   assign_one_project:
     runs-on: ubuntu-latest
-    name: Assign to Project
+    name: Assign DevBoard
+    steps:
+    - name: Assign DevBoard
       uses: srggrs/assign-one-project-github-action@1.2.0
       if: github.event.action == 'opened'|| github.event.action == 'reopened'
       with:
