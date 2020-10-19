@@ -22,7 +22,7 @@ class EquationEditor(QWidget):
         :param document: reference to the the document
         :return: returns nothing
         """
-        logging.info("")
+        logging.debug("")
         super().__init__()
 
         # initialize variables
@@ -74,6 +74,7 @@ class EquationEditor(QWidget):
         """
         Generates the image from the users input.
         """
+        logging.info("User Generated Equation")
         # TODO - handle user spamming button
 
         # get the formatted equation from the web api
@@ -105,3 +106,5 @@ class EquationEditor(QWidget):
             # add the image to the document and close the prompt
             cursor.insertImage(img)
             self.dialog.close()
+        else:
+            logging.warning("No Pixmap Found")

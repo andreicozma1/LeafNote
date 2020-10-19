@@ -6,17 +6,8 @@ from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox
 
-from Elements.Calendar import Calendar
 from Utils.DialogBuilder import DialogBuilder
-
-"""
-This file alters tools on the Bottom Bar
-of the text editor.
-    This includes:
-        Word count
-        Character count
-        Zoom feature
-"""
+from Widgets.Calendar import Calendar
 
 
 class BottomBar(QWidget):
@@ -32,8 +23,8 @@ class BottomBar(QWidget):
         :param document: the document the bottom bar will be altering
         :return: returns nothing
         """
-        super(BottomBar, self).__init__()
-        logging.info("Initialized BottomBar")
+        super().__init__()
+        logging.debug("Creating Bottom Bar")
         self.app = app
         self.document = document
         self.settings = settings
@@ -137,24 +128,27 @@ class BottomBar(QWidget):
         Counts number of characters and updates number on bottom bar
         :return: returns nothing
         """
-        char_count = len(self.document.toPlainText()) - len(self.document.toPlainText().split(" ")) + 1
+        char_count = len(self.document.toPlainText()) - len(
+            self.document.toPlainText().split(" ")) + 1
         self.label_cc.setText(str(char_count) + " Characters")
 
     def onZoomInClicked(self):
         """
-        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        Setting the value of the slider calls the changeValue
+        function to perform the appropriate calculations
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Zoom In")
         self.zoom_slider.setValue(self.zoom_slider.value() + 5)
         self.changeValue()
 
     def onZoomOutClicked(self):
         """
-        Setting the value of the slider calls the changeValue function to perform the appropriate calculations
+        Setting the value of the slider calls the changeValue
+         function to perform the appropriate calculations
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Zoom Out")
         self.zoom_slider.setValue(self.zoom_slider.value() - 5)
         self.changeValue()
 
@@ -187,7 +181,7 @@ class BottomBar(QWidget):
         resets the zoom slider when zoom is reset
         :return: returns nothing
         """
-        logging.info("")
+        logging.info("On Reset Zoom")
         self.zoom_slider.setValue(self.slider_start)
 
     def updateTime(self):
@@ -207,23 +201,28 @@ class BottomBar(QWidget):
         calendar = Calendar()
 
         setting_hint = "hints/showCalendarReminderHint"
-        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(setting_hint) is True
+        should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(
+            setting_hint) is True
         logging.info(setting_hint + ": " + str(should_show_hint))
         if should_show_hint:
-            hint = DialogBuilder(calendar, "Setting Reminders", "Hint: Select a date to create a Reminder!")
+            hint = DialogBuilder(calendar, "Setting Reminders",
+                                 "Hint: Select a date to create a Reminder!")
             hint.addButtonBox(QDialogButtonBox(QDialogButtonBox.Ok))
             hint.show()
             self.settings.setValue(setting_hint, not should_show_hint)
 
         def onCalendarReminder():
+            """
+            """
+            # noinspection PyCompatibility
             date: QDate = calendar.selectedDate()
             logging.info(date.toString("MM-dd-yyyy"))
             self.app.reminders.showDialog(calendar, False, date)
 
         calendar.selectionChanged.connect(onCalendarReminder)
 
-        self.dialog = DialogBuilder()
-        self.dialog.addWidget(calendar)
-        self.dialog.layout().setContentsMargins(0, 0, 0, 0)
-        self.dialog.setFixedHeight(400)
-        self.dialog.show()
+        dialog = DialogBuilder()
+        dialog.addWidget(calendar)
+        dialog.layout().setContentsMargins(0, 0, 0, 0)
+        dialog.setFixedHeight(400)
+        dialog.show()

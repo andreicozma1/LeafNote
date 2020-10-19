@@ -8,9 +8,12 @@ from Utils.DialogBuilder import DialogBuilder
 
 
 class Encryptor(Fernet):
+    """
+    """
+
     def __init__(self, key):
-        super(Encryptor, self).__init__(key)
-        logging.info("Create Encryptor Class")
+        super().__init__(key)
+        logging.debug("Creating Encryptor")
 
     def encryptFile(self, path):
         """
@@ -40,11 +43,18 @@ class Encryptor(Fernet):
 
 
 def onEncryptionAction(app, file_manager):
+    """
+    """
+
     # Helper Functions
     def onEncryptBtnClicked(button):
+        """
+        """
         encryptionDialogHandler(app, file_manager, button)
 
     def onDecryptBtnClicked(button):
+        """
+        """
         decryptionDialogHandler(app, file_manager, button)
 
     # Check whether the encryptor already exists
@@ -74,8 +84,8 @@ def encryptionDialogHandler(app, file_manager, button):
     """
     Checks user input and encrypts workspace if needed
     :param app: application context
-    :file_manager: file_manager context
-    :button: button clicked reference
+    :param file_manager: file_manager context
+    :param button: button clicked reference
     """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")
@@ -86,7 +96,8 @@ def encryptionDialogHandler(app, file_manager, button):
             with open(path_key, 'wb') as f:
                 f.write(key)
                 logging.debug("Saved key to: " + path_key)
-        except:
+        except OSError as e:
+            logging.exception(e)
             logging.error("Failed to save CRYPTO KEY")
             return
 
@@ -107,8 +118,8 @@ def decryptionDialogHandler(app, file_manager, button):
     """
     Checks user input and decrypts workspace if needed
     :param app: application context
-    :file_manager: file_manager context
-    :button: button clicked reference
+    :param file_manager: file_manager context
+    :param button: button clicked reference
     """
     if button.text() == "&Yes":
         logging.info("User clicked Yes")

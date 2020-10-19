@@ -1,3 +1,4 @@
+# noinspection PyCompatibility
 import _thread
 import codecs
 import glob
@@ -11,32 +12,34 @@ import numpy as np
 import pandas as pd
 import wget as wget
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
+from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
 
 from Utils.DialogBuilder import DialogBuilder
 
-"""
-This logic here is taken from https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/
-The word embeddings are taken from standford pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
-In this file you will find the implementation of the text rank algorithm. The goals is to
-take in an article or any amount of text and develop a summary of the text.
-The algorithm is split into 5 steps:
-    1. Split the text into sentences
-    3. Find the vector representation (word embeddings) for every sentence
-    4. Calculate the similarities between the sentence vectors and store
-        them into a similarity matrix.
-    5. A certain number of top-ranked sentences form the final summary
-"""
-
 
 class Summarizer:
+    """
+    """
+
     def __init__(self, word_embeddings):
         """
-        Sets up class variables.
+        This logic here is taken from
+        https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/
+        The word embeddings are taken from standford pre trained glove word embeddings
+        https://nlp.stanford.edu/projects/glove/
+        In this file you will find the implementation of the text rank algorithm. The goals is to
+        take in an article or any amount of text and develop a summary of the text.
+        The algorithm is split into 5 steps:
+            1. Split the text into sentences
+            3. Find the vector representation (word embeddings) for every sentence
+            4. Calculate the similarities between the sentence vectors and store
+                them into a similarity matrix.
+            5. A certain number of top-ranked sentences form the final summary
         """
-        logging.debug("Created instance of summarizer class")
+        logging.debug("Creating Document Summarizer")
+
         handlePackageDownloads()
-        from nltk.corpus import stopwords
         self.word_embeddings = word_embeddings
         self.sentence_vectors = []
         self.sim_mat = []
@@ -105,7 +108,8 @@ class Summarizer:
         clean_sentences = [s.lower() for s in clean_sentences]
 
         # eliminate all stop words from the sentences
-        clean_sentences = [removeStopwords(sent.split(), self.stopwords) for sent in clean_sentences]
+        clean_sentences = [removeStopwords(sent.split(), self.stopwords) for sent in
+                           clean_sentences]
         return clean_sentences
 
     def createWordVectors(self, clean_sentences):
@@ -178,15 +182,15 @@ def handlePackageDownloads():
         nltk.download('punkt')
 
 
-def removeStopwords(sen, stopwords):
+def removeStopwords(sen, stop_words):
     """
     this will remove all stopwords from a given sentence and return the new cleaned sentence
     the sentence must be a list of words: ["this", "is", "a", "sentence"]
     :param sen: the sentence to be cleaned
-    :param stopwords: the list of stopwords to remove
+    :param stop_words: the list of stopwords to remove
     :return: Returns the cleaned sentence
     """
-    new_sent = " ".join([i for i in sen if i not in stopwords])
+    new_sent = " ".join([i for i in sen if i not in stop_words])
     return new_sent
 
 
@@ -203,6 +207,8 @@ def onSummaryAction(app, document):
 
     # The action that gets called when the user selects a button on the prompt
     def onDialogButtonClicked(button):
+        """
+        """
         dependencyDialogHandler(app, button, document)
 
     # if summarizer has not been created create it
@@ -211,10 +217,12 @@ def onSummaryAction(app, document):
         # prompt the user to select or Download the word word_embeddings
         download_dialog = DialogBuilder(app, "Dictionaries",
                                         "Would you like to download required dictionaries?",
-                                        "If you have already downloaded them previously click open to select the location on disk.")
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
-        download_dialog.addButtonBox(buttonBox)
-        buttonBox.clicked.connect(onDialogButtonClicked)
+                                        "If you have already downloaded them previously "
+                                        "click open to select the location on disk.")
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+        download_dialog.addButtonBox(button_box)
+        button_box.clicked.connect(onDialogButtonClicked)
         download_dialog.exec()
     # if there is already an instance of the summarizer
     else:
@@ -235,8 +243,9 @@ def ensureDirectory(app, path: str):
             os.mkdir(path)
             logging.info("Created WordEmbeddings directory")
             return True
-        except:
-            logging.error("Failed to create WordEmbeddings directory")
+        except OSError as e:
+            logging.exception(e)
+            logging.error("Failed to create directory")
             return False
     # if it does exist prompt the user to clear the directory
     else:
@@ -246,8 +255,8 @@ def ensureDirectory(app, path: str):
         clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
                                      "Would you like to clear the contents and proceed?",
                                      "Cancel will stop the download.")
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-        clear_dialog.addButtonBox(buttonBox)
+        button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+        clear_dialog.addButtonBox(button_box)
 
         # clear the directory if selected by the user
         if clear_dialog.exec():
@@ -257,9 +266,10 @@ def ensureDirectory(app, path: str):
                 try:
                     os.remove(f)
                     logging.debug("Removed: " + f)
-                except:
+                except OSError as e:
                     dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
                     dialog_fail.show()
+                    logging.exception(e)
                     logging.error("Error occured removing directory contents")
                     return False
             return True
@@ -270,10 +280,11 @@ def ensureDirectory(app, path: str):
 
 def dependencyDialogHandler(app, button, document=None):
     """
-    This will handle the users choice for the Download prompt the user will select where they want to find/Download the files
+    This will handle the users choice for the Download prompt the user will select where they
+    want to find/Download the files
     :param app: an application reference
     :param button: the button the user selected
-    :document: a reference to the document
+    :param document: document reference
     :return: returns summary
     """
     logging.debug("User selected " + button.text())
@@ -293,11 +304,16 @@ def dependencyDialogHandler(app, button, document=None):
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
     def files_exist(path1: str, path2: str):
-        if os.path.exists(os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
+        """
+        Checks if the files exist within any of the 2 directories
+        """
+        if os.path.exists(
+                os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
+            os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
-        elif os.path.exists(os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
-                os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
+        elif os.path.exists(
+                os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
+            os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
         else:
             return None
@@ -314,7 +330,8 @@ def dependencyDialogHandler(app, button, document=None):
                 logging.error("Dictionaries not found in directory")
                 download_dialog = DialogBuilder(app, "Error!",
                                                 "Error - Dictionaries not found!",
-                                                "Please select a different path or download them again.")
+                                                "Please select a different path"
+                                                " or download them again.")
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok)
                 download_dialog.addButtonBox(button_box)
                 download_dialog.exec()
@@ -336,17 +353,20 @@ def dependencyDialogHandler(app, button, document=None):
         try:
             _thread.start_new_thread(getWordEmbeddings,
                                      (app, path_child, should_download, progress_bar, document))
-        except:
-            logging.error("Unable to start thread")
+        except Exception as e:
+            logging.exception(e)
+
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
         # fill the dictionary with the word embeddings
         initializeSummarizer(existing_path, app, document, True)
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar=None, document=None):
+def getWordEmbeddings(app, path: str, should_download: bool = True,
+                      progress_bar=None, document=None):
     """
-    This will download the necessary files for Summarizer then create the word embedding model and create
+    This will download the necessary files for Summarizer
+    then create the word embedding model and create
     an instance of the summarizer
     :param app: A reference to the application
     :param path: A path to where the files are or are to be downloaded
@@ -365,31 +385,40 @@ def getWordEmbeddings(app, path: str, should_download: bool = True, progress_bar
 
         # function to update the progress bar
         def progressBarSignal(current, total, width):
+            """
+            Change the progress bar
+            """
+            logging.debug("Progress: %s out of %s ... width %s" % current, total, width)
             progress_bar.setMaximum(total)
             progress_bar.setValue(current)
 
         # Download the word embeddings file from http://hunterprice.org/files/glove.6B.100d.zip
-        # this file is taken from stanfords pre trained glove word embeddings https://nlp.stanford.edu/projects/glove/
+        # this file is taken from stanfords pre trained glove
+        # word embeddings https://nlp.stanford.edu/projects/glove/
         url = "http://hunterprice.org/files/" + zip_file
         wget.download(url, out=path, bar=progressBarSignal)
         logging.info("Finished downloading!")
 
     # uncompress the files
     logging.info("Started unzipping")
-    with zipfile.ZipFile(os.path.abspath(os.path.join(path, zip_file)), 'r') as zip_ref:
+    with zipfile.ZipFile(os.path.abspath(os.path.join(path, zip_file))) as zip_ref:
         zip_ref.extractall(path)
     logging.info("Finished unzipping")
 
     try:  # delete the compressed file
         os.remove(os.path.abspath(os.path.join(path, zip_file)))
         logging.info("Deleted zip file")
-    except:
+    except OSError as e:
+        logging.exception(e)
         logging.warning("Failed to remove leftover ZIP file")
 
     initializeSummarizer(path, app, document, True)
 
 
 def initializeSummarizer(path, app, document, update_right_menu=False):
+    """
+    Initializes a summarizer instance
+    """
     model = createModel(path)
     if model is not None:
         # create an instance of the summarizer and give it to the application
@@ -406,7 +435,8 @@ def initializeSummarizer(path, app, document, update_right_menu=False):
 
 def createModel(path):
     """
-    takes the path to the word embedding files and fills a dictionary with the (word: word vector) pairs
+    takes the path to the word embedding files and fills
+     a dictionary with the (word: word vector) pairs
     :param path: path to the word embedding files
     :return: Returns a dictionary of word vectors
     """
@@ -426,12 +456,12 @@ def createModel(path):
         return
 
     # read the files into a python dict
-    logging.info("Attempting to read dictionary contents")
-    with codecs.open(path_vocab, 'r', 'utf-8') as f_in:
+    logging.debug("Attempting to read dictionary contents")
+    with codecs.open(path_vocab, encoding='utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
     wv = np.load(path_npy)
     model = {}
     for i, w in enumerate(index2word):
         model[w] = wv[i]
-    logging.info("Finished reading dictionary contents")
+    logging.debug("Finished reading dictionary contents")
     return model

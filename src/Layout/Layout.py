@@ -13,30 +13,41 @@ class Layout(QWidget):
     class that hold the layout properties
     """
 
-    def __init__(self, appProps, layoutProps):
+    def __init__(self, app_props, layout_props):
         """
         sets up the inital workspace
-        :param appProps: reference to application properties
-        :param layoutProps: reference to the layout properties
+        :param app_props: reference to application properties
+        :param layout_props: reference to the layout properties
         :return: returns nothing
         """
+        # noinspection PyCompatibility
         super().__init__()
-        logging.info("")
+        logging.info("Creating Main Application Layout")
 
         # Init variables
-        self.app_props = appProps
-        self.layout_props = layoutProps
+        self.app_props = app_props
+        self.layout_props = layout_props
 
     def makeMainLayout(self):
-        # Main layout of the application. Holds the top bar, main horizontal layout, as well as the bottom bar
+        """
+        """
+        logging.debug("Creating Layout - Vertical")
+        # Main layout of the application. Holds the top bar,
+        # main horizontal layout, as well as the bottom bar
         main_layout = QVBoxLayout()  # this defines the QWidget as the parent for the layout
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(self.layout_props.splitter_width)
         self.setLayout(main_layout)
         return main_layout
 
-    def makeHSplitterLayout(self, left_menu, bar_open_tabs, document, right_menu, search_and_replace):
-        horizontal_workspace = QSplitter(QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
+    def makeHSplitterLayout(self, left_menu, bar_open_tabs, document,
+                            right_menu, search_and_replace):
+        """
+        """
+        logging.debug("Creating Layout - Horizontal")
+
+        horizontal_workspace = QSplitter(
+            QtCore.Qt.Horizontal)  # Splitter between LeftMenu, Doc, and Right Menu
         horizontal_workspace.setHandleWidth(self.layout_props.splitter_width)
 
         horizontal_workspace.addWidget(left_menu)

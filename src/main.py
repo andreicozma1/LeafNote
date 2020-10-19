@@ -5,31 +5,27 @@ import sys
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
-from Elements.BottomBar import BottomBar
-from Elements.ContextMenu import ContextMenu
-from Elements.DirectoryViewer import DirectoryViewer
-from Elements.Document import Document
-from Elements.OpenTabsBar import OpenTabsBar
-from Elements.SearchAndReplace import SearchAndReplace
-from Elements.TopBar import TopBar
 from Layout.AppProps import AppProps
 from Layout.DocProps import DocProps
+from Layout.Elements.BottomBar import BottomBar
+from Layout.Elements.ContextMenu import ContextMenu
+from Layout.Elements.Document import Document
+from Layout.Elements.SearchAndReplace import SearchAndReplace
+from Layout.Elements.TabsBar.OpenTabsBar import OpenTabsBar
+from Layout.Elements.TopBar import TopBar
 from Layout.Layout import Layout
 from Layout.LayoutProps import LayoutProps
 from Layout.MenuBar import MenuBar
 from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
 from Utils.Reminders import Reminders
+from Widgets.DirectoryViewer import DirectoryViewer
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-
-"""
-all the code comes together to set up the GUI
-"""
 
 
 class App(QMainWindow):
@@ -42,8 +38,8 @@ class App(QMainWindow):
         creates the window and its attributes
         :return: returns nothing
         """
-        super(App, self).__init__()
-        logging.info("Constructor")
+        super().__init__()
+        logging.debug("Creating Application")
 
         # Initialize properties.
         path_res = os.path.dirname(os.path.abspath(__file__))
@@ -58,7 +54,6 @@ class App(QMainWindow):
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
         self.setCentralWidget(self.layout)
-        # self.show()
 
         # Create Document
         self.document = Document(self, self.doc_props)
@@ -75,8 +70,10 @@ class App(QMainWindow):
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
-        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs, self.document,
-                                                              self.right_menu, self.search_and_replace)
+        self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
+                                                              self.document,
+                                                              self.right_menu,
+                                                              self.search_and_replace)
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
@@ -92,9 +89,12 @@ class App(QMainWindow):
         # TODO - fix this function call causing Format Mode button to not have spacer
         self.updateFormatBtnsState(False)
 
-        self.setup()
+        self.setupProperties()
+        self.show()
 
     def setupTopBar(self):
+        """
+        """
         top_bar_layout = self.top_bar.makeMainLayout()
         top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
         top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
@@ -114,10 +114,14 @@ class App(QMainWindow):
         self.top_bar.show()
 
     def setupBottomBar(self):
+        """
+        """
         # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
+        """
+        """
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
@@ -127,17 +131,18 @@ class App(QMainWindow):
         self.document.currentCharFormatChanged.connect(self.menu_bar.updateFormatOnSelectionChange)
         self.setMenuBar(self.menu_bar)
 
-    def setup(self):
+    def setupProperties(self):
         """
         sets up the window
         :return: returns nothing
         """
-        logging.info("Setting up Main Window")
+        logging.info("Setting up Main Window Geometry")
         self.setWindowTitle(self.app_props.title)
         if self.settings.contains("windowSize"):
             self.resize(self.settings.value("windowSize"))
         else:
             self.setGeometry(0, 0, self.app_props.default_width, self.app_props.default_height)
+
         if self.settings.contains("windowGeometry"):
             self.setGeometry(self.settings.value("windowGeometry"))
         else:
@@ -145,12 +150,12 @@ class App(QMainWindow):
 
         self.setMinimumWidth(int(self.top_bar.width()))
 
-        if not self.settings.contains("windowResizable") or self.settings.value("windowResizable") is False:
-            logging.debug("Window is not resizable")
+        setting_resizable = not self.settings.contains("windowResizable") or self.settings.value(
+            "windowResizable") is False
+        logging.debug("Resizable - %s" % str(setting_resizable))
+        if setting_resizable:
             if not self.app_props.resizable:
                 self.setFixedSize(self.size())
-
-        self.show()
 
     def updateFormatBtnsState(self, state: bool):
         """
@@ -173,22 +178,20 @@ class App(QMainWindow):
         if state is True:
             convert_dialog = DialogBuilder(self, "Enable Formatting",
                                            "Would you like to convert this file?",
-                                           "This file needs to be converted to use enriched text formatting features\n"
+                                           "This file needs to be converted to use"
+                                           " enriched text formatting features\n"
                                            "Selecting 'Yes' will convert the original "
                                            "file to the enriched text file format.")
-            buttonBox = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-            convert_dialog.addButtonBox(buttonBox)
+            button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(button_box)
             if convert_dialog.exec():
                 logging.info("User converted file to Proprietary Format")
-                # TODO - Convert file with FileManager to a .lef format, on success, call the function below
                 self.file_manager.toLef(self.document)
             else:
                 logging.info("User DID NOT convert file to Proprietary Format")
                 self.updateFormatBtnsState(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
-            # TODO - allow option to save different file as plain text, or allow conversion back but discard formatting options
-
             self.file_manager.lefToExt(self.document)
             logging.info("Convert back to a txt file")
 
@@ -210,16 +213,20 @@ class App(QMainWindow):
         :return: returns nothing
         """
         self.left_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (
+                    self.app_props.default_width / self.width())))
         self.left_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.right_menu.setMinimumWidth(
-            int(self.width() * self.layout_props.min_menu_width * (self.app_props.default_width / self.width())))
+            int(self.width() * self.layout_props.min_menu_width * (
+                    self.app_props.default_width / self.width())))
         self.right_menu.setMaximumWidth(int(self.layout_props.max_menu_width * self.width()))
         self.documents_view.setMinimumWidth(int(self.layout_props.min_doc_width * self.width()))
 
-        return super(App, self).resizeEvent(event)
+        return super().resizeEvent(event)
 
     def closeEvent(self, event):
+        """
+        """
         logging.info("User triggered close event")
         self.settings.setValue("windowSize", self.size())
         self.settings.setValue("windowGeometry", self.geometry())
@@ -232,7 +239,8 @@ class App(QMainWindow):
             dialog_encryptor = DialogBuilder(self, "Crypto - WARNING",
                                              "WARNING!! Crypto Key missing!\n"
                                              "Would you like to decrypt workspace before exiting?",
-                                             "If you don't decrypt your workspace before exiting you will lose access to your files permanently.")
+                                             "If you don't decrypt your workspace before exiting"
+                                             "you will lose access to your files permanently.")
             buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             dialog_encryptor.addButtonBox(buttons)
             if dialog_encryptor.exec():
@@ -244,9 +252,13 @@ class App(QMainWindow):
                         logging.info(" - Decrypted: " + path)
                 logging.info("END DECRYPT WORKSPACE: " + path_workspace)
 
+        return super().closeEvent(event)
+
 
 def main():
-    logging.info("Starting application")
+    """
+    """
+    logging.info("Main Function")
     app = QApplication([])
     App()
     sys.exit(app.exec_())

@@ -9,7 +9,8 @@ from Utils.DialogBuilder import DialogBuilder
 
 class FileManager:
     """
-    FileManger handles everything associated with communicating with files. It handles all of the opening, closing,
+    FileManger handles everything associated with communicating with files.
+    It handles all of the opening, closing,
     and saving needed for the project.
     """
 
@@ -17,17 +18,18 @@ class FileManager:
         """
         Initializes the 'FileManager' object. It sets up all of the class variables.
         """
-        logging.info("")
+        logging.debug("Creating File Manager")
         self.app = app
-        self.open_documents = {}  # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
-        self.current_document = None  # current_document - the current document that is displayed to the user
+        self.open_documents = {}
+        # open_documents - dict that holds the key value pairs of (absolute path : QFileInfo)
+        self.current_document = None
+        # current_document - the current document that is displayed to the user
 
         self.encryptor = None
 
     def saveDocument(self, document):
         """
         :param document: Reference to the document
-        :param isFormatted: Boolean value if the document is formatted
         :return: Returns whether or not a tab needs to be opened
         """
 
@@ -48,11 +50,12 @@ class FileManager:
         # if a file has not been opened yet prompt the user for a file name then write to that file
         else:
             # get the entered data
-            file_name = QFileDialog.getSaveFileName(self.app, 'Save file', self.app.left_menu.model.rootPath(),
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save file',
+                                                    self.app.left_menu.model.rootPath(),
                                                     file_filter)
 
             if file_name[0] == '':
-                logging.info("No File Path Given")
+                logging.warning("No File Path Given")
                 return False
 
             path = file_name[0]
@@ -73,11 +76,13 @@ class FileManager:
         :param document: Reference to the document
         :return: Returns if the save as succeeded or not
         """
-        new_path = QFileDialog.getSaveFileName(self.app, 'Save File', self.app.left_menu.model.rootPath())[0]
+        new_path = \
+            QFileDialog.getSaveFileName(self.app, 'Save File', self.app.left_menu.model.rootPath())[
+                0]
 
         # if the new path is an empty string do nothing
         if new_path == '':
-            logging.info("No New File Path Given")
+            logging.warning("No New File Path Given")
             return False
 
         # check if the document is formatted
@@ -108,7 +113,6 @@ class FileManager:
         :param path: path to the document that needs to be closed
         :return: Returns whether or not the document is formatted
         """
-        state = None
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
@@ -117,13 +121,15 @@ class FileManager:
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
-                # get File data will never return None here because the document had to already be opened to get to this point
+                # get File data will never return None here because the document
+                # had to already be opened to get to this point
                 document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
                 if self.current_document.suffix() != 'lef':
                     document.clearAllFormatting()
                 state = (self.current_document.suffix() == 'lef')
-            # if the open documents IS empty set the current document to none/empty document with no path
+            # if the open documents IS empty set the current document
+            # to none/empty document with no path
             else:
                 self.current_document = None
                 document.setText("")
@@ -139,8 +145,7 @@ class FileManager:
                 logging.info("File Is Not Open - " + path)
             state = False
 
-        if state is not None:
-            self.app.updateFormatBtnsState(state)
+        self.app.updateFormatBtnsState(state)
 
     def closeAll(self, document):
         """
@@ -216,7 +221,7 @@ class FileManager:
         :return: Returns a string of the read in data
         """
         # open the file with read only privileges
-        logging.info(path)
+        logging.debug(path)
         file = open(path, 'r')
         # check if the file was opened
         if file.closed:
@@ -227,7 +232,7 @@ class FileManager:
         with file:
             try:
                 data = file.read()
-            except:
+            except OSError as e:
                 corrupted_file = DialogBuilder(self.app,
                                                "File Corrupted",
                                                "Could not open the selected file.",
@@ -235,6 +240,8 @@ class FileManager:
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok)
                 corrupted_file.addButtonBox(button_box)
                 corrupted_file.exec()
+                logging.exception(e)
+                logging.error("File could not be opened!")
                 return None
         file.close()
 
@@ -242,7 +249,7 @@ class FileManager:
             if self.encryptor is not None:
                 data = self.encryptor.decrypt(data.encode()).decode()
                 logging.debug("File was encrypted. Decrypting")
-        except:
+        except OSError:
             logging.info("File wasn't encrypted. Proceeding as normal")
 
         return data
@@ -256,18 +263,18 @@ class FileManager:
         :return: Returns nothing
         """
         # open the file with write only privileges
-        logging.info(path)
+        logging.debug(path)
         if self.encryptor is not None:
             logging.debug("Writing Encrypted")
             file = open(path, 'wb')
             data = self.encryptor.encrypt(data.encode())
         else:
-            logging.info("Writing Plain Text")
+            logging.debug("Writing Plain Text")
             file = open(path, 'w')
 
         # check if the file was opened
         if file.closed:
-            logging.info("Could Not Open File - " + path)
+            logging.warning("Could Not Open File - " + path)
             return ''
         # write data to the file then close the file
         file.write(data)
@@ -359,16 +366,17 @@ class FileManager:
         :return: Returns nothing
         """
         # Get path name from user
-        file_name = QFileDialog.getSaveFileName(self.app, 'New file', self.app.left_menu.model.rootPath())
+        file_name = QFileDialog.getSaveFileName(self.app, 'New file',
+                                                self.app.left_menu.model.rootPath())
         if file_name[0] == '':
-            logging.info('No File Path Given')
+            logging.warning('No File Path Given')
             return
-        path = file_name[0]
 
+        path = file_name[0]
+        logging.info('Creating NewFile - ' + path)
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(document, path)
-        logging.info(' Created NewFile - ' + path)
 
     def printAll(self):
         """
