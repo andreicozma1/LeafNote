@@ -42,7 +42,6 @@ class Document(QTextEdit):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
-        self.setAutoFormatting(self.AutoAll)
 
     def onFontItalChanged(self, is_italic: bool):
         """
@@ -208,6 +207,7 @@ class Document(QTextEdit):
         Sets formatted or not text
         """
         self.setAcceptRichText(formatting)
+        self.setAutoFormatting(self.AutoAll if formatting else self.AutoNone)
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
