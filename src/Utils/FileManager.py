@@ -1,3 +1,8 @@
+"""
+File Manager module defines the methods used to
+open, save, close, create and modify files.
+Both Plain-Text and Proprietary Format LEF files.
+"""
 import logging
 import os
 
@@ -42,14 +47,9 @@ class FileManager:
             file_filter = ""
 
         # if a file has already been opened write to the file
-        if self.current_document is not None:
-            self.writeFileData(self.current_document.absoluteFilePath(), data)
-            logging.info("Saved File -" + self.current_document.absoluteFilePath())
-            return False
-
-        # if a file has not been opened yet prompt the user for a file name then write to that file
-        else:
-            # get the entered data
+        if self.current_document is None:
+            # if a file has not been opened yet prompt the user for a file name then write to
+            # that file. Get the entered data
             file_name = QFileDialog.getSaveFileName(self.app, 'Save file',
                                                     self.app.left_menu.model.rootPath(),
                                                     file_filter)
@@ -68,7 +68,13 @@ class FileManager:
             self.current_document = self.open_documents[path]
 
             logging.info("Saved File - " + path)
-            return True
+            state = True
+        else:
+            self.writeFileData(self.current_document.absoluteFilePath(), data)
+            logging.info("Saved File -" + self.current_document.absoluteFilePath())
+            state = False
+
+        return state
 
     def saveAsDocument(self, document):
         """
@@ -273,7 +279,7 @@ class FileManager:
         # check if the file was opened
         if file.closed:
             logging.warning("Could Not Open File - " + path)
-            return ''
+            return
         # write data to the file then close the file
         file.write(data)
         file.close()
@@ -395,6 +401,6 @@ class FileManager:
         if a file doesnt exist close the file.
         :return:
         """
-        for key, val in self.open_documents.items():
+        for val in self.open_documents.values():
             if not val.exists():
                 logging.info("File Does Not Exist - {}".format(val.absoluteFilePath()))

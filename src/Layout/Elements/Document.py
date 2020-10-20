@@ -1,3 +1,8 @@
+"""
+The Document module sets up and defines the methods for
+used to interact with the Text Edit area.
+"""
+
 import logging
 
 from PyQt5 import QtGui
@@ -6,9 +11,7 @@ from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
 
-"""
-The active document - area where user types
-"""
+
 
 
 class Document(QTextEdit):
