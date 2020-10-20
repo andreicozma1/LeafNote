@@ -39,3 +39,7 @@ class CollapsibleWidget(QWidget):
 
     def addElement(self, widget: QWidget):
         self.layout_content.addWidget(widget)
+
+    def deleteElement(self, widget: QWidget):
+        widget.setParent(None)
+        self.layout_content.removeWidget(widget)

@@ -3,9 +3,10 @@ from functools import partial
 from time import time
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCalendarWidget, QPushButton, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
-    QLabel
+    QLabel, QHBoxLayout
 from Utils.DialogBuilder import DialogBuilder
 
+gloablelist = list()
 
 class Reminder(QWidget):
     """
@@ -13,19 +14,43 @@ class Reminder(QWidget):
     """
     def __init__(self, key, sort, date, time, title, description):
         super().__init__()
-        vertical_layout = QVBoxLayout(self)
-        show_title = QLabel(title)
-        show_date = QLabel(date + "," + time)
-        show_desc = QLabel(description)
-        vertical_layout.addWidget(show_title)
-        vertical_layout.addWidget(show_date)
-        vertical_layout.addWidget(show_desc)
+        self.vertical_layout = QVBoxLayout()
+        self.vl = QWidget()
+        self.horizontal_layout = QHBoxLayout(self)
+        self.show_title = QLabel(title)
+        self.show_date = QLabel(date + "," + time)
+        self.show_desc = QLabel(description)
+        self.show_time = QLabel(time)
+        self.vertical_layout.addWidget(self.show_title)
+        self.vertical_layout.addWidget(self.show_date)
+        self.vertical_layout.addWidget(self.show_time)
+        self.vertical_layout.addWidget(self.show_desc)
+        self.vl.setLayout(self.vertical_layout)
+        self.horizontal_layout.addWidget(self.vl)
         self.key = key
         self.sort_key = sort
         self.date = date
         self.time = time
         self.title = title
         self.description = description
+        self.btn = QPushButton("x")
+        self.btn.setFlat(True)
+        self.btn.clicked.connect(self.deleteReminder)
+        self.horizontal_layout.addWidget(self.btn)
+
+    def deleteReminder(self):
+        self.show_title.setParent(None)
+        self.show_date.setParent(None)
+        self.show_time.setParent(None)
+        self.show_desc.setParent(None)
+        self.vertical_layout.removeWidget(self.show_title)
+        self.vertical_layout.removeWidget(self.show_date)
+        self.vertical_layout.removeWidget(self.show_time)
+        self.vertical_layout.removeWidget(self.show_desc)
+        self.horizontal_layout.removeWidget(self.vl)
+        self.horizontal_layout.removeWidget(self.btn)
+
+        #self.app.right_menu.collapsible_reminders.deleteElement()
 
 class Reminders():
     """
@@ -38,9 +63,11 @@ class Reminders():
         self.temp_list = list()
         self.datelist = list()
         self.tlist = list()
+        self.key_list = list()
         self.trigger = 0
         self.app.settings.beginGroup("Reminders")
         self.dict_key = {}
+        self.count = 1
         self.setReminder()
 
     def addReminder(self, reminder: Reminder):
@@ -107,9 +134,12 @@ class Reminders():
         print(self.app.settings.allKeys())
         self.tlist = list(self.app.settings.allKeys())
 
-        if not self.tlist or len(self.tlist) > 3:
-            for i in range(3):
-                self.tlist.pop(len(self.tlist) - 1)
+        #self.deleteKeys(1, self.tlist)
+        #self.app.settings.clear()
+        for i in range(3):
+            self.tlist.pop(len(self.tlist) - 1)
+
+        #self.deleteKeys(5, self.tlist)
 
         print(self.tlist)
         for i in self.tlist:
@@ -126,7 +156,11 @@ class Reminders():
             for j in self.rem_list:
                 rem_temp = j
                 if i == rem_temp.sort_key:
+                    self.key_list.append(rem_temp.sort_key)
                     self.app.right_menu.collapsible_reminders.addElement(rem_temp)
+
+
+        print(self.key_list)
 
     def setReminderForDialog(self, reminder: Reminder):
         current_rem = reminder
@@ -138,19 +172,6 @@ class Reminders():
                 rem_temp = j
                 if i == rem_temp.sort_key:
                     self.app.right_menu.collapsible_reminders.addElement(rem_temp)
-
-            # count = 0
-            # for i in self.tlist:
-            #     self.app.settings.remove(i)
-            #     count += 1
-            #     if count is 1:
-            #         break
-            # print(self.app.settings.allKeys())
-
-           # print(self.app.settings.value())
-            #key_list = list(self.dict_key.keys())
-            # for i in key_list:
-            #     print(self.app.settings.value(i))
 
     def deleteKeys(self, int, tlist):
         count = 0
@@ -185,4 +206,3 @@ class Reminders():
         else:
             # add 12 to hours and remove PM
             return str(int(str1[:2]) + 12) + str1[2:6]
-

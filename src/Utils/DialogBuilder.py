@@ -50,6 +50,10 @@ class DialogBuilder(QDialog):
         logging.info("")
         self.layout_vertical.addWidget(widget)
 
+    def deleteWidget(self, widget: QWidget):
+        logging.info("Deleted")
+        self.layout_vertical.removeWidget(widget)
+
     def addButtonBox(self, button_box: QDialogButtonBox):
         logging.info("")
         self.layout_vertical.addWidget(button_box)

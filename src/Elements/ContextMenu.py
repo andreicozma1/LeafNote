@@ -61,6 +61,7 @@ class ContextMenu(QWidget):
         self.add_reminder_btn = QPushButton("Add Reminder")
         #self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog)
         self.collapsible_reminders.addElement(self.add_reminder_btn)
+
         vertical_layout.addWidget(self.collapsible_reminders)
 
 
