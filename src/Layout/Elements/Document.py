@@ -1,5 +1,6 @@
 """
-The active document - area where user types
+The Document module sets up and defines the methods for
+used to interact with the Text Edit area.
 """
 
 import logging
@@ -177,7 +178,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.setCharFormat(self.doc_props.normal)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -203,3 +204,13 @@ class Document(QTextEdit):
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         cursor.setCharFormat(self.doc_props.dict_title_styles[state])
         self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+
+    def setFormatText(self, text: str, formatting: bool):
+        """
+        Sets formatted or not text
+        """
+        self.setAcceptRichText(formatting)
+        self.setAutoFormatting(self.AutoAll if formatting else self.AutoNone)
+        self.setText(text)
+        if not formatting:
+            self.clearAllFormatting()

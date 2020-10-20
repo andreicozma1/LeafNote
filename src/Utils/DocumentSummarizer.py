@@ -25,6 +25,7 @@ class Summarizer:
     """
     This class will compute a summary of any given text
     """
+
     def __init__(self, word_embeddings):
         """
         This logic here is taken from

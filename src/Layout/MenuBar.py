@@ -7,11 +7,10 @@ import logging
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
-import Utils.DocumentSummarizer as DocumentSummarizer
 from Layout import DocProps
 from Layout.Elements import Document
 from Layout.Utils.SearchWorkspace import SearchWorkspace
-from Utils import Encryptor
+from Utils import Encryptor, EquationEditor, DocumentSummarizer
 from Widgets import Calculator
 
 
@@ -36,6 +35,7 @@ class MenuBar(QMenuBar):
         self.group_style = None
         self.group_align = None
         self.calculator = None
+        self.equation_editor = None
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager, bar_open_tabs):
@@ -166,7 +166,6 @@ class MenuBar(QMenuBar):
 
         # ========= START EDIT MENU SECTION =========
         menu_edit = self.addMenu('&Edit')
-
 
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
             """
@@ -324,11 +323,12 @@ class MenuBar(QMenuBar):
             if document.summarizer is not None:
                 selection = document.textCursor().selectedText()
                 if selection != "":
-                    app.right_menu.summary.setText(document.summarizer.summarize(selection))
+                    app.right_menu.col_summary_body.setText(
+                        document.summarizer.summarize(selection))
                 else:
-                    app.right_menu.summary.setText(
+                    app.right_menu.col_summary_body.setText(
                         document.summarizer.summarize(document.toPlainText()))
-            app.right_menu.collapsible_summary.expand()
+            app.right_menu.col_summary_main.expand()
 
         def onEncryptionAction():
             """
@@ -348,6 +348,10 @@ class MenuBar(QMenuBar):
             logging.info("Clicked Reminders Action")
             app.reminders.showDialog(app)
 
+        def onEquationEditorAction():
+            logging.info("Clicked Equation Editor Action")
+            self.equation_editor = EquationEditor.EquationEditor(document)
+
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             """
             """
@@ -361,6 +365,7 @@ class MenuBar(QMenuBar):
             makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
         menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
         menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
