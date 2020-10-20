@@ -178,6 +178,12 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         logging.info(state)
+        if state == "":
+            cursor = self.textCursor()
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            cursor.setCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            return
         if state[0] != "U" and state[0] != "R":
             cursor = self.textCursor()
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)

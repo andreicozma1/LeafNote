@@ -250,7 +250,19 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.blockSignals(True)
 
-        # TODO: check if self.combo_title_style is not none then set qcombobox to current cursor selection
+        if self.combo_title_style is not None:
+            count = 0
+            trig = 0
+            title = self.document.currentCharFormat()
+            for key in self.dict_title_style:
+                if key[0] != 'U' and key[0] != 'R':
+                    if self.dict_title_style[key] == title:
+                        self.combo_title_style.setCurrentIndex(count)
+                        trig = 1
+                        break
+                    count += 3
+            if trig == 0:
+                self.combo_title_style.setCurrentIndex(0)
 
         # Update the font style displayed
         if self.combo_font_style is not None:
