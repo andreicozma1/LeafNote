@@ -31,6 +31,7 @@ class EquationEditor(QWidget):
         self.pixmap = None
         self.equation = None
         self.equation_bar = None
+        self.user_query = ""
 
         # create the QDialog and fill it in
         self.dialog = DialogBuilder(document)
@@ -76,7 +77,8 @@ class EquationEditor(QWidget):
         """
         logging.info("User Generated Equation")
         # TODO - handle user spamming button
-
+        # if last_time + 8 < current_time:
+        # if self.user_query
         # get the formatted equation from the web api
         req = requests.get(self.url + self.equation_bar.text())
 
