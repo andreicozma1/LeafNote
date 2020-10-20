@@ -68,7 +68,10 @@ class TopBar(QWidget):
         self.dict_title_style = dict_title_style
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
+        # taverses through combo_title_style items index
         for x in range(view.model().rowCount()):
+            # mods by two to get the index with titles else gives "update" titles index
+            # changes font to be bold for if and italic for else
             if x % 2 == 0:
                 font = QFont()
                 font.setWeight(QFont.Bold)
@@ -80,6 +83,7 @@ class TopBar(QWidget):
                 color.setColor(QColor("gray"))
                 self.combo_title_style.setItemData(x, font, Qt.FontRole)
                 self.combo_title_style.setItemData(x, color, Qt.ForegroundRole)
+        # adds separators to clean up look of QComboBox
         for x in range(2, 23, 3):
             size = QSize()
             size.setHeight(7)
@@ -292,18 +296,16 @@ class TopBar(QWidget):
                 a.blockSignals(True)
 
         if self.combo_title_style is not None:
-            count = 0
-            trig = 0
             title = self.document.currentCharFormat()
-            for key in self.dict_title_style:
-                if key[0] != 'U' and key[0] != 'R':
-                    if self.dict_title_style[key] == title:
-                        self.combo_title_style.setCurrentIndex(count)
-                        trig = 1
-                        break
-                    count += 3
-            if trig == 0:
-                self.combo_title_style.setCurrentIndex(0)
+            index = 0
+            title_list = list(self.dict_title_style.values())
+            for x in range(2, 23, 3):
+                title_list.insert(x, None)
+            # print("recieved title:", title)
+            # print("compared title", title_list[3])
+            if title in title_list:
+                index = title_list.index(title)
+            self.combo_title_style.setCurrentIndex(index)
 
         # Update the font style displayed
         if self.combo_font_style is not None:
@@ -325,11 +327,10 @@ class TopBar(QWidget):
             self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
         #update the text color
         if self.combo_text_color is not None:
-            # color = QColor(self.document.currentCharFormat().foreground()).name()
             color = self.document.currentCharFormat().foreground().color().name()
             index = 0
             color_list = list(self.dict_color.values())
-            if color in self.dict_color.values():
+            if color in color_list:
                 index = color_list.index(color)
             self.updateTextColor(index)
 
