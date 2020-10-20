@@ -1,3 +1,8 @@
+"""
+File Manager module defines the methods used to
+open, save, close, create and modify files.
+Both Plain-Text and Proprietary Format LEF files.
+"""
 import logging
 import os
 
@@ -42,14 +47,9 @@ class FileManager:
             file_filter = ""
 
         # if a file has already been opened write to the file
-        if self.current_document is not None:
-            self.writeFileData(self.current_document.absoluteFilePath(), data)
-            logging.info("Saved File -" + self.current_document.absoluteFilePath())
-            return False
-
-        # if a file has not been opened yet prompt the user for a file name then write to that file
-        else:
-            # get the entered data
+        if self.current_document is None:
+            # if a file has not been opened yet prompt the user for a file name then write to
+            # that file. Get the entered data
             file_name = QFileDialog.getSaveFileName(self.app, 'Save file',
                                                     self.app.left_menu.model.rootPath(),
                                                     file_filter)
@@ -68,7 +68,13 @@ class FileManager:
             self.current_document = self.open_documents[path]
 
             logging.info("Saved File - " + path)
-            return True
+            state = True
+        else:
+            self.writeFileData(self.current_document.absoluteFilePath(), data)
+            logging.info("Saved File -" + self.current_document.absoluteFilePath())
+            state = False
+
+        return state
 
     def saveAsDocument(self, document):
         """
@@ -123,17 +129,16 @@ class FileManager:
                 self.current_document = self.open_documents[next(iter(self.open_documents))]
                 # get File data will never return None here because the document
                 # had to already be opened to get to this point
-                document.setText(self.getFileData(self.current_document.absoluteFilePath()))
                 # update the formatting enabled accordingly
-                if self.current_document.suffix() != 'lef':
-                    document.clearAllFormatting()
+                text = self.getFileData(self.current_document.absoluteFilePath())
+                document.setFormatText(text, self.current_document.suffix() == 'lef')
+
                 state = (self.current_document.suffix() == 'lef')
             # if the open documents IS empty set the current document
             # to none/empty document with no path
             else:
                 self.current_document = None
-                document.setText("")
-                document.clearAllFormatting()
+                document.setPlainText("")
                 state = False
 
             self.app.right_menu.updateDetails(self.current_document)
@@ -156,7 +161,7 @@ class FileManager:
         logging.info("closeAll")
         self.current_document = None
         self.open_documents.clear()
-        document.setText("")
+        document.setPlainText("")
         self.app.updateFormatBtnsState(False)
 
     def openDocument(self, document, path: str):
@@ -205,12 +210,11 @@ class FileManager:
             logging.info("Document Already Open - " + path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
-        if self.current_document.suffix() != 'lef':
-            document.clearAllFormatting()
-        self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
+        document.setFormatText(data, self.current_document.suffix() == 'lef')
 
+        # Update the formatting buttons based on the state
+        self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
         # update the document shown to the user
-        document.setText(data)
         self.app.right_menu.updateDetails(path)
         return True
 
@@ -275,7 +279,7 @@ class FileManager:
         # check if the file was opened
         if file.closed:
             logging.warning("Could Not Open File - " + path)
-            return ''
+            return
         # write data to the file then close the file
         file.write(data)
         file.close()
@@ -397,6 +401,6 @@ class FileManager:
         if a file doesnt exist close the file.
         :return:
         """
-        for key, val in self.open_documents.items():
+        for val in self.open_documents.values():
             if not val.exists():
                 logging.info("File Does Not Exist - {}".format(val.absoluteFilePath()))
