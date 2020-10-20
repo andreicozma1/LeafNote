@@ -328,7 +328,6 @@ class TopBar(QWidget):
             color = QColor(self.document.currentCharFormat().foreground()).name()
             index = 0
             color_list = list(self.dict_color.values())
-            print(color)
             if color in self.dict_color.values():
                 index = color_list.index(color)
             style = "QComboBox::drop-down { border: 0px;}" \
