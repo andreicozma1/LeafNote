@@ -1,3 +1,7 @@
+"""
+this module holds a class containing a reminder for the user
+"""
+
 import logging
 from time import time
 
@@ -15,12 +19,12 @@ class Reminder(QWidget):
     traits of a reminder to allow it to be added to the right bar.
     """
 
-    def __init__(self, key, sort, date, time, title, description):
+    def __init__(self, key, sort, date, reminder_time, title, description):
         # noinspection PyCompatibility
         super().__init__()
         vertical_layout = QVBoxLayout(self)
         show_title = QLabel(title)
-        show_date = QLabel(date + "," + time)
+        show_date = QLabel(date + "," + reminder_time)
         show_desc = QLabel(description)
         vertical_layout.addWidget(show_title)
         vertical_layout.addWidget(show_date)
@@ -28,7 +32,7 @@ class Reminder(QWidget):
         self.key = key
         self.sort_key = sort
         self.date = date
-        self.time = time
+        self.reminder_time = reminder_time
         self.title = title
         self.description = description
 
@@ -47,17 +51,20 @@ class Reminders:
 
     def addReminder(self, reminder: Reminder):
         """
+        this will add a reminder to the list of reminders
         """
         self.rem_list.append(reminder)
 
     def removeReminder(self, reminder: Reminder):
         """
+        this will remove a reminder from the list of reminders
         """
         # TODO remove reminder from list
         pass
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
         """
+        this will show the user a dialog of the the reminders
         """
         # Set the default date format
         # noinspection PyCompatibility
@@ -70,8 +77,6 @@ class Reminders:
         description.setMaximumHeight(120)
 
         def limitCharCount():
-            """
-            """
             # Limits the number of characters in description box
             text_content = description.toPlainText()
             length = len(text_content)
@@ -99,13 +104,12 @@ class Reminders:
 
         # Update dialog title based off selected date
         def updateTitle():
-            """
-            """
+
             # noinspection PyCompatibility
             new_date: QDate = cal.selectedDate()
             # noinspection PyCompatibility
             str_date: str = new_date.toString(format_date)
-            logging.debug("Update title " + str_date)
+            logging.debug("Update title %s", str_date)
             dialog.setTitleText(str_date)
 
         cal.selectionChanged.connect(updateTitle)
@@ -123,8 +127,8 @@ class Reminders:
             dialog.setTitleText(date.toString(format_date))
 
         dialog.addWidget(hour_cb)
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
-        dialog.addButtonBox(self.button_box)
+        button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        dialog.addButtonBox(button_box)
         # Set size constrains for looks
         dialog.setFixedWidth(cal.sizeHint().width())
         dialog.setFixedHeight(dialog.sizeHint().height())
@@ -147,7 +151,7 @@ class Reminders:
                                          description.text())
                 print("Printing Class")
                 print(reminder_node.key, reminder_node.sort_key, reminder_node.date,
-                      reminder_node.time,
+                      reminder_node.reminder_time,
                       reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
                 self.app.right_menu.col_reminders_main.addElement(reminder_node)
@@ -157,7 +161,7 @@ class Reminders:
     def convert24(self, str1):
         """
         :param str1: This is a time that we are converting from normal time to 24 hour time
-        :return:
+        :return: returns a string of the time
         """
         if str1[1] == ":":
             str1 = "0" + str1
@@ -168,14 +172,13 @@ class Reminders:
             return "00" + str1[2:-2]
 
             # remove the AM
-        elif str1[-2:] == "AM":
+        if str1[-2:] == "AM":
             return str1[:-2]
 
             # Checking if last two elements of time
         # is PM and first two elements are 12
-        elif str1[-2:] == "PM" and str1[:2] == "12":
+        if str1[-2:] == "PM" and str1[:2] == "12":
             return str1[:-2]
 
-        else:
-            # add 12 to hours and remove PM
-            return str(int(str1[:2]) + 12) + str1[2:6]
+        # add 12 to hours and remove PM
+        return str(int(str1[:2]) + 12) + str1[2:6]

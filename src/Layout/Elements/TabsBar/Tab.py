@@ -1,3 +1,6 @@
+"""
+This module holds a class defining a tab that is held in an open tabs bar
+"""
 import logging
 import random
 

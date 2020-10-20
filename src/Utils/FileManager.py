@@ -1,7 +1,11 @@
 """
+<<<<<<< HEAD
+this module holds a class that manages all file communication in the project
+=======
 File Manager module defines the methods used to
 open, save, close, create and modify files.
 Both Plain-Text and Proprietary Format LEF files.
+>>>>>>> 10f5cf57729e1e994dd7cfb1420737b333504910
 """
 import logging
 import os
@@ -67,14 +71,12 @@ class FileManager:
             self.open_documents[path] = QFileInfo(path)
             self.current_document = self.open_documents[path]
 
-            logging.info("Saved File - " + path)
-            state = True
-        else:
-            self.writeFileData(self.current_document.absoluteFilePath(), data)
-            logging.info("Saved File -" + self.current_document.absoluteFilePath())
-            state = False
+            logging.info("Saved File - %s", path)
+            return True
 
-        return state
+        self.writeFileData(self.current_document.absoluteFilePath(), data)
+        logging.info("Saved File - %s", self.current_document.absoluteFilePath())
+        return False
 
     def saveAsDocument(self, document):
         """
@@ -109,7 +111,7 @@ class FileManager:
         # open the document with its new text
         self.openDocument(document, new_path)
 
-        logging.info("Saved File As -" + new_path)
+        logging.info("Saved File As - %s", new_path)
         return True
 
     def closeDocument(self, document, path: str):
@@ -122,7 +124,7 @@ class FileManager:
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
             self.open_documents.pop(path)
-            logging.info("Closed File - " + path)
+            logging.info("Closed File - %s", path)
 
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
@@ -147,7 +149,7 @@ class FileManager:
             if path == '':
                 logging.info("No File Path Given")
             else:
-                logging.info("File Is Not Open - " + path)
+                logging.info("File Is Not Open - %s", path)
             state = False
 
         self.app.updateFormatBtnsState(state)
@@ -196,7 +198,7 @@ class FileManager:
             if path not in self.app.bar_open_tabs.open_tabs:
                 self.app.bar_open_tabs.addTab(path)
 
-            logging.info("Opened Document - " + path)
+            logging.info("Opened Document - %s", path)
 
         # if the document has already been opened in this session
         else:
@@ -207,7 +209,7 @@ class FileManager:
 
             self.current_document = self.open_documents[path]
             self.app.bar_open_tabs.active = self.app.bar_open_tabs.open_tabs[path]
-            logging.info("Document Already Open - " + path)
+            logging.info("Document Already Open - %s", path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
         document.setFormatText(data, self.current_document.suffix() == 'lef')
@@ -229,7 +231,7 @@ class FileManager:
         file = open(path, 'r')
         # check if the file was opened
         if file.closed:
-            logging.info("Could Not Open File - " + path)
+            logging.info("Could Not Open File - %s", path)
             return None
 
         # read all data then close file
@@ -278,8 +280,9 @@ class FileManager:
 
         # check if the file was opened
         if file.closed:
-            logging.warning("Could Not Open File - " + path)
+            logging.warning("Could Not Open File - %s", path)
             return
+
         # write data to the file then close the file
         file.write(data)
         file.close()
@@ -310,7 +313,7 @@ class FileManager:
 
         # delete the .txt file
         os.remove(old_path)
-        logging.info("Deleted - " + old_path)
+        logging.info("Deleted - %s", old_path)
 
         # create the file with the given extension holding the formatted data
         new_path = old_path[:period_index] + extension
@@ -355,7 +358,7 @@ class FileManager:
 
         # delete the .txt file
         os.remove(old_path)
-        logging.info("Deleted - " + old_path)
+        logging.info("Deleted - %s", old_path)
 
         # create the file with the .lef extension holding the formatted data
         new_path = old_path[:period_index] + ".lef"
@@ -377,7 +380,7 @@ class FileManager:
             return
 
         path = file_name[0]
-        logging.info('Creating NewFile - ' + path)
+        logging.info('Creating NewFile - %s', path)
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(document, path)
@@ -391,8 +394,8 @@ class FileManager:
         logging.info("Open Documents:")
         for key, path in self.open_documents.items():
             logging.info("----------------------------------------")
-            logging.info("path: " + key)
-            logging.info("QFileInfo: " + path.absoluteFilePath())
+            logging.info("path: %s", key)
+            logging.info("QFileInfo: %s", path.absoluteFilePath())
         logging.info("========================================")
 
     def fixBrokenFilePaths(self):
@@ -401,6 +404,6 @@ class FileManager:
         if a file doesnt exist close the file.
         :return:
         """
-        for val in self.open_documents.values():
+        for val in list(self.open_documents.values()):
             if not val.exists():
-                logging.info("File Does Not Exist - {}".format(val.absoluteFilePath()))
+                logging.info("File Does Not Exist - %s", val.absoluteFilePath())

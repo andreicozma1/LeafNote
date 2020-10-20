@@ -1,3 +1,7 @@
+"""
+This module holds the widget to display all search results in a given workspace
+"""
+
 import logging
 import os
 from functools import partial
@@ -127,7 +131,7 @@ class SearchWorkspace(QWidget):
                         data = file.read()
                     except OSError as e:
                         logging.exception(e)
-                        logging.error("Could not read " + f)
+                        logging.error("Could not read %s", f)
 
                 # if the search phrase is in the file add a button to the scroll area
                 if search in data:

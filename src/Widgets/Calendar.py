@@ -1,3 +1,6 @@
+"""
+This module holds a customized q calendar widget
+"""
 import logging
 
 from PyQt5.QtWidgets import QCalendarWidget
@@ -5,6 +8,7 @@ from PyQt5.QtWidgets import QCalendarWidget
 
 class Calendar(QCalendarWidget):
     """
+    This class defines a customized QCalendarWidget
     """
 
     def __init__(self):

@@ -12,8 +12,6 @@ from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from Utils import DocumentSummarizer
 
 
-
-
 class Document(QTextEdit):
     """
     Creates the widget in the middle of the text editor
@@ -160,13 +158,15 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
-        Function returns whether the font is bold
+        returns true the current font weight is bolded
+        :return: returns whether or not the text is bolded
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
-        Function returns whether the font is strike
+        returns true the current font is strikethrough
+        :return: returns whether or not the text is struck through
         """
         return self.currentCharFormat().fontStrikeOut()
 
