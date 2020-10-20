@@ -39,7 +39,7 @@ class TopBar(QWidget):
         self.button_strike = None
         self.button_under = None
         self.combo_text_color = None
-        self.dict_text_color = None
+        self.dict_color = None
         self.combo_text_align = None
         self.dict_text_align = None
 
@@ -325,11 +325,19 @@ class TopBar(QWidget):
             self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
         #update the text color
         if self.combo_text_color is not None:
-            print("here")
-            color = self.document.textColor
+            color = QColor(self.document.currentCharFormat().foreground()).name()
+            index = 0
+            color_list = list(self.dict_color.values())
             print(color)
-            # for key in range(self.dict_text_color):
-
+            if color in self.dict_color.values():
+                index = color_list.index(color)
+            style = "QComboBox::drop-down { border: 0px;}" \
+                    "QComboBox { background-color: " + list(color_list)[index] + ";" + \
+                    "border: 1px solid gray;" \
+                    "border-radius: 5px;" \
+                    "selection-background-color: rgba(0,0,0,0.2)}" \
+                    "QComboBox QAbstractItemView { min-width:30px; }"
+            self.combo_text_color.setStyleSheet(style)
 
         # Update the text alignment
         if self.combo_text_align is not None:

@@ -35,7 +35,7 @@ class DocProps:
             'yellow': '#ffff00',
             'green': '#00ff00',
             'blue': '#0000ff',
-            'violet': '#9400D3',
+            'violet': '#9400d3',
             'brown': '#a52a3a',
             'white': '#ffffff'
         }
