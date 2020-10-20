@@ -323,6 +323,14 @@ class TopBar(QWidget):
             self.button_bold.setChecked(self.document.fontWeight() == QFont.Bold)
         if self.button_strike is not None:
             self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
+        #update the text color
+        if self.combo_text_color is not None:
+            print("here")
+            color = self.document.textColor
+            print(color)
+            # for key in range(self.dict_text_color):
+
+
         # Update the text alignment
         if self.combo_text_align is not None:
             align = self.document.alignment()
