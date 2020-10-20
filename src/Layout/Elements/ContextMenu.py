@@ -1,3 +1,10 @@
+"""
+Right Menu Module creates an interactive menu with collapsible widgets
+that displays information including but not limited to:
+- File metadata such as name, path, size, modification time, etc.
+- Document Summary contents.
+- Reminders List.
+"""
 import logging
 
 from PyQt5.QtCore import QFileInfo
@@ -101,7 +108,6 @@ class ContextMenu(QScrollArea):
         :param path: path of the file
         :return: nothing
         """
-        # TODO - use document ref to display info about the document
         info = QFileInfo(path)
         # Get the file info and update all the respective fields
 
@@ -141,7 +147,8 @@ class ContextMenu(QScrollArea):
         if self.document.summarizer is not None:
             self.col_summary_body.show()
             self.col_summary_enable.hide()
-            self.col_summary_body.setText(self.document.summarizer.summarize(self.document.toPlainText()))
+            text = self.document.summarizer.summarize(self.document.toPlainText())
+            self.col_summary_body.setText(text)
         else:
             self.col_summary_body.hide()
             self.col_summary_enable.show()
