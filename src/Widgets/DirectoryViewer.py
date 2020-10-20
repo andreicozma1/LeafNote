@@ -54,7 +54,7 @@ class DirectoryViewer(QTreeView):
         self.setSortingEnabled(True)
         self.sortByColumn(1, Qt.AscendingOrder)
 
-        self.doubleClicked.connect(self.onDoubleClick)
+        self.clicked.connect(self.onClick)
 
         self.fileManager.encryptor = None
         # Check for encryption key in Workspace
@@ -67,7 +67,7 @@ class DirectoryViewer(QTreeView):
         else:
             logging.info("Workspace not encrypted")
 
-    def onDoubleClick(self, index):
+    def onClick(self, index):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -77,3 +77,9 @@ class DirectoryViewer(QTreeView):
         logging.info(path)
         if not self.sender().model.isDir(index):
             self.fileManager.openDocument(self.document, path)
+
+    def selectPath(self, path: str):
+        """
+        "Programmatically selects a path in the File System model
+        """
+        self.setCurrentIndex(self.model.index(path))
