@@ -179,6 +179,19 @@ class TopBar(QWidget):
         self.button_under.clicked.connect(self.document.onFontUnderChanged)
         return self.button_under
 
+    def updateTextColor(self, index):
+        """
+        Updates styles for font color
+        """
+        color_list = list(self.dict_color.values())
+        style = "QComboBox::drop-down { border: 0px;}" \
+                "QComboBox { background-color: " + list(color_list)[index] + ";" + \
+                "border: 1px solid gray;" \
+                "border-radius: 5px;" \
+                "selection-background-color: rgba(0,0,0,0.2)}" \
+                "QComboBox QAbstractItemView { min-width:30px; }"
+        self.combo_text_color.setStyleSheet(style)
+
     def makeComboFontColor(self, color_dict: dict) -> QComboBox:
         """
         Create Font Color Dropdown
@@ -187,19 +200,6 @@ class TopBar(QWidget):
         self.combo_text_color = QComboBox(self)
         self.dict_color = color_dict
         color_list = self.dict_color.values()
-
-        def updateTextColor(index):
-            """
-            Updates styles for font color
-            """
-            style = "QComboBox::drop-down { border: 0px;}" \
-                    "QComboBox { background-color: " + list(color_list)[index] + ";" + \
-                    "border: 1px solid gray;" \
-                    "border-radius: 5px;" \
-                    "selection-background-color: rgba(0,0,0,0.2)}" \
-                    "QComboBox QAbstractItemView { min-width:30px; }"
-            self.combo_text_color.setStyleSheet(style)
-
         self.combo_text_color.setFixedWidth(35)
         self.combo_text_color.setFixedHeight(20)
         model = self.combo_text_color.model()
@@ -209,7 +209,7 @@ class TopBar(QWidget):
             model.appendRow(item)
             self.combo_text_color.setItemData(i, c)
         self.combo_text_color.currentIndexChanged.connect(self.document.onTextColorChanged)
-        self.combo_text_color.currentIndexChanged.connect(updateTextColor)
+        self.combo_text_color.currentIndexChanged.connect(self.updateTextColor)
         self.combo_text_color.setFocusPolicy(Qt.NoFocus)
         self.combo_text_color.setToolTip("Change Text color.")
         self.combo_text_color.setStyleSheet("QComboBox::drop-down { border: 0px;}"
@@ -325,18 +325,13 @@ class TopBar(QWidget):
             self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
         #update the text color
         if self.combo_text_color is not None:
-            color = QColor(self.document.currentCharFormat().foreground()).name()
+            # color = QColor(self.document.currentCharFormat().foreground()).name()
+            color = self.document.currentCharFormat().foreground().color().name()
             index = 0
             color_list = list(self.dict_color.values())
             if color in self.dict_color.values():
                 index = color_list.index(color)
-            style = "QComboBox::drop-down { border: 0px;}" \
-                    "QComboBox { background-color: " + list(color_list)[index] + ";" + \
-                    "border: 1px solid gray;" \
-                    "border-radius: 5px;" \
-                    "selection-background-color: rgba(0,0,0,0.2)}" \
-                    "QComboBox QAbstractItemView { min-width:30px; }"
-            self.combo_text_color.setStyleSheet(style)
+            self.updateTextColor(index)
 
         # Update the text alignment
         if self.combo_text_align is not None:
