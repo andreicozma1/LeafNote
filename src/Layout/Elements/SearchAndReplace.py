@@ -1,8 +1,10 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from Elements.Replace import Replace
-from Elements.Search import Search
+from Layout.Utils.Replace import Replace
+from Layout.Utils.SearchDoc import Search
 
 
 class SearchAndReplace(QWidget):
@@ -16,7 +18,8 @@ class SearchAndReplace(QWidget):
         :param path_res: the path to the resources
         :param document: the document
         """
-        super(SearchAndReplace, self).__init__()
+        super().__init__()
+        logging.debug("Creating Search and Replace")
         self.path_res = path_res
         self.document = document
 
@@ -48,7 +51,17 @@ class SearchAndReplace(QWidget):
 
     def closeSearchAndReplace(self):
         """
-
+        hides both search and replace widgets
         """
         self.search.setVisible(False)
         self.replace.setVisible(False)
+
+    def nextOccurrence(self):
+        """
+        When enter is clicked replaces the current selection if the replace is isVisible
+        If replace is not visible and search is visible move to the next occurrence
+        """
+        if self.replace.isVisible():
+            self.replace.onReplace()
+        elif self.search.isVisible():
+            self.search.onNextOccurrenceSelect()

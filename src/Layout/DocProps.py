@@ -8,7 +8,7 @@ holds the class with the document properties
 """
 
 
-class DocProps():
+class DocProps:
     """
     class has the default document properties
     """
@@ -18,12 +18,13 @@ class DocProps():
         the default properties for the document
         :return: returns nothing
         """
-        logging.info("Setting up Document Properties")
+        logging.debug("Setting up Doc Props")
 
         # Font sizes available in the TopBar
         self.font_size_default = 12
-        self.list_font_sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-                              "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+        self.list_font_sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
+                                "14", "15", "16",
+                                "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
 
         # Colors available in the TopBar
         self.dict_colors = {

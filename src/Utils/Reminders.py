@@ -1,24 +1,31 @@
-import os
-from functools import partial
+import logging
 from time import time
+from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCalendarWidget, QPushButton, QLineEdit, QTimeEdit, QDialogButtonBox, QWidget, QVBoxLayout, \
-    QLabel, QHBoxLayout
+    QLabel, QHBoxLayout, QPlainTextEdit
+
 from Utils.DialogBuilder import DialogBuilder
+from Widgets.Calendar import Calendar
+
 
 gloablelist = list()
 
 class Reminder(QWidget):
     """
-    This is the reminder node class. It contains each individualy traits of a reminder to allow it to be added to the right bar.
+    This is the reminder node class. It contains each individually
+    traits of a reminder to allow it to be added to the right bar.
     """
+
     def __init__(self, key, sort, date, time, title, description):
+        # noinspection PyCompatibility
         super().__init__()
         self.vertical_layout = QVBoxLayout()
         self.vl = QWidget()
         self.horizontal_layout = QHBoxLayout(self)
         self.show_title = QLabel(title)
-        self.show_date = QLabel(date + "," + time)
+        #self.show_date = QLabel(date + "," + time)
+        self.show_date = QLabel(date)
         self.show_desc = QLabel(description)
         self.show_time = QLabel(time)
         self.vertical_layout.addWidget(self.show_title)
@@ -52,11 +59,15 @@ class Reminder(QWidget):
 
         #self.app.right_menu.collapsible_reminders.deleteElement()
 
-class Reminders():
+
+class Reminders:
     """
-    This is a class of reminders. It sets up the Reminder dialog as well as adds the reminders to the right menu
+    This is a class of reminders. It sets up the Reminder
+     dialog as well as adds the reminders to the right menu
     """
+
     def __init__(self, app, settings):
+        logging.debug("Creating Reminders")
         self.app = app
         self.settings = settings
         self.rem_list = list()
@@ -71,61 +82,122 @@ class Reminders():
         self.setReminder()
 
     def addReminder(self, reminder: Reminder):
+        """
+        """
         self.rem_list.append(reminder)
 
     def removeReminder(self, reminder: Reminder):
-        #TODO remove reminder from list
+        """
+        """
+        # TODO remove reminder from list
         pass
 
-    def showDialog(self):
-        #self.setReminder()
+# <<<<<<< HEAD
+#     def showDialog(self):
+#         #self.setReminder()
+# =======
+    def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
+        """
+        """
+        # Set the default date format
+        # noinspection PyCompatibility
+        format_date: str = "yyyy-MM-dd"
         title = QLineEdit()
         title.setPlaceholderText("Title")
         # ------------------------------#
-        description = QLineEdit()
+        # QPlain text edit allows text on multiple lines
+        description = QPlainTextEdit()
+        description.setMaximumHeight(120)
+
+        def limitCharCount():
+            """
+            """
+            # Limits the number of characters in description box
+            text_content = description.toPlainText()
+            length = len(text_content)
+            max_length = 150
+            if length > max_length:
+                logging.info("Description too long!")
+                # Get the cursor and position
+                cursor = description.textCursor()
+                position = cursor.position()
+                # Strip the text and set
+                new_text = text_content[:max_length]
+                description.setPlainText(new_text)
+                # Restore cursor position
+                cursor.setPosition(position - 1)
+                description.setTextCursor(cursor)
+
+        # Assign text limit listener
+        description.textChanged.connect(limitCharCount)
         description.setPlaceholderText("Description")
+
+        dialog = DialogBuilder(block, "Add reminder")
         # ------------------------------#
-        cal = QCalendarWidget()
+        cal = Calendar()
+        cal.setFixedHeight(300)
+
+        # Update dialog title based off selected date
+        def updateTitle():
+            """
+            """
+            # noinspection PyCompatibility
+            new_date: QDate = cal.selectedDate()
+            # noinspection PyCompatibility
+            str_date: str = new_date.toString(format_date)
+            logging.debug("Update title " + str_date)
+            dialog.setTitleText(str_date)
+
+        cal.selectionChanged.connect(updateTitle)
         # ------------------------------#
         hour_cb = QTimeEdit()
         # ------------------------------#
-        self.dialog = DialogBuilder(self.app, "Add Reminder")
-        self.dialog.addWidget(title)
-        self.dialog.addWidget(description)
-        self.dialog.addWidget(cal)
-        self.dialog.addWidget(hour_cb)
+        dialog.addWidget(title)
+        dialog.addWidget(description)
+
+        # Determine whether to use calendar in dialog or not
+        if show_calendar is True or date is None:
+            dialog.addWidget(cal)
+            dialog.setTitleText(cal.selectedDate().toString(format_date))
+        else:
+            dialog.setTitleText(date.toString(format_date))
+
+        dialog.addWidget(hour_cb)
         self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
-        self.dialog.addButtonBox(self.button_box)
-        if self.dialog.exec():
+        dialog.addButtonBox(self.button_box)
+        # Set size constrains for looks
+        dialog.setFixedWidth(cal.sizeHint().width())
+        dialog.setFixedHeight(dialog.sizeHint().height())
+        if dialog.exec():
             if title.text():
-                self.trigger = 1
-                selected_date = cal.selectedDate().toString("yyyy-MM-dd")
+                # Get the date from either the Cal button or the in-dialog calendar
+                if date is None:
+                    selected_date = cal.selectedDate().toString(format_date)
+                else:
+                    selected_date = date.toString(format_date)
                 milliseconds = int(time() * 1000)
                 time_temp = hour_cb.text()
                 sort_key_string = selected_date + "-" + self.convert24(time_temp)
                 sort_key_string = sort_key_string.replace(" ", "")
                 sort_key_string = sort_key_string.replace("-", "")
                 sort_key_string = sort_key_string.replace(":", "")
-                reminder_node = Reminder(milliseconds,sort_key_string, selected_date, hour_cb.text(), title.text(), description.text())
+                reminder_node = Reminder(milliseconds, sort_key_string, selected_date,
+                                         hour_cb.text(), title.text(),
+                                         description.toPlainText())
+                print(reminder_node.description)
                 print("Printing Class")
-                print(reminder_node.key, reminder_node.sort_key, reminder_node.date,reminder_node.time,reminder_node.title, reminder_node.description)
-
+                print(reminder_node.key, reminder_node.sort_key, reminder_node.date,
+                      reminder_node.time,
+                      reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
                 self.temp_list.append(reminder_node.sort_key)
                 self.temp_list.append(reminder_node.date)
                 self.temp_list.append(reminder_node.time)
                 self.temp_list.append(reminder_node.title)
                 self.temp_list.append(reminder_node.description)
-                #self.app.settings.setValue("reminders", self.dict_key)
                 self.app.settings.setValue(str(reminder_node.key), self.temp_list)
-                #self.app.settings.setValue(str(reminder_node.key), self.dict_key)
-
-                #self.temp_list.clear()
                 print(self.app.settings.value("reminders"))
-                #print(self.app.settings.fileName())
-                #self.app.right_menu.collapsible_reminders.addElement(reminder_node)
                 self.setReminderForDialog(reminder_node)
-                #self.app.right_menu.collapsible_reminders.addElement(self.app.settings.setValue(str(reminder_node.key), self.temp_list))
         else:
             print("Clicked cancel")
 
@@ -139,17 +211,14 @@ class Reminders():
         for i in range(3):
             self.tlist.pop(len(self.tlist) - 1)
 
-        #self.deleteKeys(5, self.tlist)
-
         print(self.tlist)
         for i in self.tlist:
             reminder_dict = self.app.settings.value(i)
-            print(reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3])
             tb_reminder = Reminder(None, reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3], reminder_dict[4])
-            #self.app.right_menu.collapsible_reminders.addElement(tb_reminder)
             self.rem_list.append(tb_reminder)
             self.datelist.append(reminder_dict[0])
-            # self.app.right_menu.collapsible_reminders.addElement(tb_reminder)
+            reminder_dict.clear()
+
         self.datelist.sort()
 
         for i in self.datelist:
@@ -159,8 +228,6 @@ class Reminders():
                     self.key_list.append(rem_temp.sort_key)
                     self.app.right_menu.collapsible_reminders.addElement(rem_temp)
 
-
-        print(self.key_list)
 
     def setReminderForDialog(self, reminder: Reminder):
         current_rem = reminder
@@ -186,7 +253,7 @@ class Reminders():
         :param str1: This is a time that we are converting from normal time to 24 hour time
         :return:
         """
-        if(str1[1] == ":"):
+        if str1[1] == ":":
             str1 = "0" + str1
 
         # Checking if last two elements of time

@@ -1,7 +1,7 @@
 import logging
 
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
@@ -22,8 +22,8 @@ class Document(QTextEdit):
         creates the default layout of the text document
         :return: returns nothing
         """
-        super(Document, self).__init__("")
-        logging.debug("")
+        super().__init__("")
+        logging.debug("Creating Document")
         self.doc_props = doc_props
 
         # If the dictionaries have been downloaded previously, check persistent settings
@@ -81,7 +81,7 @@ class Document(QTextEdit):
         font_format.setFontStrikeOut(is_strike)
         self.setCurrentCharFormat(font_format)
 
-    def onFontStyleChanged(self, font_str: str):
+    def onFontStyleChanged(self, font_str):
         """
         Sets the font to the new font
         :return: returns nothing
@@ -97,7 +97,7 @@ class Document(QTextEdit):
         logging.debug(point_size_str)
         self.setFontPointSize(int(point_size_str))
 
-    def onTextAlignmentChanged(self, align_str: str):
+    def onTextAlignmentChanged(self, align_str):
         """
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
@@ -117,13 +117,14 @@ class Document(QTextEdit):
         if color.isValid():
             self.setTextColor(color)
 
-    def onTextColorChanged(self, color_index:int):
+    def onTextColorChanged(self, color_index: int):
         """
         set the color the user selects to the text
         :param color_index: the location of color in the color_dict
         :return: returns nothing
         """
         logging.debug(color_index)
+        # noinspection PyCompatibility
         color_list: list = list(self.doc_props.dict_colors.values())
         self.setTextColor(QColor(color_list[color_index]))
 
@@ -155,14 +156,18 @@ class Document(QTextEdit):
         self.setPalette(palette)
 
     def fontBold(self) -> bool:
+        """
+        """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
+        """
+        """
         return self.currentCharFormat().fontStrikeOut()
 
-    def resetFormatting(self):
+    def clearAllFormatting(self):
         """
-        Clears formatting on text
+        Clears formatting on all text
         :return: returns nothing
         """
         logging.debug("")
@@ -171,6 +176,18 @@ class Document(QTextEdit):
         cursor.setCharFormat(QtGui.QTextCharFormat())
         cursor.clearSelection()
         self.setTextCursor(cursor)
+
+    def clearSelectionFormatting(self):
+        """
+        Clears formatting on selected text
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        if cursor.hasSelection() is False:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            cursor.setCharFormat(QTextCharFormat())
+        else:
+            self.setCurrentCharFormat(QTextCharFormat())
 
     def onTitleStyleChanged(self, state):
         """
