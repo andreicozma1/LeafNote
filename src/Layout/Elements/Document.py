@@ -42,6 +42,7 @@ class Document(QTextEdit):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+        self.setAutoFormatting(self.AutoAll)
 
     def onFontItalChanged(self, is_italic: bool):
         """
@@ -157,11 +158,13 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
+        Function returns whether the font is bold
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
+        Function returns whether the font is strike
         """
         return self.currentCharFormat().fontStrikeOut()
 
@@ -173,7 +176,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.setCharFormat(self.doc_props.normal)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -199,3 +202,12 @@ class Document(QTextEdit):
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         cursor.setCharFormat(self.doc_props.dict_title_styles[state])
         self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+
+    def setFormatText(self, text: str, formatting: bool):
+        """
+        Sets formatted or not text
+        """
+        self.setAcceptRichText(formatting)
+        self.setText(text)
+        if not formatting:
+            self.clearAllFormatting()
