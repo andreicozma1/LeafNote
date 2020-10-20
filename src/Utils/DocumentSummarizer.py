@@ -1,3 +1,6 @@
+"""
+this module holds a class to summarize any given class
+"""
 # noinspection PyCompatibility
 import _thread
 import codecs
@@ -10,7 +13,7 @@ import networkx as nx
 import nltk
 import numpy as np
 import pandas as pd
-import wget as wget
+import wget
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
@@ -20,8 +23,8 @@ from Utils.DialogBuilder import DialogBuilder
 
 class Summarizer:
     """
+    This class will compute a summary of any given text
     """
-
     def __init__(self, word_embeddings):
         """
         This logic here is taken from
@@ -202,7 +205,7 @@ def onSummaryAction(app, document):
     This spawns the prompt for the user to get the word embeddings needed for the doc summarizer
     :param app: Reference to the application
     :param document: Reference to the document
-    :return: Returns nothing
+    :return: Returns summarized text if dictionaries are found
     """
 
     # The action that gets called when the user selects a button on the prompt
@@ -224,10 +227,11 @@ def onSummaryAction(app, document):
         download_dialog.addButtonBox(button_box)
         button_box.clicked.connect(onDialogButtonClicked)
         download_dialog.exec()
+        return None
+
     # if there is already an instance of the summarizer
-    else:
-        logging.info("Summarizer is already initialized!")
-        return document.summarizer.summarize(document.toPlainText())
+    logging.info("Summarizer is already initialized!")
+    return document.summarizer.summarize(document.toPlainText())
 
 
 def ensureDirectory(app, path: str):
@@ -265,7 +269,7 @@ def ensureDirectory(app, path: str):
             for f in files:
                 try:
                     os.remove(f)
-                    logging.debug("Removed: " + f)
+                    logging.debug("Removed: %s", f)
                 except OSError as e:
                     dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
                     dialog_fail.show()
@@ -273,9 +277,9 @@ def ensureDirectory(app, path: str):
                     logging.error("Error occured removing directory contents")
                     return False
             return True
-        else:
-            logging.info("User chose not to clear directory. Exiting download")
-            return False
+
+        logging.info("User chose not to clear directory. Exiting download")
+        return False
 
 
 def dependencyDialogHandler(app, button, document=None):
@@ -287,7 +291,7 @@ def dependencyDialogHandler(app, button, document=None):
     :param document: document reference
     :return: returns summary
     """
-    logging.debug("User selected " + button.text())
+    logging.debug("User selected %s", button.text())
 
     # quit if the user selected cancel
     if button.text() == '&Cancel':
@@ -311,12 +315,12 @@ def dependencyDialogHandler(app, button, document=None):
                 os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
             os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
-        elif os.path.exists(
+        if os.path.exists(
                 os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
             os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
-        else:
-            return None
+
+        return None
 
     existing_path = files_exist(path_parent, path_child)
 
@@ -346,7 +350,7 @@ def dependencyDialogHandler(app, button, document=None):
             progress_bar = progress_bar_dialog.addProgressBar((0, 100))
             progress_bar_dialog.open()
         else:
-            logging.info("Found ZIP: " + zip_file + ". No need for re-download")
+            logging.info("Found ZIP: %s. No need for re-download", zip_file)
             should_download = False
             progress_bar = None
 
@@ -388,7 +392,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
             """
             Change the progress bar
             """
-            logging.debug("Progress: %s out of %s ... width %s" % current, total, width)
+            logging.debug("Progress: %s out of %s ... width %s", current, total, width)
             progress_bar.setMaximum(total)
             progress_bar.setValue(current)
 
@@ -447,13 +451,13 @@ def createModel(path):
 
     # check to make sure the glove files exist
     if not os.path.exists(path_vocab):
-        logging.error('Path does not exist - ' + path_vocab)
-        return
+        logging.error('Path does not exist - %s', path_vocab)
+        return None
 
     # check to make sure the glove files exist
     if not os.path.exists(path_npy):
-        logging.error('Path does not exist - ' + path_npy)
-        return
+        logging.error('Path does not exist - %s', path_npy)
+        return None
 
     # read the files into a python dict
     logging.debug("Attempting to read dictionary contents")

@@ -1,3 +1,7 @@
+"""
+The active document - area where user types
+"""
+
 import logging
 
 from PyQt5 import QtGui
@@ -5,10 +9,6 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
-
-"""
-The active document - area where user types
-"""
 
 
 class Document(QTextEdit):
@@ -157,11 +157,15 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
+        returns true the current font weight is bolded
+        :return: returns whether or not the text is bolded
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
+        returns true the current font is strikethrough
+        :return: returns whether or not the text is struck through
         """
         return self.currentCharFormat().fontStrikeOut()
 

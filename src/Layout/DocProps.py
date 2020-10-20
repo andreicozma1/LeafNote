@@ -1,17 +1,18 @@
+"""
+holds the class with the document properties
+"""
 import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCharFormat, QColor
-
-"""
-holds the class with the document properties
-"""
 
 
 class DocProps:
     """
     class has the default document properties
     """
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self):
         """

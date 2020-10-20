@@ -1,14 +1,17 @@
-import logging
-
 """
 holds the class with the layout properties
 """
+
+import logging
 
 
 class LayoutProps:
     """
     class has the default layout properties
     """
+
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self):
         """

@@ -1,3 +1,8 @@
+"""
+This module holds a class (AppProps) that hold all pertinent information needed for the main
+application.
+"""
+
 import logging
 import os
 
@@ -8,6 +13,8 @@ class AppProps:
     """
     class that contains the properties of the application
     """
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self, script_path):
         """

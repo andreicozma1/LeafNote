@@ -1,3 +1,6 @@
+"""
+This holds the context menu widget to display information about the document.
+"""
 import logging
 
 from PyQt5.QtCore import QFileInfo
@@ -9,7 +12,10 @@ from Widgets.CollapsibleWidget import CollapsibleWidget
 
 class ContextMenu(QWidget):
     """
+    This widget displays information about the current document.
     """
+
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, app, document):
         super().__init__()
@@ -113,6 +119,7 @@ class ContextMenu(QWidget):
 
     def updateSummary(self):
         """
+        this function will update the summary shown in the context menu.
         """
         if self.document.summarizer is not None:
             self.summary.show()
