@@ -150,7 +150,7 @@ class Reminders:
                       reminder_node.time,
                       reminder_node.title, reminder_node.description)
                 self.rem_list.append(reminder_node)
-                self.app.right_menu.collapsible_reminders.addElement(reminder_node)
+                self.app.right_menu.col_reminders_main.addElement(reminder_node)
         else:
             print("Clicked cancel")
 
