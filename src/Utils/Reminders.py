@@ -158,7 +158,7 @@ class Reminders:
                                  input_description.toPlainText())
 
         else:
-            print("Clicked cancel")
+            logging.info("Clicked cancel")
 
     def restoreReminders(self):
         """
