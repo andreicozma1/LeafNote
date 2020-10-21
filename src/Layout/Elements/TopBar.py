@@ -1,3 +1,7 @@
+"""
+all properties of the top bar
+"""
+
 import logging
 import os
 
@@ -9,15 +13,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontC
 
 from Layout.Elements import Document
 
-"""
-all properties of the top bar
-"""
-
 
 class TopBar(QWidget):
     """
     class that holds the top bar attributes
     """
+
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, path_res: str, document: Document):
         """
@@ -42,6 +44,7 @@ class TopBar(QWidget):
         self.dict_color = None
         self.combo_text_align = None
         self.dict_text_align = None
+        self.dict_align = None
 
     def makeMainLayout(self):
         """
@@ -232,13 +235,13 @@ class TopBar(QWidget):
         """
         # Button to Clear Formatting
         path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
-        self.button_clear = QPushButton(self)
-        self.button_clear.setIcon(QIcon(path_clear_icon))
-        self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
-        self.button_clear.setFixedWidth(33)
-        self.button_clear.setFocusPolicy(Qt.NoFocus)
-        self.button_clear.clicked.connect(self.document.clearSelectionFormatting)
-        return self.button_clear
+        button_clear = QPushButton(self)
+        button_clear.setIcon(QIcon(path_clear_icon))
+        button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
+        button_clear.setFixedWidth(33)
+        button_clear.setFocusPolicy(Qt.NoFocus)
+        button_clear.clicked.connect(self.document.clearSelectionFormatting)
+        return button_clear
 
     def makeComboTextAlign(self, dict_align: dict) -> QComboBox:
         """

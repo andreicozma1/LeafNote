@@ -1,3 +1,7 @@
+"""
+This module holds a widget that holds both the search file widget and replace file widget
+"""
+
 import logging
 
 from PyQt5 import QtGui

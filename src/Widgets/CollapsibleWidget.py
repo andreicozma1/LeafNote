@@ -1,3 +1,6 @@
+"""
+This module holds a widget that can be collapsed on a single click.
+"""
 import logging
 
 from PyQt5.QtCore import Qt, QSize
@@ -6,11 +9,12 @@ from PyQt5.QtWidgets import QWidget, QToolButton, QVBoxLayout
 
 class CollapsibleWidget(QWidget):
     """
+    This widget defines a customized widget to hold information and can collapse on click.
     """
 
     def __init__(self, title: str = ""):
         super().__init__()
-        logging.debug("Creating CollapsibleWidget - %s" % title)
+        logging.debug("Creating CollapsibleWidget - %s", title)
         self.title = title
 
         layout_main = QVBoxLayout(self)
@@ -40,27 +44,38 @@ class CollapsibleWidget(QWidget):
 
     def toggle(self):
         """
+        this changes whether or not the QWidget is collapsed or not.
+        :return: Returns nothing.
         """
-        logging.info("Toggling - %s" % self.title)
+        logging.info("Toggling - %s", self.title)
         checked = self.btn_toggle.isChecked()
         self.btn_toggle.setArrowType(Qt.RightArrow if checked else Qt.DownArrow)
-        self.content.setVisible(False if checked else True)
+        self.content.setVisible(not checked)
 
     def collapse(self):
         """
+        this collapses the widget.
+        :return: Returns nothing.
         """
-        logging.info("Collapsing - %s" % self.title)
+        logging.info("Collapsing - %s", self.title)
         self.btn_toggle.setChecked(True)
         self.toggle()
 
     def expand(self):
         """
+        this expands the widget.
+        :return: Returns nothing.
         """
-        logging.info("Expanding - %s" % self.title)
+        logging.info("Expanding - %s", self.title)
         self.btn_toggle.setChecked(False)
         self.toggle()
 
     def addElement(self, widget: QWidget):
         """
+        this adds a QWidget to the collapsible widget
         """
         self.layout_content.addWidget(widget)
+
+    def deleteElement(self, widget: QWidget):
+        widget.setParent(None)
+        self.layout_content.removeWidget(widget)

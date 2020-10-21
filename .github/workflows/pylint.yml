@@ -33,7 +33,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         msg: ${{ env.MESSAGE }}
-        check_for_duplicate_msg: false  # OPTIONAL 
+        check_for_duplicate_msg: true  # OPTIONAL 
     - name: Return
       run:
         cat code.txt | xargs pylint-exit --error-fail
