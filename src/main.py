@@ -72,7 +72,8 @@ class App(QMainWindow):
 
         # Create Main Workspace
         last_path = self.settings.value("workspacePath")
-        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
+        self.left_menu = DirectoryViewer(self.layout_props, self.document,
+                                         self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
@@ -81,6 +82,7 @@ class App(QMainWindow):
                                                               self.right_menu,
                                                               self.search_and_replace)
         layout_main.addWidget(self.documents_view)
+
 
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
@@ -92,7 +94,6 @@ class App(QMainWindow):
         self.setupMenuBar()
         self.menu_bar.show()
 
-        # TODO - fix this function call causing Format Mode button to not have spacer
         self.updateFormatBtnsState(False)
 
         self.setupProperties()
@@ -124,7 +125,6 @@ class App(QMainWindow):
         """
         this sets up the bottom bar as a whole
         """
-        # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
@@ -260,10 +260,10 @@ class App(QMainWindow):
                         path = os.path.join(dirpath, filename)
                         self.file_manager.encryptor.decryptFile(path)
                         logging.info(" - Decrypted: %s", path)
+                        logging.debug(dirnames)
                 logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         return super().closeEvent(event)
-
 
 def main():
     """

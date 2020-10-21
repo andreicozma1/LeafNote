@@ -16,6 +16,7 @@ import pandas as pd
 import wget
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
 from Utils.DialogBuilder import DialogBuilder
@@ -62,8 +63,6 @@ class Summarizer:
         :return: Returns a string of the summary
         """
         logging.info("Starting to generate summary")
-
-        from nltk.tokenize import sent_tokenize
 
         # break text into sentences
         sentences = sent_tokenize(text)
@@ -355,11 +354,8 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-        try:
             _thread.start_new_thread(getWordEmbeddings,
                                      (app, path_child, should_download, progress_bar, document))
-        except Exception as e:
-            logging.exception(e)
 
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")

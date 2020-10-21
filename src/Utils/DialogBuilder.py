@@ -77,6 +77,14 @@ class DialogBuilder(QDialog):
         logging.info("")
         self.layout_vertical.addWidget(widget)
 
+    def deleteWidget(self, widget: QWidget):
+        """
+        Deletes a widget from the layout
+        :param widget: Widget to delete
+        """
+        logging.info("Deleted")
+        self.layout_vertical.removeWidget(widget)
+
     def addButtonBox(self, button_box: QDialogButtonBox):
         """
         this adds a button box to the QDialog
