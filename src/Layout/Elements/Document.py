@@ -208,7 +208,8 @@ class Document(QTextEdit):
             cursor.setCharFormat(self.doc_props.dict_title_styles["Normal Text"])
             self.setCurrentCharFormat(self.doc_props.dict_title_styles["Normal Text"])
             return
-        if self.doc_props.text_update_title not in state and self.doc_props.text_reset_title not in state:
+        if self.doc_props.text_update_title not in state and \
+                self.doc_props.text_reset_title not in state:
             cursor.setCharFormat(self.doc_props.dict_title_styles[state])
             self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
         elif self.doc_props.text_update_title in state:
