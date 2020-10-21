@@ -140,6 +140,7 @@ def decryptionDialogHandler(app, file_manager, button):
                 path = os.path.join(dirpath, filename)
                 file_manager.encryptor.decryptFile(path)
                 logging.info(" - Decrypted: %s", path)
+                logging.debug(dirnames)
         logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         path_key = os.path.join(path_workspace, '.leafCryptoKey')

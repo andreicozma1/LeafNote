@@ -5,6 +5,7 @@ import logging
 import random
 
 from PyQt5.QtCore import QFileInfo
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Widgets.ColorWidget import Color
@@ -28,14 +29,13 @@ class Tab(Color):
 
         self.tab_bar = tab_bar
         self.path = path
-        self.f_name = QFileInfo(
-            self.path).fileName()  # grab substring of just the file name w/o path for asthetic
+        self.f_name = QFileInfo(self.path).fileName()
+        # grab substring of just the file name w/o path for asthetic
 
         # create horizontal layout for the tab
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(10, 0, 0, 0)
         self.horizontal_layout.setSpacing(2)
-
         # add the file name to the tab
         self.label = QLabel(self.f_name)
         self.horizontal_layout.addWidget(self.label)
@@ -52,7 +52,7 @@ class Tab(Color):
 
         self.setLayout(self.horizontal_layout)
 
-    def mousePressEvent(self, QMouseEvent):
+    def mouseReleaseEvent(self, event: QMouseEvent):
         """
         opens file of the path that the tab is holding
         :QMouseEvent: registers the mouse click
@@ -60,6 +60,7 @@ class Tab(Color):
         """
         logging.info(self.path)
         self.tab_bar.openTab(self)
+        super().mouseReleaseEvent(event)
 
     def closeTab(self):
         """
