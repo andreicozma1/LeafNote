@@ -93,7 +93,9 @@ class OpenTabsBar(QWidget):
             if self.file_manager.current_document is None:
                 self.active_tab = None
             else:
-                self.active_tab = self.open_tabs[self.file_manager.current_document.absoluteFilePath()]
+                self.active_tab = self.open_tabs[
+                    self.file_manager.current_document.absoluteFilePath()
+                ]
 
     def getTabCount(self):
         """
