@@ -196,7 +196,9 @@ class Document(QTextEdit):
 
     def onTitleStyleChanged(self, state):
         """
-        Sets the font to the new font
+        Sets the font to the new font based on title style selected
+        updates style of title
+        resets title styles to default
         :return: returns nothing
         """
         logging.info(state)
@@ -210,11 +212,16 @@ class Document(QTextEdit):
             cursor.setCharFormat(self.doc_props.dict_title_styles[state])
             self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
         elif self.doc_props.text_update_title in state:
-            self.doc_props.dict_title_styles[state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
+            self.doc_props.dict_title_styles[
+                state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
         else:
             self.resetTitleStyle()
 
     def resetTitleStyle(self):
+        """
+        resets title styles to default style
+        :return: returns nothing
+        """
         self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
         self.doc_props.dict_title_styles["Title"] = self.doc_props.title
         self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle

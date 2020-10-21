@@ -8,8 +8,8 @@ import os
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, QSizePolicy, QAbstractItemView, \
-    QListView
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, \
+    QSizePolicy, QListView
 
 from Layout.Elements import Document
 
@@ -327,7 +327,7 @@ class TopBar(QWidget):
             self.button_bold.setChecked(self.document.fontWeight() == QFont.Bold)
         if self.button_strike is not None:
             self.button_strike.setChecked(self.document.currentCharFormat().fontStrikeOut())
-        #update the text color
+        # update the text color
         if self.combo_text_color is not None:
             color = self.document.currentCharFormat().foreground().color().name()
             index = 0
