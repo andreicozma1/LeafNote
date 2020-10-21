@@ -44,7 +44,7 @@ class Reminder(QWidget):
         self.key = key
         self.sort_key = sort
         self.date = date
-        self.reminder_time = reminder_time
+        self.reminder_time = time
         self.title = title
         self.description = description
         self.btn = QPushButton("x")
@@ -175,7 +175,7 @@ class Reminders:
                 # and retreiving that class was very difficult. So storing as a list was my solution.
                 self.temp_list.append(sort_key_string)
                 self.temp_list.append(reminder_node.date)
-                self.temp_list.append(reminder_node.time)
+                self.temp_list.append(reminder_node.reminder_time)
                 self.temp_list.append(reminder_node.title)
                 self.temp_list.append(reminder_node.description)
                 # Keys temp_list with the string of the key inside of QSettings
@@ -216,7 +216,7 @@ class Reminders:
             for j in self.rem_list:
                 rem_temp = j
                 if i == rem_temp.sort_key:
-                    self.app.right_menu.collapsible_reminders.addElement(rem_temp)
+                    self.app.right_menu.col_reminders_main.addElement(rem_temp)
 
     # Adds the reminders sorted to the laylout
     def setReminderForDialog(self, reminder: Reminder):
@@ -231,7 +231,7 @@ class Reminders:
             for j in self.rem_list:
                 rem_temp = j
                 if i == rem_temp.sort_key:
-                    self.app.right_menu.collapsible_reminders.addElement(rem_temp)
+                    self.app.right_menu.col_reminders_main.addElement(rem_temp)
 
     # Converts time to 24 hours time.
     def convert24(self, str1):

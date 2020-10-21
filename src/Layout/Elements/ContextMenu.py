@@ -31,8 +31,8 @@ class ContextMenu(QScrollArea):
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
 
-        self.setupDetails(vertical_layout)
-        vertical_layout.addStretch()
+        # self.setupDetails(vertical_layout)
+        # vertical_layout.addStretch()
 
         # Main widget of QScroll area is an expandable QWidget with
         self.main_widget = QWidget()
@@ -49,12 +49,11 @@ class ContextMenu(QScrollArea):
         self.col_summary_body = self.makePropLabel("Summary")
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
-
+        self.col_reminders_add_reminder = QPushButton("Add Reminder")
         self.setupComponents()
         self.setupDetails()
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
-
 
     def setupComponents(self):
         """
@@ -102,19 +101,16 @@ class ContextMenu(QScrollArea):
             Click action for summarizer button
             """
             DocumentSummarizer.onSummaryAction(self.app, self.document)
-            
+
         # Add all summarizer components
         self.col_summary_enable.setVisible(self.document.summarizer is None)
         self.col_summary_enable.clicked.connect(onSummaryAction)
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
 
-        self.collapsible_reminders = CollapsibleWidget("Reminders:")
-        self.add_reminder_btn = QPushButton("Add Reminder")
-        #self.add_reminder_btn.clicked.connect(self.app.reminders.showDialog) Still need to work on this, future issue
-        self.collapsible_reminders.addElement(self.add_reminder_btn)
-        vertical_layout.addWidget(self.collapsible_reminders)
-        
+        #self.col_reminders_add_reminder.clicked.connect(self.col_reminders_main.app.right_menu.showDialog) #Saying no instance of app, fix in another issue
+        #self.col_reminders_main.addElement(self.col_reminders_add_reminder)
+
     def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
