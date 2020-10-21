@@ -33,5 +33,4 @@ class LayoutProps:
         self.item_height = 30
         self.item_hover_color = "rgba(249, 145, 146, 0.2)"
 
-
         self.splitter_width = 1
