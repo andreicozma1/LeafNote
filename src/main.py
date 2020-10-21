@@ -66,7 +66,8 @@ class App(QMainWindow):
 
         # Create Main Workspace
         last_path = self.settings.value("workspacePath")
-        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
+        self.left_menu = DirectoryViewer(self.layout_props, self.document,
+                                         self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
