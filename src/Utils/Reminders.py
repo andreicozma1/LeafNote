@@ -20,7 +20,7 @@ class Reminder(QWidget):
     traits of a reminder to allow it to be added to the right bar.
     """
 
-    def __init__(self, key, date, time, title, description, on_delete):
+    def __init__(self, key, date_str, time_str, title_str, desc_str, on_delete):
         # noinspection PyCompatibility
         super().__init__()
         self.key = key
@@ -32,7 +32,7 @@ class Reminder(QWidget):
         horizontal_layout = QHBoxLayout(widget_title)
         horizontal_layout.setContentsMargins(0, 0, 0, 0)
 
-        lbl_title = QLabel(title)
+        lbl_title = QLabel(title_str)
         lbl_title.setStyleSheet("font-style: bold;")
         lbl_title.setWordWrap(True)
         horizontal_layout.addWidget(lbl_title)
@@ -44,12 +44,12 @@ class Reminder(QWidget):
 
         self.vertical_layout.addWidget(widget_title)
 
-        self.show_date = QLabel(date + " at " + time)
+        self.show_date = QLabel(date_str + " at " + time_str)
         lbl_title.setStyleSheet("font-style: italic;")
         self.show_date.setWordWrap(True)
         self.vertical_layout.addWidget(self.show_date)
 
-        self.show_desc = QLabel(description)
+        self.show_desc = QLabel(desc_str)
         self.show_desc.setWordWrap(True)
         self.vertical_layout.addWidget(self.show_desc)
 
@@ -68,10 +68,14 @@ class Reminders:
         self.restoreReminders()  # Recalls old reminders and sets them
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
-        logging.info("showDialog: displays reminders dialog")
         """
         this will show the user a dialog of the the reminders
+        :param block: Element to block by dialog
+        :show_calendar: Whether to include calendar or not
+        :date: Pre-defined date if calendar is not shown
         """
+        logging.info("showDialog: displays reminders dialog")
+
         # Set the default date format
         # noinspection PyCompatibility
         format_date_def: str = "yyyy-MM-dd"
@@ -155,7 +159,6 @@ class Reminders:
         else:
             print("Clicked cancel")
 
-    # Executes when the program is launched. Retreives and displays all stored reminders inside the program
     def restoreReminders(self):
         """
         Restore saved reminders from persistent settings
@@ -213,7 +216,8 @@ class Reminders:
             logging.error("Could not remove reminder key %s" % key)
 
     # Converts time to 24 hours time.
-    def convert24(self, str1):
+    @staticmethod
+    def convert24(str1):
         """
         :param str1: This is a time that we are converting from normal time to 24 hour time
         :return: returns a string of the time
