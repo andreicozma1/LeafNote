@@ -207,16 +207,11 @@ class Document(QTextEdit):
             cursor.setCharFormat(self.doc_props.dict_title_styles[state])
             self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
         elif self.doc_props.text_update_title in state:
-            self.updateTitleStyle(state[7:])
+            cursor = self.textCursor()
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            self.doc_props.dict_title_styles[state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
         else:
             self.resetTitleStyle()
-
-    def updateTitleStyle(self, state):
-        logging.info(state)
-        cursor = self.textCursor()
-        print(state, "word")
-        self.doc_props.dict_title_styles[state] = cursor.charFormat()
-        print("got here")
 
     def resetTitleStyle(self):
         self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal

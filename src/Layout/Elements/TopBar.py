@@ -299,10 +299,9 @@ class TopBar(QWidget):
             title = self.document.currentCharFormat()
             index = 0
             title_list = list(self.dict_title_style.values())
+            # adds separator slots to the list to make the index match the list in topbar
             for x in range(2, 23, 3):
                 title_list.insert(x, None)
-            # print("recieved title:", title)
-            # print("compared title", title_list[3])
             if title in title_list:
                 index = title_list.index(title)
             self.combo_title_style.setCurrentIndex(index)
