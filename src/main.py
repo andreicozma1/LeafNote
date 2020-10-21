@@ -54,7 +54,6 @@ class App(QMainWindow):
         self.doc_props = DocProps()
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
-        self.reminders = Reminders(self, self.settings)
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -82,6 +81,8 @@ class App(QMainWindow):
                                                               self.right_menu,
                                                               self.search_and_replace)
         layout_main.addWidget(self.documents_view)
+
+        self.reminders = Reminders(self, self.settings)
 
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
@@ -263,7 +264,6 @@ class App(QMainWindow):
                 logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         return super().closeEvent(event)
-
 
 def main():
     """

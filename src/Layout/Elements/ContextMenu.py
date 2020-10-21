@@ -11,6 +11,7 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from Utils import DocumentSummarizer
+from Utils.Reminders import Reminder, Reminders
 from Widgets.CollapsibleWidget import CollapsibleWidget
 
 
@@ -29,6 +30,10 @@ class ContextMenu(QScrollArea):
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
+
+        # self.setupDetails(vertical_layout)
+        # vertical_layout.addStretch()
+
         # Main widget of QScroll area is an expandable QWidget with
         self.main_widget = QWidget()
         # The expandable QWidget has a Vertical Layout
@@ -44,7 +49,7 @@ class ContextMenu(QScrollArea):
         self.col_summary_body = self.makePropLabel("Summary")
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
-
+        self.col_reminders_add_reminder = QPushButton("Add Reminder")
         self.setupComponents()
         self.setupDetails()
         # Initial setup of labels, when no file is open
@@ -102,6 +107,9 @@ class ContextMenu(QScrollArea):
         self.col_summary_enable.clicked.connect(onSummaryAction)
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
+
+        #self.col_reminders_add_reminder.clicked.connect(self.col_reminders_main.app.right_menu.showDialog) #Saying no instance of app, fix in another issue
+        #self.col_reminders_main.addElement(self.col_reminders_add_reminder)
 
     def updateDetails(self, path):
         """

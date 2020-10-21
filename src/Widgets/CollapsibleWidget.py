@@ -75,3 +75,7 @@ class CollapsibleWidget(QWidget):
         this adds a QWidget to the collapsible widget
         """
         self.layout_content.addWidget(widget)
+
+    def deleteElement(self, widget: QWidget):
+        widget.setParent(None)
+        self.layout_content.removeWidget(widget)
