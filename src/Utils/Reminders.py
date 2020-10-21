@@ -48,7 +48,7 @@ class Reminder(QWidget):
         self.horizontal_layout.addWidget(self.btn)
 
     def deleteReminder(self):
-        logging.debug("Deleted reminder from qsettings")
+        logging.info("Deleted reminder from qsettings")
         self.show_title.setParent(None)
         self.show_date.setParent(None)
         self.show_time.setParent(None)
@@ -217,7 +217,7 @@ class Reminders:
 
     # Adds the reminders sorted to the laylout
     def setReminderForDialog(self, reminder: Reminder):
-        logging.debug("")
+        logging.debug("Added reminder to right_menu")
         current_rem = reminder
         self.rem_list.append(current_rem)
         self.date_list.append(current_rem.sort_key)
