@@ -6,7 +6,7 @@ Both Plain-Text and Proprietary Format LEF files.
 import logging
 import os
 
-from PyQt5.QtCore import QFileInfo, QFileDevice
+from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
 
 from Utils import DialogBuilder
@@ -58,8 +58,10 @@ class FileManager:
                 file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
                                                                     "File not found",
                                                                     "File not found",
-                                                                    "The original file has been moved/deleted "
-                                                                    "externally. Would you like to save a current "
+                                                                    "The original file has been "
+                                                                    "moved/deleted "
+                                                                    "externally. Would you like "
+                                                                    "to save a current "
                                                                     "copy of the file?")
                 button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
                 file_not_found_dialog.addButtonBox(button_box)
@@ -79,8 +81,8 @@ class FileManager:
                 # if the file has been modified since the document was opened
                 if self.file_opened_time is not None and self.file_opened_time < os.path.getmtime(
                         self.current_document.absoluteFilePath()):
-                    logging.warning("opened: %s, modified: %s", str(self.file_opened_time), str(os.path.getmtime(
-                        self.current_document.absoluteFilePath())))
+                    logging.warning("opened: %s, modified: %s", str(self.file_opened_time),
+                                    str(os.path.getmtime(self.current_document.absoluteFilePath())))
                     file_not_up_to_date_dialog = DialogBuilder.DialogBuilder(self.app,
                                                                              "File not up to date",
                                                                              "File not up to date",
@@ -101,7 +103,7 @@ class FileManager:
                         return True
                 self.writeFileData(self.current_document.absoluteFilePath(), data)
                 self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
-                logging.info("Saved File -" + self.current_document.absoluteFilePath())
+                logging.info("Saved File - %s", self.current_document.absoluteFilePath())
                 return True
 
         # get the entered data
@@ -127,7 +129,7 @@ class FileManager:
             document.setText(data)
             self.app.bar_open_tabs.addTab(path)
 
-        logging.info("Saved File - " + path)
+        logging.info("Saved File - %s", path)
         return True
 
     def saveAsDocument(self, document):
