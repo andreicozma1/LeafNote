@@ -1,11 +1,11 @@
+"""
+sets the way the application will be layed out
+"""
+
 import logging
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter
-
-"""
-sets the way the application will be layed out
-"""
 
 
 class Layout(QWidget):
@@ -30,6 +30,8 @@ class Layout(QWidget):
 
     def makeMainLayout(self):
         """
+        this will create the main layout of the application
+        :return: returns the created layout
         """
         logging.debug("Creating Layout - Vertical")
         # Main layout of the application. Holds the top bar,
@@ -43,6 +45,13 @@ class Layout(QWidget):
     def makeHSplitterLayout(self, left_menu, bar_open_tabs, document,
                             right_menu, search_and_replace):
         """
+        This will create the layout containing the middle section of the application
+        :param left_menu: reference to the left menu of the application
+        :param bar_open_tabs: reference to the bar containing the open tabs
+        :param document: reference to the document
+        :param right_menu: reference to the right menu of the application.
+        :param search_and_replace: reference to the search and replace for the document
+        :return: returns the created layout
         """
         logging.debug("Creating Layout - Horizontal")
 

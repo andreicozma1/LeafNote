@@ -1,17 +1,18 @@
+"""
+holds the class with the document properties
+"""
 import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCharFormat, QColor
-
-"""
-holds the class with the document properties
-"""
 
 
 class DocProps:
     """
     class has the default document properties
     """
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self):
         """
@@ -51,7 +52,7 @@ class DocProps:
         # code works with makeTitleStyleBox in TopBar.py
 
         # Default style for normal text
-        normal = QTextCharFormat()
+        self.normal = QTextCharFormat()
 
         # Default style for title
         title = QTextCharFormat()
@@ -76,7 +77,7 @@ class DocProps:
         heading4.setForeground(QColor('darkgray'))
         # creates dictionary to set the text format to the selected title style in the QComboBox
         self.dict_title_styles = {
-            "Normal Text": normal,
+            "Normal Text": self.normal,
             "Title": title,
             "Subtitle": subtitle,
             "Header 1": heading1,

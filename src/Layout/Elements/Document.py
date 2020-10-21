@@ -1,3 +1,8 @@
+"""
+The Document module sets up and defines the methods for
+used to interact with the Text Edit area.
+"""
+
 import logging
 
 from PyQt5 import QtGui
@@ -5,10 +10,6 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
-
-"""
-The active document - area where user types
-"""
 
 
 class Document(QTextEdit):
@@ -157,11 +158,15 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
+        returns true the current font weight is bolded
+        :return: returns whether or not the text is bolded
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
+        returns true the current font is strikethrough
+        :return: returns whether or not the text is struck through
         """
         return self.currentCharFormat().fontStrikeOut()
 
@@ -173,7 +178,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.setCharFormat(self.doc_props.normal)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -199,3 +204,13 @@ class Document(QTextEdit):
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         cursor.setCharFormat(self.doc_props.dict_title_styles[state])
         self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+
+    def setFormatText(self, text: str, formatting: bool):
+        """
+        Sets formatted or not text
+        """
+        self.setAcceptRichText(formatting)
+        self.setAutoFormatting(self.AutoAll if formatting else self.AutoNone)
+        self.setText(text)
+        if not formatting:
+            self.clearAllFormatting()
