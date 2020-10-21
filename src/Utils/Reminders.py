@@ -17,14 +17,14 @@ class Reminder(QWidget):
     traits of a reminder to allow it to be added to the right bar.
     """
 
-    def __init__(self, key, sort, date, time, title, description):
+    def __init__(self, key, sort, date, time, title, description, settings):
         # noinspection PyCompatibility
         super().__init__()
+        self.settings_rem = settings
         self.vertical_layout = QVBoxLayout()
         self.vl = QWidget()
         self.horizontal_layout = QHBoxLayout(self)
         self.show_title = QLabel(title)
-        #self.show_date = QLabel(date + "," + time)
         self.show_date = QLabel(date)
         self.show_desc = QLabel(description)
         self.show_time = QLabel(time)
@@ -56,8 +56,7 @@ class Reminder(QWidget):
         self.vertical_layout.removeWidget(self.show_desc)
         self.horizontal_layout.removeWidget(self.vl)
         self.horizontal_layout.removeWidget(self.btn)
-
-        #self.app.right_menu.collapsible_reminders.deleteElement()
+        self.settings_rem.remove(self.key)
 
 
 class Reminders:
@@ -67,36 +66,19 @@ class Reminders:
     """
 
     def __init__(self, app, settings):
-        logging.debug("Creating Reminders")
+        logging.info("Creating Reminders")
         self.app = app
         self.settings = settings
         self.rem_list = list()
         self.temp_list = list()
-        self.datelist = list()
-        self.tlist = list()
+        self.date_list = list()
+        self.settings_key_list = list()
         self.key_list = list()
-        self.trigger = 0
         self.app.settings.beginGroup("Reminders")
-        self.dict_key = {}
-        self.count = 1
         self.setReminder()
 
-    def addReminder(self, reminder: Reminder):
-        """
-        """
-        self.rem_list.append(reminder)
-
-    def removeReminder(self, reminder: Reminder):
-        """
-        """
-        # TODO remove reminder from list
-        pass
-
-# <<<<<<< HEAD
-#     def showDialog(self):
-#         #self.setReminder()
-# =======
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
+        logging.info("showDialog: displays reminders dialog")
         """
         """
         # Set the default date format
@@ -183,45 +165,35 @@ class Reminders:
                 sort_key_string = sort_key_string.replace(":", "")
                 reminder_node = Reminder(milliseconds, sort_key_string, selected_date,
                                          hour_cb.text(), title.text(),
-                                         description.toPlainText())
-                print(reminder_node.description)
-                print("Printing Class")
-                print(reminder_node.key, reminder_node.sort_key, reminder_node.date,
-                      reminder_node.time,
-                      reminder_node.title, reminder_node.description)
-                self.rem_list.append(reminder_node)
+                                         description.toPlainText(), self.settings)
                 self.temp_list.append(reminder_node.sort_key)
                 self.temp_list.append(reminder_node.date)
                 self.temp_list.append(reminder_node.time)
                 self.temp_list.append(reminder_node.title)
                 self.temp_list.append(reminder_node.description)
                 self.app.settings.setValue(str(reminder_node.key), self.temp_list)
-                print(self.app.settings.value("reminders"))
+                self.temp_list.clear()
                 self.setReminderForDialog(reminder_node)
         else:
             print("Clicked cancel")
 
     def setReminder(self):
-        print("setReminder")
-        print(self.app.settings.allKeys())
-        self.tlist = list(self.app.settings.allKeys())
+        logging.info("setReminder: recalls stored reminders")
+        self.settings_key_list = list(self.app.settings.allKeys())
 
-        #self.deleteKeys(1, self.tlist)
-        #self.app.settings.clear()
         for i in range(3):
-            self.tlist.pop(len(self.tlist) - 1)
+            self.settings_key_list.pop(len(self.settings_key_list) - 1)
 
-        print(self.tlist)
-        for i in self.tlist:
+        for i in self.settings_key_list:
             reminder_dict = self.app.settings.value(i)
-            tb_reminder = Reminder(None, reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3], reminder_dict[4])
+            tb_reminder = Reminder(None, reminder_dict[0], reminder_dict[1], reminder_dict[2], reminder_dict[3], reminder_dict[4], self.settings)
             self.rem_list.append(tb_reminder)
-            self.datelist.append(reminder_dict[0])
+            self.date_list.append(reminder_dict[len(reminder_dict) - 5])
             reminder_dict.clear()
 
-        self.datelist.sort()
+        self.date_list.sort()
 
-        for i in self.datelist:
+        for i in self.date_list:
             for j in self.rem_list:
                 rem_temp = j
                 if i == rem_temp.sort_key:
@@ -230,23 +202,17 @@ class Reminders:
 
 
     def setReminderForDialog(self, reminder: Reminder):
+        logging.info("setReminderForDialog: adds reminder to right_menu")
         current_rem = reminder
         self.rem_list.append(current_rem)
-        self.datelist.append(current_rem.sort_key)
-        self.datelist.sort()
-        for i in self.datelist:
+        self.date_list.append(current_rem.sort_key)
+        self.date_list.sort()
+        for i in self.date_list:
             for j in self.rem_list:
                 rem_temp = j
                 if i == rem_temp.sort_key:
                     self.app.right_menu.collapsible_reminders.addElement(rem_temp)
-
-    def deleteKeys(self, int, tlist):
-        count = 0
-        for i in tlist:
-            self.app.settings.remove(i)
-            count += 1
-            if count is int:
-                break
+                    print("This if statement ran")
 
     def convert24(self, str1):
         """
