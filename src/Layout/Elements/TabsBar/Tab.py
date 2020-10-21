@@ -22,7 +22,6 @@ class Tab(Color):
         :param path: path to file being displayed
         :return: returns nothing
         """
-        # Generate random color for the tab TODO: Change up to preference
         color = "#" + str(format(random.randint(0, 16777215), 'x'))
         super().__init__(color)
         logging.debug("Creating Tab")

@@ -93,7 +93,6 @@ class App(QMainWindow):
         self.setupMenuBar()
         self.menu_bar.show()
 
-        # TODO - fix this function call causing Format Mode button to not have spacer
         self.updateFormatBtnsState(False)
 
         self.setupProperties()
@@ -125,7 +124,6 @@ class App(QMainWindow):
         """
         this sets up the bottom bar as a whole
         """
-        # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
@@ -261,6 +259,7 @@ class App(QMainWindow):
                         path = os.path.join(dirpath, filename)
                         self.file_manager.encryptor.decryptFile(path)
                         logging.info(" - Decrypted: %s", path)
+                        logging.debug(dirnames)
                 logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         return super().closeEvent(event)

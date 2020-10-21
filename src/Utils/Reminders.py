@@ -59,7 +59,6 @@ class Reminders:
         """
         this will remove a reminder from the list of reminders
         """
-        # TODO remove reminder from list
         pass
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):

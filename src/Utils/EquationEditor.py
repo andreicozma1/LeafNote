@@ -76,7 +76,6 @@ class EquationEditor(QWidget):
         Generates the image from the users input.
         """
         logging.info("User Generated Equation")
-        # TODO - handle user spamming button
 
         # get the formatted equation from the web api
         req = requests.get(self.url + self.equation_bar.text())
