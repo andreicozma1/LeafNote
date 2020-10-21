@@ -71,7 +71,7 @@ class TopBar(QWidget):
         self.dict_title_style = dict_title_style
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.dict_title_style)
-        # taverses through combo_title_style items index
+        # traverses through combo_title_style items index
         for x in range(view.model().rowCount()):
             # mods by two to get the index with titles else gives "update" titles index
             # changes font to be bold for if and italic for else
