@@ -196,14 +196,40 @@ class Document(QTextEdit):
 
     def onTitleStyleChanged(self, state):
         """
-        Sets the font to the new font
+        Sets the font to the new font based on title style selected
+        updates style of title
+        resets title styles to default
         :return: returns nothing
         """
         logging.info(state)
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.dict_title_styles[state])
-        self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        if state == "":
+            cursor.setCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            return
+        if self.doc_props.text_update_title not in state and \
+                self.doc_props.text_reset_title not in state:
+            cursor.setCharFormat(self.doc_props.dict_title_styles[state])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        elif self.doc_props.text_update_title in state:
+            self.doc_props.dict_title_styles[
+                state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
+        else:
+            self.resetTitleStyle()
+
+    def resetTitleStyle(self):
+        """
+        resets title styles to default style
+        :return: returns nothing
+        """
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Title"] = self.doc_props.title
+        self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
+        self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
+        self.doc_props.dict_title_styles["Header 2"] = self.doc_props.heading2
+        self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
+        self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
     def setFormatText(self, text: str, formatting: bool):
         """
