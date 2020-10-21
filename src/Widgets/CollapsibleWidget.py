@@ -73,9 +73,14 @@ class CollapsibleWidget(QWidget):
     def addElement(self, widget: QWidget):
         """
         this adds a QWidget to the collapsible widget
+        :param widget: Widget to add
         """
         self.layout_content.addWidget(widget)
 
     def deleteElement(self, widget: QWidget):
+        """
+        Removes an element from the layout
+        :param widget: Widget to remove
+        """
         widget.setParent(None)
         self.layout_content.removeWidget(widget)

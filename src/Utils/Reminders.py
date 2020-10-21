@@ -168,7 +168,7 @@ class Reminders:
 
         if self.settings.contains("reminders_dict"):
             self.rem_list = self.settings.value("reminders_dict")
-            logging.info("Found reminders in Settings! %s keys" % len(self.rem_list.keys()))
+            logging.info("Found reminders in Settings! %s keys", len(self.rem_list.keys()))
 
     def addReminder(self, date: QDate, time_str: str, title_str: str, desc_str: str):
         """
@@ -210,11 +210,11 @@ class Reminders:
         :param key: key to delete
         """
         if self.rem_list.pop(key, None) is not None:
-            logging.info("Removing reminder key %s" % key)
+            logging.info("Removing reminder key %s", key)
             self.settings.setValue("reminders_dict", self.rem_list)
             self.app.right_menu.updateReminders()
         else:
-            logging.error("Could not remove reminder key %s" % key)
+            logging.error("Could not remove reminder key %s", key)
 
     # Converts time to 24 hours time.
     @staticmethod

@@ -11,9 +11,8 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from Utils import DocumentSummarizer
-from Utils.Reminders import Reminder, Reminders
+from Utils.Reminders import Reminder
 from Widgets.CollapsibleWidget import CollapsibleWidget
-from Widgets.ColorWidget import Color
 
 
 class ContextMenu(QScrollArea):
@@ -30,7 +29,6 @@ class ContextMenu(QScrollArea):
         self.app = app
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
-
 
         # self.setupDetails(vertical_layout)
         # vertical_layout.addStretch()
@@ -110,9 +108,6 @@ class ContextMenu(QScrollArea):
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
 
-        #self.col_reminders_add_reminder.clicked.connect(self.col_reminders_main.app.right_menu.showDialog) #Saying no instance of app, fix in another issue
-        #self.col_reminders_main.addElement(self.col_reminders_add_reminder)
-
     def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
@@ -165,6 +160,9 @@ class ContextMenu(QScrollArea):
             self.col_summary_enable.show()
 
     def updateReminders(self):
+        """
+        Updates the right menu reminders based on dictionary
+        """
         layout = self.col_reminders_main.content.layout()
         for i in range(layout.count()):
             layout.itemAt(i).widget().deleteLater()
@@ -178,10 +176,9 @@ class ContextMenu(QScrollArea):
 
         for rem in reminders_list:
             print(rem)
-            wid = Reminder(rem['key'], rem['date'], rem['time'], rem['title'], rem['text'], onDelete)
+            wid = Reminder(rem['key'], rem['date'], rem['time'],
+                           rem['title'], rem['text'], onDelete)
 
             self.col_reminders_main.addElement(wid)
 
         print(self.col_reminders_main.content.layout().count())
-
-
