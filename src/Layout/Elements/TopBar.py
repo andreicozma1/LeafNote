@@ -270,8 +270,6 @@ class TopBar(QWidget):
             if not a.property("persistent"):
                 a.blockSignals(True)
 
-        # TODO: check if self.list_title is not none then set qcombobox to current cursor selection
-
         # Update the font style displayed
         if self.combo_font_style is not None:
             self.combo_font_style.setCurrentFont(self.document.currentFont())
