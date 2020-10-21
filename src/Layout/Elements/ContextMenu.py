@@ -20,6 +20,8 @@ class ContextMenu(QScrollArea):
     file metadata information, summary, reminders, etc.
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, app, document):
         super().__init__()
         logging.debug("Creating Context Menu")
@@ -47,7 +49,6 @@ class ContextMenu(QScrollArea):
         self.setupDetails()
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
-
 
     def setupComponents(self):
         """

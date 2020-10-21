@@ -1,3 +1,6 @@
+"""
+This module holds a class that will display the current workspace to the user
+"""
 import logging
 import os
 
@@ -77,7 +80,7 @@ class DirectoryViewer(QTreeView):
         # Check for encryption key in Workspace
         path_key = os.path.join(path, ".leafCryptoKey")
         if os.path.exists(path_key):
-            logging.debug("Encryption key found! " + path_key)
+            logging.debug("Encryption key found! %s", path_key)
             with open(path_key, 'r') as f:
                 key = f.read()
                 self.fileManager.encryptor = Encryptor(key)
