@@ -38,7 +38,7 @@ class MenuBar(QMenuBar):
         self.equation_editor = None
 
     # =====================================================================================
-    def makeFileMenu(self, app, file_manager, bar_open_tabs):
+    def makeFileMenu(self, app, file_manager):
         """
         sets up the file tabs drop menu
         :return: returns nothing

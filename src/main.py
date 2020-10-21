@@ -131,7 +131,7 @@ class App(QMainWindow):
         """
         this sets up the menu bar as a whole
         """
-        self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
+        self.menu_bar.makeFileMenu(self, self.file_manager)
         self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar)
         self.menu_bar.makeFormatMenu(self)
