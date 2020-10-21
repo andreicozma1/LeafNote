@@ -218,6 +218,7 @@ class FileManager:
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
         # update the document shown to the user
         self.app.right_menu.updateDetails(path)
+        self.app.left_menu.selectPath(path)
         return True
 
     def getFileData(self, path: str):
@@ -322,9 +323,6 @@ class FileManager:
         # open the .txt document and add it to the dict of the open files
         # this will also set the current document
         self.openDocument(document, new_path)
-
-        # converting back from a formatted file. Reset all formatting and button selections
-        document.clearAllFormatting()
 
     def toLef(self, document):
         """
