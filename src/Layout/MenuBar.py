@@ -1,31 +1,41 @@
-import logging
-from functools import partial
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu, QLineEdit, QPushButton, QDialogButtonBox, QCalendarWidget, QTimeEdit, \
-    QMessageBox, QComboBox, QDateTimeEdit
-from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
-import os
-import Utils.DocumentSummarizer as DocumentSummarizer
-from Elements import Search, Document, Calculator, Replace
-from Layout import DocProps
-from Utils import Encryptor
-from Utils.DialogBuilder import DialogBuilder
-from time import time
-
 """
 all properties and functionalities of the menu bar
 """
+
+import logging
+
+from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
+
+from Layout import DocProps
+from Layout.Elements import Document
+from Layout.Utils.SearchWorkspace import SearchWorkspace
+from Utils import Encryptor, EquationEditor, DocumentSummarizer
+from Widgets import Calculator
+
+
 class MenuBar(QMenuBar):
+    """
+    This class is a customized QMenuBar for the application
+    """
+
     def __init__(self, document: Document, doc_props: DocProps):
         """
         Sets up the System MenuBar
         :return: returns nothing
         """
-        super(MenuBar, self).__init__()
-        logging.info("")
+        super().__init__()
+        logging.debug("Creating MenuBar")
+
         self.doc = document
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
+
+        self.menu_format = None
+        self.group_style = None
+        self.group_align = None
+        self.calculator = None
+        self.equation_editor = None
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager, bar_open_tabs):
@@ -33,23 +43,31 @@ class MenuBar(QMenuBar):
         sets up the file tabs drop menu
         :return: returns nothing
         """
-        logging.info("makeFileMenu")
+        logging.debug("makeFileMenu")
 
         def onNewBtn():
-            logging.info("MenuBar - onNewBtn")
+            """
+            """
+            logging.info("Clicked New Action")
             file_manager.newFile(self.doc)
 
         def onOpenBtn():
-            logging.info("onOpenBtn")
+            """
+            """
+            logging.info("Clicked Open Action")
             # opens a file dialogue for the user to select a file to open
-            file_name = QFileDialog.getOpenFileName(app, 'Open file', app.left_menu.model.rootPath())
+            file_name = QFileDialog.getOpenFileName(app, 'Open file',
+                                                    app.left_menu.model.rootPath())
             # open the chosen file and show the text in the text editor
             file_manager.openDocument(self.doc, file_name[0])
 
         def onOpenFolderBtn():
-            logging.info("onOpenFolderBtn")
+            """
+            """
+            logging.info("Clicked Open Folder Action")
             # opens a file dialogue for the user to select a file to open
-            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder', app.left_menu.model.rootPath())
+            folder_name = QFileDialog.getExistingDirectory(app, 'Open folder',
+                                                           app.left_menu.model.rootPath())
             # if the user selected a new folder
             if folder_name != "":
                 app.left_menu.updateDirectory(folder_name)
@@ -58,24 +76,32 @@ class MenuBar(QMenuBar):
 
         # this saves the current file that is shown in the self.doc
         def onSaveBtn():
-            logging.info("onSaveBtn")
+            """
+            """
+            logging.info("Clicked Save Action")
             if file_manager.saveDocument(self.doc):
                 logging.debug("Saved Document Completed.")
 
         def onSaveAsBtn():
-            logging.info("saveAsFile")
+            """
+            """
+            logging.info("Clicked Save As Action")
             if file_manager.saveAsDocument(self.doc):
                 logging.debug("Saved As Document Completed.")
 
         def onExitBtn():
-            logging.info("onExitBtn")
+            """
+            """
+            logging.info("Clicked Exit Action")
             file_manager.closeAll(self.doc)
             app.close()
 
-        self.menu_file = self.addMenu('&File')
+        menu_file = self.addMenu('&File')
 
         # ========= START FILE MENU SECTION =========
         def makeFileAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             file_action = QAction(name, app)
             file_action.setShortcut(shortcut)
             file_action.triggered.connect(signal)
@@ -85,18 +111,18 @@ class MenuBar(QMenuBar):
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
 
-        self.menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
-        self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
+        menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
+        menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
+        menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
+        menu_file.addSeparator()
+        menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
+        menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
 
-        self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
+        menu_file.addSeparator()
+        menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
         # ========= END FILE MENU SECTION =========
 
-        return self.menu_file
+        return menu_file
 
     # =====================================================================================
     def makeEditMenu(self, app, file_manager):
@@ -104,44 +130,66 @@ class MenuBar(QMenuBar):
         Create Edit Menu
         :return: the menu created
         """
-        logging.info("makeEditMenu")
-        self.menu_edit = self.addMenu('&Edit')
+        logging.debug("Creating Edit Menu")
 
         def onFindBtn():
-            logging.info(not self.doc.search.isVisible())
-            self.doc.search.setVisible(not self.doc.search.isVisible())
+            """
+            """
+            state_replace = app.search_and_replace.replace.isVisible()
+            logging.info("Clicked Find Action - %s", str(state_replace))
+            if state_replace:
+                app.search_and_replace.replace.setVisible(False)
+
+            state_search = app.search_and_replace.search.isVisible()
+            app.search_and_replace.search.setVisible(not state_search)
+            if state_search:
+                app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():
-            logging.info("")
-            self.doc.search_all = Search.SearchWorkspace(self.doc, file_manager, app.left_menu.model.rootPath())
+            """
+            """
+            logging.info("Clicked Find All Action")
+            self.doc.search_all = SearchWorkspace(self.doc, file_manager,
+                                                  app.left_menu.model.rootPath())
 
         def onFindAndReplaceBtn():
-            logging.info("")
-            self.doc.find_and_replace = Replace.FindAndReplace(self.doc)
+            """
+            """
+            state_replace = app.search_and_replace.replace.isVisible()
+            logging.info("Clicked Find and Replace Action - %s", str(state_replace))
+            # Toggle Find and Replace
+            app.search_and_replace.replace.setVisible(not state_replace)
+            if app.search_and_replace.replace.isVisible():
+                app.search_and_replace.search.setVisible(True)
+                app.search_and_replace.search.search_bar.setFocus()
 
         # ========= START EDIT MENU SECTION =========
+        menu_edit = self.addMenu('&Edit')
+
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             edit_action = QAction(name, app)
             edit_action.setShortcut(shortcut)
             edit_action.triggered.connect(signal)
             return edit_action
 
         # Add actions
-        self.menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
-        self.menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
-        self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
-        self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
-        self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
-        self.menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
+        menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
+        menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
+        menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
+        menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
+        menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+        menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
 
         # ========= END EDIT MENU SECTION =========
-        return self.menu_edit
+        return menu_edit
 
     # =====================================================================================
     def makeViewMenu(self, app, bottom_bar) -> QMenu:
@@ -149,21 +197,23 @@ class MenuBar(QMenuBar):
         Create View Menu
         :return: the menu created
         """
-        logging.info("makeViewMenu")
-        self.menu_view = self.addMenu('&View')
+        logging.debug("Creating View Menu")
+        menu_view = self.addMenu('&View')
 
         # ========= START VIEW MENU SECTION =========
         def makeViewAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             view_action = QAction(name, app)
             view_action.setShortcut(shortcut)
             view_action.triggered.connect(signal)
             return view_action
 
-        self.menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
-        self.menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
-        self.menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+        menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
+        menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
+        menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
         # ========= END VIEW MENU SECTION =========
-        return self.menu_view
+        return menu_view
 
     # =====================================================================================
     def makeFormatMenu(self, app) -> QMenu:
@@ -171,11 +221,13 @@ class MenuBar(QMenuBar):
         Create Format Menu
         :return: the menu created
         """
-        logging.info("formatMenuSetup")
+        logging.debug("Creating Format Menu")
         self.menu_format = self.addMenu('&Format')
 
         # ========= START FONT STYLES SECTION =========
         def makeStyleAction(name: str, shortcut: str, signal, docref) -> QAction:
+            """
+            """
             style_action = QAction(name, app)
             style_action.setShortcut(shortcut)
             style_action.setCheckable(True)
@@ -187,11 +239,14 @@ class MenuBar(QMenuBar):
         self.group_style.setExclusive(False)
         act_bold = makeStyleAction("Bold", "Ctrl+B", self.doc.onFontBoldChanged, self.doc.fontBold)
         self.group_style.addAction(act_bold)
-        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged, self.doc.fontItalic)
+        act_ital = makeStyleAction("Italicize", "Ctrl+I", self.doc.onFontItalChanged,
+                                   self.doc.fontItalic)
         self.group_style.addAction(act_ital)
-        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged, self.doc.fontStrike)
+        act_strk = makeStyleAction("Strikeout", "Ctrl+Shift+5", self.doc.onFontStrikeChanged,
+                                   self.doc.fontStrike)
         self.group_style.addAction(act_strk)
-        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged, self.doc.fontUnderline)
+        act_undr = makeStyleAction("Underline", "Ctrl+U", self.doc.onFontUnderChanged,
+                                   self.doc.fontUnderline)
         self.group_style.addAction(act_undr)
         # Add all actions in group to Style Menu
         self.menu_format.addActions(self.group_style.actions())
@@ -202,7 +257,7 @@ class MenuBar(QMenuBar):
 
         clear_format = QAction("Clear Format", app)
         clear_format.setShortcut("Ctrl+0")
-        clear_format.triggered.connect(self.doc.resetFormatting)
+        clear_format.triggered.connect(self.doc.clearSelectionFormatting)
         self.menu_format.addAction(clear_format)
 
         act_color_picker = QAction("Color Picker", app)
@@ -213,6 +268,8 @@ class MenuBar(QMenuBar):
 
         # ========= START ALIGNMENT SECTION =========
         def makeAlignAction(name: str, shortcut: str, default: bool = False) -> QAction:
+            """
+            """
             align_action = QAction(name, app)
             align_action.setShortcut(shortcut)
             align_action.setCheckable(True)
@@ -220,7 +277,10 @@ class MenuBar(QMenuBar):
             return align_action
 
         def onTextAlignmentChanged(state):
-            self.doc.onTextAlignmentChanged(list(self.doc_props.dict_align.keys()).index(state.text()))
+            """
+            """
+            self.doc.onTextAlignmentChanged(
+                list(self.doc_props.dict_text_aligns.keys()).index(state.text()))
 
         self.menu_format.addSeparator()
         # Action Group for Alignments options (Exclusive picks)
@@ -228,7 +288,9 @@ class MenuBar(QMenuBar):
         self.group_align.triggered.connect(onTextAlignmentChanged)
 
         def getName(index: int):
-            return list(self.doc_props.dict_align.keys())[index]
+            """
+            """
+            return list(self.doc_props.dict_text_aligns.keys())[index]
 
         # Add alignment options to the group
         self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
@@ -246,41 +308,67 @@ class MenuBar(QMenuBar):
         Create View Menu
         :return: the menu created
         """
-        logging.info("makeViewMenu")
-        self.menu_tools = self.addMenu('&Tools')
+        logging.debug("Creating Tools Menu")
+        menu_tools = self.addMenu('&Tools')
 
         # ========= START TOOLS MENU SECTION =========
 
         def onSummaryAction():
-            logging.info("Generating Summary")
+            """
+            """
+            logging.info("Clicked Summary Action")
             if document.summarizer is None:
                 DocumentSummarizer.onSummaryAction(app, document)
             if document.summarizer is not None:
-                app.right_menu.summary.setText(document.summarizer.summarize(document.toPlainText()))
+                selection = document.textCursor().selectedText()
+                if selection != "":
+                    app.right_menu.col_summary_body.setText(
+                        document.summarizer.summarize(selection))
+                else:
+                    app.right_menu.col_summary_body.setText(
+                        document.summarizer.summarize(document.toPlainText()))
+            app.right_menu.col_summary_main.expand()
 
         def onEncryptionAction():
+            """
+            """
+            logging.info("Clicked Encryptor Action")
             Encryptor.onEncryptionAction(app, app.file_manager)
 
         def onCalculatorAction():
+            """
+            """
+            logging.info("Clicked Calculator Action")
             self.calculator = Calculator.Calculator()
 
         def onRemindersAction():
-            app.reminders.showDialog()
+            """
+            """
+            logging.info("Clicked Reminders Action")
+            app.reminders.showDialog(app)
+
+        def onEquationEditorAction():
+            logging.info("Clicked Equation Editor Action")
+            self.equation_editor = EquationEditor.EquationEditor(document)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
+            """
+            """
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
             tools_action.triggered.connect(signal)
             return tools_action
 
-        self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
-        self.menu_tools.addAction(makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
-        self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        menu_tools.addAction(
+            makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
+        menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
+        menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
-        return self.menu_tools
+        return menu_tools
 
     # =====================================================================================
 
@@ -292,6 +380,7 @@ class MenuBar(QMenuBar):
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -303,6 +392,7 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         # Block signals
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -315,10 +405,13 @@ class MenuBar(QMenuBar):
         alignment = self.doc.alignment()
         for action in self.group_align.actions():
             action.setChecked(False)
-            index = list(self.doc_props.dict_align.values()).index(alignment)
-            if action.text() == list(self.doc_props.dict_align.keys())[index]:
-                action.setChecked(True)
+            align_list = list(self.doc_props.dict_text_aligns.values())
+            if alignment in align_list:
+                index = align_list.index(alignment)
+                if action.text() == list(self.doc_props.dict_text_aligns.keys())[index]:
+                    action.setChecked(True)
         # Unblock signals
+        # noinspection PyCompatibility
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):

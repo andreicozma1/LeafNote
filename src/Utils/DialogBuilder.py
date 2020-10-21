@@ -1,3 +1,6 @@
+"""
+This module holds a customizable dialog prompt
+"""
 import logging
 
 from PyQt5.QtCore import Qt
@@ -5,9 +8,17 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButton
 
 
 class DialogBuilder(QDialog):
-    def __init__(self, blocked_widget, text_window: str = None, text_title: str = None, text_msg: str = None):
-        super(DialogBuilder, self).__init__(blocked_widget)
-        logging.info("")
+    """
+    This class is a customizable QDialog that can be used throughout the project
+    """
+
+    def __init__(self, blocked_widget=None, text_window: str = None, text_title: str = None,
+                 text_msg: str = None):
+        """
+        Initializes the dialog builder.
+        """
+        super().__init__(blocked_widget)
+        logging.debug("Init DialogBuilder")
 
         if text_window is None:
             text_window = "Dialog"
@@ -24,6 +35,10 @@ class DialogBuilder(QDialog):
         self.setup()
 
     def setup(self):
+        """
+        this sets up the initial layout of the dialog builder
+        :return: Returns nothing
+        """
         logging.info("")
 
         font = self.label_title.font()
@@ -37,20 +52,36 @@ class DialogBuilder(QDialog):
         self.layout_vertical.addWidget(self.label_message)
 
     def setTitleText(self, text: str):
+        """
+        this sets the QDialog title
+        :return: Returns nothing
+        """
         logging.info(text)
         self.label_title.setText(text)
         self.label_title.setHidden(False)
 
     def setMsgText(self, text: str):
+        """
+        this sets the QDialog message
+        :return: Returns nothing
+        """
         logging.info(text)
         self.label_message.setText(text)
         self.label_message.setHidden(False)
 
     def addWidget(self, widget: QWidget):
+        """
+        this adds a widget to the QDialog
+        :return: Returns nothing
+        """
         logging.info("")
         self.layout_vertical.addWidget(widget)
 
     def addButtonBox(self, button_box: QDialogButtonBox):
+        """
+        this adds a button box to the QDialog
+        :return: Returns nothing
+        """
         logging.info("")
         self.layout_vertical.addWidget(button_box)
         button_box.accepted.connect(self.accept)
@@ -58,9 +89,12 @@ class DialogBuilder(QDialog):
 
     def addProgressBar(self, min_max_range: tuple = (0, 0), initial_value: int = 0,
                        text_format: str = None, orientation=None, text_direction=None):
-
-        logging.info(
-            "min=" + str(min_max_range[0]) + ";max=" + str(min_max_range[1]) + ";initial_value=" + str(initial_value))
+        """
+        this adds a progress bar to the QDialog
+        :return: Returns nothing
+        """
+        logging.info("min=%s;max=%s;initial_value=%s", str(min_max_range[0]),
+                     str(min_max_range[1]), str(initial_value))
 
         # create the progress_bar and set its properties
         progress_bar = QProgressBar()

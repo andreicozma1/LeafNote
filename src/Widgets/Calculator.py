@@ -1,16 +1,32 @@
+"""
+this module holds the calculator widgetr
+"""
+import logging
+from functools import partial
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QPushButton
 
 
 class Calculator(QWidget):
+    """
+    this is a customized calculator qwidget
+    """
 
     def __init__(self):
-        super(Calculator, self).__init__()
+        """
+        this initializes the calculator widget
+        """
+        super().__init__()
+        self.equ = 0
+        self.screen = None
         self.calculator()
         self.show()
 
     def calculator(self):
-        self.equ = 0
+        """
+        this creates the layout of the calculator
+        """
         grid = QGridLayout()
         self.setLayout(grid)
         self.screen = QLabel()
@@ -70,37 +86,37 @@ class Calculator(QWidget):
         equals.setFixedHeight(52)
         grid.addWidget(equals, 8, 3, 2, 1)
 
-        minus.clicked.connect(self.action_minus)
-        minus.setShortcut("-")
         equals.clicked.connect(self.action_equal)
         equals.setShortcut("enter")
-        zero.clicked.connect(self.action0)
+        zero.clicked.connect(partial(self.actionNum, 0))
         zero.setShortcut("0")
-        one.clicked.connect(self.action1)
+        one.clicked.connect(partial(self.actionNum, 1))
         one.setShortcut("1")
-        two.clicked.connect(self.action2)
+        two.clicked.connect(partial(self.actionNum, 2))
         two.setShortcut("2")
-        three.clicked.connect(self.action3)
+        three.clicked.connect(partial(self.actionNum, 3))
         three.setShortcut("3")
-        four.clicked.connect(self.action4)
+        four.clicked.connect(partial(self.actionNum, 4))
         four.setShortcut("4")
-        five.clicked.connect(self.action5)
+        five.clicked.connect(partial(self.actionNum, 5))
         five.setShortcut("5")
-        six.clicked.connect(self.action6)
+        six.clicked.connect(partial(self.actionNum, 6))
         six.setShortcut("6")
-        seven.clicked.connect(self.action7)
+        seven.clicked.connect(partial(self.actionNum, 7))
         seven.setShortcut("7")
-        eight.clicked.connect(self.action8)
+        eight.clicked.connect(partial(self.actionNum, 8))
         eight.setShortcut("8")
-        nine.clicked.connect(self.action9)
+        nine.clicked.connect(partial(self.actionNum, 9))
         nine.setShortcut("9")
-        divide.clicked.connect(self.action_div)
+        divide.clicked.connect(partial(self.action_operator, '/'))
         divide.setShortcut("/")
-        mult.clicked.connect(self.action_mul)
+        mult.clicked.connect(partial(self.action_operator, '*'))
         mult.setShortcut("*")
-        plus.clicked.connect(self.action_plus)
+        plus.clicked.connect(partial(self.action_operator, '+'))
         plus.setShortcut("+")
-        dec.clicked.connect(self.action_point)
+        minus.clicked.connect(partial(self.action_operator, '-'))
+        minus.setShortcut("-")
+        dec.clicked.connect(self.action_decimal)
         dec.setShortcut(".")
         clear.clicked.connect(self.action_clear)
         clear.setShortcut("c")
@@ -108,11 +124,10 @@ class Calculator(QWidget):
         delete.setShortcut("backspace")
         neg.clicked.connect(self.action_neg)
 
-    def action_plus(self):
-        text = self.screen.text()
-        self.screen.setText(text + " + ")
-
     def action_equal(self):
+        """
+        this determines the answer to the given equation
+        """
         equation = self.screen.text()
 
         try:
@@ -120,10 +135,14 @@ class Calculator(QWidget):
             self.screen.setText(str(ans))
             self.equ = 1
 
-        except:
+        except SyntaxError as e:
+            logging.exception(e)
             self.screen.setText("Wrong Input")
 
-    def action_plus(self):
+    def action_operator(self, operator):
+        """
+        this will insert a given operator into the equation
+        """
         # appending label text
         text = self.screen.text()
         if text == "Wrong Input":
@@ -132,46 +151,13 @@ class Calculator(QWidget):
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
                 text = self.screen.text()
-            self.screen.setText(text + " + ")
+            self.screen.setText(text + " " + operator + " ")
         self.equ = 0
 
-    def action_minus(self):
-        # appending label text
-        text = self.screen.text()
-        if text == "Wrong Input":
-            text = ""
-        if text != "":
-            if text[len(text) - 1] == ' ':
-                self.screen.setText(text[:len(text) - 3])
-                text = self.screen.text()
-            self.screen.setText(text + " - ")
-        self.equ = 0
-
-    def action_div(self):
-        # appending label text
-        text = self.screen.text()
-        if text == "Wrong Input":
-            text = ""
-        if text != "":
-            if text[len(text) - 1] == ' ':
-                self.screen.setText(text[:len(text) - 3])
-                text = self.screen.text()
-            self.screen.setText(text + " / ")
-        self.equ = 0
-
-    def action_mul(self):
-        # appending label text
-        text = self.screen.text()
-        if text == "Wrong Input":
-            text = ""
-        if text != "":
-            if text[len(text) - 1] == ' ':
-                self.screen.setText(text[:len(text) - 3])
-                text = self.screen.text()
-            self.screen.setText(text + " * ")
-        self.equ = 0
-
-    def action_point(self):
+    def action_decimal(self):
+        """
+        this will insert a decimal into the equation
+        """
         # appending label text
         if self.equ == 1:
             self.screen.setText("")
@@ -181,9 +167,8 @@ class Calculator(QWidget):
                 for x in reversed(text):
                     if x == '.':
                         return
-                    else:
-                        if x == ' ':
-                            break
+                    if x == ' ':
+                        break
                 temp = text[len(text) - 1]
                 if not temp.isnumeric():
                     text += "0"
@@ -192,121 +177,30 @@ class Calculator(QWidget):
             self.screen.setText(text + ".")
         self.equ = 0
 
-    def action0(self):
-        # appending label text
+    def actionNum(self, num):
+        """
+        this will insert the given number into the equation
+        """
         if self.equ == 1:
             self.screen.setText("")
         text = self.screen.text()
         if text == "Wrong Input":
             self.screen.setText("")
             text = self.screen.text()
-        self.screen.setText(text + "0")
-        self.equ = 0
-
-    def action1(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "1")
-        self.equ = 0
-
-    def action2(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "2")
-        self.equ = 0
-
-    def action3(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "3")
-        self.equ = 0
-
-    def action4(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "4")
-        self.equ = 0
-
-    def action5(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "5")
-        self.equ = 0
-
-    def action6(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "6")
-        self.equ = 0
-
-    def action7(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "7")
-        self.equ = 0
-
-    def action8(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "8")
-        self.equ = 0
-
-    def action9(self):
-        # appending label text
-        if self.equ == 1:
-            self.screen.setText("")
-        text = self.screen.text()
-        if text == "Wrong Input":
-            self.screen.setText("")
-            text = self.screen.text()
-        self.screen.setText(text + "9")
+        self.screen.setText(text + str(num))
         self.equ = 0
 
     def action_clear(self):
+        """
+        this will clear the equation
+        """
         # clearing the label text
         self.screen.setText("")
 
     def action_del(self):
+        """
+        this will delete the last entered number in the equation
+        """
         # clearing a single digit
         text = self.screen.text()
         if text == "Wrong Input":
@@ -323,6 +217,9 @@ class Calculator(QWidget):
         self.equ = 0
 
     def action_neg(self):
+        """
+        this will negate the current number
+        """
         text = self.screen.text()
         if text == "Wrong Input":
             self.screen.setText("")
@@ -336,10 +233,9 @@ class Calculator(QWidget):
                     text = text[:x] + '-' + text[x:]
                     self.screen.setText(text)
                     return
-                else:
-                    if text[x] == '-':
-                        text = text[:x] + text[(x + 1):]
-                        self.screen.setText(text)
-                        return
+                if text[x] == '-':
+                    text = text[:x] + text[(x + 1):]
+                    self.screen.setText(text)
+                    return
             text = '-' + text
             self.screen.setText(text)

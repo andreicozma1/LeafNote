@@ -1,3 +1,6 @@
+"""
+This module holds a class that will display the current workspace to the user
+"""
 import logging
 import os
 
@@ -6,15 +9,11 @@ from PyQt5.QtWidgets import QFileSystemModel, QTreeView
 
 from Utils.Encryptor import Encryptor
 
-"""
-displays interactive directory on 
-left side of text editor
-"""
-
 
 class DirectoryViewer(QTreeView):
     """
-    displays a directory
+    displays interactive directory on
+    left side of text editor
     """
 
     def __init__(self, document, file_manager, path=None):
@@ -24,8 +23,9 @@ class DirectoryViewer(QTreeView):
         :param path: default path to file being displayed
         :return: returns nothing
         """
-        super(DirectoryViewer, self).__init__()
-        logging.info("")
+        super().__init__()
+        logging.debug("Creating Directory Viewer")
+
         self.document = document
         self.fileManager = file_manager
 
@@ -63,12 +63,12 @@ class DirectoryViewer(QTreeView):
         # Check for encryption key in Workspace
         path_key = os.path.join(path, ".leafCryptoKey")
         if os.path.exists(path_key):
-            logging.debug("Encryption key found! " + path_key)
+            logging.debug("Encryption key found! %s", path_key)
             with open(path_key, 'r') as f:
                 key = f.read()
                 self.fileManager.encryptor = Encryptor(key)
         else:
-            logging.debug("Workspace not encrypted")
+            logging.info("Workspace not encrypted")
 
     def onDoubleClick(self, index):
         """

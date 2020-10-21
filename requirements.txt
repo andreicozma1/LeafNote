@@ -19,3 +19,4 @@ six==1.15.0
 threadpoolctl==2.1.0
 tqdm==4.50.2
 wget==3.2
+requests~=2.24.0

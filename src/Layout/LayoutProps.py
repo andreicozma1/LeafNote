@@ -1,21 +1,24 @@
-import logging
-
 """
 holds the class with the layout properties
 """
 
+import logging
 
-class LayoutProps():
+
+class LayoutProps:
     """
     class has the default layout properties
     """
+
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self):
         """
         the default properties for the layout
         :return: returns nothing
         """
-        logging.info("Setting up Layout Properties")
+        logging.debug("Setting up Layout Props")
 
         self.min_doc_width = .4
         self.min_menu_width = .2
