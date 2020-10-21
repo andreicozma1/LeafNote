@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollAr
 from Utils import DocumentSummarizer
 from Utils.Reminders import Reminder, Reminders
 from Widgets.CollapsibleWidget import CollapsibleWidget
+from Widgets.ColorWidget import Color
 
 
 class ContextMenu(QScrollArea):
@@ -54,6 +55,7 @@ class ContextMenu(QScrollArea):
         self.setupDetails()
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
+        self.updateReminders()
 
     def setupComponents(self):
         """
@@ -161,3 +163,25 @@ class ContextMenu(QScrollArea):
         else:
             self.col_summary_body.hide()
             self.col_summary_enable.show()
+
+    def updateReminders(self):
+        layout = self.col_reminders_main.content.layout()
+        for i in range(layout.count()):
+            layout.itemAt(i).widget().deleteLater()
+
+        dictionary = self.app.reminders.rem_list
+        reminders_list = list(dictionary.values())
+        reminders_list.sort(key=lambda t: t['sort'])
+
+        def onDelete(key):
+            self.app.reminders.deleteReminder(key)
+
+        for rem in reminders_list:
+            print(rem)
+            wid = Reminder(rem['key'], rem['date'], rem['time'], rem['title'], rem['text'], onDelete)
+
+            self.col_reminders_main.addElement(wid)
+
+        print(self.col_reminders_main.content.layout().count())
+
+
