@@ -78,6 +78,10 @@ class DialogBuilder(QDialog):
         self.layout_vertical.addWidget(widget)
 
     def deleteWidget(self, widget: QWidget):
+        """
+        Deletes a widget from the layout
+        :param widget: Widget to delete
+        """
         logging.info("Deleted")
         self.layout_vertical.removeWidget(widget)
 
