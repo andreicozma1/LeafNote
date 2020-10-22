@@ -76,17 +76,16 @@ class EquationEditor(QWidget):
         Generates the image from the users input.
         """
         logging.info("User Generated Equation")
-        # TODO - handle user spamming button
-        # if last_time + 8 < current_time:
-        # if self.user_query
-        # get the formatted equation from the web api
-        req = requests.get(self.url + self.equation_bar.text())
 
-        # convert the image to a pixmap and display it to the user through the qlabel
-        img = QImage()
-        img.loadFromData(req.content)
-        self.pixmap = QPixmap(img)
-        self.equation.setPixmap(self.pixmap)
+        if self.user_query != self.equation_bar.text():
+            self.user_query = self.equation_bar.text()
+            # get the formatted equation from the web api
+            req = requests.get(self.url + self.equation_bar.text())
+            # convert the image to a pixmap and display it to the user through the qlabel
+            img = QImage()
+            img.loadFromData(req.content)
+            self.pixmap = QPixmap(img)
+            self.equation.setPixmap(self.pixmap)
 
     def onInsert(self):
         """
