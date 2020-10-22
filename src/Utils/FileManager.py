@@ -63,7 +63,7 @@ class FileManager:
             if not file_missing:
                 # if the file is not missing check its time
                 if self.checkCurrentFileTime(document):
-                    # if the users file is out of date and they select to keep their current version
+                    # if the user is up to date or wants to save the current document
                     self.writeFileData(self.current_document.absoluteFilePath(), data)
                     self.file_opened_time = os.path.getatime(
                         self.current_document.absoluteFilePath()
