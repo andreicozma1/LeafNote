@@ -108,34 +108,35 @@ class FileManager:
         if os.path.exists(self.current_document.absoluteFilePath()):
             # returns true that the file exists and false saying the file is not missing
             return True, False
-        else:
-            # if the file doesnt exist prompt the user to ask if they want to save it
-            logging.warning("File not found")
-            file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
-                                                                "File not found",
-                                                                "File not found",
-                                                                "The original file has been "
-                                                                "moved/deleted "
-                                                                "externally. Would you like "
-                                                                "to save a current "
-                                                                "copy of the file?")
-            button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
-            file_not_found_dialog.addButtonBox(button_box)
 
-            # close the tab with the current name because we will create newtab if the user
-            # wants to save the file and we dont want to keep it if the user does not want to save
-            self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
+        # if the file doesnt exist prompt the user to ask if they want to save it
+        logging.warning("File not found")
+        file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                            "File not found",
+                                                            "File not found",
+                                                            "The original file has been "
+                                                            "moved/deleted "
+                                                            "externally. Would you like "
+                                                            "to save a current "
+                                                            "copy of the file?")
+        button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+        file_not_found_dialog.addButtonBox(button_box)
 
-            if file_not_found_dialog.exec():
-                # if the user chose to save the document return true that the file will exist and
-                # true that the file is in fact missing
-                return True, True
+        # close the tab with the current name because we will create newtab if the user
+        # wants to save the file and we dont want to keep it if the user does not want to save
+        self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
 
-            else:
-                # if the user chose not to save the file return false that the file doesnt exist
-                # and false that the file is missing
-                logging.info("User chose NOT to save the file.")
-                return False, False
+        if file_not_found_dialog.exec():
+            # if the user chose to save the document return true that the file will exist and
+            # true that the file is in fact missing
+            logging.info("User chose save the current document.")
+            return True, True
+
+
+        # if the user chose not to save the file return false that the file doesnt exist
+        # and false that the file is missing
+        logging.info("User chose NOT to save the file.")
+        return False, False
 
     def checkCurrentFileTime(self, document):
         """
@@ -167,14 +168,14 @@ class FileManager:
                 # if they want to keep their changes return true
                 logging.debug("User chose to keep their changes")
                 return True
-            else:
-                # if they want to update to the most recent changes on disk return false
-                logging.debug("User chose to update to file saved on disk")
-                data = self.getFileData(self.current_document.absoluteFilePath())
-                self.writeFileData(self.current_document.absoluteFilePath(), data)
-                self.openDocument(document, self.current_document.absoluteFilePath(), False)
-                self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
-                return False
+
+            # if they want to update to the most recent changes on disk return false
+            logging.debug("User chose to update to file saved on disk")
+            data = self.getFileData(self.current_document.absoluteFilePath())
+            self.writeFileData(self.current_document.absoluteFilePath(), data)
+            self.openDocument(document, self.current_document.absoluteFilePath(), False)
+            self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
+            return False
 
         # return true if the file is up to date
         return True
