@@ -1,3 +1,8 @@
+"""
+The Document module sets up and defines the methods for
+used to interact with the Text Edit area.
+"""
+
 import logging
 
 from PyQt5 import QtGui
@@ -5,10 +10,6 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
-
-"""
-The active document - area where user types
-"""
 
 
 class Document(QTextEdit):
@@ -157,11 +158,15 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
+        returns true the current font weight is bolded
+        :return: returns whether or not the text is bolded
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
+        returns true the current font is strikethrough
+        :return: returns whether or not the text is struck through
         """
         return self.currentCharFormat().fontStrikeOut()
 
@@ -173,7 +178,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.setCharFormat(self.doc_props.normal)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -191,11 +196,47 @@ class Document(QTextEdit):
 
     def onTitleStyleChanged(self, state):
         """
-        Sets the font to the new font
+        Sets the font to the new font based on title style selected
+        updates style of title
+        resets title styles to default
         :return: returns nothing
         """
         logging.info(state)
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.dict_title_styles[state])
-        self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        if state == "":
+            cursor.setCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            return
+        if self.doc_props.text_update_title not in state and \
+                self.doc_props.text_reset_title not in state:
+            cursor.setCharFormat(self.doc_props.dict_title_styles[state])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        elif self.doc_props.text_update_title in state:
+            self.doc_props.dict_title_styles[
+                state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
+        else:
+            self.resetTitleStyle()
+
+    def resetTitleStyle(self):
+        """
+        resets title styles to default style
+        :return: returns nothing
+        """
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Title"] = self.doc_props.title
+        self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
+        self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
+        self.doc_props.dict_title_styles["Header 2"] = self.doc_props.heading2
+        self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
+        self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
+
+    def setFormatText(self, text: str, formatting: bool):
+        """
+        Sets formatted or not text
+        """
+        self.setAcceptRichText(formatting)
+        self.setAutoFormatting(self.AutoAll if formatting else self.AutoNone)
+        self.setText(text)
+        if not formatting:
+            self.clearAllFormatting()

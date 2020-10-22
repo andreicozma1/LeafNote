@@ -2,8 +2,8 @@
 EQUATION EDITOR
 """
 import logging
-import requests
 
+import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QPushButton
@@ -16,6 +16,7 @@ class EquationEditor(QWidget):
     This is a widget is an interactive editor for the user to create and insert equations
     using latex
     """
+
     def __init__(self, document):
         """
         initializes the widgets

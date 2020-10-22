@@ -1,3 +1,6 @@
+"""
+this module holds the widget that will display the replace feature in a document
+"""
 import logging
 
 from PyQt5.QtCore import Qt
@@ -6,6 +9,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton
 
 class Replace(QWidget):
     """
+    This widget shows gives the user the ability to replace text throughout the document
     """
 
     def __init__(self, search_and_replace, document):

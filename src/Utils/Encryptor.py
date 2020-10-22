@@ -1,3 +1,6 @@
+"""
+This module holds a class to encrypt a file and or a directory
+"""
 import logging
 import os
 
@@ -9,6 +12,7 @@ from Utils.DialogBuilder import DialogBuilder
 
 class Encryptor(Fernet):
     """
+    this class will encrypt a given file
     """
 
     def __init__(self, key):
@@ -44,6 +48,10 @@ class Encryptor(Fernet):
 
 def onEncryptionAction(app, file_manager):
     """
+    this will determine what will be encrypted or decrypted based off user input
+    :param app: reference to the main application object
+    :param file_manager: reference to the file manager object
+    :return: Returns nothing
     """
 
     # Helper Functions
@@ -95,20 +103,21 @@ def encryptionDialogHandler(app, file_manager, button):
         try:
             with open(path_key, 'wb') as f:
                 f.write(key)
-                logging.debug("Saved key to: " + path_key)
+                logging.debug("Saved key to: %s", path_key)
         except OSError as e:
             logging.exception(e)
             logging.error("Failed to save CRYPTO KEY")
             return
 
         file_manager.encryptor = Encryptor(key)
-        logging.info("START ENCRYPT FILES IN WORKSPACE: " + path_workspace)
+        logging.info("START ENCRYPT FILES IN WORKSPACE: %s", path_workspace)
         for dirpath, dirnames, filenames in os.walk(path_workspace):
             for filename in [f for f in filenames if not f.startswith(".")]:
                 path = os.path.join(dirpath, filename)
                 file_manager.encryptor.encryptFile(path)
-                logging.info(" - Encrypted: " + path)
-        logging.info("END ENCRYPT FILES IN WORKSPACE: " + path_workspace)
+                logging.info(" - Encrypted: %s", path)
+                logging.debug(dirnames)
+        logging.info("END ENCRYPT FILES IN WORKSPACE: %s", path_workspace)
 
     else:
         logging.info("User canceled")
@@ -125,18 +134,19 @@ def decryptionDialogHandler(app, file_manager, button):
         logging.info("User clicked Yes")
 
         path_workspace = app.left_menu.model.rootPath()
-        logging.info("START DECRYPT WORKSPACE: " + path_workspace)
+        logging.info("START DECRYPT WORKSPACE: %s", path_workspace)
         for dirpath, dirnames, filenames in os.walk(path_workspace):
             for filename in [f for f in filenames if not f.startswith(".")]:
                 path = os.path.join(dirpath, filename)
                 file_manager.encryptor.decryptFile(path)
-                logging.info(" - Decrypted: " + path)
-        logging.info("END DECRYPT WORKSPACE: " + path_workspace)
+                logging.info(" - Decrypted: %s", path)
+                logging.debug(dirnames)
+        logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
         if os.path.exists(path_key):
             os.remove(path_key)
-            logging.debug("Removed CRYPTO KEY: " + path_key)
+            logging.debug("Removed CRYPTO KEY: %s", path_key)
         else:
             logging.error("Failed to remove CRYPTO KEY")
             return

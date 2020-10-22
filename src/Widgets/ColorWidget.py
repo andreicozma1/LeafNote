@@ -1,9 +1,8 @@
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget
-
 """
 holds class Color
 """
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QWidget
 
 
 class Color(QWidget):
