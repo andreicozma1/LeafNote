@@ -111,7 +111,7 @@ class FileManager:
                                                 self.app.left_menu.model.rootPath(),
                                                 file_filter)
 
-        if file_name[0] == '':
+        if file_name is None or file_name[0] == '':
             logging.info("No File Path Given")
             return False
 
