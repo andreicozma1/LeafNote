@@ -92,9 +92,7 @@ class Document(QTextEdit):
             cursor.setPosition(end, QTextCursor.KeepAnchor)
 
             # set the words format
-            font_format = self.currentCharFormat()
-            font_format.setFontUnderline(True)
-            cursor.setCharFormat(font_format)
+            cursor.setCharFormat(self.doc_props.format_url)
 
             # reset to the current format
             cursor.setPosition(pos)
