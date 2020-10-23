@@ -38,7 +38,7 @@ class MenuBar(QMenuBar):
         self.equation_editor = None
 
     # =====================================================================================
-    def makeFileMenu(self, app, file_manager, bar_open_tabs):
+    def makeFileMenu(self, app, file_manager):
         """
         sets up the file tabs drop menu
         :return: returns nothing
@@ -80,15 +80,14 @@ class MenuBar(QMenuBar):
             """
             logging.info("Clicked Save Action")
             if file_manager.saveDocument(self.doc):
-                logging.info("Created tab")
-                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
+                logging.debug("Saved Document Completed.")
 
         def onSaveAsBtn():
             """
             """
             logging.info("Clicked Save As Action")
             if file_manager.saveAsDocument(self.doc):
-                logging.info("Created tab")
+                logging.debug("Saved As Document Completed.")
 
         def onExitBtn():
             """
