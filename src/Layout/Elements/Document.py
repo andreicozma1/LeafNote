@@ -41,6 +41,7 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
+        self.textChanged.connect(self.highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
@@ -54,7 +55,7 @@ class Document(QTextEdit):
 
         # get the start and end index of the current slection
         start = self.toPlainText().rfind(" ", 0, pos)
-        end = self.toPlainText().find(" ", pos, )
+        end = self.toPlainText().find(" ", pos)
 
         # fix the indices if they are equal to -1
         start = 0 if start == -1 else start + 1
@@ -71,6 +72,11 @@ class Document(QTextEdit):
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
 
+    def highlightUrls(self):
+        pattern = re.compile(r"(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?"
+                             r"^=%&:/~+#-]*[\w@?^=%&/~+#-])?")
+        urls = re.findall(pattern, self.toPlainText())
+        print(urls)
 
     def onFontItalChanged(self, is_italic: bool):
         """
