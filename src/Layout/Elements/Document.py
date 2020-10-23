@@ -4,10 +4,8 @@ used to interact with the Text Edit area.
 """
 
 import logging
-import re
 import webbrowser
-
-import validators as validators
+import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
@@ -42,7 +40,7 @@ class Document(QTextEdit):
             default_text = "You can type here."
 
         self.urls = list()
-        self.textChanged.connect(self.highlightUrls)
+        self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
@@ -50,19 +48,16 @@ class Document(QTextEdit):
         self.setPlaceholderText("Start typing here...")
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
+        """
+        if the double clicked word is a link open it
+        :return: returns nothing
+        """
         # get the cursor where the user double clicked
         cursor = self.cursorForPosition(e.pos())
         pos = cursor.position()
 
-        # get the start and end index of the current slection
-        start = self.toPlainText().rfind(" ", 0, pos) + 1
-        end = self.toPlainText().find(" ", pos)
-
-        # fix the indices if they are equal to -1
-        end = len(self.toPlainText()) if end == -1 else end
-
-        # get the selected word
-        url = self.toPlainText()[start:end]
+        # get the selected words position and full word
+        _, _, url = self._getWordFromPos(pos)
 
         # check if the url is valid
         valid = validators.url(url)
@@ -72,21 +67,17 @@ class Document(QTextEdit):
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
 
-    def highlightUrls(self):
+    def _highlightUrls(self):
+        """
+        This highlights the current word if it is a link
+        :return: returns nothing
+        """
         # save the current cursor position and format
         cursor = self.textCursor()
         pos = cursor.position()
-        curr_format = self.currentCharFormat()
 
-        # get the start and end index of the current slection
-        start = self.toPlainText().rfind(" ", 0, pos) + 1
-        end = self.toPlainText().find(" ", pos)
-
-        # fix the indices if they are equal to -1
-        end = len(self.toPlainText()) if end == -1 else end
-
-        # get the selected word
-        url = self.toPlainText()[start:end]
+        # get the selected words position and full word
+        start, end, url = self._getWordFromPos(pos)
 
         # check if the url is valid
         valid = validators.url(url)
@@ -94,6 +85,7 @@ class Document(QTextEdit):
         # if the link is valid, underline it
         if valid:
             self.blockSignals(True)
+            curr_format = self.currentCharFormat()
 
             # select the whole word
             cursor.setPosition(start)
@@ -111,6 +103,22 @@ class Document(QTextEdit):
 
             self.blockSignals(False)
 
+    def _getWordFromPos(self, pos):
+        """
+        this get the word at the selected position
+        :param pos: the position in the document
+        :return: returns a tuple of the start and end position as well as the word
+        """
+        # get the start and end index of the current selection
+        start = self.toPlainText().rfind(" ", 0, pos) + 1
+        end = self.toPlainText().find(" ", pos)
+
+        # fix the indices if they are equal to -1
+        end = len(self.toPlainText()) if end == -1 else end
+
+        # get the selected word
+        word = self.toPlainText()[start:end]
+        return start, end, word
 
     def onFontItalChanged(self, is_italic: bool):
         """
