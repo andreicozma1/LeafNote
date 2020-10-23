@@ -4,9 +4,12 @@ used to interact with the Text Edit area.
 """
 
 import logging
+import re
+import webbrowser
 
+import validators as validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
@@ -43,6 +46,31 @@ class Document(QTextEdit):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+
+    def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
+        # get the cursor where the user double clicked
+        cursor = self.cursorForPosition(e.pos())
+        pos = cursor.position()
+
+        # get the start and end index of the current slection
+        start = self.toPlainText().rfind(" ", 0, pos)
+        end = self.toPlainText().find(" ", pos, )
+
+        # fix the indices if they are equal to -1
+        start = 0 if start == -1 else start + 1
+        end = len(self.toPlainText()) if end == -1 else end
+
+        # get the selected word
+        url = self.toPlainText()[start:end]
+
+        # check if the url is valid
+        valid = validators.url(url)
+
+        # if the link is valid open it
+        if valid:
+            webbrowser.open(url)
+            logging.info("User opened link - %s", url)
+
 
     def onFontItalChanged(self, is_italic: bool):
         """
