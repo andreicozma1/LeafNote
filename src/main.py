@@ -55,6 +55,8 @@ class App(QMainWindow):
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
         self.reminders = Reminders(self, self.settings)
+        self.btn_mode_switch = None
+
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -82,7 +84,6 @@ class App(QMainWindow):
                                                               self.right_menu,
                                                               self.search_and_replace)
         layout_main.addWidget(self.documents_view)
-
 
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
