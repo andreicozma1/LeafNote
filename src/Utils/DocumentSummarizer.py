@@ -77,7 +77,7 @@ class Summarizer:
 
         # create vectors for each of our sentences
         self.sentence_vectors = []
-        self.createWordVectors(clean_sentences)
+        self.createSentenceVectors(clean_sentences)
 
         # create a similarity matrix of the sentences
         self.sim_mat = np.zeros([len(sentences), len(sentences)])
@@ -115,7 +115,7 @@ class Summarizer:
                            clean_sentences]
         return clean_sentences
 
-    def createWordVectors(self, clean_sentences):
+    def createSentenceVectors(self, clean_sentences):
         """
         this will creates a list of sentence vectors from the given clean sentences
         :param clean_sentences: a list of sentences without stopwords
