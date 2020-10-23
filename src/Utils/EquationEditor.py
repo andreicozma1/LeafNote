@@ -32,6 +32,7 @@ class EquationEditor(QWidget):
         self.pixmap = None
         self.equation = None
         self.equation_bar = None
+        self.user_query = ""
 
         # create the QDialog and fill it in
         self.dialog = DialogBuilder(document)
@@ -77,14 +78,15 @@ class EquationEditor(QWidget):
         """
         logging.info("User Generated Equation")
 
-        # get the formatted equation from the web api
-        req = requests.get(self.url + self.equation_bar.text())
-
-        # convert the image to a pixmap and display it to the user through the qlabel
-        img = QImage()
-        img.loadFromData(req.content)
-        self.pixmap = QPixmap(img)
-        self.equation.setPixmap(self.pixmap)
+        if self.user_query != self.equation_bar.text():
+            self.user_query = self.equation_bar.text()
+            # get the formatted equation from the web api
+            req = requests.get(self.url + self.equation_bar.text())
+            # convert the image to a pixmap and display it to the user through the qlabel
+            img = QImage()
+            img.loadFromData(req.content)
+            self.pixmap = QPixmap(img)
+            self.equation.setPixmap(self.pixmap)
 
     def onInsert(self):
         """
