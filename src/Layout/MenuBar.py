@@ -230,13 +230,13 @@ class MenuBar(QMenuBar):
         menu_view.addSeparator()
         menu_view.addAction(
             makeViewAction("Toggle Size", "",
-                           partial(left_menu.toggleHeader, "Size")))
+                           partial(left_menu.toggleHeaderColByName, "Size")))
         menu_view.addAction(
             makeViewAction("Toggle Type", "",
-                           partial(left_menu.toggleHeader, "Type")))
+                           partial(left_menu.toggleHeaderColByName, "Type")))
         menu_view.addAction(
             makeViewAction("Toggle Date", "",
-                           partial(left_menu.toggleHeader, "Date Modified")))
+                           partial(left_menu.toggleHeaderColByName, "Date Modified")))
         menu_view.addAction(
             makeViewAction("Fit Columns", "", left_menu.resizeColumnsToContent))
         # ========= END LEFT MENU OPTIONS SECTION =========

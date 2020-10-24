@@ -10,9 +10,6 @@ class LayoutProps:
     class has the default layout properties
     """
 
-    # pylint: disable=too-few-public-methods
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self):
         """
         the default properties for the layout
@@ -28,11 +25,46 @@ class LayoutProps:
         self.bar_tabs_spacing = 1
         self.bar_tabs_tab_width = 50
 
-        self.default_left_menu_cols = ["Name"]
-
-        self.header_margin = 5
-        self.header_color = "rgba(249, 145, 146, 0.8)"
-        self.item_height = 30
-        self.item_hover_color = "rgba(249, 145, 146, 0.2)"
-
         self.splitter_width = 1
+
+    @staticmethod
+    def getDefaultLeftMenuCols():
+        """
+        Returns the default columns shown in the left menu at startup
+        """
+        return ["Name"]
+
+    @staticmethod
+    def getDefaultLeftMenuItemHeight():
+        """
+        Returns the default Left Menu Item height
+        """
+        return 30
+
+    @staticmethod
+    def getDefaultLeftMenuHeaderMargin():
+        """
+        Returns the default Left Menu Header Margin
+        """
+        return 5
+
+    @staticmethod
+    def getDefaultLeftMenuHeaderColor():
+        """
+        Returns the default Left Menu Header Color
+        """
+        return "rgba(56, 90, 125, 1.0)"
+
+    @staticmethod
+    def getDefaultLeftMenuSelectColor():
+        """
+        Returns the default Left Menu Select color
+        """
+        return "rgba(249, 145, 146, 0.6)"
+
+    @staticmethod
+    def getDefaultLeftMenuHoverColor():
+        """
+        Returns the default Left Menu Hover Color
+        """
+        return "rgba(249, 145, 146, 0.1)"

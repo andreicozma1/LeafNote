@@ -12,8 +12,6 @@ class DocProps:
     class has the default document properties
     """
 
-    # pylint: disable=too-few-public-methods
-
     def __init__(self):
         """
         the default properties for the document

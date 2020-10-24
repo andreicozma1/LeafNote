@@ -37,8 +37,6 @@ class App(QMainWindow):
     puts all the pieces of code together to get finished application
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self):
         """
         creates the window and its attributes

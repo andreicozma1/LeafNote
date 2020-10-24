@@ -21,8 +21,6 @@ class BottomBar(QWidget):
     the bottom bar
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, app, document, settings: QSettings, path_res: str):
         """
         Creates the bottom bar
