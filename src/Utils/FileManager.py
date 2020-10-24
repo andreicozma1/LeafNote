@@ -336,7 +336,7 @@ class FileManager:
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
         # update the document shown to the user
         self.app.right_menu.updateDetails(path)
-        self.app.left_menu.selectPath(path)
+        self.app.left_menu.selectItemFromPath(path)
         return True
 
     def getFileData(self, path: str):

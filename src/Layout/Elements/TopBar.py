@@ -19,8 +19,6 @@ class TopBar(QWidget):
     class that holds the top bar attributes
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, path_res: str, document: Document):
         """
         sets up the top bar and its features

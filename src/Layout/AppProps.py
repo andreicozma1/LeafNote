@@ -14,8 +14,6 @@ class AppProps:
     class that contains the properties of the application
     """
 
-    # pylint: disable=too-few-public-methods
-
     def __init__(self, script_path):
         """
         sets the default properties of applications

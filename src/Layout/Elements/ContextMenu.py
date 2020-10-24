@@ -21,17 +21,12 @@ class ContextMenu(QScrollArea):
     file metadata information, summary, reminders, etc.
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self, app, document):
         super().__init__()
         logging.debug("Creating Context Menu")
         self.app = app
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
-
-        # self.setupDetails(vertical_layout)
-        # vertical_layout.addStretch()
 
         # Main widget of QScroll area is an expandable QWidget with
         self.main_widget = QWidget()
