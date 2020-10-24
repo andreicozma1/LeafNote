@@ -1,4 +1,5 @@
 import logging
+from functools import partial
 
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
@@ -185,7 +186,7 @@ class MenuBar(QMenuBar):
         return self.menu_edit
 
     # =====================================================================================
-    def makeViewMenu(self, app, bottom_bar) -> QMenu:
+    def makeViewMenu(self, app, bottom_bar, left_menu) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -202,9 +203,33 @@ class MenuBar(QMenuBar):
             view_action.triggered.connect(signal)
             return view_action
 
-        self.menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
-        self.menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
-        self.menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+        self.menu_view.addAction(
+            makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
+        self.menu_view.addAction(
+            makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
+        self.menu_view.addAction(
+            makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+
+        # ========= START LEFT MENU OPTIONS SECTION =========
+        self.menu_view.addSeparator()
+        self.menu_view.addAction(
+            makeViewAction("Expand All", "", left_menu.expandAll))
+        self.menu_view.addAction(
+            makeViewAction("Collapse All", "", left_menu.collapseAll))
+        self.addSeparator()
+        self.menu_view.addAction(
+            makeViewAction("Toggle Size", "",
+                           partial(left_menu.toggleHeader, "Size")))
+        self.menu_view.addAction(
+            makeViewAction("Toggle Type", "",
+                           partial(left_menu.toggleHeader, "Type")))
+        self.menu_view.addAction(
+            makeViewAction("Toggle Date", "",
+                           partial(left_menu.toggleHeader, "Date Modified")))
+        self.menu_view.addAction(
+            makeViewAction("Fit Columns", "", left_menu.resizeColumnsToContent))
+        # ========= END LEFT MENU OPTIONS SECTION =========
+
         # ========= END VIEW MENU SECTION =========
         return self.menu_view
 
@@ -315,7 +340,8 @@ class MenuBar(QMenuBar):
             if document.summarizer is not None:
                 selection = document.textCursor().selectedText()
                 if selection != "":
-                    app.right_menu.col_summary_body.setText(document.summarizer.summarize(selection))
+                    app.right_menu.col_summary_body.setText(
+                        document.summarizer.summarize(selection))
                 else:
                     app.right_menu.col_summary_body.setText(
                         document.summarizer.summarize(document.toPlainText()))

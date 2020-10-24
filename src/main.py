@@ -66,7 +66,8 @@ class App(QMainWindow):
 
         # Create Main Workspace
         last_path = self.settings.value("workspacePath")
-        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
+        self.left_menu = DirectoryViewer(self.layout_props, self.document,
+                                         self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.document)
@@ -124,7 +125,7 @@ class App(QMainWindow):
         """
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self, self.file_manager)
-        self.menu_bar.makeViewMenu(self, self.bottom_bar)
+        self.menu_bar.makeViewMenu(self, self.bottom_bar, self.left_menu)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
         self.document.selectionChanged.connect(self.menu_bar.updateFormatOnSelectionChange)

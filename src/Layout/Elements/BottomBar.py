@@ -225,4 +225,4 @@ class BottomBar(QWidget):
         dialog.addWidget(calendar)
         dialog.layout().setContentsMargins(0, 0, 0, 0)
         dialog.setFixedHeight(400)
-        dialog.show()
+        dialog.exec()
