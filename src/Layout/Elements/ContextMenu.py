@@ -11,6 +11,7 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from Utils import DocumentSummarizer
+from Utils.Reminders import Reminder
 from Widgets.CollapsibleWidget import CollapsibleWidget
 
 
@@ -20,12 +21,17 @@ class ContextMenu(QScrollArea):
     file metadata information, summary, reminders, etc.
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, app, document):
         super().__init__()
         logging.debug("Creating Context Menu")
         self.app = app
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
+
+        # self.setupDetails(vertical_layout)
+        # vertical_layout.addStretch()
 
         # Main widget of QScroll area is an expandable QWidget with
         self.main_widget = QWidget()
@@ -42,12 +48,12 @@ class ContextMenu(QScrollArea):
         self.col_summary_body = self.makePropLabel("Summary")
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
-
+        self.col_reminders_add = QPushButton("Add Reminder")
         self.setupComponents()
         self.setupDetails()
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
-
+        self.updateReminders()
 
     def setupComponents(self):
         """
@@ -102,6 +108,15 @@ class ContextMenu(QScrollArea):
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
 
+        def onRemindersAction():
+            """
+            Adds a new reminder on button click
+            """
+            self.app.reminders.showDialog(self)
+
+        self.col_reminders_add.clicked.connect(onRemindersAction)
+        self.col_reminders_main.addElement(self.col_reminders_add)
+
     def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
@@ -152,3 +167,24 @@ class ContextMenu(QScrollArea):
         else:
             self.col_summary_body.hide()
             self.col_summary_enable.show()
+
+    def updateReminders(self):
+        """
+        Updates the right menu reminders based on dictionary
+        """
+        layout = self.col_reminders_main.content.layout()
+        for i in range(1, layout.count()):
+            layout.itemAt(i).widget().deleteLater()
+
+        dictionary = self.app.reminders.rem_list
+        reminders_list = list(dictionary.values())
+        reminders_list.sort(key=lambda t: t['sort'])
+
+        def onDelete(key):
+            self.app.reminders.deleteReminder(key)
+
+        for rem in reminders_list:
+            wid = Reminder(rem['key'], rem['date'], rem['time'],
+                           rem['title'], rem['text'], onDelete)
+
+            self.col_reminders_main.addElement(wid)

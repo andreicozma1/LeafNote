@@ -1,3 +1,7 @@
+"""
+all properties and functionalities of the menu bar
+"""
+
 import logging
 from functools import partial
 
@@ -10,13 +14,10 @@ from Layout.Utils.SearchWorkspace import SearchWorkspace
 from Utils import Encryptor, EquationEditor, DocumentSummarizer
 from Widgets import Calculator
 
-"""
-all properties and functionalities of the menu bar
-"""
-
 
 class MenuBar(QMenuBar):
     """
+    This class is a customized QMenuBar for the application
     """
 
     def __init__(self, document: Document, doc_props: DocProps):
@@ -31,8 +32,14 @@ class MenuBar(QMenuBar):
         self.doc_props = doc_props
         self.setNativeMenuBar(False)
 
+        self.menu_format = None
+        self.group_style = None
+        self.group_align = None
+        self.calculator = None
+        self.equation_editor = None
+
     # =====================================================================================
-    def makeFileMenu(self, app, file_manager, bar_open_tabs):
+    def makeFileMenu(self, app, file_manager):
         """
         sets up the file tabs drop menu
         :return: returns nothing
@@ -74,15 +81,14 @@ class MenuBar(QMenuBar):
             """
             logging.info("Clicked Save Action")
             if file_manager.saveDocument(self.doc):
-                logging.info("Created tab")
-                bar_open_tabs.addTab(file_manager.current_document.absoluteFilePath())
+                logging.debug("Saved Document Completed.")
 
         def onSaveAsBtn():
             """
             """
             logging.info("Clicked Save As Action")
             if file_manager.saveAsDocument(self.doc):
-                logging.info("Created tab")
+                logging.debug("Saved As Document Completed.")
 
         def onExitBtn():
             """
@@ -91,7 +97,7 @@ class MenuBar(QMenuBar):
             file_manager.closeAll(self.doc)
             app.close()
 
-        self.menu_file = self.addMenu('&File')
+        menu_file = self.addMenu('&File')
 
         # ========= START FILE MENU SECTION =========
         def makeFileAction(name: str, shortcut: str, signal) -> QAction:
@@ -106,18 +112,18 @@ class MenuBar(QMenuBar):
         new_file_act.setStatusTip('New')
         new_file_act.triggered.connect(onNewBtn)
 
-        self.menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
-        self.menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
-        self.menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
-        self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
-        self.menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
+        menu_file.addAction(makeFileAction("New File", "Alt+Insert", onNewBtn))
+        menu_file.addAction(makeFileAction("Open File", "Ctrl+o", onOpenBtn))
+        menu_file.addAction(makeFileAction("Open Workspace", "Ctrl+Shift+o", onOpenFolderBtn))
+        menu_file.addSeparator()
+        menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
+        menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
 
-        self.menu_file.addSeparator()
-        self.menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
+        menu_file.addSeparator()
+        menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
         # ========= END FILE MENU SECTION =========
 
-        return self.menu_file
+        return menu_file
 
     # =====================================================================================
     def makeEditMenu(self, app, file_manager):
@@ -126,13 +132,12 @@ class MenuBar(QMenuBar):
         :return: the menu created
         """
         logging.debug("Creating Edit Menu")
-        self.menu_edit = self.addMenu('&Edit')
 
         def onFindBtn():
             """
             """
             state_replace = app.search_and_replace.replace.isVisible()
-            logging.info("Clicked Find Action - %s" % str(state_replace))
+            logging.info("Clicked Find Action - %s", str(state_replace))
             if state_replace:
                 app.search_and_replace.replace.setVisible(False)
 
@@ -152,7 +157,7 @@ class MenuBar(QMenuBar):
             """
             """
             state_replace = app.search_and_replace.replace.isVisible()
-            logging.info("Clicked Find and Replace Action - %s" % str(state_replace))
+            logging.info("Clicked Find and Replace Action - %s", str(state_replace))
             # Toggle Find and Replace
             app.search_and_replace.replace.setVisible(not state_replace)
             if app.search_and_replace.replace.isVisible():
@@ -160,6 +165,8 @@ class MenuBar(QMenuBar):
                 app.search_and_replace.search.search_bar.setFocus()
 
         # ========= START EDIT MENU SECTION =========
+        menu_edit = self.addMenu('&Edit')
+
         def makeEditAction(name: str, shortcut: str, signal) -> QAction:
             """
             """
@@ -169,21 +176,21 @@ class MenuBar(QMenuBar):
             return edit_action
 
         # Add actions
-        self.menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
-        self.menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
-        self.menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
-        self.menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
-        self.menu_edit.addSeparator()
-        self.menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
-        self.menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
-        self.menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
+        menu_edit.addAction(makeEditAction("Undo", "Ctrl+z", self.doc.undo))
+        menu_edit.addAction(makeEditAction("Redo", "Ctrl+Shift+z", self.doc.redo))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Select All", "Ctrl+a", self.doc.selectAll))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
+        menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
+        menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        menu_edit.addSeparator()
+        menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
+        menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
+        menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
 
         # ========= END EDIT MENU SECTION =========
-        return self.menu_edit
+        return menu_edit
 
     # =====================================================================================
     def makeViewMenu(self, app, bottom_bar, left_menu) -> QMenu:
@@ -192,46 +199,50 @@ class MenuBar(QMenuBar):
         :return: the menu created
         """
         logging.debug("Creating View Menu")
-        self.menu_view = self.addMenu('&View')
+        menu_view = self.addMenu('&View')
 
         # ========= START VIEW MENU SECTION =========
         def makeViewAction(name: str, shortcut: str, signal) -> QAction:
             """
+            Creates action button for View Menu
+            :param name: Name displayed in menu
+            :param shortcut: shortcut used
+            :pram signal: callback
             """
             view_action = QAction(name, app)
             view_action.setShortcut(shortcut)
             view_action.triggered.connect(signal)
             return view_action
 
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
 
         # ========= START LEFT MENU OPTIONS SECTION =========
-        self.menu_view.addSeparator()
-        self.menu_view.addAction(
+        menu_view.addSeparator()
+        menu_view.addAction(
             makeViewAction("Expand All", "", left_menu.expandAll))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Collapse All", "", left_menu.collapseAll))
-        self.addSeparator()
-        self.menu_view.addAction(
+        menu_view.addSeparator()
+        menu_view.addAction(
             makeViewAction("Toggle Size", "",
                            partial(left_menu.toggleHeader, "Size")))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Toggle Type", "",
                            partial(left_menu.toggleHeader, "Type")))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Toggle Date", "",
                            partial(left_menu.toggleHeader, "Date Modified")))
-        self.menu_view.addAction(
+        menu_view.addAction(
             makeViewAction("Fit Columns", "", left_menu.resizeColumnsToContent))
         # ========= END LEFT MENU OPTIONS SECTION =========
 
         # ========= END VIEW MENU SECTION =========
-        return self.menu_view
+        return menu_view
 
     # =====================================================================================
     def makeFormatMenu(self, app) -> QMenu:
@@ -327,7 +338,7 @@ class MenuBar(QMenuBar):
         :return: the menu created
         """
         logging.debug("Creating Tools Menu")
-        self.menu_tools = self.addMenu('&Tools')
+        menu_tools = self.addMenu('&Tools')
 
         # ========= START TOOLS MENU SECTION =========
 
@@ -366,6 +377,7 @@ class MenuBar(QMenuBar):
             app.reminders.showDialog(app)
 
         def onEquationEditorAction():
+            logging.info("Clicked Equation Editor Action")
             self.equation_editor = EquationEditor.EquationEditor(document)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
@@ -376,16 +388,16 @@ class MenuBar(QMenuBar):
             tools_action.triggered.connect(signal)
             return tools_action
 
-        self.menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
-        self.menu_tools.addAction(
+        menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        menu_tools.addAction(
             makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        self.menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
-        self.menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
-        self.menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
+        menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
+        menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
+        menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
 
         # ========= END TOOLS MENU SECTION =========
 
-        return self.menu_tools
+        return menu_tools
 
     # =====================================================================================
 

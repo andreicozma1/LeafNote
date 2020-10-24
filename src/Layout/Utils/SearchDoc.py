@@ -1,13 +1,13 @@
+"""
+This module contains a widget that gives the user the ability to search through a document
+"""
+
 import logging
 import os
 
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QShortcut
-
-
-############################################################################
-# SEARCH CURRENT FILE
 
 
 class Search(QWidget):
@@ -137,6 +137,7 @@ class Search(QWidget):
 
     def onCaseSensitiveSearchSelect(self):
         """
+        handles the button click for the case sensitive search
         """
         logging.info("Clicked Case Sensitive")
         if self.regex_search.isChecked():
@@ -145,6 +146,7 @@ class Search(QWidget):
 
     def onWholeWordSearchSelect(self):
         """
+        handles the button click for the whole word search
         """
         logging.info("Clicked Whole Word")
         if self.regex_search.isChecked():
@@ -153,6 +155,7 @@ class Search(QWidget):
 
     def onRegexSearchSelect(self):
         """
+        handles the button click for the regex search
         """
         logging.info("Clicked Regex")
         if self.regex_search.isChecked():
@@ -162,6 +165,7 @@ class Search(QWidget):
 
     def onPreviousOccurrenceSelect(self):
         """
+        handles the button click for the previous occurrence search
         """
         logging.info("Clicked Previous")
         self.document.find(self.search, self.flags | QTextDocument.FindBackward)
@@ -171,6 +175,7 @@ class Search(QWidget):
 
     def onNextOccurrenceSelect(self):
         """
+        handles the button click for the next occurrence search
         """
         logging.info("Clicked Next")
         self.document.find(self.search, self.flags)
@@ -180,6 +185,7 @@ class Search(QWidget):
 
     def onCloseSearch(self):
         """
+        handles the button click to close the search widget
         """
         logging.info("Clicked Close")
         self.search_and_replace.replace.setVisible(False)
@@ -187,6 +193,7 @@ class Search(QWidget):
 
     def onChanged(self, search):
         """
+        this handles any change the user makes to the search bar
         """
         self.search = search
 
@@ -215,6 +222,3 @@ class Search(QWidget):
         if self.regex_search.isChecked():
             self.search = QRegExp(self.search)
         self.document.find(self.search, self.flags)
-
-############################################################################
-# SEARCH CURRENT WORKSPACE

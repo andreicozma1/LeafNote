@@ -2,8 +2,8 @@
 EQUATION EDITOR
 """
 import logging
-import requests
 
+import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QPushButton
@@ -16,6 +16,7 @@ class EquationEditor(QWidget):
     This is a widget is an interactive editor for the user to create and insert equations
     using latex
     """
+
     def __init__(self, document):
         """
         initializes the widgets
@@ -31,6 +32,7 @@ class EquationEditor(QWidget):
         self.pixmap = None
         self.equation = None
         self.equation_bar = None
+        self.user_query = ""
 
         # create the QDialog and fill it in
         self.dialog = DialogBuilder(document)
@@ -75,16 +77,16 @@ class EquationEditor(QWidget):
         Generates the image from the users input.
         """
         logging.info("User Generated Equation")
-        # TODO - handle user spamming button
 
-        # get the formatted equation from the web api
-        req = requests.get(self.url + self.equation_bar.text())
-
-        # convert the image to a pixmap and display it to the user through the qlabel
-        img = QImage()
-        img.loadFromData(req.content)
-        self.pixmap = QPixmap(img)
-        self.equation.setPixmap(self.pixmap)
+        if self.user_query != self.equation_bar.text():
+            self.user_query = self.equation_bar.text()
+            # get the formatted equation from the web api
+            req = requests.get(self.url + self.equation_bar.text())
+            # convert the image to a pixmap and display it to the user through the qlabel
+            img = QImage()
+            img.loadFromData(req.content)
+            self.pixmap = QPixmap(img)
+            self.equation.setPixmap(self.pixmap)
 
     def onInsert(self):
         """

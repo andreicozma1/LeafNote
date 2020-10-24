@@ -1,8 +1,11 @@
+"""
+This module holds a class that will display the current workspace to the user
+"""
 import logging
 import os
 
 from PyQt5.QtCore import Qt, QDir
-from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QAbstractItemView
+from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QAbstractItemView, QShortcut
 
 from Utils.Encryptor import Encryptor
 
@@ -30,10 +33,11 @@ class DirectoryViewer(QTreeView):
             path = QDir.currentPath()
 
         self.model = QFileSystemModel()
-        item_height = str(self.layout_props.item_height)
-        prop_bar_height = str(self.layout_props.header_margin)
-        prop_header_color = self.layout_props.header_color
-        prop_item_hover_color = self.layout_props.item_hover_color
+
+        item_height = str(layout_props.item_height)
+        prop_bar_height = str(layout_props.header_margin)
+        prop_header_color = layout_props.header_color
+        prop_item_hover_color = layout_props.item_hover_color
 
         style = "QTreeView::item { height: " + item_height + "px; }" + \
                 "QTreeView::item:selected {" \
@@ -73,21 +77,26 @@ class DirectoryViewer(QTreeView):
         self.sortByColumn(1, Qt.AscendingOrder)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
 
-        self.clicked.connect(self.onClick)
-        self.selectionModel().currentRowChanged.connect(self.onSelection)
+        # Expand or collapse directory on click
+        self.clicked.connect(self.onClickDir)
+        # Shortcut for pressing enter on directory
+        shortcut = QShortcut(Qt.Key_Return, self)
+        shortcut.activated.connect(self.onClickDir)
+        # Open documents on selection changed
+        self.selectionModel().currentRowChanged.connect(self.onSelectionChanged)
 
         self.fileManager.encryptor = None
         # Check for encryption key in Workspace
         path_key = os.path.join(path, ".leafCryptoKey")
         if os.path.exists(path_key):
-            logging.debug("Encryption key found! " + path_key)
+            logging.debug("Encryption key found! %s", path_key)
             with open(path_key, 'r') as f:
                 key = f.read()
                 self.fileManager.encryptor = Encryptor(key)
         else:
             logging.info("Workspace not encrypted")
 
-    def onSelection(self, index):
+    def onSelectionChanged(self, index):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -96,22 +105,26 @@ class DirectoryViewer(QTreeView):
         path = self.model.filePath(index)
         logging.info(path)
         if not self.model.isDir(index):
+            logging.debug("Selected document")
             self.fileManager.openDocument(self.document, path)
 
-    def onClick(self, index):
+    def onClickDir(self, index=None):
         """
         functionality of double click on directory
         :param index: location of filePath
         :return: returns nothing
         """
+        # If coming from Enter Pressed, resolve index
+        if index is None:
+            index = self.selectionModel().currentIndex()
         path = self.model.filePath(index)
-        logging.info(path)
-        if not self.model.isDir(index):
-            self.fileManager.openDocument(self.document, path)
-        else:
+        # Toggle expand/collapse directory
+        if self.model.isDir(index):
             if self.isExpanded(index):
+                logging.debug("Collapsing dir %s", path)
                 self.collapse(index)
             else:
+                logging.debug("Expanding dir %s", path)
                 self.expand(index)
 
     def toggleHeader(self, name: str):
