@@ -28,9 +28,6 @@ class ContextMenu(QScrollArea):
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
-        # self.setupDetails(vertical_layout)
-        # vertical_layout.addStretch()
-
         # Main widget of QScroll area is an expandable QWidget with
         self.main_widget = QWidget()
         # The expandable QWidget has a Vertical Layout

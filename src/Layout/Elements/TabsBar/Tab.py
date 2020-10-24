@@ -34,7 +34,7 @@ class Tab(Color):
 
         # create horizontal layout for the tab
         self.horizontal_layout = QHBoxLayout()
-        self.horizontal_layout.setContentsMargins(10, 0, 0, 0)
+        self.horizontal_layout.setContentsMargins(10, 0, 10, 0)
         self.horizontal_layout.setSpacing(2)
         # add the file name to the tab
         self.label = QLabel(self.f_name)

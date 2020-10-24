@@ -21,11 +21,44 @@ class LayoutProps:
         self.min_menu_width = .2
         self.max_menu_width = .3
         self.bar_height = 35
-        self.bar_tabs_height = 25
-        self.bar_tabs_spacing = 1
-        self.bar_tabs_tab_width = 50
 
-        self.splitter_width = 1
+    # ========= START GENERAL LAYOUT SECTION =========
+
+    @staticmethod
+    def getDefSplitterWidth():
+        """
+        Returns the default columns shown in the left menu at startup
+        """
+        return 1
+
+    # ========= END GENERAL LAYOUT SECTION =========
+
+    # ========= START OPEN TABS BAR SECTION =========
+    @staticmethod
+    def getDefOpenTabWidth():
+        """
+        Returns the fixed size of each tab in Open Tabs Bar
+        If None, then the width will be calculated automatically based on content
+        """
+        return None
+
+    @staticmethod
+    def getDefOpenTabHeight():
+        """
+        Returns the default Open Tabs Bar height
+        """
+        return 35
+
+    @staticmethod
+    def getDefTabsBarSpacing():
+        """
+        Returns the default Open Tabs Bar spacing between tabs
+        """
+        return 1
+
+    # ========= END OPEN TABS BAR SECTION =========
+
+    # ========= START LEFT MENU SECTION =========
 
     @staticmethod
     def getDefaultLeftMenuCols():
@@ -46,7 +79,7 @@ class LayoutProps:
         """
         Returns the default Left Menu Header Margin
         """
-        return 5
+        return 4
 
     @staticmethod
     def getDefaultLeftMenuHeaderColor():
@@ -68,3 +101,5 @@ class LayoutProps:
         Returns the default Left Menu Hover Color
         """
         return "rgba(249, 145, 146, 0.1)"
+
+    # ========= END LEFT MENU SECTION =========
