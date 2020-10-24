@@ -6,41 +6,50 @@ import logging
 import os
 from functools import partial
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QFileInfo
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea, QPushButton
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea, QTextEdit, QSplitter, \
+    QTreeView, QAbstractItemView
 
 
-class File(QPushButton):
-    """
-    This is a button that holds information about the button
-    """
-
+class Item(QStandardItem):
     def __init__(self, path):
-        """
-        sets up the buttons properties
-        :param path: the file the button is representing
-        """
-        super().__init__()
+        file_name = QFileInfo(path).fileName()
         self.path = path
-        self.file_name = QFileInfo(path).fileName()
-        self.initUI()
-
-    def initUI(self):
-        """
-        sets up the buttons appearance
-        :return: Returns nothing
-        """
-        self.setText(self.file_name)
-        self.setMinimumHeight(20)
+        super().__init__(file_name)
 
 
-def getAllfiles(path):
-    """
-    returns a list of all files from the given path down the tree
-    :param path: a path to the directory to get all files from
-    :return: returns a list of files in the given directory
-    """
-    return [os.path.join(r, file) for r, d, f in os.walk(path) for file in f]
+class FileViewer(QTreeView):
+    def __init__(self, search_workspace):
+        super().__init__()
+        self.search_workspace = search_workspace
+
+        self.model = QStandardItemModel()
+        self.setModel(self.model)
+        self.setHeaderHidden(True)
+
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.clicked.connect(self.onSelection)
+        self.doubleClicked.connect(self.onDoubleClick)
+        self.selectionModel().currentRowChanged.connect(self.onSelection)
+
+    def insertFile(self, path):
+        item = Item(path)
+        self.model.appendRow(item)
+
+    def clearFiles(self):
+        self.model.clear()
+
+    def onSelection(self, index):
+        item = self.model.itemFromIndex(index)
+        data = self.search_workspace.file_manager.getFileData(item.path)
+        self.search_workspace.display.setText(data)
+
+    def onDoubleClick(self,index):
+        item = self.model.itemFromIndex(index)
+        self.search_workspace.file_manager.openDocument(self.search_workspace.document, item.path)
+        self.search_workspace.close()
 
 
 class SearchWorkspace(QWidget):
@@ -61,6 +70,8 @@ class SearchWorkspace(QWidget):
         self.document = document
         self.file_manager = file_manager
         self.path = path
+
+        self.file_viewer = FileViewer(self)
 
         self.initUI()
         self.show()
@@ -87,24 +98,20 @@ class SearchWorkspace(QWidget):
         # create the layout to hold the search results
         self.vertical_layout.addWidget(self.search_bar, alignment=Qt.AlignLeft)
 
-        # create the scroll area to display the search results
-        self.scroll = QScrollArea()
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(400)
 
-        # create a widget to hold the vbox layout and to be placed in the scroll area
-        widget = QWidget()
-        self.search_results = QVBoxLayout()
-        self.search_results.setAlignment(Qt.AlignTop)
-        self.search_results.setSpacing(2)
-        widget.setLayout(self.search_results)
-        self.scroll.setWidget(widget)
+        # -----------------------------------------------------------------
 
-        # add the scroll area to the main layout
-        self.vertical_layout.addWidget(self.scroll)
-        self.vertical_layout.addStretch()
+        splitter = QSplitter(QtCore.Qt.Vertical)  # Splitter between files and display
+
+        splitter.addWidget(self.file_viewer)
+
+        # add a q text edit to display the selected file
+        self.display = QTextEdit()
+        self.display.setReadOnly(True)
+        splitter.addWidget(self.display)
+
+        self.vertical_layout.addWidget(splitter)
+
 
     def onChanged(self, search):
         """
@@ -114,10 +121,13 @@ class SearchWorkspace(QWidget):
         """
 
         # clear the the previous query
-        self.clearSearchResults()
+        self.file_viewer.clearFiles()
+
+        if search == "":
+            return
 
         # get a list of all files in the workspace
-        files = getAllfiles(self.path)
+        files = getAllFiles(self.path)
 
         # for each file in the list open it and look for the search word
         for f in files:
@@ -134,26 +144,15 @@ class SearchWorkspace(QWidget):
                         logging.error("Could not read %s", f)
 
                 # if the search phrase is in the file add a button to the scroll area
-                if search in data:
-                    item = File(f)
-                    item.clicked.connect(partial(self.onItemClicked, item))
-                    self.search_results.addWidget(item)
+                if search in data or search in f:
+                    self.file_viewer.insertFile(f)
                 file.close()
 
-    def onItemClicked(self, btn):
-        """
-        when an item is clicked open it on the document and close the search workspace widget
-        :param btn: then button that has been clicked
-        :return: Returns nothing
-        """
-        logging.info(btn.file_name)
-        self.file_manager.openDocument(self.document, btn.path)
-        self.close()
 
-    def clearSearchResults(self):
-        """
-        Clears the vbox layout holding all the search results
-        :return: returns nothing
-        """
-        for i in reversed(range(self.search_results.count())):
-            self.search_results.itemAt(i).widget().deleteLater()
+def getAllFiles(path):
+    """
+    returns a list of all files from the given path down the tree
+    :param path: a path to the directory to get all files from
+    :return: returns a list of files in the given directory
+    """
+    return [os.path.join(r, file) for r, d, f in os.walk(path) for file in f]
