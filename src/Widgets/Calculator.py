@@ -18,12 +18,12 @@ class Calculator(QWidget):
         this initializes the calculator widget
         """
         super().__init__()
-        self.equ = 0
+        self.equ = False
         self.screen = None
-        self.calculator()
-        self.show()
+        self.initUI()
+        # self.show()
 
-    def calculator(self):
+    def initUI(self):
         """
         this creates the layout of the calculator
         """
@@ -85,11 +85,13 @@ class Calculator(QWidget):
         """
         equation = self.screen.text()
 
+        # solves the equation in the calculator screen
         try:
             ans = eval(equation)
             self.screen.setText(str(ans))
-            self.equ = 1
+            self.equ = True
 
+        # throws error "Wrong Input" if there is an issue with solving the equation
         except SyntaxError as e:
             logging.exception(e)
             self.screen.setText("Wrong Input")
@@ -100,25 +102,37 @@ class Calculator(QWidget):
         """
         # appending label text
         text = self.screen.text()
+        # resets the screen if "Wrong Input" was the last thing on the screen
         if text == "Wrong Input":
             text = ""
+
+        # checks for an existing operator and replaces or adds operator to equation
         if text != "":
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
                 text = self.screen.text()
             self.screen.setText(text + " " + operator + " ")
-        self.equ = 0
+        self.equ = False
 
     def action_decimal(self):
         """
         this will insert a decimal into the equation
         """
-        # appending label text
-        if self.equ == 1:
+        # if last item on screen was a solution to an equation then it clears screen
+        if self.equ:
             self.screen.setText("")
+
+        # appending label text
         text = self.screen.text()
+
+        # checks that "Wrong Input" is not on the screen
         if text != "Wrong Input":
+
+            # if screen is not blank make sure there is no
+            # decimal already otherwise add a 0 then the decimal
             if text != "":
+
+                # checks for preexisting decimal or operation (+, -, etc.)
                 for x in reversed(text):
                     if x == '.':
                         return
@@ -130,26 +144,31 @@ class Calculator(QWidget):
             else:
                 text += "0"
             self.screen.setText(text + ".")
-        self.equ = 0
+        self.equ = False
 
     def actionNum(self, num):
         """
         this will insert the given number into the equation
         """
-        if self.equ == 1:
+        # if last item on screen was a solution to an equation then it clears screen
+        if self.equ:
             self.screen.setText("")
+
+        # adds number to screen
         text = self.screen.text()
         if text == "Wrong Input":
             self.screen.setText("")
             text = self.screen.text()
+        if text == "0":
+            text = ""
         self.screen.setText(text + str(num))
-        self.equ = 0
+        self.equ = False
 
     def action_clear(self):
         """
         this will clear the equation
         """
-        # clearing the label text
+        # clearing the screen
         self.screen.setText("")
 
     def action_del(self):
@@ -158,9 +177,14 @@ class Calculator(QWidget):
         """
         # clearing a single digit
         text = self.screen.text()
+
+        # resets the screen if "Wrong Input" was the last thing on the screen
         if text == "Wrong Input":
             self.screen.setText("")
             text = self.screen.text()
+
+        # checks what last input was, if operation delete spaces as well,
+        # if decimal following 0 delete 0 as well, if number delete last number
         if text != "":
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
@@ -169,16 +193,21 @@ class Calculator(QWidget):
                     self.screen.setText(text[:len(text) - 2])
                 else:
                     self.screen.setText(text[:len(text) - 1])
-        self.equ = 0
+        self.equ = False
 
     def action_neg(self):
         """
         this will negate the current number
         """
         text = self.screen.text()
+
+        # resets the screen if "Wrong Input" was the last thing on the screen
         if text == "Wrong Input":
             self.screen.setText("")
             text = self.screen.text()
+
+        # checks for negative if there is none add one else remove it
+        # checks for operation to see if its a new number
         if text != "":
             for x in reversed(range(len(text))):
                 if text[x] == " ":
@@ -191,6 +220,8 @@ class Calculator(QWidget):
                 if text[x] == '-':
                     text = text[:x] + text[(x + 1):]
                     self.screen.setText(text)
+                    return
+                if text == "0":
                     return
             text = '-' + text
             self.screen.setText(text)

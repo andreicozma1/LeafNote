@@ -10,9 +10,8 @@ from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 from Layout import DocProps
 from Layout.Elements import Document
 from Layout.Utils.SearchWorkspace import SearchWorkspace
-from Utils import Encryptor, EquationEditor, DocumentSummarizer
+from Utils import Encryptor, EquationEditor, DocumentSummarizer, DialogBuilder
 from Widgets import Calculator
-
 
 class MenuBar(QMenuBar):
     """
@@ -34,7 +33,7 @@ class MenuBar(QMenuBar):
         self.menu_format = None
         self.group_style = None
         self.group_align = None
-        self.calculator = None
+        # self.calculator = None
         self.equation_editor = None
 
     # =====================================================================================
@@ -340,7 +339,10 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Calculator Action")
-            self.calculator = Calculator.Calculator()
+            calculator_dialog = DialogBuilder.DialogBuilder(app, "Calculator")
+            calculator = Calculator.Calculator()
+            calculator_dialog.addWidget(calculator)
+            calculator_dialog.exec()
 
         def onRemindersAction():
             """
