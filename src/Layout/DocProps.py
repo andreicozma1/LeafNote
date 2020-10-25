@@ -47,6 +47,10 @@ class DocProps:
             'Justify': Qt.AlignJustify
         }
 
+        self.format_url = QTextCharFormat()
+        self.format_url.setFontUnderline(True)
+        self.format_url.setForeground(QColor('blue'))
+
         # code works with makeTitleStyleBox in TopBar.py
 
         # Default style for normal text
