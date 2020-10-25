@@ -4,52 +4,114 @@ This module holds the widget to display all search results in a given workspace
 
 import logging
 import os
-from functools import partial
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QFileInfo
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QScrollArea, QTextEdit, QSplitter, \
-    QTreeView, QAbstractItemView
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeySequence
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTextEdit, QSplitter, \
+    QTreeView, QAbstractItemView, QShortcut, QPushButton
 
 
 class Item(QStandardItem):
+    """
+    This is the item that is held in the tree view model
+    """
     def __init__(self, path):
-        file_name = QFileInfo(path).fileName()
+        """
+        this initializes the item
+        """
+        self.file_name = QFileInfo(path).fileName()
         self.path = path
-        super().__init__(file_name)
+        super().__init__(self.file_name)
+
+    def getFileName(self):
+        """
+        returns the file name held by the item
+        :return: returns the file name
+        """
+        return self.file_name
+
+    def getPath(self):
+        """
+        returns the path held by the item
+        :return: returns the path
+        """
+        return self.path
 
 
 class FileViewer(QTreeView):
+    """
+    This shows the relevant files to the search query
+    """
     def __init__(self, search_workspace):
+        """
+        this initializes the viewer
+        :param search_workspace: the trees parent
+        """
         super().__init__()
         self.search_workspace = search_workspace
-
         self.model = QStandardItemModel()
-        self.setModel(self.model)
-        self.setHeaderHidden(True)
+        self.initUI()
 
+    def initUI(self):
+        """
+        initializes the tree QTreeView
+        :return: returns nothing
+        """
+
+        # create the model to be displayed
+        self.setModel(self.model)
+
+        # set the objects properties
+        self.setHeaderHidden(True)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        # set all signals
         self.clicked.connect(self.onSelection)
         self.doubleClicked.connect(self.onDoubleClick)
         self.selectionModel().currentRowChanged.connect(self.onSelection)
 
     def insertFile(self, path):
+        """
+        this inserts a new item into the model
+        :param path: the file the item represents
+        :return: returns nothing
+        """
         item = Item(path)
         self.model.appendRow(item)
 
     def clearFiles(self):
+        """
+        clears the model
+        :return: returns nothing
+        """
         self.model.clear()
 
     def onSelection(self, index):
+        """
+        handles when the user clicks on an item
+        :param index: the index the user clicked on
+        :return: returns nothing
+        """
+        # get the selected item
         item = self.model.itemFromIndex(index)
+
+        # set the display to show the file
         data = self.search_workspace.file_manager.getFileData(item.path)
         self.search_workspace.display.setText(data)
 
-    def onDoubleClick(self,index):
+    def onDoubleClick(self, index):
+        """
+        handles when the user double clicks on an item
+        :param index: the index the user clicked on
+        :return: returns nothing
+        """
+        # get the selected item
         item = self.model.itemFromIndex(index)
+
+        # open the selected file and close widget
         self.search_workspace.file_manager.openDocument(self.search_workspace.document, item.path)
-        self.search_workspace.close()
+        self.search_workspace.closeWidget()
 
 
 class SearchWorkspace(QWidget):
@@ -72,6 +134,7 @@ class SearchWorkspace(QWidget):
         self.path = path
 
         self.file_viewer = FileViewer(self)
+        self.close_dialog_callback = None
 
         self.initUI()
         self.show()
@@ -95,23 +158,83 @@ class SearchWorkspace(QWidget):
         self.search_bar.setFixedWidth(375)
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
 
+        # create shortcuts for the line edit
+        prev_file_shortcut = QShortcut(QKeySequence(Qt.Key_Up), self.search_bar)
+        prev_file_shortcut.activated.connect(self.onPreviousFile)
+        next_file_shortcut = QShortcut(QKeySequence(Qt.Key_Down), self.search_bar)
+        next_file_shortcut.activated.connect(self.onNextFile)
+
         # create the layout to hold the search results
-        self.vertical_layout.addWidget(self.search_bar, alignment=Qt.AlignLeft)
+        self.vertical_layout.addWidget(self.search_bar, alignment=Qt.AlignCenter)
 
+        # Splitter between files and display
+        splitter = QSplitter(QtCore.Qt.Vertical)
 
-        # -----------------------------------------------------------------
-
-        splitter = QSplitter(QtCore.Qt.Vertical)  # Splitter between files and display
-
+        # add the file viewer
         splitter.addWidget(self.file_viewer)
+        splitter.setCollapsible(0, False)
 
         # add a q text edit to display the selected file
         self.display = QTextEdit()
         self.display.setReadOnly(True)
         splitter.addWidget(self.display)
 
+        # add splitter to main layout
         self.vertical_layout.addWidget(splitter)
 
+        # create button top open the selected file
+        open_file = QPushButton("Open File")
+        open_file.setFixedWidth(80)
+        open_file.clicked.connect(self.openFile)
+        self.vertical_layout.addWidget(open_file, alignment=Qt.AlignRight)
+
+    def setCloseDialogCallback(self, callback):
+        """
+        sets the callback function that is called when the widget is closed
+        :param callback: the callback function to be called
+        :return: returns nothing
+        """
+        self.close_dialog_callback = callback
+
+    def onPreviousFile(self):
+        """
+        moves to the previous shown file
+        :return: returns nothing
+        """
+        index = self.file_viewer.currentIndex()
+        index = self.file_viewer.indexAbove(index)
+        self.file_viewer.setCurrentIndex(index)
+
+    def onNextFile(self):
+        """
+        moves to the next shown file
+        :return: returns nothing
+        """
+        index = self.file_viewer.currentIndex()
+        index = self.file_viewer.indexBelow(index)
+        self.file_viewer.setCurrentIndex(index)
+
+    def openFile(self):
+        """
+        opens the selected file
+        :returns nothing
+        """
+        # get the selected file
+        index = self.file_viewer.currentIndex()
+        item = self.file_viewer.model.itemFromIndex(index)
+        if item is not None:
+            # open the file if one is selected
+            self.file_manager.openDocument(self.document, item.path)
+        self.closeWidget()
+
+    def closeWidget(self):
+        """
+        closes the widget
+        :return: returns nothing
+        """
+        self.close()
+        if self.close_dialog_callback is not None:
+            self.close_dialog_callback()
 
     def onChanged(self, search):
         """
@@ -120,8 +243,9 @@ class SearchWorkspace(QWidget):
         :return: returns nothing
         """
 
-        # clear the the previous query
+        # clear the previous query
         self.file_viewer.clearFiles()
+        self.display.setText("")
 
         if search == "":
             return
@@ -144,9 +268,14 @@ class SearchWorkspace(QWidget):
                         logging.error("Could not read %s", f)
 
                 # if the search phrase is in the file add a button to the scroll area
-                if search in data or search in f:
+                if str(search) in data or str(search) in f:
                     self.file_viewer.insertFile(f)
                 file.close()
+
+        # set the focus on the first search result
+        # index = self.file_viewer.indexBelow(self.file_viewer.rootIndex())
+        index = self.file_viewer.model.index(0, 0)
+        self.file_viewer.setCurrentIndex(index)
 
 
 def getAllFiles(path):

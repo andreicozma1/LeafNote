@@ -12,6 +12,7 @@ from Layout import DocProps
 from Layout.Elements import Document
 from Layout.Utils.SearchWorkspace import SearchWorkspace
 from Utils import Encryptor, EquationEditor, DocumentSummarizer
+from Utils.DialogBuilder import DialogBuilder
 from Widgets import Calculator
 
 
@@ -150,8 +151,18 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Find All Action")
-            self.doc.search_all = SearchWorkspace(self.doc, file_manager,
-                                                  app.left_menu.model.rootPath())
+            # create the search workspace dialog
+            search_workspace_dialog = DialogBuilder(app, "Search Workspace")
+
+            # create search workspace widget
+            search_workspace = SearchWorkspace(self.doc, file_manager,
+                                               app.left_menu.model.rootPath())
+            search_workspace.setCloseDialogCallback(search_workspace_dialog.close)
+
+            # modify the dialog
+            search_workspace_dialog.addWidget(search_workspace)
+            search_workspace_dialog.setCloseOnUnfocused(True)
+            search_workspace_dialog.exec()
 
         def onFindAndReplaceBtn():
             """
