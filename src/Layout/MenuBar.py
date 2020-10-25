@@ -3,6 +3,7 @@ all properties and functionalities of the menu bar
 """
 
 import logging
+from functools import partial
 
 from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
@@ -192,7 +193,7 @@ class MenuBar(QMenuBar):
         return menu_edit
 
     # =====================================================================================
-    def makeViewMenu(self, app, bottom_bar) -> QMenu:
+    def makeViewMenu(self, app, bottom_bar, left_menu) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -203,15 +204,43 @@ class MenuBar(QMenuBar):
         # ========= START VIEW MENU SECTION =========
         def makeViewAction(name: str, shortcut: str, signal) -> QAction:
             """
+            Creates action button for View Menu
+            :param name: Name displayed in menu
+            :param shortcut: shortcut used
+            :pram signal: callback
             """
             view_action = QAction(name, app)
             view_action.setShortcut(shortcut)
             view_action.triggered.connect(signal)
             return view_action
 
-        menu_view.addAction(makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
-        menu_view.addAction(makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
-        menu_view.addAction(makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+        menu_view.addAction(
+            makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
+        menu_view.addAction(
+            makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
+        menu_view.addAction(
+            makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
+
+        # ========= START LEFT MENU OPTIONS SECTION =========
+        menu_view.addSeparator()
+        menu_view.addAction(
+            makeViewAction("Expand All", "", left_menu.expandAll))
+        menu_view.addAction(
+            makeViewAction("Collapse All", "", left_menu.collapseAll))
+        menu_view.addSeparator()
+        menu_view.addAction(
+            makeViewAction("Toggle Size", "",
+                           partial(left_menu.toggleHeaderColByName, "Size")))
+        menu_view.addAction(
+            makeViewAction("Toggle Type", "",
+                           partial(left_menu.toggleHeaderColByName, "Type")))
+        menu_view.addAction(
+            makeViewAction("Toggle Date", "",
+                           partial(left_menu.toggleHeaderColByName, "Date Modified")))
+        menu_view.addAction(
+            makeViewAction("Fit Columns", "", left_menu.resizeColumnsToContent))
+        # ========= END LEFT MENU OPTIONS SECTION =========
+
         # ========= END VIEW MENU SECTION =========
         return menu_view
 

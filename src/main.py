@@ -37,8 +37,6 @@ class App(QMainWindow):
     puts all the pieces of code together to get finished application
     """
 
-    # pylint: disable=too-many-instance-attributes
-
     def __init__(self):
         """
         creates the window and its attributes
@@ -133,7 +131,7 @@ class App(QMainWindow):
         """
         self.menu_bar.makeFileMenu(self, self.file_manager)
         self.menu_bar.makeEditMenu(self, self.file_manager)
-        self.menu_bar.makeViewMenu(self, self.bottom_bar)
+        self.menu_bar.makeViewMenu(self, self.bottom_bar, self.left_menu)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
         self.document.selectionChanged.connect(self.menu_bar.updateFormatOnSelectionChange)

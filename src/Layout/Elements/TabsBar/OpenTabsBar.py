@@ -33,10 +33,13 @@ class OpenTabsBar(QWidget):
         self.active_tab = None
         self.open_tabs = {}
 
+        self.tab_width = self.layout_props.getDefOpenTabWidth()
+        self.tab_height = self.layout_props.getDefOpenTabHeight()
+
         # crate the horizontal layout
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_layout.setSpacing(self.layout_props.bar_tabs_spacing)
+        self.horizontal_layout.setSpacing(self.layout_props.getDefTabsBarSpacing())
         self.setLayout(self.horizontal_layout)
 
         # set the background
@@ -45,6 +48,7 @@ class OpenTabsBar(QWidget):
         self.setPalette(palette)
         self.setAutoFillBackground(True)
 
+        # Add filler spacing at the end
         self.horizontal_layout.addStretch()
 
     def openTab(self, tab):
@@ -62,6 +66,12 @@ class OpenTabsBar(QWidget):
         """
         logging.info(path)
         tab = Tab(self, path)
+
+        if self.tab_width is not None:
+            tab.setFixedWidth(self.tab_width)
+
+        tab.setFixedHeight(self.tab_height)
+
         self.layout().insertWidget(0, tab)
 
         # add tab to the dict holding open tabs
