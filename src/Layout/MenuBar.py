@@ -144,7 +144,7 @@ class MenuBar(QMenuBar):
 
             state_search = app.search_and_replace.search.isVisible()
             app.search_and_replace.search.setVisible(not state_search)
-            if state_search:
+            if not state_search:
                 app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():

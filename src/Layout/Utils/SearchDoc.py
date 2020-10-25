@@ -4,6 +4,7 @@ This module contains a widget that gives the user the ability to search through 
 
 import logging
 import os
+from functools import partial
 
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
@@ -83,19 +84,21 @@ class Search(QWidget):
         self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
         self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C),
                                                  self.case_sensitive)
-        self.case_sensitive_shortcut.activated.connect(self.onCaseSensitiveSearchSelect)
+        self.case_sensitive_shortcut.activated.connect(
+            partial(self.onCaseSensitiveSearchSelect, True)
+        )
         self.horizontal_layout.addWidget(self.case_sensitive, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
         self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
         self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
-        self.whole_word_shortcut.activated.connect(self.onWholeWordSearchSelect)
+        self.whole_word_shortcut.activated.connect(partial(self.onWholeWordSearchSelect, True))
         self.horizontal_layout.addWidget(self.whole_word, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
         self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
         self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
-        self.regex_search_shortcut.activated.connect(self.onRegexSearchSelect)
+        self.regex_search_shortcut.activated.connect(partial(self.onRegexSearchSelect, True))
         self.horizontal_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
@@ -135,29 +138,35 @@ class Search(QWidget):
         self.close_search_shortcut.activated.connect(self.search_and_replace.closeSearchAndReplace)
         self.horizontal_layout.addWidget(self.close_search)
 
-    def onCaseSensitiveSearchSelect(self):
+    def onCaseSensitiveSearchSelect(self, from_shortcut=False):
         """
         handles the button click for the case sensitive search
         """
         logging.info("Clicked Case Sensitive")
+        if from_shortcut:
+            self.case_sensitive.setChecked(not self.case_sensitive.isChecked())
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
         self.onChanged(self.search_bar.text())
 
-    def onWholeWordSearchSelect(self):
+    def onWholeWordSearchSelect(self, from_shortcut=False):
         """
         handles the button click for the whole word search
         """
         logging.info("Clicked Whole Word")
+        if from_shortcut:
+            self.whole_word.setChecked(not self.whole_word.isChecked())
         if self.regex_search.isChecked():
             self.whole_word.setChecked(False)
         self.onChanged(self.search_bar.text())
 
-    def onRegexSearchSelect(self):
+    def onRegexSearchSelect(self, from_shortcut=False):
         """
         handles the button click for the regex search
         """
         logging.info("Clicked Regex")
+        if from_shortcut:
+            self.regex_search.setChecked(not self.regex_search.isChecked())
         if self.regex_search.isChecked():
             self.case_sensitive.setChecked(False)
             self.whole_word.setChecked(False)
