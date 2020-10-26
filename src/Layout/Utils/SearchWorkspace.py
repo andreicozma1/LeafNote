@@ -68,6 +68,7 @@ class FileViewer(QTreeView):
         # set the objects properties
         self.setHeaderHidden(True)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setIndentation(10)
 
         # set all signals
         self.clicked.connect(self.onSelection)
@@ -98,6 +99,8 @@ class FileViewer(QTreeView):
         """
         # get the selected item
         item = self.model.itemFromIndex(index)
+        if item is None:
+            return
 
         # set the display to show the file
         data = self.search_workspace.file_manager.getFileData(item.path)
@@ -112,6 +115,8 @@ class FileViewer(QTreeView):
         """
         # get the selected item
         item = self.model.itemFromIndex(index)
+        if item is None:
+            return
 
         # open the selected file and close widget
         self.search_workspace.file_manager.openDocument(self.search_workspace.document, item.path)
@@ -162,6 +167,7 @@ class SearchWorkspace(QWidget):
 
         # create the overarching vbox layout for the widget
         vertical_layout = QVBoxLayout(self)
+        vertical_layout.setContentsMargins(0, 0, 0, 0)
 
         # -------------------------------------------------------------------
         # create layout to hold the search bar and filters
@@ -314,8 +320,12 @@ class SearchWorkspace(QWidget):
         if from_shortcut:
             logging.debug("User selected previous file")
         index = self.file_viewer.currentIndex()
-        index = self.file_viewer.indexAbove(index)
-        self.file_viewer.setCurrentIndex(index)
+
+        prev_index = self.file_viewer.indexAbove(index)
+        if prev_index is None:
+            self.file_viewer.setCurrentIndex(index)
+        else:
+            self.file_viewer.setCurrentIndex(prev_index)
 
     def onNextFile(self, from_shortcut=False):
         """
@@ -325,8 +335,12 @@ class SearchWorkspace(QWidget):
         if from_shortcut:
             logging.debug("User selected next file")
         index = self.file_viewer.currentIndex()
-        index = self.file_viewer.indexBelow(index)
-        self.file_viewer.setCurrentIndex(index)
+
+        next_index = self.file_viewer.indexBelow(index)
+        if next is None:
+            self.file_viewer.setCurrentIndex(index)
+        else:
+            self.file_viewer.setCurrentIndex(next_index)
 
     def openFile(self, from_shortcut=False):
         """
