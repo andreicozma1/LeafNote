@@ -12,8 +12,13 @@ from Layout import DocProps
 from Layout.Elements import Document
 from Layout.LayoutProps import LayoutProps
 from Layout.Utils.SearchWorkspace import SearchWorkspace
-from Utils import Encryptor, EquationEditor, DocumentSummarizer, DialogBuilder
-from Widgets import Calculator
+
+from Utils.DialogBuilder import DialogBuilder
+from Utils import Encryptor, DocumentSummarizer
+from Utils.EquationEditor import EquationEditor
+from Widgets.Calculator import Calculator
+from Widgets.Dictionary import Dictionary
+
 
 
 class MenuBar(QMenuBar):
@@ -370,10 +375,10 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Calculator Action")
-            calculator_dialog = DialogBuilder.DialogBuilder(app, "Calculator")
-            calculator = Calculator.Calculator()
-            calculator_dialog.addWidget(calculator)
-            calculator_dialog.exec()
+            dialog = DialogBuilder(text_window="Calculator")
+            dialog.layout().setContentsMargins(0, 0, 0, 0)
+            dialog.addWidget(Calculator())
+            dialog.exec()
 
         def onRemindersAction():
             """
@@ -382,8 +387,23 @@ class MenuBar(QMenuBar):
             app.reminders.showDialog(app)
 
         def onEquationEditorAction():
+            """
+            """
             logging.info("Clicked Equation Editor Action")
-            equation_editor = EquationEditor.EquationEditor(document)
+            EquationEditor(document)
+
+        def onDictionaryAction():
+            """
+            """
+            logging.info("Clicked Dictionary Action")
+            dictionary = Dictionary()
+            dialog = DialogBuilder(text_window="Dictionary")
+            dictionary.onCloseClicked(dialog.close)
+            dictionary.onLookupClicked(dialog.adjustSize)
+            dialog.layout().setContentsMargins(0, 0, 0, 0)
+            dialog.setFixedWidth(600)
+            dialog.addWidget(dictionary)
+            dialog.show()
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             """
@@ -393,12 +413,13 @@ class MenuBar(QMenuBar):
             tools_action.triggered.connect(signal)
             return tools_action
 
-        menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        menu_tools.addAction(makeToolsAction("Summarize", "", onSummaryAction))
         menu_tools.addAction(
-            makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
+            makeToolsAction("Encrypt/Decrypt", "", onEncryptionAction))
+        menu_tools.addAction(makeToolsAction("Add Reminder", "", onRemindersAction))
         menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
         menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
+        menu_tools.addAction(makeToolsAction("Word Dictionary ", "", onDictionaryAction))
 
         # ========= END TOOLS MENU SECTION =========
 
