@@ -25,4 +25,12 @@ class LayoutProps:
         self.bar_tabs_spacing = 1
         self.bar_tabs_tab_width = 50
 
+        self.default_left_menu_cols = ["Name"]
+        self.header_margin = 5
+        self.item_height = 30
+        self.item_selected_color = "rgba(249, 145, 146, 0.8)"
+        self.item_hover_color = "rgba(249, 145, 146, 0.2)"
+        self.header_color = "rgb(56, 90, 125)"
+        self.header_color_light = "rgba(56, 90, 125, 0.8)"
+
         self.splitter_width = 1

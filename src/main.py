@@ -66,10 +66,11 @@ class App(QMainWindow):
 
         # Create Main Workspace
         last_path = self.settings.value("workspacePath")
-        self.left_menu = DirectoryViewer(self.document, self.file_manager, last_path)
+        self.left_menu = DirectoryViewer(self.layout_props, self.document,
+                                         self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
-        self.right_menu = ContextMenu(self, self.document)
+        self.right_menu = ContextMenu(self, self.layout_props, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
                                                               self.document,
                                                               self.right_menu,
@@ -82,7 +83,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.bottom_bar)
 
         # Setup System MenuBar
-        self.menu_bar = MenuBar(self.document, self.doc_props)
+        self.menu_bar = MenuBar(self.document, self.doc_props, self.layout_props)
         self.setupMenuBar()
         self.menu_bar.show()
 
@@ -124,7 +125,7 @@ class App(QMainWindow):
         """
         self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
         self.menu_bar.makeEditMenu(self, self.file_manager)
-        self.menu_bar.makeViewMenu(self, self.bottom_bar)
+        self.menu_bar.makeViewMenu(self, self.bottom_bar, self.left_menu)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
         self.document.selectionChanged.connect(self.menu_bar.updateFormatOnSelectionChange)
