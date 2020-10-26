@@ -64,7 +64,8 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         view = QListView(self.combo_title_style)
-        view.setStyleSheet("QListView::item { height : 18 px }")
+        view.setStyleSheet("QListView::item { height : 18 px }/"
+                           "selection-background-color: rgba(0,0,0,0.2)}")
         self.combo_title_style.setView(view)
         self.dict_title_style = dict_title_style
         self.combo_title_style.setToolTip('Styles')
@@ -91,6 +92,7 @@ class TopBar(QWidget):
             separator = QStandardItem()
             separator.setSizeHint(size)
             view.model().insertRow(x, separator)
+            view.model().item(x).setEnabled(False)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
         self.combo_title_style.setMaxVisibleItems(view.model().rowCount())
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
