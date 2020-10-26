@@ -9,7 +9,7 @@ import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
-
+from spellchecker import SpellChecker
 from Utils import DocumentSummarizer
 
 
@@ -46,6 +46,8 @@ class Document(QTextEdit):
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+
+        self.textChanged.connect(self.getCurrentSentence)
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -323,3 +325,19 @@ class Document(QTextEdit):
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
+
+    def getCurrentSentence(self):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        word = self._getWordFromPos(pos)
+
+        if word[2] == "":
+            word_temp = self._getWordFromPos(pos - 1)
+            self.SpellChecker(word_temp[2])
+
+    def SpellChecker(self, word_t):
+        spell = SpellChecker()
+        spell.correction(word_t)
+        #print(spell.candidates(word_t))
+
+
