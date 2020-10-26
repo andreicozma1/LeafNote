@@ -13,9 +13,11 @@ from Layout.Elements import Document
 from Layout.Utils.SearchWorkspace import SearchWorkspace
 
 from Utils.DialogBuilder import DialogBuilder
-from Utils import Encryptor, EquationEditor, DocumentSummarizer
-from Widgets import Calculator
+from Utils import Encryptor, DocumentSummarizer
+from Utils.EquationEditor import EquationEditor
+from Widgets.Calculator import Calculator
 from Widgets.Dictionary import Dictionary
+
 
 class MenuBar(QMenuBar):
     """
@@ -369,8 +371,8 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Calculator Action")
-            calculator_dialog = DialogBuilder.DialogBuilder(app, "Calculator")
-            calculator = Calculator.Calculator()
+            calculator_dialog = DialogBuilder(app, "Calculator")
+            calculator = Calculator()
             calculator_dialog.addWidget(calculator)
             calculator_dialog.exec()
 
@@ -384,7 +386,7 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Equation Editor Action")
-            EquationEditor.EquationEditor(document)
+            EquationEditor(document)
 
         def onDictionaryAction():
             """

@@ -1,3 +1,7 @@
+"""
+Dictionary class is a QWidget that lets the user type in words into a text field
+and returns the definitions list and pronunciation.
+"""
 import logging
 
 import requests
@@ -14,23 +18,26 @@ class Definition(QWidget):
 
     def __init__(self, def_type: str, def_text: str, def_example: str):
         super().__init__()
-        layout = QVBoxLayout(self)
+        self.layout = QVBoxLayout(self)
         # Create elements
-        lbl_type = QLabel("Type: " + def_type)
-        lbl_definition = QLabel("Definition: " + def_text)
-        lbl_example = QLabel("Example: " + def_example)
+        self.lbl_type = QLabel("Type: " + def_type)
+        self.lbl_definition = QLabel("Definition: " + def_text)
+        self.lbl_example = QLabel("Example: " + def_example)
+        self.initUI()
+
+    def initUI(self):
         # Make text selectable
-        lbl_type.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        lbl_definition.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        lbl_example.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.lbl_type.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.lbl_definition.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.lbl_example.setTextInteractionFlags(Qt.TextSelectableByMouse)
         # Make text wrap
-        lbl_type.setWordWrap(True)
-        lbl_definition.setWordWrap(True)
-        lbl_example.setWordWrap(True)
+        self.lbl_type.setWordWrap(True)
+        self.lbl_definition.setWordWrap(True)
+        self.lbl_example.setWordWrap(True)
         # Add all elements to layout
-        layout.addWidget(lbl_type)
-        layout.addWidget(lbl_definition)
-        layout.addWidget(lbl_example)
+        self.layout.addWidget(self.lbl_type)
+        self.layout.addWidget(self.lbl_definition)
+        self.layout.addWidget(self.lbl_example)
 
 
 class Dictionary(QWidget):
