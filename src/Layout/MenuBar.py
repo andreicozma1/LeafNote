@@ -36,6 +36,7 @@ class MenuBar(QMenuBar):
 
         self.menu_format = None
         self.group_style = None
+        self.group_align = None
 
         self.updateAppearance()
 
@@ -382,7 +383,7 @@ class MenuBar(QMenuBar):
 
         def onEquationEditorAction():
             logging.info("Clicked Equation Editor Action")
-            self.equation_editor = EquationEditor.EquationEditor(document)
+            equation_editor = EquationEditor.EquationEditor(document)
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             """
@@ -451,6 +452,9 @@ class MenuBar(QMenuBar):
                 a.blockSignals(False)
 
     def updateAppearance(self):
+        """
+        Updates appearance of MenuBar according to styles
+        """
         prop_select_color = self.layout_props.getDefaultLeftMenuHeaderColorLight()
         style = "QMenu::item:selected { background-color: " + prop_select_color + ";}"
         self.setStyleSheet(style)
