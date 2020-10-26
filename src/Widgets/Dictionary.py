@@ -18,7 +18,6 @@ class Definition(QWidget):
 
     def __init__(self, def_type: str, def_text: str, def_example: str):
         super().__init__()
-        self.layout = QVBoxLayout(self)
         # Create elements
         self.lbl_type = QLabel("Type: " + def_type)
         self.lbl_definition = QLabel("Definition: " + def_text)
@@ -26,6 +25,10 @@ class Definition(QWidget):
         self.initUI()
 
     def initUI(self):
+        """
+        Set up individual definition UI
+        """
+        layout = QVBoxLayout(self)
         # Make text selectable
         self.lbl_type.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.lbl_definition.setTextInteractionFlags(Qt.TextSelectableByMouse)
@@ -35,9 +38,9 @@ class Definition(QWidget):
         self.lbl_definition.setWordWrap(True)
         self.lbl_example.setWordWrap(True)
         # Add all elements to layout
-        self.layout.addWidget(self.lbl_type)
-        self.layout.addWidget(self.lbl_definition)
-        self.layout.addWidget(self.lbl_example)
+        layout.addWidget(self.lbl_type)
+        layout.addWidget(self.lbl_definition)
+        layout.addWidget(self.lbl_example)
 
 
 class Dictionary(QWidget):
