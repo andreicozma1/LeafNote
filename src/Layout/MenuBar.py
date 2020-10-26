@@ -33,7 +33,6 @@ class MenuBar(QMenuBar):
         self.menu_format = None
         self.group_style = None
         self.group_align = None
-        # self.calculator = None
         self.equation_editor = None
 
     # =====================================================================================

@@ -21,7 +21,6 @@ class Calculator(QWidget):
         self.equ = False
         self.screen = None
         self.initUI()
-        # self.show()
 
     def initUI(self):
         """
