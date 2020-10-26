@@ -9,8 +9,8 @@ import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
-from spellchecker import SpellChecker
 from Utils import DocumentSummarizer
+from Utils.SyntaxHighlighter import SyntaxHighlighter
 
 
 class Document(QTextEdit):
@@ -29,6 +29,8 @@ class Document(QTextEdit):
         self.app = app
         self.doc_props = doc_props
 
+        self.highlighter = SyntaxHighlighter(self)
+
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
         if app.settings.contains("dictionaryPath"):
@@ -40,14 +42,14 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        self.textChanged.connect(self._highlightUrls)
+        # self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
 
-        self.textChanged.connect(self.getCurrentSentence)
+        # self.textChanged.connect(self.getCurrentSentence)
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -69,44 +71,6 @@ class Document(QTextEdit):
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
 
-    def _highlightUrls(self):
-        """
-        This highlights the current word if it is a link
-        :return: returns nothing
-        """
-        # if formatting mode is off do not highlight the links
-        if self.app.btn_mode_switch is None or not self.app.btn_mode_switch.isChecked():
-            return
-
-        # save the current cursor position and format
-        cursor = self.textCursor()
-        pos = cursor.position()
-
-        # get the selected words position and full word
-        start, end, url = self._getWordFromPos(pos)
-
-        # check if the url is valid
-        valid = validators.url(url)
-
-        # if the link is valid, underline it
-        if valid:
-            self.blockSignals(True)
-            curr_format = self.currentCharFormat()
-
-            # select the whole word
-            cursor.setPosition(start)
-            cursor.setPosition(end, QTextCursor.KeepAnchor)
-
-            # set the words format
-            cursor.setCharFormat(self.doc_props.format_url)
-
-            # reset to the current format
-            cursor.setPosition(pos)
-            cursor.setCharFormat(curr_format)
-            self.setTextCursor(cursor)
-
-            self.blockSignals(False)
-
     def _getWordFromPos(self, pos):
         """
         this get the word at the selected position
@@ -120,7 +84,7 @@ class Document(QTextEdit):
 
         end = self.toPlainText().find(" ", pos)
         new_line = self.toPlainText().find("\n", pos)
-        end = end if end < new_line else new_line
+        end = end if end > new_line else new_line
 
         # fix the indices if they are equal to -1
         end = len(self.toPlainText()) if end == -1 else end
@@ -326,18 +290,18 @@ class Document(QTextEdit):
         if not formatting:
             self.clearAllFormatting()
 
-    def getCurrentSentence(self):
-        cursor = self.textCursor()
-        pos = cursor.position()
-        word = self._getWordFromPos(pos)
-
-        if word[2] == "":
-            word_temp = self._getWordFromPos(pos - 1)
-            self.SpellChecker(word_temp[2])
-
-    def SpellChecker(self, word_t):
-        spell = SpellChecker()
-        spell.correction(word_t)
-        #print(spell.candidates(word_t))
+    # def getCurrentSentence(self):
+    #     cursor = self.textCursor()
+    #     pos = cursor.position()
+    #     word = self._getWordFromPos(pos)
+    #
+    #     if word[2] == "":
+    #         word_temp = self._getWordFromPos(pos - 1)
+    #         self.SpellChecker(word_temp[2])
+    #
+    # def SpellChecker(self, word_t):
+    #     spell = SpellChecker()
+    #     spell.correction(word_t)
+    #     #print(spell.candidates(word_t))
 
 

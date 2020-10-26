@@ -24,7 +24,7 @@ from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
 from Utils.Reminders import Reminders
 from Widgets.DirectoryViewer import DirectoryViewer
-from Utils.SyntaxHighlighter import EnchantHighlighter
+from Utils.SyntaxHighlighter import SyntaxHighlighter
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -84,7 +84,6 @@ class App(QMainWindow):
                                                               self.search_and_replace)
         layout_main.addWidget(self.documents_view)
 
-        self.spell_check = EnchantHighlighter(self, self.document)
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
         self.setupBottomBar()
