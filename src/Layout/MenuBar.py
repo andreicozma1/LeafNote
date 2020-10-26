@@ -371,10 +371,10 @@ class MenuBar(QMenuBar):
             """
             """
             logging.info("Clicked Calculator Action")
-            calculator_dialog = DialogBuilder(app, "Calculator")
-            calculator = Calculator()
-            calculator_dialog.addWidget(calculator)
-            calculator_dialog.exec()
+            dialog = DialogBuilder(text_window="Calculator")
+            dialog.layout().setContentsMargins(0, 0, 0, 0)
+            dialog.addWidget(Calculator())
+            dialog.exec()
 
         def onRemindersAction():
             """
@@ -396,6 +396,7 @@ class MenuBar(QMenuBar):
             dialog = DialogBuilder(text_window="Dictionary")
             dictionary.onCloseClicked(dialog.close)
             dictionary.onLookupClicked(dialog.adjustSize)
+            dialog.layout().setContentsMargins(0, 0, 0, 0)
             dialog.setFixedWidth(600)
             dialog.addWidget(dictionary)
             dialog.show()
@@ -408,10 +409,10 @@ class MenuBar(QMenuBar):
             tools_action.triggered.connect(signal)
             return tools_action
 
-        menu_tools.addAction(makeToolsAction("Generate Summary", "", onSummaryAction))
+        menu_tools.addAction(makeToolsAction("Summarize", "", onSummaryAction))
         menu_tools.addAction(
-            makeToolsAction("Encrypt/Decrypt Workspace", "", onEncryptionAction))
-        menu_tools.addAction(makeToolsAction("Reminders", "", onRemindersAction))
+            makeToolsAction("Encrypt/Decrypt", "", onEncryptionAction))
+        menu_tools.addAction(makeToolsAction("Add Reminder", "", onRemindersAction))
         menu_tools.addAction(makeToolsAction("Calculator", "", onCalculatorAction))
         menu_tools.addAction(makeToolsAction("Equation Editor ", "", onEquationEditorAction))
         menu_tools.addAction(makeToolsAction("Word Dictionary ", "", onDictionaryAction))
