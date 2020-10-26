@@ -8,14 +8,14 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         super().__init__(document)
         self.document = document
         self.highlighting_rules = []
+        self.misspelled_words = []
+
+        self.err_format = QTextCharFormat()
 
         self.setupRules()
 
-
     def setupRules(self):
         url_format = QTextCharFormat()
-        url_expression = None
-
         url_format.setFontUnderline(True)
         url_format.setForeground(QColor("blue"))
 
@@ -23,19 +23,28 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                   r"\w@?^=%&/~+#-])?"
         self.highlighting_rules.append((QRegExp(pattern), url_format))
 
-        # self.err_format = QTextCharFormat()
-        # self.err_format.setUnderlineColor(Qt.red)
-        # self.err_format.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
+        self.err_format = QTextCharFormat()
+        self.err_format.setUnderlineColor(Qt.red)
+        self.err_format.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
 
     def highlightBlock(self, text):
         for rule in self.highlighting_rules:
-            expression = QRegExp(rule[0])
+            expression = rule[0]
             index = expression.indexIn(text)
             while index >= 0:
-                print("r")
                 length = expression.matchedLength()
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index+length)
+
+        # for word in self.misspelled_words:
+        #     print(word)
+        #     expression = QRegExp("\\b" + word + "\\b")
+        #     index = expression.indexIn(text)
+        #     while index >= 0:
+        #         length = expression.matchedLength()
+        #         self.setFormat(index, length, self.err_format)
+        #         index = expression.indexIn(text, index + length)
+
         self.setCurrentBlockState(0)
 
 

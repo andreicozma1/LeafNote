@@ -9,6 +9,8 @@ import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from spellchecker import SpellChecker
+
 from Utils import DocumentSummarizer
 from Utils.SyntaxHighlighter import SyntaxHighlighter
 
@@ -30,6 +32,8 @@ class Document(QTextEdit):
         self.doc_props = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
+        self.spell_checker = SpellChecker()
+        self.textChanged.connect(self.getMisspelledWords)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -42,14 +46,12 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        # self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
 
-        # self.textChanged.connect(self.getCurrentSentence)
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -289,6 +291,14 @@ class Document(QTextEdit):
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
+
+    def getMisspelledWords(self):
+        cursor = self.textCursor()
+        cursor_pos = cursor.position()
+        _, _, word = self._getWordFromPos(cursor_pos)
+        # print(word)
+        # unknown = self.spell_checker.unknown([word])
+        # self.highlighter.misspelled_words = unknown
 
     # def getCurrentSentence(self):
     #     cursor = self.textCursor()
