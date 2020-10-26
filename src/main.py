@@ -1,3 +1,7 @@
+"""
+this module contains the main function of the application.
+"""
+
 import logging
 import os
 import sys
@@ -49,6 +53,7 @@ class App(QMainWindow):
         self.settings = QSettings(self.app_props.domain, self.app_props.title)
         self.file_manager = FileManager(self)
         self.reminders = Reminders(self, self.settings)
+        self.btn_mode_switch = None
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -87,7 +92,6 @@ class App(QMainWindow):
         self.setupMenuBar()
         self.menu_bar.show()
 
-        # TODO - fix this function call causing Format Mode button to not have spacer
         self.updateFormatBtnsState(False)
 
         self.setupProperties()
@@ -95,6 +99,7 @@ class App(QMainWindow):
 
     def setupTopBar(self):
         """
+        this sets up the top bar as a whole
         """
         top_bar_layout = self.top_bar.makeMainLayout()
         top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
@@ -116,14 +121,15 @@ class App(QMainWindow):
 
     def setupBottomBar(self):
         """
+        this sets up the bottom bar as a whole
         """
-        # TODO Make BottomBar Modular and similar to TopBar above
         self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
         """
+        this sets up the menu bar as a whole
         """
-        self.menu_bar.makeFileMenu(self, self.file_manager, self.bar_open_tabs)
+        self.menu_bar.makeFileMenu(self, self.file_manager)
         self.menu_bar.makeEditMenu(self, self.file_manager)
         self.menu_bar.makeViewMenu(self, self.bottom_bar, self.left_menu)
         self.menu_bar.makeFormatMenu(self)
@@ -153,7 +159,7 @@ class App(QMainWindow):
 
         setting_resizable = not self.settings.contains("windowResizable") or self.settings.value(
             "windowResizable") is False
-        logging.debug("Resizable - %s" % str(setting_resizable))
+        logging.debug("Resizable - %s", str(setting_resizable))
         if setting_resizable:
             if not self.app_props.resizable:
                 self.setFixedSize(self.size())
@@ -227,6 +233,7 @@ class App(QMainWindow):
 
     def closeEvent(self, event):
         """
+        this handles the closing of the application
         """
         logging.info("User triggered close event")
         self.settings.setValue("windowSize", self.size())
@@ -245,19 +252,21 @@ class App(QMainWindow):
             buttons = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             dialog_encryptor.addButtonBox(buttons)
             if dialog_encryptor.exec():
-                logging.info("START DECRYPT WORKSPACE: " + path_workspace)
+                logging.info("START DECRYPT WORKSPACE: %s", path_workspace)
                 for dirpath, dirnames, filenames in os.walk(path_workspace):
                     for filename in [f for f in filenames if not f.startswith(".")]:
                         path = os.path.join(dirpath, filename)
                         self.file_manager.encryptor.decryptFile(path)
-                        logging.info(" - Decrypted: " + path)
-                logging.info("END DECRYPT WORKSPACE: " + path_workspace)
+                        logging.info(" - Decrypted: %s", path)
+                        logging.debug(dirnames)
+                logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         return super().closeEvent(event)
 
 
 def main():
     """
+    this is the main function of the application
     """
     logging.info("Main Function")
     app = QApplication([])

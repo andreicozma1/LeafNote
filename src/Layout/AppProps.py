@@ -1,3 +1,8 @@
+"""
+This module holds a class (AppProps) that hold all pertinent information needed for the main
+application.
+"""
+
 import logging
 import os
 

@@ -1,11 +1,10 @@
+"""
+holds the class with the document properties
+"""
 import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCharFormat, QColor
-
-"""
-holds the class with the document properties
-"""
 
 
 class DocProps:
@@ -35,7 +34,7 @@ class DocProps:
             'yellow': '#ffff00',
             'green': '#00ff00',
             'blue': '#0000ff',
-            'violet': '#9400D3',
+            'violet': '#9400d3',
             'brown': '#a52a3a',
             'white': '#ffffff'
         }
@@ -48,39 +47,52 @@ class DocProps:
             'Justify': Qt.AlignJustify
         }
 
+        self.format_url = QTextCharFormat()
+        self.format_url.setFontUnderline(True)
+        self.format_url.setForeground(QColor('blue'))
+
         # code works with makeTitleStyleBox in TopBar.py
 
         # Default style for normal text
         self.normal = QTextCharFormat()
-
         # Default style for title
-        title = QTextCharFormat()
-        title.setFontPointSize(26)
+        self.title = QTextCharFormat()
+        self.title.setFontPointSize(26)
         # Default style for subtitle
-        subtitle = QTextCharFormat()
-        subtitle.setFontPointSize(15)
-        subtitle.setForeground(QColor('darkgray'))
+        self.subtitle = QTextCharFormat()
+        self.subtitle.setFontPointSize(15)
+        self.subtitle.setForeground(QColor('darkgray'))
         # Default style for heading 1
-        heading1 = QTextCharFormat()
-        heading1.setFontPointSize(20)
+        self.heading1 = QTextCharFormat()
+        self.heading1.setFontPointSize(20)
         # Default style for heading 2
-        heading2 = QTextCharFormat()
-        heading2.setFontPointSize(16)
+        self.heading2 = QTextCharFormat()
+        self.heading2.setFontPointSize(16)
         # Default style for heading 3
-        heading3 = QTextCharFormat()
-        heading3.setFontPointSize(14)
-        heading3.setForeground(QColor('gray'))
+        self.heading3 = QTextCharFormat()
+        self.heading3.setFontPointSize(14)
+        self.heading3.setForeground(QColor('gray'))
         # Default style for heading 4
-        heading4 = QTextCharFormat()
-        heading4.setFontPointSize(12)
-        heading4.setForeground(QColor('darkgray'))
+        self.heading4 = QTextCharFormat()
+        self.heading4.setFontPointSize(12)
+        self.heading4.setForeground(QColor('darkgray'))
+        self.text_update_title = "Update "
+        self.text_reset_title = "Reset to Default"
         # creates dictionary to set the text format to the selected title style in the QComboBox
         self.dict_title_styles = {
             "Normal Text": self.normal,
-            "Title": title,
-            "Subtitle": subtitle,
-            "Header 1": heading1,
-            "Header 2": heading2,
-            "Header 3": heading3,
-            "Header 4": heading4,
+            self.text_update_title + "Normal Text": None,
+            "Title": self.title,
+            self.text_update_title + "Title": None,
+            "Subtitle": self.subtitle,
+            self.text_update_title + "Subtitle": None,
+            "Header 1": self.heading1,
+            self.text_update_title + "Header 1": None,
+            "Header 2": self.heading2,
+            self.text_update_title + "Header 2": None,
+            "Header 3": self.heading3,
+            self.text_update_title + "Header 3": None,
+            "Header 4": self.heading4,
+            self.text_update_title + "Header 4": None,
+            self.text_reset_title: None,
         }

@@ -11,6 +11,7 @@ from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from Utils import DocumentSummarizer
+from Utils.Reminders import Reminder
 from Widgets.CollapsibleWidget import CollapsibleWidget
 
 
@@ -47,11 +48,13 @@ class ContextMenu(QScrollArea):
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
         self.col_reminders_main.setStyleSheet(self.getCollapsibleMenuStyle())
+        self.col_reminders_add = QPushButton("Add Reminder")
 
         self.setupComponents()
         self.setupDetails()
         # Initial setup of labels, when no file is open
         self.updateDetails(None)
+        self.updateReminders()
 
     def setupComponents(self):
         """
@@ -106,6 +109,15 @@ class ContextMenu(QScrollArea):
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
 
+        def onRemindersAction():
+            """
+            Adds a new reminder on button click
+            """
+            self.app.reminders.showDialog(self)
+
+        self.col_reminders_add.clicked.connect(onRemindersAction)
+        self.col_reminders_main.addElement(self.col_reminders_add)
+
     def updateDetails(self, path):
         """
         Updates the elements in the right menu based on arguments
@@ -157,14 +169,35 @@ class ContextMenu(QScrollArea):
             self.col_summary_body.hide()
             self.col_summary_enable.show()
 
+    def updateReminders(self):
+        """
+        Updates the right menu reminders based on dictionary
+        """
+        layout = self.col_reminders_main.content.layout()
+        for i in range(1, layout.count()):
+            layout.itemAt(i).widget().deleteLater()
+
+        dictionary = self.app.reminders.rem_list
+        reminders_list = list(dictionary.values())
+        reminders_list.sort(key=lambda t: t['sort'])
+
+        def onDelete(key):
+            self.app.reminders.deleteReminder(key)
+
+        for rem in reminders_list:
+            wid = Reminder(rem['key'], rem['date'], rem['time'],
+                           rem['title'], rem['text'], onDelete)
+
+            self.col_reminders_main.addElement(wid)
+
     def getCollapsibleMenuStyle(self) -> str:
         """
         Retrieves the CSS Style used for the right menu
         Collapsible Widgets
         """
-        prop_header_height = str(self.layout_props.item_height)
-        prop_header_color = str(self.layout_props.header_color_light)
-        prop_header_color_select = str(self.layout_props.header_color)
+        prop_header_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
+        prop_header_color = str(self.layout_props.getDefaultLeftMenuHeaderColorLight())
+        prop_header_color_select = str(self.layout_props.getDefaultLeftMenuHeaderColor())
 
         return "QToolButton { background-color: " + prop_header_color + ";" + \
                "color: white;" \

@@ -4,14 +4,14 @@ used to interact with the Text Edit area.
 """
 
 import logging
+import webbrowser
 
+import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
-
-
 
 
 class Document(QTextEdit):
@@ -27,6 +27,7 @@ class Document(QTextEdit):
         """
         super().__init__("")
         logging.debug("Creating Document")
+        self.app = app
         self.doc_props = doc_props
 
         # If the dictionaries have been downloaded previously, check persistent settings
@@ -40,11 +41,92 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
+        self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+
+    def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
+        """
+        if the double clicked word is a link open it
+        :return: returns nothing
+        """
+        # get the cursor where the user double clicked
+        cursor = self.cursorForPosition(e.pos())
+        pos = cursor.position()
+
+        # get the selected words position and full word
+        _, _, url = self._getWordFromPos(pos)
+
+        # check if the url is valid
+        valid = validators.url(url)
+        print(valid)
+        # if the link is valid open it
+        if valid:
+            webbrowser.open(url)
+            logging.info("User opened link - %s", url)
+
+    def _highlightUrls(self):
+        """
+        This highlights the current word if it is a link
+        :return: returns nothing
+        """
+        # if formatting mode is off do not highlight the links
+        if self.app.btn_mode_switch is None or not self.app.btn_mode_switch.isChecked():
+            return
+
+        # save the current cursor position and format
+        cursor = self.textCursor()
+        pos = cursor.position()
+
+        # get the selected words position and full word
+        start, end, url = self._getWordFromPos(pos)
+
+        # check if the url is valid
+        valid = validators.url(url)
+
+        # if the link is valid, underline it
+        if valid:
+            self.blockSignals(True)
+            curr_format = self.currentCharFormat()
+
+            # select the whole word
+            cursor.setPosition(start)
+            cursor.setPosition(end, QTextCursor.KeepAnchor)
+
+            # set the words format
+            cursor.setCharFormat(self.doc_props.format_url)
+
+            # reset to the current format
+            cursor.setPosition(pos)
+            cursor.setCharFormat(curr_format)
+            self.setTextCursor(cursor)
+
+            self.blockSignals(False)
+
+    def _getWordFromPos(self, pos):
+        """
+        this get the word at the selected position
+        :param pos: the position in the document
+        :return: returns a tuple of the start and end position as well as the word
+        """
+        # get the start and end index of the current selection
+        start = self.toPlainText().rfind(" ", 0, pos) + 1
+        new_line = self.toPlainText().rfind("\n", 0, pos) + 1
+        start = start if start > new_line else new_line
+
+        end = self.toPlainText().find(" ", pos)
+        new_line = self.toPlainText().find("\n", pos)
+        end = end if end < new_line else new_line
+
+        # fix the indices if they are equal to -1
+        end = len(self.toPlainText()) if end == -1 else end
+
+        # get the selected word
+        word = self.toPlainText()[start:end]
+        return start, end, word
 
     def onFontItalChanged(self, is_italic: bool):
         """
@@ -160,13 +242,15 @@ class Document(QTextEdit):
 
     def fontBold(self) -> bool:
         """
-        Function returns whether the font is bold
+        returns true the current font weight is bolded
+        :return: returns whether or not the text is bolded
         """
         return self.fontWeight() == QFont.Bold
 
     def fontStrike(self) -> bool:
         """
-        Function returns whether the font is strike
+        returns true the current font is strikethrough
+        :return: returns whether or not the text is struck through
         """
         return self.currentCharFormat().fontStrikeOut()
 
@@ -196,14 +280,40 @@ class Document(QTextEdit):
 
     def onTitleStyleChanged(self, state):
         """
-        Sets the font to the new font
+        Sets the font to the new font based on title style selected
+        updates style of title
+        resets title styles to default
         :return: returns nothing
         """
         logging.info(state)
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(self.doc_props.dict_title_styles[state])
-        self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        if state == "":
+            cursor.setCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles["Normal Text"])
+            return
+        if self.doc_props.text_update_title not in state and \
+                self.doc_props.text_reset_title not in state:
+            cursor.setCharFormat(self.doc_props.dict_title_styles[state])
+            self.setCurrentCharFormat(self.doc_props.dict_title_styles[state])
+        elif self.doc_props.text_update_title in state:
+            self.doc_props.dict_title_styles[
+                state[len(self.doc_props.text_update_title):]] = cursor.charFormat()
+        else:
+            self.resetTitleStyle()
+
+    def resetTitleStyle(self):
+        """
+        resets title styles to default style
+        :return: returns nothing
+        """
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Title"] = self.doc_props.title
+        self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
+        self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
+        self.doc_props.dict_title_styles["Header 2"] = self.doc_props.heading2
+        self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
+        self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
     def setFormatText(self, text: str, formatting: bool):
         """
