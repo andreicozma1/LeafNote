@@ -61,7 +61,7 @@ class Document(QTextEdit):
 
         # check if the url is valid
         valid = validators.url(url)
-        print(valid)
+
         # if the link is valid open it
         if valid:
             webbrowser.open(url)

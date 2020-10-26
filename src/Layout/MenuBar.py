@@ -5,7 +5,8 @@ all properties and functionalities of the menu bar
 import logging
 from functools import partial
 
-from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtPrintSupport import QPrintDialog
+from PyQt5.QtWidgets import QAction, QMenu, QDialog
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 from Layout import DocProps
@@ -88,6 +89,13 @@ class MenuBar(QMenuBar):
             if file_manager.saveAsDocument(self.doc):
                 logging.debug("Saved As Document Completed.")
 
+        def onPrintBtn():
+            logging.info("Clicked Print")
+            printer = file_manager.exportToPDF(self.doc, to_print=True)
+            print_dialog = QPrintDialog(printer)
+            if print_dialog.exec() == QDialog.Accepted:
+                print("User print doc")
+
         def onExitBtn():
             """
             """
@@ -96,7 +104,6 @@ class MenuBar(QMenuBar):
             app.close()
 
         menu_file = self.addMenu('&File')
-
         # ========= START FILE MENU SECTION =========
         def makeFileAction(name: str, shortcut: str, signal) -> QAction:
             """
@@ -116,6 +123,11 @@ class MenuBar(QMenuBar):
         menu_file.addSeparator()
         menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
         menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
+        menu_file.addSeparator()
+        menu_download = menu_file.addMenu('&Download')
+        menu_download.addAction(makeFileAction("PDF Document (.pdf)", "",
+                                               partial(file_manager.exportToPDF, self.doc)))
+        menu_file.addAction(makeFileAction("Print", "Ctrl+p", onPrintBtn))
 
         menu_file.addSeparator()
         menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))

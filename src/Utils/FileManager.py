@@ -7,6 +7,7 @@ import logging
 import os
 
 from PyQt5.QtCore import QFileInfo
+from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
 
 from Utils import DialogBuilder
@@ -502,6 +503,36 @@ class FileManager:
         # create the file and open it
         self.writeFileData(path, "")
         self.openDocument(document, path)
+
+    def exportToPDF(self, document, to_print=False):
+        """
+        this will download the formatted document to the file of the users choice
+        :param document: reference to the document
+        :param to_print: if the caller intends to print the document
+        :return: returns the qprinter object that is created
+        """
+        # get the file name if exporting
+        file_name = "file"
+        if not to_print:
+            file_name = QFileDialog.getSaveFileName(self.app, 'Save To PDF')
+            if file_name is not None:
+                file_name = file_name[0]
+
+        # if the file name is not given return none
+        if file_name == '':
+            return None
+
+        # create the qprinter object
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setPageSize(QPrinter.A4)
+        printer.setColorMode(QPrinter.Color)
+        printer.setOutputFormat(QPrinter.PdfFormat)
+
+        # if exporting file save the output name and export it
+        if not to_print:
+            printer.setOutputFileName(file_name)
+            document.print_(printer)
+        return printer
 
     def printAll(self):
         """
