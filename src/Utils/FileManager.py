@@ -52,6 +52,7 @@ class FileManager:
             file_filter = ""
 
         # if a file has already been opened write to the file
+
         if self.current_document is not None:
             # check if the file that was being worked on has been moved externally
             file_exists, file_missing = self.checkCurrentFileExists()

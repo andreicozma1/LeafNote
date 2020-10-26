@@ -4,9 +4,10 @@ used to interact with the Text Edit area.
 """
 
 import logging
-
+import webbrowser
+import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 
 from Utils import DocumentSummarizer
@@ -25,6 +26,7 @@ class Document(QTextEdit):
         """
         super().__init__("")
         logging.debug("Creating Document")
+        self.app = app
         self.doc_props = doc_props
 
         # If the dictionaries have been downloaded previously, check persistent settings
@@ -38,11 +40,92 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
+        self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+
+    def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
+        """
+        if the double clicked word is a link open it
+        :return: returns nothing
+        """
+        # get the cursor where the user double clicked
+        cursor = self.cursorForPosition(e.pos())
+        pos = cursor.position()
+
+        # get the selected words position and full word
+        _, _, url = self._getWordFromPos(pos)
+
+        # check if the url is valid
+        valid = validators.url(url)
+        print(valid)
+        # if the link is valid open it
+        if valid:
+            webbrowser.open(url)
+            logging.info("User opened link - %s", url)
+
+    def _highlightUrls(self):
+        """
+        This highlights the current word if it is a link
+        :return: returns nothing
+        """
+        # if formatting mode is off do not highlight the links
+        if self.app.btn_mode_switch is None or not self.app.btn_mode_switch.isChecked():
+            return
+
+        # save the current cursor position and format
+        cursor = self.textCursor()
+        pos = cursor.position()
+
+        # get the selected words position and full word
+        start, end, url = self._getWordFromPos(pos)
+
+        # check if the url is valid
+        valid = validators.url(url)
+
+        # if the link is valid, underline it
+        if valid:
+            self.blockSignals(True)
+            curr_format = self.currentCharFormat()
+
+            # select the whole word
+            cursor.setPosition(start)
+            cursor.setPosition(end, QTextCursor.KeepAnchor)
+
+            # set the words format
+            cursor.setCharFormat(self.doc_props.format_url)
+
+            # reset to the current format
+            cursor.setPosition(pos)
+            cursor.setCharFormat(curr_format)
+            self.setTextCursor(cursor)
+
+            self.blockSignals(False)
+
+    def _getWordFromPos(self, pos):
+        """
+        this get the word at the selected position
+        :param pos: the position in the document
+        :return: returns a tuple of the start and end position as well as the word
+        """
+        # get the start and end index of the current selection
+        start = self.toPlainText().rfind(" ", 0, pos) + 1
+        new_line = self.toPlainText().rfind("\n", 0, pos) + 1
+        start = start if start > new_line else new_line
+
+        end = self.toPlainText().find(" ", pos)
+        new_line = self.toPlainText().find("\n", pos)
+        end = end if end < new_line else new_line
+
+        # fix the indices if they are equal to -1
+        end = len(self.toPlainText()) if end == -1 else end
+
+        # get the selected word
+        word = self.toPlainText()[start:end]
+        return start, end, word
 
     def onFontItalChanged(self, is_italic: bool):
         """
