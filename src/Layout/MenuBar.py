@@ -19,6 +19,7 @@ from Widgets.Calculator import Calculator
 from Widgets.Dictionary import Dictionary
 
 
+
 class MenuBar(QMenuBar):
     """
     This class is a customized QMenuBar for the application
@@ -146,15 +147,25 @@ class MenuBar(QMenuBar):
 
             state_search = app.search_and_replace.search.isVisible()
             app.search_and_replace.search.setVisible(not state_search)
-            if state_search:
+            if not state_search:
                 app.search_and_replace.search.search_bar.setFocus()
 
         def onFindAllBtn():
             """
             """
             logging.info("Clicked Find All Action")
-            self.doc.search_all = SearchWorkspace(self.doc, file_manager,
-                                                  app.left_menu.model.rootPath())
+            # create the search workspace dialog
+            search_workspace_dialog = DialogBuilder.DialogBuilder(app, "Search Workspace")
+
+            # create search workspace widget
+            search_workspace = SearchWorkspace(self.doc, file_manager,
+                                               app.left_menu.model.rootPath())
+            search_workspace.setCloseDialogCallback(search_workspace_dialog.close)
+
+            # modify the dialog
+            search_workspace_dialog.addWidget(search_workspace)
+            # search_workspace_dialog.setCloseOnUnfocused(True)
+            search_workspace_dialog.show()
 
         def onFindAndReplaceBtn():
             """
