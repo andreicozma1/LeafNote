@@ -97,6 +97,7 @@ class OpenTabsBar(QWidget):
         if path in self.open_tabs:
             # pop the closed tab from the open tab dic
             self.open_tabs.pop(path)
+            self.horizontal_layout.removeWidget(tab)
             tab.deleteLater()
 
             # set the active tab
