@@ -316,4 +316,3 @@ class Document(QTextEdit):
 
             for word in misspelled:
                 self.highlighter.misspelled_words.append((start, word))
-                print(self.highlighter.misspelled_words)
