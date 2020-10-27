@@ -19,7 +19,6 @@ from Widgets.Calculator import Calculator
 from Widgets.Dictionary import Dictionary
 
 
-
 class MenuBar(QMenuBar):
     """
     This class is a customized QMenuBar for the application
