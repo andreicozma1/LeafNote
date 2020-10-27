@@ -89,13 +89,6 @@ class MenuBar(QMenuBar):
             if file_manager.saveAsDocument(self.doc):
                 logging.debug("Saved As Document Completed.")
 
-        def onPrintBtn():
-            logging.info("Clicked Print")
-            printer = file_manager.exportToPDF(self.doc, to_print=True)
-            print_dialog = QPrintDialog(printer)
-            if print_dialog.exec() == QDialog.Accepted:
-                print("User print doc")
-
         def onExitBtn():
             """
             """
@@ -124,10 +117,11 @@ class MenuBar(QMenuBar):
         menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
         menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
         menu_file.addSeparator()
-        menu_download = menu_file.addMenu('&Download')
+        menu_download = menu_file.addMenu('&Export')
         menu_download.addAction(makeFileAction("PDF Document (.pdf)", "",
                                                partial(file_manager.exportToPDF, self.doc)))
-        menu_file.addAction(makeFileAction("Print", "Ctrl+p", onPrintBtn))
+        menu_file.addAction(makeFileAction("Print", "Ctrl+p", partial(file_manager.printDocument,
+                                                                      self.doc)))
 
         menu_file.addSeparator()
         menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))
