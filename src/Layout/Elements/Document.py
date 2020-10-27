@@ -5,6 +5,7 @@ used to interact with the Text Edit area.
 
 import logging
 import webbrowser
+
 import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor

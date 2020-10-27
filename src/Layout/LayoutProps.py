@@ -68,6 +68,17 @@ class LayoutProps:
         return ["Name"]
 
     @staticmethod
+    def getDefaultLeftMenuHeaderMargin():
+        """
+        Returns the default Left Menu Header Margin
+        """
+        return 4
+
+    # ========= END LEFT MENU SECTION =========
+
+    # ========= START DEFAULTS SECTION =========
+
+    @staticmethod
     def getDefaultLeftMenuItemHeight():
         """
         Returns the default Left Menu Item height
@@ -75,18 +86,18 @@ class LayoutProps:
         return 30
 
     @staticmethod
-    def getDefaultLeftMenuHeaderMargin():
-        """
-        Returns the default Left Menu Header Margin
-        """
-        return 4
-
-    @staticmethod
     def getDefaultLeftMenuHeaderColor():
         """
         Returns the default Left Menu Header Color
         """
         return "rgba(56, 90, 125, 1.0)"
+
+    @staticmethod
+    def getDefaultLeftMenuHeaderColorLight():
+        """
+        Returns the default Left Menu Header Color
+        """
+        return "rgba(56, 90, 125, 0.8)"
 
     @staticmethod
     def getDefaultLeftMenuSelectColor():
@@ -102,4 +113,4 @@ class LayoutProps:
         """
         return "rgba(249, 145, 146, 0.1)"
 
-    # ========= END LEFT MENU SECTION =========
+    # ========= END DEFAULTS SECTION =========

@@ -222,7 +222,9 @@ class BottomBar(QWidget):
         :return: CalendarWidget()
         """
         logging.debug("Showing calendar")
-        calendar = Calendar()
+        header = self.app.layout_props.getDefaultLeftMenuHeaderColorLight()
+        select = self.app.layout_props.getDefaultLeftMenuSelectColor()
+        calendar = Calendar(header, select)
 
         setting_hint = "hints/showCalendarReminderHint"
         should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(

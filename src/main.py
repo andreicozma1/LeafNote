@@ -55,7 +55,6 @@ class App(QMainWindow):
         self.reminders = Reminders(self, self.settings)
         self.btn_mode_switch = None
 
-
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
         layout_main = self.layout.makeMainLayout()
@@ -76,7 +75,7 @@ class App(QMainWindow):
                                          self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
-        self.right_menu = ContextMenu(self, self.document)
+        self.right_menu = ContextMenu(self, self.layout_props, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
                                                               self.document,
                                                               self.right_menu,
@@ -89,7 +88,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.bottom_bar)
 
         # Setup System MenuBar
-        self.menu_bar = MenuBar(self.document, self.doc_props)
+        self.menu_bar = MenuBar(self.document, self.doc_props, self.layout_props)
         self.setupMenuBar()
         self.menu_bar.show()
 
@@ -263,6 +262,7 @@ class App(QMainWindow):
                 logging.info("END DECRYPT WORKSPACE: %s", path_workspace)
 
         return super().closeEvent(event)
+
 
 def main():
     """

@@ -64,7 +64,7 @@ class DirectoryViewer(QTreeView):
         shortcut = QShortcut(Qt.Key_Return, self)
         shortcut.activated.connect(self.onClickDirIndex)
         # Open documents on selection changed
-        self.selectionModel().currentRowChanged.connect(self.onSelectDirIndex)
+        self.selectionModel().currentRowChanged.connect(self.onSelectFileIndex)
 
     def updateDirectory(self, abs_path: str):
         """
@@ -76,7 +76,6 @@ class DirectoryViewer(QTreeView):
 
         self.model.setRootPath(abs_path)
         self.setRootIndex(self.model.index(abs_path))
-
         self.sortByColumn(0, Qt.AscendingOrder)
 
         self.fileManager.encryptor = None
@@ -90,7 +89,7 @@ class DirectoryViewer(QTreeView):
         else:
             logging.info("Workspace not encrypted")
 
-    def onSelectDirIndex(self, index: QModelIndex):
+    def onSelectFileIndex(self, index: QModelIndex):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -156,10 +155,10 @@ class DirectoryViewer(QTreeView):
         style = "QTreeView::item { height: " + prop_item_height + "px; }" + \
                 "QTreeView::item:selected {" \
                 "background-color: " + prop_item_select_color + "; }" + \
-                "QTreeView::item:hover:!selected { background-color: " \
-                + prop_item_hover_color + "; }" + \
+                "QTreeView::item:hover:!selected { " + \
+                "background-color: " + prop_item_hover_color + "; }" + \
                 "QHeaderView::section { margin: " + prop_header_margin + ";" + \
-                " margin-left: 0; " \
-                " background-color: " + prop_header_color + ";" \
-                                                            " color: white; }"
+                " margin-left: 0; " + \
+                " background-color: " + prop_header_color + ";" + \
+                " color: white; }"
         self.setStyleSheet(style)
