@@ -514,12 +514,21 @@ class FileManager:
         logging.debug("")
         # get the file name if exporting
         file_name = QFileDialog.getSaveFileName(self.app, 'Save To PDF')
+
         if file_name is not None:
             file_name = file_name[0]
 
         # if the file name is not given return none
         if file_name == '':
             return None
+
+        # if there is no pdf extension then add it
+        file_info = QFileInfo(file_name)
+        if file_info.suffix() != "pdf":
+            if file_name.find('.') != -1:
+                file_name = file_name[:file_name.rindex('.')] + ".pdf"
+            else:
+                file_name = file_name + ".pdf"
 
         # create the qprinter object
         printer = QPrinter(QPrinter.HighResolution)
