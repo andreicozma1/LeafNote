@@ -33,7 +33,7 @@ class Document(QTextEdit):
 
         self.highlighter = SyntaxHighlighter(self)
         self.spell_checker = SpellChecker()
-        self.textChanged.connect(self.getMisspelledWords)
+        self.textChanged.connect(self.getCurrentSentence)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -67,7 +67,6 @@ class Document(QTextEdit):
 
         # check if the url is valid
         valid = validators.url(url)
-        print(valid)
         # if the link is valid open it
         if valid:
             webbrowser.open(url)
@@ -300,18 +299,26 @@ class Document(QTextEdit):
         # unknown = self.spell_checker.unknown([word])
         # self.highlighter.misspelled_words = unknown
 
-    # def getCurrentSentence(self):
-    #     cursor = self.textCursor()
-    #     pos = cursor.position()
-    #     word = self._getWordFromPos(pos)
-    #
-    #     if word[2] == "":
-    #         word_temp = self._getWordFromPos(pos - 1)
-    #         self.SpellChecker(word_temp[2])
-    #
-    # def SpellChecker(self, word_t):
-    #     spell = SpellChecker()
-    #     spell.correction(word_t)
-    #     #print(spell.candidates(word_t))
+    def getCurrentSentence(self):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        _, _, word = self._getWordFromPos(pos)
+
+        if word == "":
+            _, _, word_temp = self._getWordFromPos(pos - 1)
+            self.SpellChecker(word_temp)
+
+    def SpellChecker(self, word_t):
+        print("Correction, Canidates")
+
+        if word_t != '':
+            misspelled = self.spell_checker.unknown([word_t])
+
+            for word in misspelled:
+                print("Appended")
+                self.highlighter.misspelled_words.append(word)
+                #print(self.highlighter.misspelled_words)
+                # print(self.spell_checker.correction(word))
+                # print(self.spell_checker.candidates(word))
 
 
