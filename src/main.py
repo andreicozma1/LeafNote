@@ -24,7 +24,6 @@ from Utils.DialogBuilder import DialogBuilder
 from Utils.FileManager import FileManager
 from Utils.Reminders import Reminders
 from Widgets.DirectoryViewer import DirectoryViewer
-from Utils.SyntaxHighlighter import SyntaxHighlighter
 
 logging.basicConfig(
     level=logging.DEBUG,
