@@ -8,10 +8,12 @@ import webbrowser
 
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from spellchecker import SpellChecker
 
 from Utils import DocumentSummarizer
+from Utils.SyntaxHighlighter import SyntaxHighlighter
 
 
 class Document(QTextEdit):
@@ -30,6 +32,10 @@ class Document(QTextEdit):
         self.app = app
         self.doc_props = doc_props
 
+        self.highlighter = SyntaxHighlighter(self)
+        self.spell_checker = SpellChecker()
+        self.textChanged.connect(self.getCurrentWord)
+
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
         if app.settings.contains("dictionaryPath"):
@@ -41,12 +47,12 @@ class Document(QTextEdit):
         if default_text is None:
             default_text = "You can type here."
 
-        self.textChanged.connect(self._highlightUrls)
         self.setText(default_text)
         self.setAutoFillBackground(True)
         self.setBackgroundColor("white")
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
+
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -62,49 +68,10 @@ class Document(QTextEdit):
 
         # check if the url is valid
         valid = validators.url(url)
-        print(valid)
         # if the link is valid open it
         if valid:
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
-
-    def _highlightUrls(self):
-        """
-        This highlights the current word if it is a link
-        :return: returns nothing
-        """
-        # if formatting mode is off do not highlight the links
-        if self.app.btn_mode_switch is None or not self.app.btn_mode_switch.isChecked():
-            return
-
-        # save the current cursor position and format
-        cursor = self.textCursor()
-        pos = cursor.position()
-
-        # get the selected words position and full word
-        start, end, url = self._getWordFromPos(pos)
-
-        # check if the url is valid
-        valid = validators.url(url)
-
-        # if the link is valid, underline it
-        if valid:
-            self.blockSignals(True)
-            curr_format = self.currentCharFormat()
-
-            # select the whole word
-            cursor.setPosition(start)
-            cursor.setPosition(end, QTextCursor.KeepAnchor)
-
-            # set the words format
-            cursor.setCharFormat(self.doc_props.format_url)
-
-            # reset to the current format
-            cursor.setPosition(pos)
-            cursor.setCharFormat(curr_format)
-            self.setTextCursor(cursor)
-
-            self.blockSignals(False)
 
     def _getWordFromPos(self, pos):
         """
@@ -119,7 +86,7 @@ class Document(QTextEdit):
 
         end = self.toPlainText().find(" ", pos)
         new_line = self.toPlainText().find("\n", pos)
-        end = end if end < new_line else new_line
+        end = end if end > new_line else new_line
 
         # fix the indices if they are equal to -1
         end = len(self.toPlainText()) if end == -1 else end
@@ -324,3 +291,29 @@ class Document(QTextEdit):
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
+
+    def getCurrentWord(self):
+        """
+        grabs current word in text document and runs a spell checker
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        pos = cursor.position()
+        _, _, word = self._getWordFromPos(pos)
+
+        if word == "":
+            start, _, word_temp = self._getWordFromPos(pos - 1)
+            self.SpellChecker(start, word_temp)
+
+    def SpellChecker(self, start, word_t):
+        """
+        runs word_t through a spell checker
+        :param start: Start positon of the word
+        :param word_t: The word itself
+        :return: returns nothing
+        """
+        if word_t != '':
+            misspelled = self.spell_checker.unknown([word_t])
+
+            for word in misspelled:
+                self.highlighter.misspelled_words.append((start, word))

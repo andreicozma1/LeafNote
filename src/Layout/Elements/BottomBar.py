@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, 
 from Utils.DialogBuilder import DialogBuilder
 from Widgets.Calendar import Calendar
 
-
 class BottomBar(QWidget):
     """
     BottomBar sets up the bottom bar when called in Main.py
