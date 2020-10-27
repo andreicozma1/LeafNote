@@ -8,10 +8,7 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         super().__init__(document)
         self.document = document
         self.highlighting_rules = []
-        self.misspelled_words = {
-
-        }
-
+        self.misspelled_words = []
         self.err_format = QTextCharFormat()
 
         self.setupRules()
@@ -38,10 +35,9 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index+length)
 
-        print(self.misspelled_words)
         if len(self.misspelled_words) > 0:
             for word in self.misspelled_words:
-                expression = QRegExp("\\b" + word + "\\b")
+                expression = QRegExp("\\b" + word[1] + "\\b")
                 index = expression.indexIn(text)
                 while index >= 0:
                     length = expression.matchedLength()

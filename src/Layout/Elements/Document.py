@@ -305,19 +305,17 @@ class Document(QTextEdit):
         _, _, word = self._getWordFromPos(pos)
 
         if word == "":
-            _, _, word_temp = self._getWordFromPos(pos - 1)
-            self.SpellChecker(word_temp)
+            start, _, word_temp = self._getWordFromPos(pos - 1)
+            self.SpellChecker(start, word_temp)
 
-    def SpellChecker(self, word_t):
+    def SpellChecker(self, start, word_t):
         print("Correction, Canidates")
-
         if word_t != '':
             misspelled = self.spell_checker.unknown([word_t])
 
             for word in misspelled:
-                print("Appended")
-                self.highlighter.misspelled_words.append(word)
-                #print(self.highlighter.misspelled_words)
+                self.highlighter.misspelled_words.append((start, word))
+                print(self.highlighter.misspelled_words)
                 # print(self.spell_checker.correction(word))
                 # print(self.spell_checker.candidates(word))
 
