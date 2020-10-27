@@ -544,7 +544,10 @@ class FileManager:
 
         # create and run the print dialog
         print_dialog = QPrintDialog(printer)
-        if print_dialog.exec() == QDialog.Accepted:
+        state = print_dialog.exec()
+        print(state)
+        print(QDialog.Accepted)
+        if state == QDialog.Accepted:
             # print if the user selected print
             logging.debug("User chose to print")
             document.print_(printer)
