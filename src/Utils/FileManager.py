@@ -540,11 +540,11 @@ class FileManager:
         printer = QPrinter(QPrinter.HighResolution)
         printer.setPageSize(QPrinter.A4)
         printer.setColorMode(QPrinter.Color)
-        printer.setOutputFormat(QPrinter.PdfFormat)
+        printer.setOutputFormat(QPrinter.NativeFormat)
 
         # create and run the print dialog
         print_dialog = QPrintDialog(printer)
-        state = print_dialog.exec()
+        state = print_dialog.exec_()
         print(state)
         print(QDialog.Accepted)
         if state == QDialog.Accepted:
