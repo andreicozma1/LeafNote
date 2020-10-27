@@ -7,7 +7,7 @@ import logging
 import webbrowser
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
 
@@ -317,6 +317,3 @@ class Document(QTextEdit):
             for word in misspelled:
                 self.highlighter.misspelled_words.append((start, word))
                 print(self.highlighter.misspelled_words)
-
-
-

@@ -1,9 +1,14 @@
+"""
+This is the libraries used in this module
+"""
 from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QSyntaxHighlighter, QTextBlockUserData, QTextCharFormat, QColor
+from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor
 
 
 class SyntaxHighlighter(QSyntaxHighlighter):
-
+    """
+    SyntaxHighlighter is an instance of QSyntaxHighlighter that allows us the modify the docuemnt
+    """
     def __init__(self, document):
         super().__init__(document)
         self.document = document
@@ -14,6 +19,10 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         self.setupRules()
 
     def setupRules(self):
+        """
+        Sets up the formatting
+        :return: returns nothing
+        """
         url_format = QTextCharFormat()
         url_format.setFontUnderline(True)
         url_format.setForeground(QColor("blue"))
@@ -27,6 +36,11 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         self.err_format.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
 
     def highlightBlock(self, text):
+        """
+        Will highlight current text
+        :param text: current word in the file
+        :return: returns nothing
+        """
         for rule in self.highlighting_rules:
             expression = rule[0]
             index = expression.indexIn(text)
@@ -45,5 +59,3 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                     index = expression.indexIn(text, index + length)
 
         self.setCurrentBlockState(0)
-
-

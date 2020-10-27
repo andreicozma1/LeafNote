@@ -12,8 +12,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, 
 
 from Utils.DialogBuilder import DialogBuilder
 from Widgets.Calendar import Calendar
-from spellchecker import SpellChecker
-
 
 class BottomBar(QWidget):
     """
@@ -251,4 +249,3 @@ class BottomBar(QWidget):
         dialog.layout().setContentsMargins(0, 0, 0, 0)
         dialog.setFixedHeight(400)
         dialog.exec()
-
