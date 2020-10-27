@@ -33,7 +33,7 @@ class Document(QTextEdit):
 
         self.highlighter = SyntaxHighlighter(self)
         self.spell_checker = SpellChecker()
-        self.textChanged.connect(self.getCurrentSentence)
+        self.textChanged.connect(self.getCurrentWord)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -291,15 +291,11 @@ class Document(QTextEdit):
         if not formatting:
             self.clearAllFormatting()
 
-    def getMisspelledWords(self):
-        cursor = self.textCursor()
-        cursor_pos = cursor.position()
-        _, _, word = self._getWordFromPos(cursor_pos)
-        # print(word)
-        # unknown = self.spell_checker.unknown([word])
-        # self.highlighter.misspelled_words = unknown
-
-    def getCurrentSentence(self):
+    def getCurrentWord(self):
+        """
+        grabs current word in text document and runs a spell checker
+        :return: returns nothing
+        """
         cursor = self.textCursor()
         pos = cursor.position()
         _, _, word = self._getWordFromPos(pos)
@@ -309,14 +305,18 @@ class Document(QTextEdit):
             self.SpellChecker(start, word_temp)
 
     def SpellChecker(self, start, word_t):
-        print("Correction, Canidates")
+        """
+        runs word_t through a spell checker
+        :param start: Start positon of the word
+        :param word_t: The word itself
+        :return: returns nothing
+        """
         if word_t != '':
             misspelled = self.spell_checker.unknown([word_t])
 
             for word in misspelled:
                 self.highlighter.misspelled_words.append((start, word))
                 print(self.highlighter.misspelled_words)
-                # print(self.spell_checker.correction(word))
-                # print(self.spell_checker.candidates(word))
+
 
 
