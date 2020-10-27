@@ -14,6 +14,7 @@ from Layout.Utils.SearchWorkspace import SearchWorkspace
 from Utils import Encryptor, EquationEditor, DocumentSummarizer, DialogBuilder
 from Widgets import Calculator
 
+
 class MenuBar(QMenuBar):
     """
     This class is a customized QMenuBar for the application
