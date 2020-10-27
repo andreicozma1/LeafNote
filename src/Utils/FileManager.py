@@ -532,25 +532,32 @@ class FileManager:
 
     def printDocument(self, document):
         """
-
+        this will print the document to the selected printer
+        :param document: reference to the document
+        :return: return true on print, false otherwise
         """
+        # create the qprinter object
         printer = QPrinter(QPrinter.HighResolution)
         printer.setPageSize(QPrinter.A4)
         printer.setColorMode(QPrinter.Color)
         printer.setOutputFormat(QPrinter.PdfFormat)
+
+        # create and run the print dialog
         print_dialog = QPrintDialog(printer)
         if print_dialog.exec() == QDialog.Accepted:
+            # print if the user selected print
             logging.debug("User chose to print")
             document.print_(printer)
             return True
-        else:
-            logging.warning("User chose NOT to print")
-            return False
+
+        # if the user selected not to print
+        logging.warning("User chose NOT to print")
+        return False
 
     def printAll(self):
         """
         For debugging. Prints out all of the documents stored in open_documents dictionary.
-        :return:
+        :return: returns nothing
         """
         logging.info("========================================")
         logging.info("Open Documents:")

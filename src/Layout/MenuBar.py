@@ -5,8 +5,7 @@ all properties and functionalities of the menu bar
 import logging
 from functools import partial
 
-from PyQt5.QtPrintSupport import QPrintDialog
-from PyQt5.QtWidgets import QAction, QMenu, QDialog
+from PyQt5.QtWidgets import QAction, QMenu
 from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 from Layout import DocProps
