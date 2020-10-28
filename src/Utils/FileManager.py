@@ -134,7 +134,6 @@ class FileManager:
             logging.info("User chose save the current document.")
             return True, True
 
-
         # if the user chose not to save the file return false that the file doesnt exist
         # and false that the file is missing
         logging.info("User chose NOT to save the file.")
@@ -181,7 +180,6 @@ class FileManager:
 
         # return true if the file is up to date
         return True
-
 
     def saveAsDocument(self, document):
         """

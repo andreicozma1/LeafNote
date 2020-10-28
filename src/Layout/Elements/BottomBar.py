@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, 
 from Utils.DialogBuilder import DialogBuilder
 from Widgets.Calendar import Calendar
 
-
 class BottomBar(QWidget):
     """
     BottomBar sets up the bottom bar when called in Main.py
@@ -222,7 +221,9 @@ class BottomBar(QWidget):
         :return: CalendarWidget()
         """
         logging.debug("Showing calendar")
-        calendar = Calendar()
+        header = self.app.layout_props.getDefaultLeftMenuHeaderColorLight()
+        select = self.app.layout_props.getDefaultLeftMenuSelectColor()
+        calendar = Calendar(header, select)
 
         setting_hint = "hints/showCalendarReminderHint"
         should_show_hint = not self.settings.contains(setting_hint) or self.settings.value(

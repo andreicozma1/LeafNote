@@ -11,13 +11,17 @@ class Calendar(QCalendarWidget):
     This class defines a customized QCalendarWidget
     """
 
-    def __init__(self):
+    def __init__(self, header_color: str = None, select_color: str = None):
         super().__init__()
         logging.debug("Creating Calendar")
+        if header_color is None:
+            header_color = "initial"
+        if select_color is None:
+            select_color = "initial"
 
         self.setStyleSheet("#qt_calendar_navigationbar"
                            "{"
-                           "   background-color : #F97170;"
+                           "   background-color : " + header_color + ";" + \
                            "   min-height: 40px;"
                            "}"
                            "#qt_calendar_prevmonth:hover, #qt_calendar_nextmonth:hover, "
@@ -44,6 +48,5 @@ class Calendar(QCalendarWidget):
                            "   qproperty-text: '>';"
                            "}"
                            "#qt_calendar_calendarview  {"
-                           "   selection-background-color: #F97170;"
-                           "}"
+                           "   selection-background-color: " + select_color + ";}"
                            )

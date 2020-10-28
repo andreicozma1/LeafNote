@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QFileDialog, QMenuBar, QActionGroup
 
 from Layout import DocProps
 from Layout.Elements import Document
+from Layout.LayoutProps import LayoutProps
 from Layout.Utils.SearchWorkspace import SearchWorkspace
 
 from Utils.DialogBuilder import DialogBuilder
@@ -24,7 +25,7 @@ class MenuBar(QMenuBar):
     This class is a customized QMenuBar for the application
     """
 
-    def __init__(self, document: Document, doc_props: DocProps):
+    def __init__(self, document: Document, doc_props: DocProps, layout_props: LayoutProps):
         """
         Sets up the System MenuBar
         :return: returns nothing
@@ -34,12 +35,14 @@ class MenuBar(QMenuBar):
 
         self.doc = document
         self.doc_props = doc_props
+        self.layout_props = layout_props
         self.setNativeMenuBar(False)
 
         self.menu_format = None
         self.group_style = None
         self.group_align = None
-        self.equation_editor = None
+
+        self.updateAppearance()
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager):
@@ -482,3 +485,11 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
+
+    def updateAppearance(self):
+        """
+        Updates appearance of MenuBar according to styles
+        """
+        prop_select_color = self.layout_props.getDefaultLeftMenuHeaderColorLight()
+        style = "QMenu::item:selected { background-color: " + prop_select_color + ";}"
+        self.setStyleSheet(style)
