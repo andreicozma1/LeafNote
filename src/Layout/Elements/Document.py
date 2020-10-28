@@ -303,9 +303,9 @@ class Document(QTextEdit):
 
         if word == "":
             start, _, word_temp = self._getWordFromPos(pos - 1)
-            self.SpellChecker(start, word_temp)
+            self.spellChecker(start, word_temp)
 
-    def SpellChecker(self, start, word_t):
+    def spellChecker(self, start, word_t):
         """
         runs word_t through a spell checker
         :param start: Start positon of the word
