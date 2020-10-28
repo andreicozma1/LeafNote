@@ -20,7 +20,6 @@ from Widgets.Calculator import Calculator
 from Widgets.Dictionary import Dictionary
 
 
-
 class MenuBar(QMenuBar):
     """
     This class is a customized QMenuBar for the application
@@ -105,7 +104,6 @@ class MenuBar(QMenuBar):
             app.close()
 
         menu_file = self.addMenu('&File')
-
         # ========= START FILE MENU SECTION =========
         def makeFileAction(name: str, shortcut: str, signal) -> QAction:
             """
@@ -125,6 +123,12 @@ class MenuBar(QMenuBar):
         menu_file.addSeparator()
         menu_file.addAction(makeFileAction("Save File...", "Ctrl+s", onSaveBtn))
         menu_file.addAction(makeFileAction("Save File As...", "Ctrl+Shift+q", onSaveAsBtn))
+        menu_file.addSeparator()
+        menu_download = menu_file.addMenu('&Export')
+        menu_download.addAction(makeFileAction("PDF Document (.pdf)", "",
+                                               partial(file_manager.exportToPDF, self.doc)))
+        menu_file.addAction(makeFileAction("Print", "Ctrl+p", partial(file_manager.printDocument,
+                                                                      self.doc)))
 
         menu_file.addSeparator()
         menu_file.addAction(makeFileAction("Exit", "Ctrl+q", onExitBtn))

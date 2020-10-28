@@ -53,7 +53,6 @@ class Document(QTextEdit):
         self.setTextColorByString("black")
         self.setPlaceholderText("Start typing here...")
 
-
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
         if the double clicked word is a link open it
@@ -68,6 +67,7 @@ class Document(QTextEdit):
 
         # check if the url is valid
         valid = validators.url(url)
+
         # if the link is valid open it
         if valid:
             webbrowser.open(url)

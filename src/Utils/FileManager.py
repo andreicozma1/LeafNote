@@ -7,7 +7,8 @@ import logging
 import os
 
 from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
+from PyQt5.QtWidgets import QFileDialog, QDialogButtonBox, QDialog
 
 from Utils import DialogBuilder
 
@@ -501,10 +502,72 @@ class FileManager:
         self.writeFileData(path, "")
         self.openDocument(document, path)
 
+    def exportToPDF(self, document):
+        """
+        this will download the formatted document to the file of the users choice
+        :param document: reference to the document
+        :param to_print: if the caller intends to print the document
+        :return: returns the qprinter object that is created
+        """
+        logging.debug("")
+        # get the file name if exporting
+        file_name = QFileDialog.getSaveFileName(self.app, 'Save To PDF')
+
+        if file_name is not None:
+            file_name = file_name[0]
+
+        # if the file name is not given return none
+        if file_name == '':
+            return None
+
+        # if there is no pdf extension then add it
+        file_info = QFileInfo(file_name)
+        if file_info.suffix() != "pdf":
+            if file_name.find('.') != -1:
+                file_name = file_name[:file_name.rindex('.')] + ".pdf"
+            else:
+                file_name = file_name + ".pdf"
+
+        # create the qprinter object
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setPageSize(QPrinter.A4)
+        printer.setColorMode(QPrinter.Color)
+        printer.setOutputFormat(QPrinter.PdfFormat)
+        printer.setOutputFileName(file_name)
+        document.print_(printer)
+        return printer
+
+    def printDocument(self, document):
+        """
+        this will print the document to the selected printer
+        :param document: reference to the document
+        :return: return true on print, false otherwise
+        """
+        # create the qprinter object
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setPageSize(QPrinter.A4)
+        printer.setColorMode(QPrinter.Color)
+        printer.setOutputFormat(QPrinter.NativeFormat)
+
+        # create and run the print dialog
+        print_dialog = QPrintDialog(printer)
+        state = print_dialog.exec_()
+        print(state)
+        print(QDialog.Accepted)
+        if state == QDialog.Accepted:
+            # print if the user selected print
+            logging.debug("User chose to print")
+            document.print_(printer)
+            return True
+
+        # if the user selected not to print
+        logging.warning("User chose NOT to print")
+        return False
+
     def printAll(self):
         """
         For debugging. Prints out all of the documents stored in open_documents dictionary.
-        :return:
+        :return: returns nothing
         """
         logging.info("========================================")
         logging.info("Open Documents:")
