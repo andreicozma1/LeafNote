@@ -1,6 +1,6 @@
 cffi==1.14.3
 click==7.1.2
-cryptography==3.1.1
+cryptography==3.2.1
 decorator==4.4.2
 joblib==0.17.0
 networkx==2.5
@@ -22,4 +22,3 @@ wget==3.2
 requests~=2.24.0
 validators~=0.18.1
 pyspellchecker==0.5.5
-pyenchant==3.1.1
