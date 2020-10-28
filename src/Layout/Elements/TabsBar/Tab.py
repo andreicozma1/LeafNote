@@ -6,7 +6,7 @@ import random
 
 from PyQt5.QtCore import QFileInfo
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QToolButton
 
 from Widgets.ColorWidget import Color
 
@@ -41,12 +41,12 @@ class Tab(Color):
         self.horizontal_layout.addWidget(self.label)
 
         self.horizontal_layout.addStretch()
-        self.btn_close = QPushButton("x")
-        self.btn_close.setContentsMargins(0, 0, 0, 0)
+        self.btn_close = QToolButton()
+        self.btn_close.setText("x")
         self.btn_close.setToolTip("Close tab")
-        self.btn_close.setFlat(True)
-        self.btn_close.setCheckable(False)
-        self.btn_close.setFixedWidth(15)
+        self.btn_close.setContentsMargins(0, 0, 0, 0)
+        self.btn_close.setStyleSheet(
+            "background-color: transparent; text-align: center; font-size: 14px; border: 0;")
         self.btn_close.released.connect(self.closeTab)
         self.horizontal_layout.addWidget(self.btn_close)
 
