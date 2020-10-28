@@ -48,7 +48,7 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index+length)
 
-        if bool(self.misspelled_words):
+        if self.misspelled_words:
             for word in list(self.misspelled_words.keys()):
                 expression = QRegExp("\\b" + word + "\\b")
                 index = expression.indexIn(text)
