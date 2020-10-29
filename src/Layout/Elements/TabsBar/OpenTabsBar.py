@@ -1,15 +1,15 @@
-import logging
-
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
-
-from Elements.Tab import Tab
-
 """
 when one or more file is open it
 will show the file tabs under the
 top bar
 """
+
+import logging
+
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
+
+from Layout.Elements.TabsBar.Tab import Tab
 
 
 class OpenTabsBar(QWidget):
@@ -24,8 +24,8 @@ class OpenTabsBar(QWidget):
         :param layout_props: properties for the layout - dimensions
         :return: returns nothing
         """
-        super(OpenTabsBar, self).__init__()
-        logging.info("")
+        super().__init__()
+        logging.debug("Creating Open Tabs Bar")
 
         self.document = document
         self.file_manager = file_manager
@@ -33,10 +33,13 @@ class OpenTabsBar(QWidget):
         self.active_tab = None
         self.open_tabs = {}
 
-        # crate the hbox layout
+        self.tab_width = self.layout_props.getDefOpenTabWidth()
+        self.tab_height = self.layout_props.getDefOpenTabHeight()
+
+        # crate the horizontal layout
         self.horizontal_layout = QHBoxLayout()
         self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_layout.setSpacing(self.layout_props.bar_tabs_spacing)
+        self.horizontal_layout.setSpacing(self.layout_props.getDefTabsBarSpacing())
         self.setLayout(self.horizontal_layout)
 
         # set the background
@@ -45,9 +48,13 @@ class OpenTabsBar(QWidget):
         self.setPalette(palette)
         self.setAutoFillBackground(True)
 
+        # Add filler spacing at the end
         self.horizontal_layout.addStretch()
 
     def openTab(self, tab):
+        """
+        Opens a tab
+        """
         self.active_tab = tab
         self.file_manager.openDocument(self.document, tab.path)
 
@@ -59,6 +66,12 @@ class OpenTabsBar(QWidget):
         """
         logging.info(path)
         tab = Tab(self, path)
+
+        if self.tab_width is not None:
+            tab.setFixedWidth(self.tab_width)
+
+        tab.setFixedHeight(self.tab_height)
+
         self.layout().insertWidget(0, tab)
 
         # add tab to the dict holding open tabs
@@ -70,7 +83,6 @@ class OpenTabsBar(QWidget):
         """
         removes object from layout and destroys it
         :param path: path to file being displayed
-        :param closeDocument: if the document is closed in file manager
         :param save: if the document is saved
         :return: returns nothing
         """
@@ -82,15 +94,19 @@ class OpenTabsBar(QWidget):
             self.file_manager.saveDocument(self.document)
         self.file_manager.closeDocument(self.document, path)
 
-        # pop the closed tab from the open tab dic
-        self.open_tabs.pop(path)
-        tab.deleteLater()
+        if path in self.open_tabs:
+            # pop the closed tab from the open tab dic
+            self.open_tabs.pop(path)
+            self.horizontal_layout.removeWidget(tab)
+            tab.deleteLater()
 
-        # set the active tab
-        if self.file_manager.current_document is None:
-            self.active_tab = None
-        else:
-            self.active_tab = self.open_tabs[self.file_manager.current_document.absoluteFilePath()]
+            # set the active tab
+            if self.file_manager.current_document is None:
+                self.active_tab = None
+            else:
+                self.active_tab = self.open_tabs[
+                    self.file_manager.current_document.absoluteFilePath()
+                ]
 
     def getTabCount(self):
         """

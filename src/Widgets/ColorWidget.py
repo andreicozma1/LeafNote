@@ -1,9 +1,8 @@
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget
-
 """
 holds class Color
 """
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QWidget
 
 
 class Color(QWidget):
@@ -17,7 +16,7 @@ class Color(QWidget):
         :param color: the color widget will be set to
         :return: returns nothing
         """
-        super(Color, self).__init__()
+        super().__init__()
         self.setAutoFillBackground(True)
 
         palette = self.palette()
