@@ -271,31 +271,31 @@ class SearchWorkspace(QWidget):
 
         # button to go to the previous occurrence
         self.previous_occurrence = QPushButton("Previous")
-        self.previous_occurrence.setFixedWidth(80)
+        # self.previous_occurrence.setFixedWidth(80)
         self.previous_occurrence.clicked.connect(self.onPreviousOccurrenceSelect)
         button_hbox.addWidget(self.previous_occurrence, alignment=Qt.AlignRight)
 
         # button to go to the next occurrence
         self.next_occurrence = QPushButton("Next")
-        self.next_occurrence.setFixedWidth(80)
+        # self.next_occurrence.setFixedWidth(80)
         self.next_occurrence.clicked.connect(self.onNextOccurrenceSelect)
         button_hbox.addWidget(self.next_occurrence, alignment=Qt.AlignRight)
 
         # button to go to the previous occurrence
         self.replace = QPushButton("Replace")
-        self.replace.setFixedWidth(80)
+        # self.replace.setFixedWidth(80)
         self.replace.clicked.connect(self.onReplace)
         button_hbox.addWidget(self.replace, alignment=Qt.AlignRight)
 
         # button to go to the next occurrence
         self.replace_all = QPushButton("Replace All")
-        self.replace_all.setFixedWidth(80)
+        # self.replace_all.setFixedWidth(80)
         self.replace_all.clicked.connect(self.onReplaceAll)
         button_hbox.addWidget(self.replace_all, alignment=Qt.AlignRight)
 
         # create button top open the selected file
         open_file = QPushButton("Open File")
-        open_file.setFixedWidth(80)
+        # open_file.setFixedWidth(80)
         open_file.clicked.connect(self.openFile)
         button_hbox.addWidget(open_file, alignment=Qt.AlignRight)
 
