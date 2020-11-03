@@ -2,6 +2,7 @@
 This module holds a class that displays various information to the user about the document
 on the bottom of the application.
 """
+import html
 import logging
 import os
 
@@ -62,9 +63,8 @@ class BottomBar(QWidget):
         font_default.setPointSize(8)
 
         # Create Calendar Button
-        path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
-        calendar = QPushButton("", self)
-        calendar.setIcon(QIcon(path_calendar_icon))
+        calendar = QPushButton(html.unescape('&#128197;'), self)
+        calendar.setFixedWidth(30)
         calendar.clicked.connect(self.showCalendar)
         horizontal_layout.addWidget(calendar)
 

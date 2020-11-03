@@ -1,7 +1,7 @@
 """
 This module contains a widget that gives the user the ability to search through a document
 """
-
+import html
 import logging
 import os
 from functools import partial
@@ -108,26 +108,19 @@ class Search(QWidget):
 
         # -----------------------------------------------------------
 
-        # get required images
-        path = os.path.join(self.path_res, "arrow.ico")
-        pixmap = QPixmap(path)
-        down_arrow = QIcon(pixmap)
-        up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))
         # add the previous occurrence option
-        self.previous_occurrence = createSearchBtn("", "Previous Occurrence",
+        self.previous_occurrence = createSearchBtn(html.unescape('&#8593;'), "Previous Occurrence",
                                                    self.onPreviousOccurrenceSelect, False)
         self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return),
                                                       self.previous_occurrence)
         self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
-        self.previous_occurrence.setIcon(up_arrow)
         self.horizontal_layout.addWidget(self.previous_occurrence)
 
         # add the next occurrence option
-        self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect,
+        self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence", self.onNextOccurrenceSelect,
                                                False)
         self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
         self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
-        self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
         # -----------------------------------------------------------
