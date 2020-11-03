@@ -43,7 +43,6 @@ class TopBar(QWidget):
         self.combo_text_color = None
         self.button_clear = None
         self.combo_text_align = None
-        
         self.button_mode_switch = None
 
     def makeMainLayout(self):
