@@ -147,10 +147,10 @@ class DirectoryViewer(QTreeView):
         Updates the layout appearance based on properties
         """
         prop_header_margin = str(self.layout_props.getDefaultLeftMenuHeaderMargin())
-        prop_header_color = self.layout_props.getDefaultLeftMenuHeaderColor()
-        prop_item_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
-        prop_item_select_color = self.layout_props.getDefaultLeftMenuSelectColor()
-        prop_item_hover_color = self.layout_props.getDefaultLeftMenuHoverColor()
+        prop_header_color = self.layout_props.getDefaultHeaderColor()
+        prop_item_height = str(self.layout_props.getDefaultItemHeight())
+        prop_item_select_color = self.layout_props.getDefaultSelectColor()
+        prop_item_hover_color = self.layout_props.getDefaultHoverColor()
 
         style = "QTreeView::item { height: " + prop_item_height + "px; }" + \
                 "QTreeView::item:selected {" \

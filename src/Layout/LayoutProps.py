@@ -20,7 +20,6 @@ class LayoutProps:
         self.min_doc_width = .4
         self.min_menu_width = .2
         self.max_menu_width = .3
-        self.bar_height = 35
 
     # ========= START GENERAL LAYOUT SECTION =========
 
@@ -79,38 +78,45 @@ class LayoutProps:
     # ========= START DEFAULTS SECTION =========
 
     @staticmethod
-    def getDefaultLeftMenuItemHeight():
+    def getDefaultItemHeight():
         """
-        Returns the default Left Menu Item height
+        Returns the default Item height
         """
         return 30
 
     @staticmethod
-    def getDefaultLeftMenuHeaderColor():
+    def getDefaultHeaderColor():
         """
-        Returns the default Left Menu Header Color
+        Returns the default Header Color
         """
         return "rgba(56, 90, 125, 1.0)"
 
     @staticmethod
-    def getDefaultLeftMenuHeaderColorLight():
+    def getDefaultHeaderColorLight():
         """
-        Returns the default Left Menu Header Color
+        Returns the default Header Color
         """
         return "rgba(56, 90, 125, 0.8)"
 
     @staticmethod
-    def getDefaultLeftMenuSelectColor():
+    def getDefaultSelectColor():
         """
-        Returns the default Left Menu Select color
+        Returns the default Select color
         """
         return "rgba(249, 145, 146, 0.6)"
 
     @staticmethod
-    def getDefaultLeftMenuHoverColor():
+    def getDefaultHoverColor():
         """
-        Returns the default Left Menu Hover Color
+        Returns the default Hover Color
         """
         return "rgba(249, 145, 146, 0.1)"
+
+    @staticmethod
+    def getDefaultBarHeight():
+        """
+        Returns the default bar height (topBar and bottomBar)
+        """
+        return 30
 
     # ========= END DEFAULTS SECTION =========
