@@ -232,7 +232,6 @@ class FileManager:
         Closes the document with the given path.
         :param document: reference to the document
         :param path: path to the document that needs to be closed
-        :return: Returns whether or not the document is formatted
         """
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
@@ -262,15 +261,15 @@ class FileManager:
                 state = False
 
             self.app.right_menu.updateDetails(self.current_document)
+            self.app.updateFormatBtnsState(state)
+
         # if it does not exist print error messages
         else:
             if path == '':
                 logging.info("No File Path Given")
             else:
                 logging.info("File Is Not Open - %s", path)
-            state = False
 
-        self.app.updateFormatBtnsState(state)
 
     def closeAll(self, document):
         """

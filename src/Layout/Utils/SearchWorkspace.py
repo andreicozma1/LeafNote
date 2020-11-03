@@ -515,11 +515,7 @@ class SearchWorkspace(QWidget):
         item = self.file_viewer.model.itemFromIndex(index)
         if item is not None:
             f = item.path
-            if QFileInfo(f).suffix() == 'lef':
-                data = self.display.toHtml()
-            else:
-                data = self.display.toPlainText()
-            self.file_manager.writeFileData(f, data)
+            self.replaceFileData(f)
 
     def onReplaceAll(self):
         """
@@ -545,14 +541,31 @@ class SearchWorkspace(QWidget):
                 cursor.insertText(self.replace_bar.text())
                 self.onNextOccurrenceSelect()
                 cursor = self.display.textCursor()
-            if QFileInfo(f).suffix() == 'lef':
-                data = self.display.toHtml()
-            else:
-                data = self.display.toPlainText()
-            self.file_manager.writeFileData(f, data)
+
+            self.replaceFileData(f)
 
         data = self.file_manager.getFileData(current_file)
         self.display.setText(data)
+
+    def replaceFileData(self, path):
+        """
+        this will replace the text of the actual file with the replaced data
+        It also checks if it edited the current file and if so it closes it and reopens it.
+        :param path: path to the file being edited
+        :return: returns nothing
+        """
+        if QFileInfo(path).suffix() == 'lef':
+            data = self.display.toHtml()
+        else:
+            data = self.display.toPlainText()
+        closed_doc = False
+        if self.file_manager.current_document.absoluteFilePath() == path:
+            self.file_manager.closeDocument(self.document, path)
+            closed_doc = True
+
+        self.file_manager.writeFileData(path, data)
+        if closed_doc:
+            self.file_manager.openDocument(self.document, path)
 
 
 def getAllFiles(path):
