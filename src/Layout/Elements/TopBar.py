@@ -1,7 +1,7 @@
 """
 all properties of the top bar
 """
-
+import html
 import logging
 import os
 
@@ -232,9 +232,7 @@ class TopBar(QWidget):
         Create Clear Formatting Button
         """
         # Button to Clear Formatting
-        path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
-        button_clear = QPushButton(self)
-        button_clear.setIcon(QIcon(path_clear_icon))
+        button_clear = QPushButton(html.unescape('&#574;'))
         button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
         button_clear.setFixedWidth(33)
         button_clear.setFocusPolicy(Qt.NoFocus)
