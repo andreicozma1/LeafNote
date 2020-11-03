@@ -11,6 +11,7 @@ from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, \
     QSizePolicy, QListView
 
+from Layout.DocProps import DocProps
 from Layout.Elements import Document
 
 
@@ -26,23 +27,24 @@ class TopBar(QWidget):
         """
         super().__init__()
         logging.debug("Creating Top Bar")
-        self.path_res = path_res
-        self.document = document
+        self.path_res: str = path_res
+        self.document: Document = document
+        self.doc_props: DocProps = self.document.doc_props
 
         self.combo_title_style = None
-        self.dict_title_style = None
         self.combo_font_style = None
         self.combo_font_size = None
-        self.list_font_size = None
+
         self.button_bold = None
         self.button_ital = None
         self.button_strike = None
         self.button_under = None
+
         self.combo_text_color = None
-        self.dict_color = None
+        self.button_clear = None
         self.combo_text_align = None
-        self.dict_text_align = None
-        self.dict_align = None
+        
+        self.button_mode_switch = None
 
     def makeMainLayout(self):
         """
@@ -57,7 +59,7 @@ class TopBar(QWidget):
 
         return horizontal_layout
 
-    def makeTitleStyleBox(self, dict_title_style: list) -> QComboBox:
+    def makeTitleStyleBox(self) -> QComboBox:
         """
         Create Title Style Drop Down
         """
@@ -66,9 +68,8 @@ class TopBar(QWidget):
         view = QListView(self.combo_title_style)
         view.setStyleSheet("QListView::item { height : 18 px }")
         self.combo_title_style.setView(view)
-        self.dict_title_style = dict_title_style
         self.combo_title_style.setToolTip('Styles')
-        self.combo_title_style.addItems(self.dict_title_style)
+        self.combo_title_style.addItems(self.doc_props.dict_title_styles)
         # traverses through combo_title_style items index
         for x in range(view.model().rowCount()):
             # mods by two to get the index with titles else gives "update" titles index
@@ -108,19 +109,17 @@ class TopBar(QWidget):
         self.combo_font_style.setCurrentFont(self.document.currentFont())
         return self.combo_font_style
 
-    def makeComboFontSizeBox(self, list_font_size: list) -> QComboBox:
+    def makeComboFontSizeBox(self) -> QComboBox:
         """
         Create Font Size Dropdown
         """
         # Adds functionality to the ComboBox
         self.combo_font_size = QComboBox(self)
-        self.list_font_size = list_font_size
         self.combo_font_size.setToolTip('Change font size')
-        self.combo_font_size.addItems(self.list_font_size)
+        self.combo_font_size.addItems(self.doc_props.list_font_sizes)
         self.combo_font_size.setFixedWidth(60)
         self.combo_font_size.setFocusPolicy(Qt.NoFocus)
-        self.combo_font_size.setCurrentIndex(
-            self.list_font_size.index(str(self.document.font().pointSize())))
+        self.combo_font_size.setCurrentIndex(self.doc_props.def_font_size_index)
         self.combo_font_size.currentTextChanged.connect(self.document.onFontSizeChanged)
         return self.combo_font_size
 
@@ -184,11 +183,11 @@ class TopBar(QWidget):
         self.button_under.clicked.connect(self.document.onFontUnderChanged)
         return self.button_under
 
-    def updateTextColor(self, index):
+    def updateTextColor(self, index: int):
         """
         Updates styles for font color
         """
-        color_list = list(self.dict_color.values())
+        color_list = list(self.doc_props.dict_colors.values())
         style = "QComboBox::drop-down { border: 0px;}" \
                 "QComboBox { background-color: " + list(color_list)[index] + ";" + \
                 "border: 1px solid gray;" \
@@ -197,14 +196,13 @@ class TopBar(QWidget):
                 "QComboBox QAbstractItemView { min-width:30px; }"
         self.combo_text_color.setStyleSheet(style)
 
-    def makeComboFontColor(self, color_dict: dict) -> QComboBox:
+    def makeComboFontColor(self) -> QComboBox:
         """
         Create Font Color Dropdown
         """
         # Button to change text color
         self.combo_text_color = QComboBox(self)
-        self.dict_color = color_dict
-        color_list = self.dict_color.values()
+        color_list = self.doc_props.dict_colors.values()
         self.combo_text_color.setFixedWidth(35)
         self.combo_text_color.setFixedHeight(20)
         model = self.combo_text_color.model()
@@ -217,12 +215,10 @@ class TopBar(QWidget):
         self.combo_text_color.currentIndexChanged.connect(self.updateTextColor)
         self.combo_text_color.setFocusPolicy(Qt.NoFocus)
         self.combo_text_color.setToolTip("Change Text color.")
-        self.combo_text_color.setStyleSheet("QComboBox::drop-down { border: 0px;}"
-                                            "QComboBox { background-color: black;"
-                                            "            border: 1px solid gray;"
-                                            "            border-radius: 5px;"
-                                            "selection-background-color: rgba(0,0,0,0.2)} "
-                                            "QComboBox QAbstractItemView { min-width:30px; }")
+        index = list(self.doc_props.dict_colors.keys()).index(
+            self.doc_props.def_text_color_key)
+        self.combo_text_color.setCurrentIndex(index)
+        self.updateTextColor(self.combo_text_color.currentIndex())
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         return self.combo_text_color
@@ -233,26 +229,26 @@ class TopBar(QWidget):
         """
         # Button to Clear Formatting
         path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
-        button_clear = QPushButton(self)
-        button_clear.setIcon(QIcon(path_clear_icon))
-        button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
-        button_clear.setFixedWidth(33)
-        button_clear.setFocusPolicy(Qt.NoFocus)
-        button_clear.clicked.connect(self.document.clearSelectionFormatting)
-        return button_clear
+        self.button_clear = QPushButton(self)
+        self.button_clear.setIcon(QIcon(path_clear_icon))
+        self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
+        self.button_clear.setFixedWidth(33)
+        self.button_clear.setFocusPolicy(Qt.NoFocus)
+        self.button_clear.clicked.connect(self.document.clearSelectionFormatting)
+        return self.button_clear
 
-    def makeComboTextAlign(self, dict_align: dict) -> QComboBox:
+    def makeComboTextAlign(self) -> QComboBox:
         """
         Create Text Alignment Dropdown
         """
         # Adds ability to change alignment of text
         self.combo_text_align = QComboBox(self)
-        self.dict_align = dict_align
         self.combo_text_align.setToolTip('Change text alignment')
-        self.combo_text_align.addItems(self.dict_align)
+        self.combo_text_align.addItems(self.doc_props.dict_text_aligns)
         self.combo_text_align.setFocusPolicy(Qt.NoFocus)
         self.combo_text_align.currentIndexChanged.connect(self.document.onTextAlignmentChanged)
-        self.combo_text_align.setCurrentIndex(0)
+        def_index = list(self.doc_props.dict_text_aligns).index(self.doc_props.def_text_align_key)
+        self.combo_text_align.setCurrentIndex(def_index)
         return self.combo_text_align
 
     def makeBtnFormatMode(self, callback) -> QPushButton:
@@ -260,15 +256,15 @@ class TopBar(QWidget):
         Create Enable Format Mode Button
         """
         # Mode Switching button to the very right (after stretch)
-        button_mode_switch = QPushButton("Formatting Mode", self)
+        self.button_mode_switch = QPushButton("Formatting Mode", self)
 
-        button_mode_switch.setToolTip("Enable Document Formatting")
-        button_mode_switch.setProperty("persistent",
-                                       True)  # Used to keep button enabled in setFormattingMode
-        button_mode_switch.setCheckable(True)
-        button_mode_switch.setFocusPolicy(Qt.NoFocus)
-        button_mode_switch.clicked.connect(callback)
-        return button_mode_switch
+        self.button_mode_switch.setToolTip("Enable Document Formatting")
+        # Used to keep button enabled in setFormattingMode
+        self.button_mode_switch.setProperty("persistent", True)
+        self.button_mode_switch.setCheckable(True)
+        self.button_mode_switch.setFocusPolicy(Qt.NoFocus)
+        self.button_mode_switch.clicked.connect(callback)
+        return self.button_mode_switch
 
     def setFormattingButtonsEnabled(self, state):
         """
@@ -299,7 +295,7 @@ class TopBar(QWidget):
         if self.combo_title_style is not None:
             title = self.document.currentCharFormat()
             index = 0
-            title_list = list(self.dict_title_style.values())
+            title_list = list(self.doc_props.dict_title_styles.values())
             # adds separator slots to the list to make the index match the list in topbar
             for x in range(2, 23, 3):
                 title_list.insert(x, None)
@@ -314,7 +310,7 @@ class TopBar(QWidget):
         if self.combo_font_size is not None:
             size = int(self.document.currentCharFormat().fontPointSize())
             if size != 0:
-                size_index = self.list_font_size.index(str(size))
+                size_index = self.doc_props.list_font_sizes.index(str(size))
                 self.combo_font_size.setCurrentIndex(size_index)
         # Update extra formatting options
         if self.button_ital is not None:
@@ -329,7 +325,7 @@ class TopBar(QWidget):
         if self.combo_text_color is not None:
             color = self.document.currentCharFormat().foreground().color().name()
             index = 0
-            color_list = list(self.dict_color.values())
+            color_list = list(self.doc_props.dict_colors.values())
             if color in color_list:
                 index = color_list.index(color)
             self.updateTextColor(index)
@@ -337,7 +333,7 @@ class TopBar(QWidget):
         # Update the text alignment
         if self.combo_text_align is not None:
             align = self.document.alignment()
-            align_list = list(self.dict_align.values())
+            align_list = list(self.doc_props.dict_text_aligns.values())
             if align in align_list:
                 align_index = align_list.index(align)
                 self.combo_text_align.setCurrentIndex(align_index)

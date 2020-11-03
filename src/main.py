@@ -37,12 +37,13 @@ class App(QMainWindow):
     puts all the pieces of code together to get finished application
     """
 
-    def __init__(self):
+    def __init__(self, ctx):
         """
         creates the window and its attributes
         :return: returns nothing
         """
         super().__init__()
+        self.ctx = ctx
         logging.debug("Creating Application")
 
         # Initialize properties.
@@ -102,16 +103,16 @@ class App(QMainWindow):
         this sets up the top bar as a whole
         """
         top_bar_layout = self.top_bar.makeMainLayout()
-        top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
+        top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox())
         top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
-        top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox(self.doc_props.list_font_sizes))
+        top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox())
         top_bar_layout.addWidget(self.top_bar.makeBtnBold())
         top_bar_layout.addWidget(self.top_bar.makeBtnItal())
         top_bar_layout.addWidget(self.top_bar.makeBtnStrike())
         top_bar_layout.addWidget(self.top_bar.makeBtnUnder())
-        top_bar_layout.addWidget(self.top_bar.makeComboFontColor(self.doc_props.dict_colors))
+        top_bar_layout.addWidget(self.top_bar.makeComboFontColor())
         top_bar_layout.addWidget(self.top_bar.makeClearFormatting())
-        top_bar_layout.addWidget(self.top_bar.makeComboTextAlign(self.doc_props.dict_text_aligns))
+        top_bar_layout.addWidget(self.top_bar.makeComboTextAlign())
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
         self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
@@ -269,9 +270,9 @@ def main():
     this is the main function of the application
     """
     logging.info("Main Function")
-    app = QApplication([])
-    App()
-    sys.exit(app.exec_())
+    ctx = QApplication([])
+    App(ctx)
+    sys.exit(ctx.exec_())
 
 
 # Starting point of the program
