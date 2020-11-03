@@ -129,6 +129,17 @@ class TestTopBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.top_bar.children())
 
+    def testTextColorChange(self):
+        """
+            Test stylesheet change on index change
+        """
+        element: QComboBox = self.top_bar.combo_text_color
+        # iterate through the color list
+        for index, key in enumerate(self.doc_props.dict_colors.keys()):
+            value_hex = self.doc_props.dict_colors[key]
+            element.setCurrentIndex(index)
+            self.assertIn(value_hex, element.styleSheet())
+
     def testClearFormat(self):
         """
         Test default clear format btn behavior
