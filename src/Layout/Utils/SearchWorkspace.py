@@ -407,7 +407,8 @@ class SearchWorkspace(QWidget):
         index = self.file_viewer.currentIndex()
         item = self.file_viewer.model.itemFromIndex(index)
         if item is not None:
-            if self.file_manager.current_document.absoluteFilePath() == item.path:
+            if self.file_manager.current_document is not None and \
+                    self.file_manager.current_document.absoluteFilePath() == item.path:
                 self.file_manager.closeDocument(self.document, item.path)
             # open the file if one is selected
             self.file_manager.openDocument(self.document, item.path)
@@ -559,7 +560,8 @@ class SearchWorkspace(QWidget):
         else:
             data = self.display.toPlainText()
         closed_doc = False
-        if self.file_manager.current_document.absoluteFilePath() == path:
+        if self.file_manager.current_document is not None and \
+                self.file_manager.current_document.absoluteFilePath() == path:
             self.file_manager.closeDocument(self.document, path)
             closed_doc = True
 
