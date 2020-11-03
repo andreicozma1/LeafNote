@@ -159,7 +159,6 @@ class SearchWorkspace(QWidget):
         self.search = ""
 
         self.initUI()
-        self.show()
 
     def initUI(self):
         """
@@ -530,10 +529,10 @@ class SearchWorkspace(QWidget):
         # get the selected file
         index = self.file_viewer.currentIndex()
         item = self.file_viewer.model.itemFromIndex(index)
-        if item is not None:
-            current_file = item.path
-        else:
+        if item is None:
             return
+
+        current_file = item.path
         # iterate through each file containing the search screen
         for f in self.files:
             # get the data from the current file and insert it into the display
