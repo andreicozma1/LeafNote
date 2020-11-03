@@ -14,6 +14,7 @@ import nltk
 import numpy as np
 import pandas as pd
 import wget
+from PyQt5.QtCore import QStandardPaths
 from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize
@@ -91,7 +92,6 @@ class Summarizer:
         # extract top n sentences as the summary
         self.ranked_sentences = sorted(((scores[i], s)
                                         for i, s in enumerate(sentences)), reverse=True)
-        # self.ranked_sentences = self.ranked_sentences[:]
         self.ranked_sentences = [s[1] for s in self.ranked_sentences]
         self.summary = sentToText(self.ranked_sentences[:summary_size])
         logging.info("Finished generating summary")
@@ -219,11 +219,9 @@ def onSummaryAction(app, document):
         logging.info("Summarizer NOT initialized. Prompting user for dependency download.")
         # prompt the user to select or Download the word word_embeddings
         download_dialog = DialogBuilder(app, "Dictionaries",
-                                        "Would you like to download required dictionaries?",
-                                        "If you have already downloaded them previously "
-                                        "click open to select the location on disk.")
+                                        "Would you like to download required dictionaries?")
         button_box = QDialogButtonBox(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Open | QDialogButtonBox.Yes)
+            QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
         download_dialog.addButtonBox(button_box)
         button_box.clicked.connect(onDialogButtonClicked)
         download_dialog.exec()
@@ -297,12 +295,14 @@ def dependencyDialogHandler(app, button, document=None):
     if button.text() == '&Cancel':
         return
 
-    path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-                                                   app.left_menu.model.rootPath(),
-                                                   QFileDialog.ShowDirsOnly
-                                                   | QFileDialog.DontResolveSymlinks)
+    # path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
+    #                                                app.left_menu.model.rootPath(),
+    #                                                QFileDialog.ShowDirsOnly
+    #                                                | QFileDialog.DontResolveSymlinks)
+    path_parent = QStandardPaths.AppDataLocation
+
     if path_parent == "":
-        logging.info("User Cancelled File Dialog")
+        logging.info("No app data location given")
         return
 
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
