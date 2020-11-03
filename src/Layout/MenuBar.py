@@ -345,9 +345,9 @@ class MenuBar(QMenuBar):
             return list(self.doc_props.dict_text_aligns.keys())[index]
 
         # Add alignment options to the group
-        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
-        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+R'))
-        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+E'))
+        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+[', True))
+        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+]'))
+        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+\\'))
         self.group_align.addAction(makeAlignAction(getName(3), 'Ctrl+Shift+J'))
         # Add all actions in group to Format Menu
         self.menu_format.addActions(self.group_align.actions())

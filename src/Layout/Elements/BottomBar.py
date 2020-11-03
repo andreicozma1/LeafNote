@@ -4,9 +4,8 @@ on the bottom of the application.
 """
 import html
 import logging
-import os
 
-from PyQt5.Qt import Qt, QTimer, QIcon
+from PyQt5.Qt import Qt, QTimer
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox

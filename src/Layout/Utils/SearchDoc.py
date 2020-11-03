@@ -3,11 +3,10 @@ This module contains a widget that gives the user the ability to search through 
 """
 import html
 import logging
-import os
 from functools import partial
 
 from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
+from PyQt5.QtGui import QTextDocument, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QShortcut
 
 
@@ -117,8 +116,8 @@ class Search(QWidget):
         self.horizontal_layout.addWidget(self.previous_occurrence)
 
         # add the next occurrence option
-        self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence", self.onNextOccurrenceSelect,
-                                               False)
+        self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence",
+                                               self.onNextOccurrenceSelect, False)
         self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
         self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
         self.horizontal_layout.addWidget(self.next_occurrence)

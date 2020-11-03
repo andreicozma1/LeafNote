@@ -3,11 +3,10 @@ all properties of the top bar
 """
 import html
 import logging
-import os
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem
+from PyQt5.QtGui import QFont, QBrush, QColor, QStandardItem
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, \
     QSizePolicy, QListView
 
