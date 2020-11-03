@@ -255,6 +255,18 @@ class TopBar(QWidget):
         self.combo_text_align.setCurrentIndex(0)
         return self.combo_text_align
 
+    def makeComboBulletList(self) -> QComboBox:
+        """
+        Create Text Alignment Dropdown
+        """
+        # Adds ability to change alignment of text
+        self.combo_bullet_list = QComboBox(self)
+        self.combo_bullet_list.setToolTip('Bulleted List')
+        self.combo_bullet_list.setFocusPolicy(Qt.NoFocus)
+        self.combo_text_align.currentIndexChanged.connect(self.document.onTextAlignmentChanged)
+        self.combo_bullet_list.setCurrentIndex(0)
+        return self.combo_text_align
+
     def makeBtnFormatMode(self, callback) -> QPushButton:
         """
         Create Enable Format Mode Button
