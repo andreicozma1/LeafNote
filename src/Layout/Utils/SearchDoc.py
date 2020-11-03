@@ -169,7 +169,6 @@ class Search(QWidget):
         """
         handles the button click for the regex search
         """
-        print(from_shortcut)
         logging.info("Clicked Regex")
         if from_shortcut:
             self.regex_search.setChecked(not self.regex_search.isChecked())
