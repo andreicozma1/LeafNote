@@ -59,12 +59,12 @@ class DirectoryViewer(QTreeView):
         self.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # Expand or collapse directory on click
-        self.clicked.connect(self.onClickDirIndex)
+        self.clicked.connect(self.onClickItem)
         # Shortcut for pressing enter on directory
         shortcut = QShortcut(Qt.Key_Return, self)
-        shortcut.activated.connect(self.onClickDirIndex)
+        shortcut.activated.connect(self.onClickItem)
         # Open documents on selection changed
-        self.selectionModel().currentRowChanged.connect(self.onSelectFileIndex)
+        self.selectionModel().currentRowChanged.connect(self.onClickItem)
 
     def updateDirectory(self, abs_path: str):
         """
@@ -89,19 +89,7 @@ class DirectoryViewer(QTreeView):
         else:
             logging.info("Workspace not encrypted")
 
-    def onSelectFileIndex(self, index: QModelIndex):
-        """
-        functionality of double click on directory
-        :param index: location of filePath
-        :return: returns nothing
-        """
-        path = self.model.filePath(index)
-        logging.info(path)
-        if not self.model.isDir(index):
-            logging.debug("Selected document")
-            self.fileManager.openDocument(self.document, path)
-
-    def onClickDirIndex(self, index: QModelIndex = None):
+    def onClickItem(self, index: QModelIndex = None):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -119,6 +107,9 @@ class DirectoryViewer(QTreeView):
             else:
                 logging.debug("Expanding dir %s", path)
                 self.expand(index)
+        else:
+            logging.info("Reopening closed document")
+            self.fileManager.openDocument(self.document, path)
 
     def toggleHeaderColByName(self, name: str):
         """
