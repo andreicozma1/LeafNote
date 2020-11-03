@@ -68,7 +68,8 @@ class Search(QWidget):
 
         # -----------------------------------------------------------
 
-        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
+        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True,
+                            extra_on_click_param: bool = False):
             """
             """
             btn = QPushButton(title)
@@ -77,11 +78,15 @@ class Search(QWidget):
             btn.setCheckable(is_checkable)
             btn.setFlat(True)
             btn.setFixedWidth(25)
-            btn.clicked.connect(on_click)
+            if extra_on_click_param:
+                btn.clicked.connect(partial(on_click, False))
+            else:
+                btn.clicked.connect(on_click)
             return btn
 
         # add the case sensitive option
-        self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
+        self.case_sensitive = createSearchBtn("Aa", "Match Case",
+                                              self.onCaseSensitiveSearchSelect, True, True)
         self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C),
                                                  self.case_sensitive)
         self.case_sensitive_shortcut.activated.connect(
@@ -90,13 +95,13 @@ class Search(QWidget):
         self.horizontal_layout.addWidget(self.case_sensitive, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
+        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect, True, True)
         self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
         self.whole_word_shortcut.activated.connect(partial(self.onWholeWordSearchSelect, True))
         self.horizontal_layout.addWidget(self.whole_word, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
+        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect, True, True)
         self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
         self.regex_search_shortcut.activated.connect(partial(self.onRegexSearchSelect, True))
         self.horizontal_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
@@ -164,6 +169,7 @@ class Search(QWidget):
         """
         handles the button click for the regex search
         """
+        print(from_shortcut)
         logging.info("Clicked Regex")
         if from_shortcut:
             self.regex_search.setChecked(not self.regex_search.isChecked())

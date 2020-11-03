@@ -52,8 +52,12 @@ class FileManager:
             data = document.toPlainText()
             file_filter = ""
 
-        # if a file has already been opened write to the file
+        # if the file has not been changed do nothing
+        if self.current_document is not None and data == self.getFileData(
+                self.current_document.absoluteFilePath()):
+            return False
 
+        # if a file has already been opened write to the file
         if self.current_document is not None:
             # check if the file that was being worked on has been moved externally
             file_exists, file_missing = self.checkCurrentFileExists()
@@ -83,6 +87,7 @@ class FileManager:
             return False
 
         path = file_name[0]
+
         # write the text in the document shown to the user to the given file path
         self.writeFileData(path, data)
 

@@ -157,16 +157,17 @@ class MenuBar(QMenuBar):
             if not state_search:
                 app.search_and_replace.search.search_bar.setFocus()
 
-        def onFindAllBtn():
+        def onFindAllBtn(replace=False):
             """
             """
             logging.info("Clicked Find All Action")
             # create the search workspace dialog
-            search_workspace_dialog = DialogBuilder.DialogBuilder(app, "Search Workspace")
+            search_workspace_dialog = DialogBuilder(app, "Search Workspace")
 
             # create search workspace widget
             search_workspace = SearchWorkspace(self.doc, file_manager,
                                                app.left_menu.model.rootPath())
+            search_workspace.toggleReplace(replace)
             search_workspace.setCloseDialogCallback(search_workspace_dialog.close)
 
             # modify the dialog
@@ -209,6 +210,7 @@ class MenuBar(QMenuBar):
         menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
         menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
+        menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+r", partial(onFindAllBtn, True)))
 
         # ========= END EDIT MENU SECTION =========
         return menu_edit

@@ -119,6 +119,9 @@ class FileViewer(QTreeView):
             return
 
         # open the selected file and close widget
+        if self.search_workspace.file_manager.current_document.absoluteFilePath() == item.path:
+            self.search_workspace.file_manager.closeDocument(self.search_workspace.document,
+                                                             item.path)
         self.search_workspace.file_manager.openDocument(self.search_workspace.document, item.path)
         self.search_workspace.closeWidget()
 
@@ -148,6 +151,8 @@ class SearchWorkspace(QWidget):
         self.regex_search = None
         self.display = None
 
+        self.files = []
+
         self.file_viewer = FileViewer(self)
         self.close_dialog_callback = None
         self.flags = QTextDocument.FindFlag(0)
@@ -162,7 +167,7 @@ class SearchWorkspace(QWidget):
         :return:
         """
         # set window properties
-        self.setFixedWidth(400)
+        self.setFixedWidth(450)
         self.setWindowTitle("Search Workspace")
 
         # create the overarching vbox layout for the widget
@@ -181,7 +186,7 @@ class SearchWorkspace(QWidget):
         self.search_bar = QLineEdit()
         self.search_bar.setContentsMargins(0, 0, 0, 0)
         self.search_bar.textChanged[str].connect(self.onChanged)
-        self.search_bar.setFixedWidth(298)
+        self.search_bar.setFixedWidth(365)
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
 
         # create shortcuts for the line edit
@@ -196,7 +201,8 @@ class SearchWorkspace(QWidget):
         # create the layout to hold the search results
         search_layout.addWidget(self.search_bar)
 
-        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
+        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True,
+                            extra_on_click_param: bool = False):
             """
             """
             btn = QPushButton(title)
@@ -205,26 +211,40 @@ class SearchWorkspace(QWidget):
             btn.setCheckable(is_checkable)
             btn.setFlat(True)
             btn.setFixedWidth(25)
-            btn.clicked.connect(on_click)
+            if extra_on_click_param:
+                btn.clicked.connect(partial(on_click, False))
+            else:
+                btn.clicked.connect(on_click)
             return btn
 
         # add the case sensitive option
-        self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
+        self.case_sensitive = createSearchBtn("Aa", "Match Case",
+                                              self.onCaseSensitiveSearchSelect, True, True)
         createShortcut(Qt.ALT + Qt.Key_C, self.case_sensitive, self.onCaseSensitiveSearchSelect)
         search_layout.addWidget(self.case_sensitive, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
+        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect, True, True)
         createShortcut(Qt.ALT + Qt.Key_O, self.whole_word, self.onWholeWordSearchSelect)
         search_layout.addWidget(self.whole_word, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
+        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect, True, True)
         createShortcut(Qt.ALT + Qt.Key_X, self.regex_search, self.onRegexSearchSelect)
         search_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
 
         search_layout.addStretch()
         vertical_layout.addWidget(widget)
+
+        # -------------------------------------------------------------------
+
+        # add the qLineEdit as a search bar
+        self.replace_bar = QLineEdit()
+        self.replace_bar.setContentsMargins(0, 0, 0, 0)
+        self.replace_bar.setFixedWidth(365)
+        self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
+
+        vertical_layout.addWidget(self.replace_bar)
 
         # -------------------------------------------------------------------
 
@@ -251,16 +271,28 @@ class SearchWorkspace(QWidget):
         button_hbox.setSpacing(3)
 
         # button to go to the previous occurrence
-        previous_occurrence = QPushButton("Previous")
-        previous_occurrence.setFixedWidth(80)
-        previous_occurrence.clicked.connect(self.onPreviousOccurrenceSelect)
-        button_hbox.addWidget(previous_occurrence, alignment=Qt.AlignRight)
+        self.previous_occurrence = QPushButton("Previous")
+        self.previous_occurrence.setFixedWidth(80)
+        self.previous_occurrence.clicked.connect(self.onPreviousOccurrenceSelect)
+        button_hbox.addWidget(self.previous_occurrence, alignment=Qt.AlignRight)
 
         # button to go to the next occurrence
-        next_occurrence = QPushButton("Next")
-        next_occurrence.setFixedWidth(80)
-        next_occurrence.clicked.connect(self.onNextOccurrenceSelect)
-        button_hbox.addWidget(next_occurrence, alignment=Qt.AlignRight)
+        self.next_occurrence = QPushButton("Next")
+        self.next_occurrence.setFixedWidth(80)
+        self.next_occurrence.clicked.connect(self.onNextOccurrenceSelect)
+        button_hbox.addWidget(self.next_occurrence, alignment=Qt.AlignRight)
+
+        # button to go to the previous occurrence
+        self.replace = QPushButton("Replace")
+        self.replace.setFixedWidth(80)
+        self.replace.clicked.connect(self.onReplace)
+        button_hbox.addWidget(self.replace, alignment=Qt.AlignRight)
+
+        # button to go to the next occurrence
+        self.replace_all = QPushButton("Replace All")
+        self.replace_all.setFixedWidth(80)
+        self.replace_all.clicked.connect(self.onReplaceAll)
+        button_hbox.addWidget(self.replace_all, alignment=Qt.AlignRight)
 
         # create button top open the selected file
         open_file = QPushButton("Open File")
@@ -269,6 +301,23 @@ class SearchWorkspace(QWidget):
         button_hbox.addWidget(open_file, alignment=Qt.AlignRight)
 
         vertical_layout.addWidget(widget, alignment=Qt.AlignRight)
+
+        # create shortcuts for the whole widget
+        shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_F), self)
+        shortcut.activated.connect(partial(self.toggleReplace, False))
+        shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_R), self)
+        shortcut.activated.connect(partial(self.toggleReplace, True))
+        shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
+        shortcut.activated.connect(self.closeWidget)
+
+    def toggleReplace(self, state=None):
+        if state is None:
+            state = not self.replace.isVisible()
+
+        self.replace.setVisible(state)
+        self.replace_all.setVisible(state)
+        self.replace_bar.setVisible(state)
+        logging.debug("Toggling replace workspace: %s", str(state))
 
     def setCloseDialogCallback(self, callback):
         """
@@ -353,6 +402,8 @@ class SearchWorkspace(QWidget):
         index = self.file_viewer.currentIndex()
         item = self.file_viewer.model.itemFromIndex(index)
         if item is not None:
+            if self.file_manager.current_document.absoluteFilePath() == item.path:
+                self.file_manager.closeDocument(self.document, item.path)
             # open the file if one is selected
             self.file_manager.openDocument(self.document, item.path)
         self.closeWidget()
@@ -376,6 +427,7 @@ class SearchWorkspace(QWidget):
         # clear the previous query
         self.file_viewer.clearFiles()
         self.display.setText("")
+        self.files = []
 
         if search == "":
             return
@@ -389,6 +441,7 @@ class SearchWorkspace(QWidget):
             if os.path.isfile(f):
                 # if the search phrase is in the file add a button to the scroll area
                 if self.searchFile(f, search) or str(search) in f:
+                    self.files.append(f)
                     self.file_viewer.insertFile(f)
 
         # set the focus on the first search result
@@ -441,6 +494,61 @@ class SearchWorkspace(QWidget):
         """
         logging.info("Clicked Next")
         self.display.find(self.search, self.flags)
+
+    def onReplace(self):
+        """
+        Replaces the current selection of the search string with the replace string
+        """
+        logging.info("Clicked Replace")
+        cursor = self.display.textCursor()
+        if cursor.hasSelection():
+            cursor.insertText(self.replace_bar.text())
+        self.onNextOccurrenceSelect()
+
+        # save the changes to the selected file
+        index = self.file_viewer.currentIndex()
+        item = self.file_viewer.model.itemFromIndex(index)
+        if item is not None:
+            f = item.path
+            if QFileInfo(f).suffix() == 'lef':
+                data = self.display.toHtml()
+            else:
+                data = self.display.toPlainText()
+            self.file_manager.writeFileData(f, data)
+
+    def onReplaceAll(self):
+        """
+        Replaces all occurrences of the search string with the replace string
+        """
+        logging.info("Clicked Replace All")
+        # get the selected file
+        index = self.file_viewer.currentIndex()
+        item = self.file_viewer.model.itemFromIndex(index)
+        if item is not None:
+            current_file = item.path
+        else:
+            return
+        # iterate through each file containing the search screen
+        for f in self.files:
+            # get the data from the current file and insert it into the display
+            data = self.file_manager.getFileData(f)
+            self.display.setText(data)
+            self.display.find(self.search, self.flags)
+            # iterate through each occurance and replace
+            cursor = self.display.textCursor()
+            while cursor.hasSelection():
+                cursor.insertText(self.replace_bar.text())
+                self.onNextOccurrenceSelect()
+                cursor = self.display.textCursor()
+            if QFileInfo(f).suffix() == 'lef':
+                data = self.display.toHtml()
+            else:
+                data = self.display.toPlainText()
+            self.file_manager.writeFileData(f, data)
+
+        data = self.file_manager.getFileData(current_file)
+        self.display.setText(data)
+
 
 def getAllFiles(path):
     """
