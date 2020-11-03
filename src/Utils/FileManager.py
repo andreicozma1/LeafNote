@@ -270,7 +270,6 @@ class FileManager:
             else:
                 logging.info("File Is Not Open - %s", path)
 
-
     def closeAll(self, document):
         """
         Clears the list of all open documents.
@@ -352,6 +351,7 @@ class FileManager:
         # open the file with read only privileges
         logging.debug(path)
         file = open(path, 'r')
+
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - %s", path)

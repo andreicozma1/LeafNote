@@ -119,10 +119,12 @@ class FileViewer(QTreeView):
             return
 
         # open the selected file and close widget
-        if self.search_workspace.file_manager.current_document.absoluteFilePath() == item.path:
+        if self.search_workspace.file_manager.current_document is not None and \
+                self.search_workspace.file_manager.current_document.absoluteFilePath() == item.path:
             self.search_workspace.file_manager.closeDocument(self.search_workspace.document,
                                                              item.path)
-        self.search_workspace.file_manager.openDocument(self.search_workspace.document, item.path)
+        self.search_workspace.file_manager.openDocument(self.search_workspace.document,
+                                                        item.path, False)
         self.search_workspace.closeWidget()
 
 
@@ -371,6 +373,7 @@ class SearchWorkspace(QWidget):
         moves to the previous shown file
         :return: returns nothing
         """
+        logging.debug("User selected previous file")
         if from_shortcut:
             logging.debug("User selected previous file")
         index = self.file_viewer.currentIndex()
@@ -401,6 +404,7 @@ class SearchWorkspace(QWidget):
         opens the selected file
         :returns nothing
         """
+        logging.debug("Opening file")
         if from_shortcut:
             logging.debug("User opening file from shortcut")
         # get the selected file
@@ -411,7 +415,7 @@ class SearchWorkspace(QWidget):
                     self.file_manager.current_document.absoluteFilePath() == item.path:
                 self.file_manager.closeDocument(self.document, item.path)
             # open the file if one is selected
-            self.file_manager.openDocument(self.document, item.path)
+            self.file_manager.openDocument(self.document, item.path, False)
         self.closeWidget()
 
     def closeWidget(self):
@@ -555,6 +559,7 @@ class SearchWorkspace(QWidget):
         :param path: path to the file being edited
         :return: returns nothing
         """
+        logging.debug("Replace ")
         if QFileInfo(path).suffix() == 'lef':
             data = self.display.toHtml()
         else:
@@ -567,7 +572,7 @@ class SearchWorkspace(QWidget):
 
         self.file_manager.writeFileData(path, data)
         if closed_doc:
-            self.file_manager.openDocument(self.document, path)
+            self.file_manager.openDocument(self.document, path, False)
 
 
 def getAllFiles(path):
