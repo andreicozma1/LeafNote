@@ -68,6 +68,7 @@ class App(QMainWindow):
         self.top_bar = TopBar(self.app_props.path_res, self.document)
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.setupTopBar()
+        self.top_bar.setFixedHeight(self.layout_props.getDefaultBarHeight())
         layout_main.addWidget(self.top_bar)
 
         # Create Main Workspace
@@ -85,7 +86,8 @@ class App(QMainWindow):
 
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
-        self.setupBottomBar()
+        self.bottom_bar.setFixedHeight(self.layout_props.getDefaultBarHeight())
+
         layout_main.addWidget(self.bottom_bar)
 
         # Setup System MenuBar
@@ -115,16 +117,9 @@ class App(QMainWindow):
         top_bar_layout.addWidget(self.top_bar.makeComboTextAlign())
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
-        self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
         self.document.selectionChanged.connect(self.top_bar.updateFormatOnSelectionChange)
         self.document.currentCharFormatChanged.connect(self.top_bar.updateFormatOnSelectionChange)
         self.top_bar.show()
-
-    def setupBottomBar(self):
-        """
-        this sets up the bottom bar as a whole
-        """
-        self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
         """
@@ -161,9 +156,8 @@ class App(QMainWindow):
         setting_resizable = not self.settings.contains("windowResizable") or self.settings.value(
             "windowResizable") is False
         logging.debug("Resizable - %s", str(setting_resizable))
-        if setting_resizable:
-            if not self.app_props.resizable:
-                self.setFixedSize(self.size())
+        if setting_resizable and not self.app_props.resizable:
+            self.setFixedSize(self.size())
 
     def updateFormatBtnsState(self, state: bool):
         """

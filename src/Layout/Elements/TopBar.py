@@ -51,7 +51,7 @@ class TopBar(QWidget):
         :return: the main layout of the top bar
         """
         horizontal_layout = QHBoxLayout()
-        horizontal_layout.setContentsMargins(10, 0, 10, 0)
+        horizontal_layout.setContentsMargins(0, 0, 0, 0)
         horizontal_layout.setSpacing(3)
         self.setLayout(horizontal_layout)
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -190,7 +190,7 @@ class TopBar(QWidget):
         style = "QComboBox::drop-down { border: 0px;}" \
                 "QComboBox { background-color: " + list(color_list)[index] + ";" + \
                 "border: 1px solid gray;" \
-                "border-radius: 5px;" \
+                "border-radius: 3px;" \
                 "selection-background-color: rgba(0,0,0,0.2)}" \
                 "QComboBox QAbstractItemView { min-width:30px; }"
         self.combo_text_color.setStyleSheet(style)
@@ -214,9 +214,9 @@ class TopBar(QWidget):
         self.combo_text_color.currentIndexChanged.connect(self.updateTextColor)
         self.combo_text_color.setFocusPolicy(Qt.NoFocus)
         self.combo_text_color.setToolTip("Change Text color.")
-        index = list(self.doc_props.dict_colors.keys()).index(
+        def_index = list(self.doc_props.dict_colors.keys()).index(
             self.doc_props.def_text_color_key)
-        self.combo_text_color.setCurrentIndex(index)
+        self.combo_text_color.setCurrentIndex(def_index)
         self.updateTextColor(self.combo_text_color.currentIndex())
         self.combo_text_color.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 

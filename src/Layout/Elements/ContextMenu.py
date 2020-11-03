@@ -195,9 +195,9 @@ class ContextMenu(QScrollArea):
         Retrieves the CSS Style used for the right menu
         Collapsible Widgets
         """
-        prop_header_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
-        prop_header_color = str(self.layout_props.getDefaultLeftMenuHeaderColorLight())
-        prop_header_color_select = str(self.layout_props.getDefaultLeftMenuHeaderColor())
+        prop_header_height = str(self.layout_props.getDefaultItemHeight())
+        prop_header_color = str(self.layout_props.getDefaultHeaderColorLight())
+        prop_header_color_select = str(self.layout_props.getDefaultHeaderColor())
 
         return "QToolButton { background-color: " + prop_header_color + ";" + \
                "color: white;" \
