@@ -310,7 +310,12 @@ class SearchWorkspace(QWidget):
         shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
         shortcut.activated.connect(self.closeWidget)
 
-    def toggleReplace(self, state=None):
+    def toggleReplace(self, state: bool = None) -> bool:
+        """
+        This will toggle if the replace menu is shown
+        :param state: the state to set the replace to
+        :return: returns whether or no replace is shown
+        """
         if state is None:
             state = not self.replace.isVisible()
 
@@ -318,6 +323,7 @@ class SearchWorkspace(QWidget):
         self.replace_all.setVisible(state)
         self.replace_bar.setVisible(state)
         logging.debug("Toggling replace workspace: %s", str(state))
+        return state
 
     def setCloseDialogCallback(self, callback):
         """
