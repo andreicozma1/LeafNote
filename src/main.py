@@ -112,6 +112,7 @@ class App(QMainWindow):
         top_bar_layout.addWidget(self.top_bar.makeComboFontColor(self.doc_props.dict_colors))
         top_bar_layout.addWidget(self.top_bar.makeClearFormatting())
         top_bar_layout.addWidget(self.top_bar.makeComboTextAlign(self.doc_props.dict_text_aligns))
+        top_bar_layout.addWidget(self.top_bar.makeComboBulletList())
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
         self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
