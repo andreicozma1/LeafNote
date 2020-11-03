@@ -64,7 +64,7 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         view = QListView(self.combo_title_style)
-        view.setStyleSheet("QListView::item { height : 18 px }/"
+        view.setStyleSheet("QListView::item { height : 23 px }/"
                            "selection-background-color: rgba(0,0,0,0.2)}")
         self.combo_title_style.setView(view)
         self.dict_title_style = dict_title_style
@@ -88,7 +88,7 @@ class TopBar(QWidget):
         # adds separators to clean up look of QComboBox
         for x in range(2, 23, 3):
             size = QSize()
-            size.setHeight(7)
+            size.setHeight(10)
             separator = QStandardItem()
             separator.setSizeHint(size)
             view.model().insertRow(x, separator)
