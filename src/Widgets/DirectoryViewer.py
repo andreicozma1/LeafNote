@@ -64,7 +64,7 @@ class DirectoryViewer(QTreeView):
         shortcut = QShortcut(Qt.Key_Return, self)
         shortcut.activated.connect(self.onClickItem)
         # Open documents on selection changed
-        self.selectionModel().currentRowChanged.connect(self.onClickItem)
+        self.selectionModel().currentRowChanged.connect(self.onSelectFileIndex)
 
     def updateDirectory(self, abs_path: str):
         """
@@ -88,6 +88,18 @@ class DirectoryViewer(QTreeView):
                 self.fileManager.encryptor = Encryptor(key)
         else:
             logging.info("Workspace not encrypted")
+
+    def onSelectFileIndex(self, index: QModelIndex):
+        """
+        functionality of double click on directory
+        :param index: location of filePath
+        :return: returns nothing
+        """
+        path = self.model.filePath(index)
+        logging.info(path)
+        if not self.model.isDir(index):
+            logging.debug("Selected document")
+            self.fileManager.openDocument(self.document, path)
 
     def onClickItem(self, index: QModelIndex = None):
         """
