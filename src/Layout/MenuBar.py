@@ -172,7 +172,6 @@ class MenuBar(QMenuBar):
 
             # modify the dialog
             search_workspace_dialog.addWidget(search_workspace)
-            # search_workspace_dialog.setCloseOnUnfocused(True)
             search_workspace_dialog.show()
 
         def onFindAndReplaceBtn():

@@ -6,11 +6,11 @@ import logging
 import os
 from functools import partial
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import Qt, QFileInfo, QRegExp
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeySequence, QTextDocument
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTextEdit, QSplitter, \
-    QTreeView, QAbstractItemView, QShortcut, QPushButton, QHBoxLayout
+    QTreeView, QAbstractItemView, QShortcut, QPushButton, QHBoxLayout, QSizePolicy
 
 
 class Item(QStandardItem):
@@ -154,7 +154,6 @@ class SearchWorkspace(QWidget):
         self.display = None
 
         self.files = []
-
         self.file_viewer = FileViewer(self)
         self.close_dialog_callback = None
         self.flags = QTextDocument.FindFlag(0)
@@ -168,16 +167,19 @@ class SearchWorkspace(QWidget):
         :return:
         """
         # set window properties
-        self.setFixedWidth(450)
+        self.setMinimumWidth(450)
         self.setWindowTitle("Search Workspace")
+        self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
         # create the overarching vbox layout for the widget
         vertical_layout = QVBoxLayout(self)
         vertical_layout.setContentsMargins(0, 0, 0, 0)
 
         # -------------------------------------------------------------------
+
         # create layout to hold the search bar and filters
         widget = QWidget()
+
         search_layout = QHBoxLayout(widget)
         search_layout.setContentsMargins(0, 0, 0, 0)
         search_layout.setAlignment(Qt.AlignLeft)
@@ -187,7 +189,6 @@ class SearchWorkspace(QWidget):
         self.search_bar = QLineEdit()
         self.search_bar.setContentsMargins(0, 0, 0, 0)
         self.search_bar.textChanged[str].connect(self.onChanged)
-        self.search_bar.setFixedWidth(365)
         self.search_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
 
         # create shortcuts for the line edit
@@ -234,7 +235,6 @@ class SearchWorkspace(QWidget):
         createShortcut(Qt.ALT + Qt.Key_X, self.regex_search, self.onRegexSearchSelect)
         search_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
 
-        search_layout.addStretch()
         vertical_layout.addWidget(widget)
 
         # -------------------------------------------------------------------
@@ -242,7 +242,6 @@ class SearchWorkspace(QWidget):
         # add the qLineEdit as a search bar
         self.replace_bar = QLineEdit()
         self.replace_bar.setContentsMargins(0, 0, 0, 0)
-        self.replace_bar.setFixedWidth(365)
         self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
 
         vertical_layout.addWidget(self.replace_bar)
@@ -267,37 +266,33 @@ class SearchWorkspace(QWidget):
         # -------------------------------------------------------------------
 
         widget = QWidget()
+
         button_hbox = QHBoxLayout(widget)
         button_hbox.setContentsMargins(0, 0, 0, 0)
         button_hbox.setSpacing(3)
 
         # button to go to the previous occurrence
         self.previous_occurrence = QPushButton("Previous")
-        # self.previous_occurrence.setFixedWidth(80)
         self.previous_occurrence.clicked.connect(self.onPreviousOccurrenceSelect)
         button_hbox.addWidget(self.previous_occurrence, alignment=Qt.AlignRight)
 
         # button to go to the next occurrence
         self.next_occurrence = QPushButton("Next")
-        # self.next_occurrence.setFixedWidth(80)
         self.next_occurrence.clicked.connect(self.onNextOccurrenceSelect)
         button_hbox.addWidget(self.next_occurrence, alignment=Qt.AlignRight)
 
         # button to go to the previous occurrence
         self.replace = QPushButton("Replace")
-        # self.replace.setFixedWidth(80)
         self.replace.clicked.connect(self.onReplace)
         button_hbox.addWidget(self.replace, alignment=Qt.AlignRight)
 
         # button to go to the next occurrence
         self.replace_all = QPushButton("Replace All")
-        # self.replace_all.setFixedWidth(80)
         self.replace_all.clicked.connect(self.onReplaceAll)
         button_hbox.addWidget(self.replace_all, alignment=Qt.AlignRight)
 
         # create button top open the selected file
         open_file = QPushButton("Open File")
-        # open_file.setFixedWidth(80)
         open_file.clicked.connect(self.openFile)
         button_hbox.addWidget(open_file, alignment=Qt.AlignRight)
 
@@ -310,6 +305,14 @@ class SearchWorkspace(QWidget):
         shortcut.activated.connect(partial(self.toggleReplace, True))
         shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
         shortcut.activated.connect(self.closeWidget)
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        """
+        when the widget is resized set the length of the replace bar to the length
+        of the search bar.
+        """
+        if a0.size() != a0.oldSize():
+            self.replace_bar.setFixedWidth(self.search_bar.width())
 
     def toggleReplace(self, state: bool = None) -> bool:
         """
