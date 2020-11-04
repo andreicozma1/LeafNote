@@ -232,18 +232,19 @@ def onSummaryAction(app, document):
     return document.summarizer.summarize(document.toPlainText())
 
 
-def ensureDirectory(app, path: str):
+def ensureDirectory(app, path: str, clear_directory: bool = False):
     """
     This will ensure that the directory we are saving the embedding files into exists.
     :param app: reference to the application
     :param path: path to the directory
+    :param clear_directory: whether or not to clear the given directory
     :return: Returns true on success and false otherwise
     """
     # if the path doesnt exist make the directory
     if not os.path.exists(path):
         try:
             os.mkdir(path)
-            logging.info("Created WordEmbeddings directory")
+            logging.info("Created directory %s", path)
             return True
         except OSError as e:
             logging.exception(e)
@@ -251,18 +252,9 @@ def ensureDirectory(app, path: str):
             return False
     # if it does exist prompt the user to clear the directory
     else:
-        logging.info("Download path directory already exists!")
-
-        # create the dialog to warn the user the dir will be cleared
-        clear_dialog = DialogBuilder(app, "Download directory WordEmbeddings already exists...",
-                                     "Would you like to clear the contents and proceed?",
-                                     "Cancel will stop the download.")
-        button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-        clear_dialog.addButtonBox(button_box)
-
         # clear the directory if selected by the user
-        if clear_dialog.exec():
-            logging.info("User chose to remove all contents")
+        if clear_directory:
+            logging.info("Found directory. Removing all directory contents %s", path)
             files = glob.glob(os.path.abspath(os.path.join(path, '*')))
             for f in files:
                 try:
@@ -276,8 +268,8 @@ def ensureDirectory(app, path: str):
                     return False
             return True
 
-        logging.info("User chose not to clear directory. Exiting download")
-        return False
+        logging.info("Found directory. Keeping contents %s", path)
+        return True
 
 
 def dependencyDialogHandler(app, button, document=None):
@@ -295,19 +287,22 @@ def dependencyDialogHandler(app, button, document=None):
     if button.text() == '&Cancel':
         return
 
-    # path_parent = QFileDialog.getExistingDirectory(app, "Select Folder To Download To",
-    #                                                app.left_menu.model.rootPath(),
-    #                                                QFileDialog.ShowDirsOnly
-    #                                                | QFileDialog.DontResolveSymlinks)
-    path_parent = QStandardPaths.AppDataLocation
+    # get app data location for respective OS
+    app_data_locations = QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)
 
-    if path_parent == "":
-        logging.info("No app data location given")
+    if not len(app_data_locations):
+        logging.info("App data location not found")
         return
+
+    path_parent = app_data_locations[0]
+
+    # create application folder in the app data directory if needed
+    path_parent = os.path.abspath(os.path.join(path_parent, 'LeafNote'))
+    ensureDirectory(app, path_parent)
 
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
-    def files_exist(path1: str, path2: str):
+    def files_exist(path1: str):
         """
         Checks if the files exist within any of the 2 directories
         """
@@ -315,14 +310,10 @@ def dependencyDialogHandler(app, button, document=None):
                 os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
             os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
-        if os.path.exists(
-                os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
-            os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
-            return path2
 
         return None
 
-    existing_path = files_exist(path_parent, path_child)
+    existing_path = files_exist(path_child)
 
     if existing_path is None:
         zip_file = 'glove.6B.100d.zip'
@@ -330,18 +321,9 @@ def dependencyDialogHandler(app, button, document=None):
         # prompt the user that they need to download the dependency files
         if not os.path.exists(os.path.abspath(os.path.join(path_child, zip_file))):
             logging.warning("Missing Files and ZIP. To re-download")
-            if button.text() == "Open":
-                logging.error("Dictionaries not found in directory")
-                download_dialog = DialogBuilder(app, "Error!",
-                                                "Error - Dictionaries not found!",
-                                                "Please select a different path"
-                                                " or download them again.")
-                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
-                download_dialog.addButtonBox(button_box)
-                download_dialog.exec()
+            if not ensureDirectory(app, path_child, True):
                 return
-            if not ensureDirectory(app, path_child):
-                return
+
             should_download = True
             # create loading bar dialog and start the download thread
             progress_bar_dialog = DialogBuilder(app, "Download Progress",
@@ -354,8 +336,8 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-            _thread.start_new_thread(getWordEmbeddings,
-                                     (app, path_child, should_download, progress_bar, document))
+        _thread.start_new_thread(getWordEmbeddings,
+                                 (app, path_child, should_download, progress_bar, document))
 
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
