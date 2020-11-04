@@ -282,6 +282,15 @@ class Document(QTextEdit):
         self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
         self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
+    def bulletList(self):
+        print("in")
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+        text = cursor.selectedText()
+        text = text + " inserted text"
+        cursor.insertText(text)
+        print(text)
+
     def setFormatText(self, text: str, formatting: bool):
         """
         Sets formatted or not text

@@ -2,6 +2,7 @@
 all properties of the top bar
 """
 
+import html
 import logging
 import os
 
@@ -255,18 +256,17 @@ class TopBar(QWidget):
         self.combo_text_align.setCurrentIndex(0)
         return self.combo_text_align
 
-    def makeComboBulletList(self) -> QComboBox:
+    def makeBulletList(self) -> QPushButton:
         """
         Create Bullet List Dropdown
         """
         # Adds ability to change alignment of text
-        path_bullet_list_icon = os.path.join(self.path_res, "bullet_list.ico")
-        self.combo_bullet_list = QComboBox(self)
-        # self.combo_bullet_list.setIcon(QIcon(path_bullet_list_icon))
-        self.combo_bullet_list.setToolTip('Bulleted List')
-        self.combo_bullet_list.setFocusPolicy(Qt.NoFocus)
-        self.combo_bullet_list.setCurrentIndex(0)
-        return self.combo_bullet_list
+        button_bullet_list = QPushButton(html.unescape('&#8226;'), self)
+        button_bullet_list.setToolTip('Bulleted List')
+        button_bullet_list.setFixedWidth(33)
+        button_bullet_list.setFocusPolicy(Qt.NoFocus)
+        button_bullet_list.clicked.connect(self.document.bulletList)
+        return button_bullet_list
 
     def makeBtnFormatMode(self, callback) -> QPushButton:
         """
