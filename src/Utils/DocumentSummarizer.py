@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import wget
 from PyQt5.QtCore import QStandardPaths
-from PyQt5.QtWidgets import QDialogButtonBox, QFileDialog
+from PyQt5.QtWidgets import QDialogButtonBox
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
@@ -290,7 +290,7 @@ def dependencyDialogHandler(app, button, document=None):
     # get app data location for respective OS
     app_data_locations = QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)
 
-    if not len(app_data_locations):
+    if not app_data_locations:
         logging.info("App data location not found")
         return
 
