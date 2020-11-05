@@ -3,6 +3,7 @@ The Document module sets up and defines the methods for
 used to interact with the Text Edit area.
 """
 
+import html
 import logging
 import webbrowser
 
@@ -283,13 +284,17 @@ class Document(QTextEdit):
         self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
     def bulletList(self):
-        print("in")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.BlockUnderCursor)
         text = cursor.selectedText()
-        text = text + " inserted text"
+        temp = text[0]
+        text = text[1:]
+        text = text.strip()
+        if text[0] ==  html.unescape('&#8226;'):
+            text = text[1:]
+            text = text.strip()
+        text = temp + "\t" + html.unescape('&#8226;') + " " + text
         cursor.insertText(text)
-        print(text)
 
     def setFormatText(self, text: str, formatting: bool):
         """
