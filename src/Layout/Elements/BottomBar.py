@@ -56,7 +56,6 @@ class BottomBar(QToolBar):
         :return: Returns nothing
         """
         # Set layout params
-        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(5)
 
         # Set global font size
