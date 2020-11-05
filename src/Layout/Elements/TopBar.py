@@ -4,12 +4,13 @@ all properties of the top bar
 
 import logging
 import os
+from functools import partial
 
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem
+from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, \
-    QSizePolicy, QListView
+    QSizePolicy, QListView, QShortcut
 
 from Layout.DocProps import DocProps
 from Layout.Elements import Document
@@ -65,7 +66,8 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         view = QListView(self.combo_title_style)
-        view.setStyleSheet("QListView::item { height : 18 px }")
+        view.setStyleSheet("QListView::item { height : 23 px }"
+                           "selection-background-color: rgba(0,0,0,0.2)}")
         self.combo_title_style.setView(view)
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.doc_props.dict_title_styles)
@@ -87,12 +89,28 @@ class TopBar(QWidget):
         # adds separators to clean up look of QComboBox
         for x in range(2, 23, 3):
             size = QSize()
-            size.setHeight(7)
+            size.setHeight(10)
             separator = QStandardItem()
             separator.setSizeHint(size)
             view.model().insertRow(x, separator)
+            view.model().item(x).setEnabled(False)
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
         self.combo_title_style.setMaxVisibleItems(view.model().rowCount())
+        self.combo_title_style.setItemData(0, "test", QtCore.Qt.ToolTipRole)
+        numKey = 49
+        index = 0
+        title_list = list(self.dict_title_style.keys())
+        for key in range(0, 13, 2):
+            shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + numKey), self)
+            shortcut.activated.connect(partial(self.document.onTitleStyleChanged, title_list[key]))
+            self.combo_title_style.setItemData(index, "Ctrl+Alt+" + str(numKey - 48),
+                                               QtCore.Qt.ToolTipRole)
+            index += 3
+            numKey += 1
+        shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + Qt.Key_0), self)
+        shortcut.activated.connect(
+            partial(self.document.onTitleStyleChanged, self.document.doc_props.text_reset_title))
+        self.combo_title_style.setItemData(index, "Ctrl+Alt+0", QtCore.Qt.ToolTipRole)
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
 
