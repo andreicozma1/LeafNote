@@ -66,8 +66,8 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         view = QListView(self.combo_title_style)
-        view.setStyleSheet("QListView::item { height : 23 px }"
-                           "selection-background-color: rgba(0,0,0,0.2)}")
+        view.setStyleSheet("QListView::item { height : 23 px; }"
+                           "selection-background-color: rgba(0,0,0,0.2);")
         self.combo_title_style.setView(view)
         self.combo_title_style.setToolTip('Styles')
         self.combo_title_style.addItems(self.doc_props.dict_title_styles)
@@ -99,7 +99,7 @@ class TopBar(QWidget):
         self.combo_title_style.setItemData(0, "test", QtCore.Qt.ToolTipRole)
         numKey = 49
         index = 0
-        title_list = list(self.dict_title_style.keys())
+        title_list = list(self.doc_props.dict_title_styles.keys())
         for key in range(0, 13, 2):
             shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + numKey), self)
             shortcut.activated.connect(partial(self.document.onTitleStyleChanged, title_list[key]))
