@@ -99,7 +99,7 @@ class TopBar(QWidget):
         self.combo_title_style.setItemData(0, "test", QtCore.Qt.ToolTipRole)
         numKey = 49
         index = 0
-        title_list = list(self.dict_title_style.keys())
+        title_list = list(self.doc_props.dict_title_styles.keys())
         for key in range(0, 13, 2):
             shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + numKey), self)
             shortcut.activated.connect(partial(self.document.onTitleStyleChanged, title_list[key]))
