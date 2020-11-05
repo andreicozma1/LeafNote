@@ -103,11 +103,13 @@ class TopBar(QWidget):
         for key in range(0, 13, 2):
             shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + numKey), self)
             shortcut.activated.connect(partial(self.document.onTitleStyleChanged, title_list[key]))
-            self.combo_title_style.setItemData(index, "Ctrl+Alt+" + str(numKey - 48), QtCore.Qt.ToolTipRole)
+            self.combo_title_style.setItemData(index, "Ctrl+Alt+" + str(numKey - 48),
+                                               QtCore.Qt.ToolTipRole)
             index += 3
             numKey += 1
         shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + Qt.Key_0), self)
-        shortcut.activated.connect(partial(self.document.onTitleStyleChanged, self.document.doc_props.text_reset_title))
+        shortcut.activated.connect(
+            partial(self.document.onTitleStyleChanged, self.document.doc_props.text_reset_title))
         self.combo_title_style.setItemData(index, "Ctrl+Alt+0", QtCore.Qt.ToolTipRole)
         self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
         return self.combo_title_style
