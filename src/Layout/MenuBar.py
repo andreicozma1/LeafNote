@@ -162,7 +162,7 @@ class MenuBar(QMenuBar):
             """
             logging.info("Clicked Find All Action")
             # create the search workspace dialog
-            search_workspace_dialog = DialogBuilder.DialogBuilder(app, "Search Workspace")
+            search_workspace_dialog = DialogBuilder(app, "Search Workspace")
 
             # create search workspace widget
             search_workspace = SearchWorkspace(self.doc, file_manager,
