@@ -10,20 +10,20 @@ from PyQt5.Qt import Qt, QTimer, QIcon
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox, \
-    QSizePolicy, QToolButton
+    QSizePolicy, QToolButton, QToolBar
 
 from Utils.DialogBuilder import DialogBuilder
 from Widgets.Calendar import Calendar
 
 
-class BottomBar(QWidget):
+class BottomBar(QToolBar):
     """
     BottomBar sets up the bottom bar when called in Main.py
     holds functionality and format of the the tools in
     the bottom bar
     """
 
-    def __init__(self, app, document, settings: QSettings, path_res: str):
+    def __init__(self, app, document, settings: QSettings):
         """
         Creates the bottom bar
         :param document: the document the bottom bar will be altering
@@ -35,7 +35,6 @@ class BottomBar(QWidget):
         self.app = app
         self.document = document
         self.settings = settings
-        self.path_res = path_res
 
         # initialize each globally used widget
         self.label_time = None
@@ -50,26 +49,23 @@ class BottomBar(QWidget):
         # set up the layout
         self.initUI()
 
+        # self.setStyleSheet("background-color: #ff0000; height: 100%;")
+
     def initUI(self):
         """
         Create the layout of the widget
         :return: Returns nothing
         """
-        # Sets up the layout of the bottom bar
-        horizontal_layout = QHBoxLayout(self)
-        horizontal_layout.setContentsMargins(10, 0, 10, 0)
-        horizontal_layout.setSpacing(3)
 
         # Set global font size
         font_default = QFont()
         font_default.setPointSize(font_default.pointSize() - 3)
 
         # Create Calendar Button
-        path_calendar_icon = os.path.join(self.path_res, "calendar.ico")
-        calendar = QPushButton("", self)
-        calendar.setIcon(QIcon(path_calendar_icon))
+        calendar = QToolButton()
+        calendar.setText(html.unescape("&#128197;"))
         calendar.clicked.connect(self.showCalendar)
-        horizontal_layout.addWidget(calendar)
+        self.addWidget(calendar)
 
         def createBottomBarLabel(title, font):
             label = QLabel(title)
@@ -78,23 +74,23 @@ class BottomBar(QWidget):
 
         # Create date-time label
         self.label_time = createBottomBarLabel('', font_default)
-        horizontal_layout.addWidget(self.label_time)
+        self.addWidget(self.label_time)
         timer = QTimer(self)
         timer.timeout.connect(self.updateTime)
         timer.start(1000)
         self.updateTime()
 
-        horizontal_layout.addStretch()
+        self.addSpacer()
 
         # Create Word Counter
         self.label_wc = createBottomBarLabel('0 Words', font_default)
-        horizontal_layout.addWidget(self.label_wc)
+        self.addWidget(self.label_wc)
 
         # Create Character Counter
         self.label_cc = createBottomBarLabel('0 Characters', font_default)
-        horizontal_layout.addWidget(self.label_cc)
+        self.addWidget(self.label_cc)
 
-        horizontal_layout.addStretch()
+        self.addSpacer()
 
         # functionality of word and character count
         self.document.textChanged.connect(self.updateWordCount)
@@ -108,15 +104,15 @@ class BottomBar(QWidget):
             return btn
 
         # Zoom reset button
-        button_zoom_reset = createZoomPushButton(html.unescape("&#128175;"), self.resetZoom,
+        button_zoom_reset = createZoomPushButton("100%", self.resetZoom,
                                                  'Reset zoom to default 100%')
-        horizontal_layout.addWidget(button_zoom_reset)
+        self.addWidget(button_zoom_reset)
 
         # Zoom Out button
         button_zoom_out = createZoomPushButton(html.unescape("&minus;"), self.onZoomOutClicked,
                                                'Zoom out (Ctrl+-)')
         button_zoom_out.setAutoRepeat(True)
-        horizontal_layout.addWidget(button_zoom_out)
+        self.addWidget(button_zoom_out)
 
         # Zoom Slider
         self.zoom_slider = QSlider(Qt.Horizontal, self)
@@ -128,13 +124,18 @@ class BottomBar(QWidget):
         self.zoom_slider.setValue(self.slider_start)
 
         self.zoom_slider.valueChanged[int].connect(self.changeValue)
-        horizontal_layout.addWidget(self.zoom_slider)
+        self.addWidget(self.zoom_slider)
 
         # Zoom in button
         button_zoom_in = createZoomPushButton(html.unescape("&plus;"), self.onZoomInClicked,
                                               'Zoom in (Ctrl+=)')
         button_zoom_in.setAutoRepeat(True)
-        horizontal_layout.addWidget(button_zoom_in)
+        self.addWidget(button_zoom_in)
+
+    def addSpacer(self):
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.addWidget(spacer)
 
     def updateWordCount(self):
         """
