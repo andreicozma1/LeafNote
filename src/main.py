@@ -37,12 +37,13 @@ class App(QMainWindow):
     puts all the pieces of code together to get finished application
     """
 
-    def __init__(self):
+    def __init__(self, ctx):
         """
         creates the window and its attributes
         :return: returns nothing
         """
         super().__init__()
+        self.ctx = ctx
         logging.debug("Creating Application")
 
         # Initialize properties.
@@ -54,7 +55,6 @@ class App(QMainWindow):
         self.file_manager = FileManager(self)
         self.reminders = Reminders(self, self.settings)
         self.btn_mode_switch = None
-
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout(self.app_props, self.layout_props)
@@ -68,6 +68,7 @@ class App(QMainWindow):
         self.top_bar = TopBar(self.app_props.path_res, self.document)
         self.btn_mode_switch = self.top_bar.makeBtnFormatMode(self.setFormattingMode)
         self.setupTopBar()
+        self.top_bar.setFixedHeight(self.layout_props.getDefaultBarHeight())
         layout_main.addWidget(self.top_bar)
 
         # Create Main Workspace
@@ -76,7 +77,7 @@ class App(QMainWindow):
                                          self.file_manager, last_path)
         self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
-        self.right_menu = ContextMenu(self, self.document)
+        self.right_menu = ContextMenu(self, self.layout_props, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
                                                               self.document,
                                                               self.right_menu,
@@ -85,11 +86,12 @@ class App(QMainWindow):
 
         # Create BottomBar, depends on document
         self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
-        self.setupBottomBar()
+        self.bottom_bar.setFixedHeight(self.layout_props.getDefaultBarHeight())
+
         layout_main.addWidget(self.bottom_bar)
 
         # Setup System MenuBar
-        self.menu_bar = MenuBar(self.document, self.doc_props)
+        self.menu_bar = MenuBar(self.document, self.doc_props, self.layout_props)
         self.setupMenuBar()
         self.menu_bar.show()
 
@@ -103,28 +105,21 @@ class App(QMainWindow):
         this sets up the top bar as a whole
         """
         top_bar_layout = self.top_bar.makeMainLayout()
-        top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox(self.doc_props.dict_title_styles))
+        top_bar_layout.addWidget(self.top_bar.makeTitleStyleBox())
         top_bar_layout.addWidget(self.top_bar.makeComboFontStyleBox())
-        top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox(self.doc_props.list_font_sizes))
+        top_bar_layout.addWidget(self.top_bar.makeComboFontSizeBox())
         top_bar_layout.addWidget(self.top_bar.makeBtnBold())
         top_bar_layout.addWidget(self.top_bar.makeBtnItal())
         top_bar_layout.addWidget(self.top_bar.makeBtnStrike())
         top_bar_layout.addWidget(self.top_bar.makeBtnUnder())
-        top_bar_layout.addWidget(self.top_bar.makeComboFontColor(self.doc_props.dict_colors))
+        top_bar_layout.addWidget(self.top_bar.makeComboFontColor())
         top_bar_layout.addWidget(self.top_bar.makeClearFormatting())
-        top_bar_layout.addWidget(self.top_bar.makeComboTextAlign(self.doc_props.dict_text_aligns))
+        top_bar_layout.addWidget(self.top_bar.makeComboTextAlign())
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
-        self.top_bar.setFixedHeight(self.top_bar.minimumSizeHint().height())
         self.document.selectionChanged.connect(self.top_bar.updateFormatOnSelectionChange)
         self.document.currentCharFormatChanged.connect(self.top_bar.updateFormatOnSelectionChange)
         self.top_bar.show()
-
-    def setupBottomBar(self):
-        """
-        this sets up the bottom bar as a whole
-        """
-        self.bottom_bar.setFixedHeight(self.bottom_bar.minimumSizeHint().height())
 
     def setupMenuBar(self):
         """
@@ -161,9 +156,8 @@ class App(QMainWindow):
         setting_resizable = not self.settings.contains("windowResizable") or self.settings.value(
             "windowResizable") is False
         logging.debug("Resizable - %s", str(setting_resizable))
-        if setting_resizable:
-            if not self.app_props.resizable:
-                self.setFixedSize(self.size())
+        if setting_resizable and not self.app_props.resizable:
+            self.setFixedSize(self.size())
 
     def updateFormatBtnsState(self, state: bool):
         """
@@ -264,14 +258,15 @@ class App(QMainWindow):
 
         return super().closeEvent(event)
 
+
 def main():
     """
     this is the main function of the application
     """
     logging.info("Main Function")
-    app = QApplication([])
-    App()
-    sys.exit(app.exec_())
+    ctx = QApplication([])
+    App(ctx)
+    sys.exit(ctx.exec_())
 
 
 # Starting point of the program

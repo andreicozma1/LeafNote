@@ -46,7 +46,7 @@ class Tab(Color):
         self.btn_close.setToolTip("Close tab")
         self.btn_close.setContentsMargins(0, 0, 0, 0)
         self.btn_close.setStyleSheet(
-            "background-color: transparent; text-align: center; font-size: 14px")
+            "background-color: transparent; text-align: center; font-size: 14px; border: 0;")
         self.btn_close.released.connect(self.closeTab)
         self.horizontal_layout.addWidget(self.btn_close)
 

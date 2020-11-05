@@ -21,10 +21,11 @@ class ContextMenu(QScrollArea):
     file metadata information, summary, reminders, etc.
     """
 
-    def __init__(self, app, document):
+    def __init__(self, app, layout_props, document):
         super().__init__()
         logging.debug("Creating Context Menu")
         self.app = app
+        self.layout_props = layout_props
         self.document = document
         self.format_time = "MM-dd-yyyy HH:mm:ss"
 
@@ -35,15 +36,20 @@ class ContextMenu(QScrollArea):
 
         # Init File Details
         self.col_metadata_main = CollapsibleWidget("File Details:")
+        self.col_metadata_main.setStyleSheet(self.getCollapsibleMenuStyle())
         self.col_metadata_contents = ["Name", "Path", "Size", "Owner",
                                       "Viewed", "Modified"]
         # Init Summary Components
         self.col_summary_main = CollapsibleWidget("Summary:")
+        self.col_summary_main.setStyleSheet(self.getCollapsibleMenuStyle())
+
         self.col_summary_enable = QPushButton("Enable Summarizer")
         self.col_summary_body = self.makePropLabel("Summary")
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
+        self.col_reminders_main.setStyleSheet(self.getCollapsibleMenuStyle())
         self.col_reminders_add = QPushButton("Add Reminder")
+
         self.setupComponents()
         self.setupDetails()
         # Initial setup of labels, when no file is open
@@ -183,3 +189,20 @@ class ContextMenu(QScrollArea):
                            rem['title'], rem['text'], onDelete)
 
             self.col_reminders_main.addElement(wid)
+
+    def getCollapsibleMenuStyle(self) -> str:
+        """
+        Retrieves the CSS Style used for the right menu
+        Collapsible Widgets
+        """
+        prop_header_height = str(self.layout_props.getDefaultItemHeight())
+        prop_header_color = str(self.layout_props.getDefaultHeaderColorLight())
+        prop_header_color_select = str(self.layout_props.getDefaultHeaderColor())
+
+        return "QToolButton { background-color: " + prop_header_color + ";" + \
+               "color: white;" \
+               "height: " + prop_header_height + "; }" + \
+               "QToolButton:hover, QToolButton:checked:hover { color: white;" \
+               "background-color: " + prop_header_color_select + "; }" + \
+               "QToolButton:checked {" + \
+               "background-color: " + prop_header_color + "; }"

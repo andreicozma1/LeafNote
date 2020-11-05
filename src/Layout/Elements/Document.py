@@ -5,12 +5,16 @@ used to interact with the Text Edit area.
 
 import logging
 import webbrowser
+
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextCursor
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from spellchecker import SpellChecker
 
+from Layout.DocProps import DocProps
 from Utils import DocumentSummarizer
+from Utils.SyntaxHighlighter import SyntaxHighlighter
 
 
 class Document(QTextEdit):
@@ -19,7 +23,7 @@ class Document(QTextEdit):
     where the text is input and displayed
     """
 
-    def __init__(self, app, doc_props, default_text: str = ""):
+    def __init__(self, app, doc_props):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -27,7 +31,11 @@ class Document(QTextEdit):
         super().__init__("")
         logging.debug("Creating Document")
         self.app = app
-        self.doc_props = doc_props
+        self.doc_props: DocProps = doc_props
+
+        self.highlighter = SyntaxHighlighter(self)
+        self.spell_checker = SpellChecker()
+        self.textChanged.connect(self.onTextChanged)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -37,15 +45,9 @@ class Document(QTextEdit):
 
         self.textColor = "black"
 
-        if default_text is None:
-            default_text = "You can type here."
-
-        self.textChanged.connect(self._highlightUrls)
-        self.setText(default_text)
         self.setAutoFillBackground(True)
-        self.setBackgroundColor("white")
-        self.setTextColorByString("black")
-        self.setPlaceholderText("Start typing here...")
+        self.setBackgroundColor(self.doc_props.def_background_color)
+        self.setPlaceholderText(self.doc_props.def_placeholder_text)
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -61,49 +63,11 @@ class Document(QTextEdit):
 
         # check if the url is valid
         valid = validators.url(url)
-        print(valid)
+
         # if the link is valid open it
         if valid:
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
-
-    def _highlightUrls(self):
-        """
-        This highlights the current word if it is a link
-        :return: returns nothing
-        """
-        # if formatting mode is off do not highlight the links
-        if self.app.btn_mode_switch is None or not self.app.btn_mode_switch.isChecked():
-            return
-
-        # save the current cursor position and format
-        cursor = self.textCursor()
-        pos = cursor.position()
-
-        # get the selected words position and full word
-        start, end, url = self._getWordFromPos(pos)
-
-        # check if the url is valid
-        valid = validators.url(url)
-
-        # if the link is valid, underline it
-        if valid:
-            self.blockSignals(True)
-            curr_format = self.currentCharFormat()
-
-            # select the whole word
-            cursor.setPosition(start)
-            cursor.setPosition(end, QTextCursor.KeepAnchor)
-
-            # set the words format
-            cursor.setCharFormat(self.doc_props.format_url)
-
-            # reset to the current format
-            cursor.setPosition(pos)
-            cursor.setCharFormat(curr_format)
-            self.setTextCursor(cursor)
-
-            self.blockSignals(False)
 
     def _getWordFromPos(self, pos):
         """
@@ -118,7 +82,7 @@ class Document(QTextEdit):
 
         end = self.toPlainText().find(" ", pos)
         new_line = self.toPlainText().find("\n", pos)
-        end = end if end < new_line else new_line
+        end = end if end > new_line else new_line
 
         # fix the indices if they are equal to -1
         end = len(self.toPlainText()) if end == -1 else end
@@ -228,17 +192,6 @@ class Document(QTextEdit):
         self.setPalette(palette)
         # self.setBackgroundVisible(False)
 
-    def setTextColorByString(self, color_str: str):
-        """
-        sets the text box to designated color
-        :param color_str: color the text box will be set to
-        :return: return nothing
-        """
-        logging.debug(color_str)
-        palette = self.palette()
-        palette.setColor(QPalette.Text, QColor(color_str))
-        self.setPalette(palette)
-
     def fontBold(self) -> bool:
         """
         returns true the current font weight is bolded
@@ -261,7 +214,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(self.doc_props.normal)
+        cursor.setCharFormat(self.doc_props.default)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -306,7 +259,7 @@ class Document(QTextEdit):
         resets title styles to default style
         :return: returns nothing
         """
-        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.default
         self.doc_props.dict_title_styles["Title"] = self.doc_props.title
         self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
         self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
@@ -323,3 +276,28 @@ class Document(QTextEdit):
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
+
+    def onTextChanged(self):
+        """
+        grabs current word in text document and runs a spell checker
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        pos = cursor.position()
+        _, _, word = self._getWordFromPos(pos)
+
+        if word == "":
+            _, _, word_temp = self._getWordFromPos(pos - 1)
+            self.spellChecker(word_temp)
+
+    def spellChecker(self, word_t):
+        """
+        runs word_t through a spell checker
+        :param word_t: The word itself
+        :return: returns nothing
+        """
+        if word_t != '':
+            misspelled = self.spell_checker.unknown([word_t])
+
+            for word in misspelled:
+                self.highlighter.misspelled_words[word] = None

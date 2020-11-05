@@ -67,7 +67,6 @@ class Reminders:
         self.rem_list: dict = dict()
         self.restoreReminders()  # Recalls old reminders and sets them
 
-
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
         """
         this will show the user a dialog of the the reminders

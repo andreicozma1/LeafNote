@@ -59,12 +59,12 @@ class DirectoryViewer(QTreeView):
         self.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # Expand or collapse directory on click
-        self.clicked.connect(self.onClickDirIndex)
+        self.clicked.connect(self.onClickItem)
         # Shortcut for pressing enter on directory
         shortcut = QShortcut(Qt.Key_Return, self)
-        shortcut.activated.connect(self.onClickDirIndex)
+        shortcut.activated.connect(self.onClickItem)
         # Open documents on selection changed
-        self.selectionModel().currentRowChanged.connect(self.onSelectDirIndex)
+        self.selectionModel().currentRowChanged.connect(self.onSelectFileIndex)
 
     def updateDirectory(self, abs_path: str):
         """
@@ -76,7 +76,6 @@ class DirectoryViewer(QTreeView):
 
         self.model.setRootPath(abs_path)
         self.setRootIndex(self.model.index(abs_path))
-
         self.sortByColumn(0, Qt.AscendingOrder)
 
         self.fileManager.encryptor = None
@@ -90,7 +89,7 @@ class DirectoryViewer(QTreeView):
         else:
             logging.info("Workspace not encrypted")
 
-    def onSelectDirIndex(self, index: QModelIndex):
+    def onSelectFileIndex(self, index: QModelIndex):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -102,7 +101,7 @@ class DirectoryViewer(QTreeView):
             logging.debug("Selected document")
             self.fileManager.openDocument(self.document, path)
 
-    def onClickDirIndex(self, index: QModelIndex = None):
+    def onClickItem(self, index: QModelIndex = None):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -120,6 +119,9 @@ class DirectoryViewer(QTreeView):
             else:
                 logging.debug("Expanding dir %s", path)
                 self.expand(index)
+        else:
+            logging.info("Reopening closed document")
+            self.fileManager.openDocument(self.document, path)
 
     def toggleHeaderColByName(self, name: str):
         """
@@ -148,18 +150,18 @@ class DirectoryViewer(QTreeView):
         Updates the layout appearance based on properties
         """
         prop_header_margin = str(self.layout_props.getDefaultLeftMenuHeaderMargin())
-        prop_header_color = self.layout_props.getDefaultLeftMenuHeaderColor()
-        prop_item_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
-        prop_item_select_color = self.layout_props.getDefaultLeftMenuSelectColor()
-        prop_item_hover_color = self.layout_props.getDefaultLeftMenuHoverColor()
+        prop_header_color = self.layout_props.getDefaultHeaderColor()
+        prop_item_height = str(self.layout_props.getDefaultItemHeight())
+        prop_item_select_color = self.layout_props.getDefaultSelectColor()
+        prop_item_hover_color = self.layout_props.getDefaultHoverColor()
 
         style = "QTreeView::item { height: " + prop_item_height + "px; }" + \
                 "QTreeView::item:selected {" \
                 "background-color: " + prop_item_select_color + "; }" + \
-                "QTreeView::item:hover:!selected { background-color: " \
-                + prop_item_hover_color + "; }" + \
+                "QTreeView::item:hover:!selected { " + \
+                "background-color: " + prop_item_hover_color + "; }" + \
                 "QHeaderView::section { margin: " + prop_header_margin + ";" + \
-                " margin-left: 0; " \
-                " background-color: " + prop_header_color + ";" \
-                                                            " color: white; }"
+                " margin-left: 0; " + \
+                " background-color: " + prop_header_color + ";" + \
+                " color: white; }"
         self.setStyleSheet(style)
