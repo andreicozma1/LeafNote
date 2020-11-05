@@ -251,5 +251,6 @@ class BottomBar(QToolBar):
         dialog = DialogBuilder()
         dialog.addWidget(calendar)
         dialog.layout().setContentsMargins(0, 0, 0, 0)
-        dialog.setFixedHeight(400)
+        dialog.setMinimumWidth(int(dialog.width() / 1.2))
+        dialog.setMinimumHeight(int(dialog.height() / 1.2))
         dialog.exec()
