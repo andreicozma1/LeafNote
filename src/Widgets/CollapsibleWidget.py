@@ -22,9 +22,6 @@ class CollapsibleWidget(QWidget):
         layout_main.setContentsMargins(0, 0, 0, 0)
         layout_main.setSpacing(0)
 
-        font_default = QFont()
-        font_default.setPointSize(font_default.pointSize() - 3)
-
         self.btn_toggle = QToolButton(self)
         self.btn_toggle.setStyleSheet("QToolButton { border: none; padding-left: 5px; }")
         self.btn_toggle.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -34,7 +31,6 @@ class CollapsibleWidget(QWidget):
         self.btn_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.btn_toggle.setArrowType(Qt.RightArrow)
         self.btn_toggle.setIconSize(QSize(8, 8))
-        self.btn_toggle.setFont(font_default)
         self.btn_toggle.pressed.connect(self.toggle)
 
         self.content = QWidget()
