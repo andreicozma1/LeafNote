@@ -4,12 +4,11 @@ on the bottom of the application.
 """
 import html
 import logging
-import os
 
-from PyQt5.Qt import Qt, QTimer, QIcon
+from PyQt5.Qt import Qt, QTimer
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox, \
+from PyQt5.QtWidgets import QWidget, QLabel, QSlider, QDialogButtonBox, \
     QSizePolicy, QToolButton, QToolBar
 
 from Utils.DialogBuilder import DialogBuilder
@@ -134,6 +133,9 @@ class BottomBar(QToolBar):
         self.addWidget(button_zoom_in)
 
     def addSpacer(self):
+        """
+        Creates an expanding spacer in the layout
+        """
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.addWidget(spacer)
@@ -241,8 +243,8 @@ class BottomBar(QToolBar):
 
         def onCalendarReminder():
             """
+            Creates a calendar reminder
             """
-            # noinspection PyCompatibility
             date: QDate = calendar.selectedDate()
             logging.info(date.toString("MM-dd-yyyy"))
             self.app.reminders.showDialog(calendar, False, date)
