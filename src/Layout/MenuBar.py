@@ -491,6 +491,6 @@ class MenuBar(QMenuBar):
         """
         Updates appearance of MenuBar according to styles
         """
-        prop_select_color = self.layout_props.getDefaultLeftMenuHeaderColorLight()
+        prop_select_color = self.layout_props.getDefaultHeaderColorLight()
         style = "QMenu::item:selected { background-color: " + prop_select_color + ";}"
         self.setStyleSheet(style)

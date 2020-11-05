@@ -362,7 +362,7 @@ class FileManager:
             try:
                 data = file.read()
 
-            except OSError as e:
+            except (ValueError, OSError) as e:
                 corrupted_file = DialogBuilder.DialogBuilder(self.app,
                                                              "File Corrupted",
                                                              "Could not open the selected file.",

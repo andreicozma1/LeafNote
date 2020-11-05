@@ -32,6 +32,13 @@ class DialogBuilder(QDialog):
         if text_msg is None:
             self.label_message.setHidden(True)
 
+        self.close_on_unfocused = False
+
+        # get rid of the question mark help button from the dialog
+        icon = self.windowIcon()
+        self.setWindowFlags(self.windowFlags() & (~Qt.WindowContextHelpButtonHint))
+        self.setWindowIcon(icon)
+
         self.installEventFilter(self)
         self.setup()
 

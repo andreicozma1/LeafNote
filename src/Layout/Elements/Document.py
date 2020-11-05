@@ -12,6 +12,7 @@ from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
 
+from Layout.DocProps import DocProps
 from Utils import DocumentSummarizer
 from Utils.SyntaxHighlighter import SyntaxHighlighter
 
@@ -22,7 +23,7 @@ class Document(QTextEdit):
     where the text is input and displayed
     """
 
-    def __init__(self, app, doc_props, default_text: str = ""):
+    def __init__(self, app, doc_props):
         """
         creates the default layout of the text document
         :return: returns nothing
@@ -30,11 +31,11 @@ class Document(QTextEdit):
         super().__init__("")
         logging.debug("Creating Document")
         self.app = app
-        self.doc_props = doc_props
+        self.doc_props: DocProps = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
         self.spell_checker = SpellChecker()
-        self.textChanged.connect(self.getCurrentWord)
+        self.textChanged.connect(self.onTextChanged)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -44,14 +45,9 @@ class Document(QTextEdit):
 
         self.textColor = "black"
 
-        if default_text is None:
-            default_text = "You can type here."
-
-        self.setText(default_text)
         self.setAutoFillBackground(True)
-        self.setBackgroundColor("white")
-        self.setTextColorByString("black")
-        self.setPlaceholderText("Start typing here...")
+        self.setBackgroundColor(self.doc_props.def_background_color)
+        self.setPlaceholderText(self.doc_props.def_placeholder_text)
 
     def mouseDoubleClickEvent(self, e: QtGui.QMouseEvent) -> None:
         """
@@ -196,17 +192,6 @@ class Document(QTextEdit):
         self.setPalette(palette)
         # self.setBackgroundVisible(False)
 
-    def setTextColorByString(self, color_str: str):
-        """
-        sets the text box to designated color
-        :param color_str: color the text box will be set to
-        :return: return nothing
-        """
-        logging.debug(color_str)
-        palette = self.palette()
-        palette.setColor(QPalette.Text, QColor(color_str))
-        self.setPalette(palette)
-
     def fontBold(self) -> bool:
         """
         returns true the current font weight is bolded
@@ -229,7 +214,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(self.doc_props.normal)
+        cursor.setCharFormat(self.doc_props.default)
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -274,7 +259,7 @@ class Document(QTextEdit):
         resets title styles to default style
         :return: returns nothing
         """
-        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.normal
+        self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.default
         self.doc_props.dict_title_styles["Title"] = self.doc_props.title
         self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
         self.doc_props.dict_title_styles["Header 1"] = self.doc_props.heading1
@@ -292,7 +277,7 @@ class Document(QTextEdit):
         if not formatting:
             self.clearAllFormatting()
 
-    def getCurrentWord(self):
+    def onTextChanged(self):
         """
         grabs current word in text document and runs a spell checker
         :return: returns nothing
