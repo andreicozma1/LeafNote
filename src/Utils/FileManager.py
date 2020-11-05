@@ -293,18 +293,18 @@ class FileManager:
             self.saveDocument(document)
 
         if self.current_document is None and document.toPlainText() != "":
-                # if the file doesnt exist prompt the user to ask if they want to save it
-                logging.info("File not found")
-                file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
-                                                                    "File not saved",
-                                                                    "This file has not been saved. "
-                                                                    "Would you like to save it?")
-                button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
-                file_not_found_dialog.addButtonBox(button_box)
+            # if the file doesnt exist prompt the user to ask if they want to save it
+            logging.info("File not found")
+            file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                                "File not saved",
+                                                                "This file has not been saved. "
+                                                                "Would you like to save it?")
+            button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+            file_not_found_dialog.addButtonBox(button_box)
 
-                if file_not_found_dialog.exec():
-                    logging.info("User chose save the current document.")
-                    self.newFile(document, data=document.toPlainText())
+            if file_not_found_dialog.exec():
+                logging.info("User chose save the current document.")
+                self.newFile(document, data=document.toPlainText())
 
         # if the document is not already open
         if path not in self.open_documents:
