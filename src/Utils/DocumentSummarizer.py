@@ -232,7 +232,7 @@ def onSummaryAction(app, document):
     return document.summarizer.summarize(document.toPlainText())
 
 
-def ensureDirectory(app, path: str, clear_directory: bool = False):
+def ensureDirectory(app, path: str):
     """
     This will ensure that the directory we are saving the embedding files into exists.
     :param app: reference to the application
@@ -252,21 +252,20 @@ def ensureDirectory(app, path: str, clear_directory: bool = False):
             return False
     # if it does exist prompt the user to clear the directory
     else:
-        # clear the directory if selected by the user
-        if clear_directory:
-            logging.info("Found directory. Removing all directory contents %s", path)
-            files = glob.glob(os.path.abspath(os.path.join(path, '*')))
-            for f in files:
-                try:
-                    os.remove(f)
-                    logging.debug("Removed: %s", f)
-                except OSError as e:
-                    dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
-                    dialog_fail.show()
-                    logging.exception(e)
-                    logging.error("Error occured removing directory contents")
-                    return False
-            return True
+        # clear the directory
+        logging.info("Found directory. Removing all directory contents %s", path)
+        files = glob.glob(os.path.abspath(os.path.join(path, '*')))
+        for f in files:
+            try:
+                os.remove(f)
+                logging.debug("Removed: %s", f)
+            except OSError as e:
+                dialog_fail = DialogBuilder(app, "Removing contents failed\nPermission denied")
+                dialog_fail.show()
+                logging.exception(e)
+                logging.error("Error occured removing directory contents")
+                return False
+        return True
 
         logging.info("Found directory. Keeping contents %s", path)
         return True
@@ -294,11 +293,18 @@ def dependencyDialogHandler(app, button, document=None):
         logging.info("App data location not found")
         return
 
+    print(app_data_locations)
     path_parent = app_data_locations[0]
+
+    if not os.path.exists(path_parent):
+        logging.info("WHAT THE F***")
+        return
 
     # create application folder in the app data directory if needed
     path_parent = os.path.abspath(os.path.join(path_parent, 'LeafNote'))
-    ensureDirectory(app, path_parent)
+    if not os.path.exists(path_parent):
+        logging.info("Creating directory %s", path_parent)
+        os.mkdir(path_parent)
 
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
@@ -321,7 +327,7 @@ def dependencyDialogHandler(app, button, document=None):
         # prompt the user that they need to download the dependency files
         if not os.path.exists(os.path.abspath(os.path.join(path_child, zip_file))):
             logging.warning("Missing Files and ZIP. To re-download")
-            if not ensureDirectory(app, path_child, True):
+            if not ensureDirectory(app, path_child):
                 return
 
             should_download = True
