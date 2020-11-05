@@ -126,7 +126,7 @@ class FileManager:
 
         # close the tab with the current name because we will create newtab if the user
         # wants to save the file and we dont want to keep it if the user does not want to save
-        self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
+        self.app.bar_open_tabs.forceCloseTab(self.current_document.absoluteFilePath())
 
         if file_not_found_dialog.exec():
             # if the user chose to save the document return true that the file will exist and
@@ -339,8 +339,7 @@ class FileManager:
 
             self.current_document = self.open_documents[path]
             self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
-
-            self.app.bar_open_tabs.active = self.app.bar_open_tabs.open_tabs[path]
+            self.app.bar_open_tabs.setCurrentIndex(self.app.bar_open_tabs.open_tabs[path])
             logging.info("Document Already Open - %s", path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
@@ -350,7 +349,7 @@ class FileManager:
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
         # update the document shown to the user
         self.app.right_menu.updateDetails(path)
-        self.app.left_menu.selectItemFromPath(path)
+        # self.app.left_menu.selectItemFromPath(path)
         return True
 
     def getFileData(self, path: str):
@@ -443,7 +442,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .lef file
-        self.app.bar_open_tabs.closeTab(old_path, save=False)
+        self.app.bar_open_tabs.forceCloseTab(old_path)
 
         # delete the .txt file
         os.remove(old_path)
@@ -485,7 +484,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .txt file
-        self.app.bar_open_tabs.closeTab(old_path, save=False)
+        self.app.bar_open_tabs.forceCloseTab(old_path)
 
         # delete the .txt file
         os.remove(old_path)
