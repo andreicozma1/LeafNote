@@ -56,7 +56,7 @@ class BottomBar(QToolBar):
         Create the layout of the widget
         :return: Returns nothing
         """
-
+        self.layout().setSpacing(5)
         # Set global font size
         font_default = QFont()
         font_default.setPointSize(font_default.pointSize() - 3)
@@ -106,6 +106,7 @@ class BottomBar(QToolBar):
         # Zoom reset button
         button_zoom_reset = createZoomPushButton("100%", self.resetZoom,
                                                  'Reset zoom to default 100%')
+        button_zoom_reset.setFont(font_default)
         self.addWidget(button_zoom_reset)
 
         # Zoom Out button
@@ -116,7 +117,7 @@ class BottomBar(QToolBar):
 
         # Zoom Slider
         self.zoom_slider = QSlider(Qt.Horizontal, self)
-        self.zoom_slider.setFixedWidth(140)
+        self.zoom_slider.setFixedWidth(self.zoom_slider.width() * 2)
         self.zoom_slider.setMinimum(-50)
         self.zoom_slider.setMaximum(50)
 
