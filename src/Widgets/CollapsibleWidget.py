@@ -4,7 +4,6 @@ This module holds a widget that can be collapsed on a single click.
 import logging
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QToolButton, QVBoxLayout, QSizePolicy
 
 
