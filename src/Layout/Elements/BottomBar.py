@@ -55,7 +55,10 @@ class BottomBar(QToolBar):
         Create the layout of the widget
         :return: Returns nothing
         """
+        # Set layout params
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(5)
+
         # Set global font size
         font_default = QFont()
         font_default.setPointSize(font_default.pointSize() - 3)
@@ -116,7 +119,7 @@ class BottomBar(QToolBar):
 
         # Zoom Slider
         self.zoom_slider = QSlider(Qt.Horizontal, self)
-        self.zoom_slider.setFixedWidth(self.zoom_slider.width() * 2)
+        self.zoom_slider.setFixedWidth(240)
         self.zoom_slider.setMinimum(-50)
         self.zoom_slider.setMaximum(50)
 
