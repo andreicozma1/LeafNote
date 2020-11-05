@@ -2,13 +2,15 @@
 This module holds a class that displays various information to the user about the document
 on the bottom of the application.
 """
+import html
 import logging
 import os
 
 from PyQt5.Qt import Qt, QTimer, QIcon
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider, QPushButton, QDialogButtonBox, \
+    QSizePolicy, QToolButton
 
 from Utils.DialogBuilder import DialogBuilder
 from Widgets.Calendar import Calendar
@@ -71,7 +73,6 @@ class BottomBar(QWidget):
 
         def createBottomBarLabel(title, font):
             label = QLabel(title)
-            label.setContentsMargins(0, 2, 0, 0)
             label.setFont(font)
             return label
 
@@ -100,20 +101,20 @@ class BottomBar(QWidget):
         self.document.textChanged.connect(self.updateCharCount)
 
         def createZoomPushButton(title, signal, tool_tip):
-            btn = QPushButton(title)
+            btn = QToolButton()
+            btn.setText(title)
             btn.setToolTip(tool_tip)
             btn.clicked.connect(signal)
             return btn
 
         # Zoom reset button
-        button_zoom_reset = createZoomPushButton('100%', self.resetZoom,
-                                                 'Resets zoom to default 100%')
-        button_zoom_reset.setFont(font_default)
+        button_zoom_reset = createZoomPushButton(html.unescape("&#128175;"), self.resetZoom,
+                                                 'Reset zoom to default 100%')
         horizontal_layout.addWidget(button_zoom_reset)
 
         # Zoom Out button
-        button_zoom_out = createZoomPushButton('-', self.onZoomOutClicked,
-                                               'Zoom out')
+        button_zoom_out = createZoomPushButton(html.unescape("&minus;"), self.onZoomOutClicked,
+                                               'Zoom out (Ctrl+-)')
         button_zoom_out.setAutoRepeat(True)
         horizontal_layout.addWidget(button_zoom_out)
 
@@ -130,8 +131,8 @@ class BottomBar(QWidget):
         horizontal_layout.addWidget(self.zoom_slider)
 
         # Zoom in button
-        button_zoom_in = createZoomPushButton('+', self.onZoomInClicked,
-                                              'Zoom in')
+        button_zoom_in = createZoomPushButton(html.unescape("&plus;"), self.onZoomInClicked,
+                                              'Zoom in (Ctrl+=)')
         button_zoom_in.setAutoRepeat(True)
         horizontal_layout.addWidget(button_zoom_in)
 
