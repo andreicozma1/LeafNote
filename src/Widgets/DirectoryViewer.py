@@ -119,7 +119,7 @@ class DirectoryViewer(QTreeView):
             else:
                 logging.debug("Expanding dir %s", path)
                 self.expand(index)
-        else:
+        elif path not in self.fileManager.open_documents:
             logging.info("Reopening closed document")
             self.fileManager.openDocument(self.document, path)
 
