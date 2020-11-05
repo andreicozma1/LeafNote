@@ -4,6 +4,7 @@ This module holds a widget that can be collapsed on a single click.
 import logging
 
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QToolButton, QVBoxLayout, QSizePolicy
 
 
@@ -35,8 +36,8 @@ class CollapsibleWidget(QWidget):
         self.content = QWidget()
         self.content.hide()
         self.layout_content = QVBoxLayout(self.content)
-        self.layout_content.setContentsMargins(13, 0, 13, 0)
-        self.layout_content.setSpacing(0)
+        self.layout_content.setContentsMargins(13, 2, 13, 5)
+        self.layout_content.setSpacing(2)
 
         layout_main.addWidget(self.btn_toggle)
         layout_main.addWidget(self.content)
