@@ -66,7 +66,7 @@ class TopBar(QWidget):
         # ComboBox for title style
         self.combo_title_style = QComboBox(self)
         view = QListView(self.combo_title_style)
-        view.setStyleSheet("QListView::item { height : 23 px }/"
+        view.setStyleSheet("QListView::item { height : 23 px }"
                            "selection-background-color: rgba(0,0,0,0.2)}")
         self.combo_title_style.setView(view)
         self.combo_title_style.setToolTip('Styles')
