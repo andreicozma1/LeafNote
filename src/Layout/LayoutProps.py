@@ -117,6 +117,6 @@ class LayoutProps:
         """
         Returns the default bar height (topBar and bottomBar)
         """
-        return 30
+        return 26
 
     # ========= END DEFAULTS SECTION =========
