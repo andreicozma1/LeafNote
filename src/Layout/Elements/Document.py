@@ -9,10 +9,11 @@ import webbrowser
 
 import validators
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextListFormat, QKeySequence
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextListFormat, QKeySequence, \
+    QKeyEvent
 from PyQt5.QtWidgets import QColorDialog, QTextEdit, QShortcut
 from spellchecker import SpellChecker
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent, QCoreApplication
 
 from Utils import DocumentSummarizer
 from Utils.SyntaxHighlighter import SyntaxHighlighter
@@ -37,8 +38,6 @@ class Document(QTextEdit):
         self.highlighter = SyntaxHighlighter(self)
         self.spell_checker = SpellChecker()
         self.textChanged.connect(self.getCurrentWord)
-
-        # self.installEventFilter(self)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -286,44 +285,71 @@ class Document(QTextEdit):
         self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
         self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
-    # def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
-    #     if a1.type() == QtCore.QEvent.KeyPress:
-    #         if a1.key() == Qt.Key_X:
-    #             print("xxxx")
-    #             cursor = self.textCursor()
-    #             cursor.insertText("x")
-    #             return True
-    #     return False
-
     def keyPressEvent(self, event):
-        super().keyPressEvent(event)
         if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
             self.pressedReturn()
+            super().keyPressEvent(event)
         elif event.key() == QtCore.Qt.Key_Tab:
+            super().keyPressEvent(event)
             self.pressedTab()
-        elif event.key() == QtCore.Qt.Key_Tab + QtCore.Qt.Key_Shift:
+        elif event.key() == QtCore.Qt.Key_Backtab:
+            print("shift tab")
+            super().keyPressEvent(event)
             self.pressedShiftTab()
-        event.accept()
+        else:
+            super().keyPressEvent(event)
 
     def pressedReturn(self):
-        print("return")
-
-    def pressedTab(self):
         cursor = self.textCursor()
+        listIn = cursor.currentList()
         if cursor.currentList() != None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
-            print(text)
             text = text.strip()
-            print(text)
             if text == "":
-                style = QTextListFormat.ListCircle
+                print("delete")
+                listIn.removeItem(listIn.count() - 1)
+
+    def pressedTab(self):
+        cursor = self.textCursor()
+        listIn = cursor.currentList()
+        if cursor.currentList() != None:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            text = cursor.selectedText()
+            text = text.strip()
+            if text == "":
+                currlist = listIn.format()
+                style = currlist.style()
+                if style == -3:
+                    style = -1
+                else:
+                    style -= 1
                 listFormat2 = QTextListFormat()
+                listFormat2.setIndent(currlist.indent() + 1)
                 listFormat2.setStyle(style)
-                cursor.createList(listFormat2)
+                cursor.insertList(listFormat2)
 
     def pressedShiftTab(self):
-        print("shift tab")
+        cursor = self.textCursor()
+        listIn = cursor.currentList()
+        if cursor.currentList() != None:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            text = cursor.selectedText()
+            text = text.strip()
+            if text == "":
+                currlist = listIn.format()
+                indent = currlist.indent()
+                style = currlist.style()
+                if indent != 1:
+                    indent -= 1
+                    if style == -1:
+                        style = -3
+                    else:
+                        style += 1
+                listFormat2 = QTextListFormat()
+                listFormat2.setIndent(indent)
+                listFormat2.setStyle(style)
+                cursor.insertList(listFormat2)
 
     def bulletList(self):
         style = QTextListFormat.ListDisc
@@ -331,18 +357,7 @@ class Document(QTextEdit):
         listFormat = QTextListFormat()
         listFormat.setStyle(style)
         cursor.createList(listFormat)
-
-        # cursor = self.textCursor()
-        # cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-        # text = cursor.selectedText()
-        # temp = text[0]
-        # text = text[1:]
-        # text = text.strip()
-        # if text[0] ==  html.unescape('&#8226;'):
-        #     text = text[1:]
-        #     text = text.strip()
-        # text = temp + "\t" + html.unescape('&#8226;') + " " + text
-        # cursor.insertText(text)
+        print("here")
 
     def setFormatText(self, text: str, formatting: bool):
         """
