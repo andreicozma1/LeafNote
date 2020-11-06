@@ -57,14 +57,13 @@ class DirectoryViewer(QTreeView):
         self.setIndentation(10)
         self.setSortingEnabled(True)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setExpandsOnDoubleClick(True)
 
         # Expand or collapse directory on click
-        self.clicked.connect(self.onClickDirIndex)
+        self.doubleClicked.connect(self.onClickItem)
         # Shortcut for pressing enter on directory
         shortcut = QShortcut(Qt.Key_Return, self)
-        shortcut.activated.connect(self.onClickDirIndex)
-        # Open documents on selection changed
-        self.selectionModel().currentRowChanged.connect(self.onSelectFileIndex)
+        shortcut.activated.connect(self.onClickItem)
 
     def updateDirectory(self, abs_path: str):
         """
@@ -89,19 +88,7 @@ class DirectoryViewer(QTreeView):
         else:
             logging.info("Workspace not encrypted")
 
-    def onSelectFileIndex(self, index: QModelIndex):
-        """
-        functionality of double click on directory
-        :param index: location of filePath
-        :return: returns nothing
-        """
-        path = self.model.filePath(index)
-        logging.info(path)
-        if not self.model.isDir(index):
-            logging.debug("Selected document")
-            self.fileManager.openDocument(self.document, path)
-
-    def onClickDirIndex(self, index: QModelIndex = None):
+    def onClickItem(self, index: QModelIndex = None):
         """
         functionality of double click on directory
         :param index: location of filePath
@@ -112,18 +99,15 @@ class DirectoryViewer(QTreeView):
             index = self.selectionModel().currentIndex()
         path = self.model.filePath(index)
         # Toggle expand/collapse directory
-        if self.model.isDir(index):
-            if self.isExpanded(index):
-                logging.debug("Collapsing dir %s", path)
-                self.collapse(index)
-            else:
-                logging.debug("Expanding dir %s", path)
-                self.expand(index)
+        if not self.model.isDir(index):
+            logging.info("Opening document")
+            self.fileManager.openDocument(self.document, path)
 
     def toggleHeaderColByName(self, name: str):
         """
         Shows or Hides a column based on it's name
         """
+        logging.debug("Toggling header column %s", name)
         for i in range(1, self.model.columnCount()):
             col_name = self.model.headerData(i, Qt.Horizontal)
             if col_name == name:
@@ -133,6 +117,7 @@ class DirectoryViewer(QTreeView):
         """
         Resizes all columns to fit content
         """
+        logging.debug("Resizing columns to contents")
         for i in range(1, self.model.columnCount()):
             self.resizeColumnToContents(i)
 
@@ -140,17 +125,21 @@ class DirectoryViewer(QTreeView):
         """
         "Programmatically selects a path in the File System model
         """
+        logging.debug("Selecting path %s", path)
+        self.selectionModel().blockSignals(True)
         self.setCurrentIndex(self.model.index(path))
+        self.selectionModel().blockSignals(False)
 
     def updateAppearance(self):
         """
         Updates the layout appearance based on properties
         """
+        logging.debug("Setting up appearance")
         prop_header_margin = str(self.layout_props.getDefaultLeftMenuHeaderMargin())
-        prop_header_color = self.layout_props.getDefaultLeftMenuHeaderColor()
-        prop_item_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
-        prop_item_select_color = self.layout_props.getDefaultLeftMenuSelectColor()
-        prop_item_hover_color = self.layout_props.getDefaultLeftMenuHoverColor()
+        prop_header_color = self.layout_props.getDefaultHeaderColor()
+        prop_item_height = str(self.layout_props.getDefaultItemHeight())
+        prop_item_select_color = self.layout_props.getDefaultSelectColor()
+        prop_item_hover_color = self.layout_props.getDefaultHoverColor()
 
         style = "QTreeView::item { height: " + prop_item_height + "px; }" + \
                 "QTreeView::item:selected {" \

@@ -52,8 +52,12 @@ class FileManager:
             data = document.toPlainText()
             file_filter = ""
 
-        # if a file has already been opened write to the file
+        # if the file has not been changed do nothing
+        if self.current_document is not None and data == self.getFileData(
+                self.current_document.absoluteFilePath()):
+            return False
 
+        # if a file has already been opened write to the file
         if self.current_document is not None:
             # check if the file that was being worked on has been moved externally
             file_exists, file_missing = self.checkCurrentFileExists()
@@ -83,6 +87,7 @@ class FileManager:
             return False
 
         path = file_name[0]
+
         # write the text in the document shown to the user to the given file path
         self.writeFileData(path, data)
 
@@ -126,7 +131,7 @@ class FileManager:
 
         # close the tab with the current name because we will create newtab if the user
         # wants to save the file and we dont want to keep it if the user does not want to save
-        self.app.bar_open_tabs.closeTab(self.current_document.absoluteFilePath(), False)
+        self.app.bar_open_tabs.forceCloseTab(self.current_document.absoluteFilePath())
 
         if file_not_found_dialog.exec():
             # if the user chose to save the document return true that the file will exist and
@@ -227,7 +232,6 @@ class FileManager:
         Closes the document with the given path.
         :param document: reference to the document
         :param path: path to the document that needs to be closed
-        :return: Returns whether or not the document is formatted
         """
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
@@ -257,15 +261,14 @@ class FileManager:
                 state = False
 
             self.app.right_menu.updateDetails(self.current_document)
+            self.app.updateFormatBtnsState(state)
+
         # if it does not exist print error messages
         else:
             if path == '':
                 logging.info("No File Path Given")
             else:
                 logging.info("File Is Not Open - %s", path)
-            state = False
-
-        self.app.updateFormatBtnsState(state)
 
     def closeAll(self, document):
         """
@@ -291,6 +294,20 @@ class FileManager:
         # if there is already a file open save before the Document's text is overwritten
         if save and self.current_document is not None:
             self.saveDocument(document)
+
+        if self.current_document is None and document.toPlainText() != "":
+            # if the file doesnt exist prompt the user to ask if they want to save it
+            logging.info("File not found")
+            file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                                "File not saved",
+                                                                "This file has not been saved. "
+                                                                "Would you like to save it?")
+            button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+            file_not_found_dialog.addButtonBox(button_box)
+
+            if file_not_found_dialog.exec():
+                logging.info("User chose save the current document.")
+                self.newFile(document, data=document.toPlainText())
 
         # if the document is not already open
         if path not in self.open_documents:
@@ -325,8 +342,7 @@ class FileManager:
 
             self.current_document = self.open_documents[path]
             self.file_opened_time = os.path.getatime(self.current_document.absoluteFilePath())
-
-            self.app.bar_open_tabs.active = self.app.bar_open_tabs.open_tabs[path]
+            self.app.bar_open_tabs.setCurrentIndex(self.app.bar_open_tabs.open_tabs[path])
             logging.info("Document Already Open - %s", path)
 
         # check for the proprietary file extension .lef and update the top bar accordingly
@@ -336,7 +352,7 @@ class FileManager:
         self.app.updateFormatBtnsState(self.current_document.suffix() == 'lef')
         # update the document shown to the user
         self.app.right_menu.updateDetails(path)
-        self.app.left_menu.selectItemFromPath(path)
+        # self.app.left_menu.selectItemFromPath(path)
         return True
 
     def getFileData(self, path: str):
@@ -348,6 +364,7 @@ class FileManager:
         # open the file with read only privileges
         logging.debug(path)
         file = open(path, 'r')
+
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - %s", path)
@@ -358,7 +375,7 @@ class FileManager:
             try:
                 data = file.read()
 
-            except OSError as e:
+            except (ValueError, OSError) as e:
                 corrupted_file = DialogBuilder.DialogBuilder(self.app,
                                                              "File Corrupted",
                                                              "Could not open the selected file.",
@@ -429,7 +446,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .lef file
-        self.app.bar_open_tabs.closeTab(old_path, save=False)
+        self.app.bar_open_tabs.forceCloseTab(old_path)
 
         # delete the .txt file
         os.remove(old_path)
@@ -471,7 +488,7 @@ class FileManager:
             period_index = len(self.current_document.filePath())
 
         # close the .txt file
-        self.app.bar_open_tabs.closeTab(old_path, save=False)
+        self.app.bar_open_tabs.forceCloseTab(old_path)
 
         # delete the .txt file
         os.remove(old_path)
@@ -484,7 +501,7 @@ class FileManager:
         # open the .lef document and add it to the dict of the open files
         self.openDocument(document, new_path)
 
-    def newFile(self, document):
+    def newFile(self, document, data: str = ""):
         """
         This will create a new unformatted file.
         :return: Returns nothing
@@ -499,7 +516,8 @@ class FileManager:
         path = file_name[0]
         logging.info('Creating NewFile - %s', path)
         # create the file and open it
-        self.writeFileData(path, "")
+        self.writeFileData(path, data)
+        self.current_document = QFileInfo(path)
         self.openDocument(document, path)
 
     def exportToPDF(self, document):
