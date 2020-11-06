@@ -60,7 +60,7 @@ class BottomBar(QToolBar):
 
         # Set global font size
         font_default = QFont()
-        font_default.setPointSize(font_default.pointSize() - 3)
+        font_default.setPointSize(10)
 
         # Create Calendar Button
         calendar = QToolButton()
