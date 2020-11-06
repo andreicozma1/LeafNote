@@ -3,17 +3,14 @@ The Document module sets up and defines the methods for
 used to interact with the Text Edit area.
 """
 
-import html
 import logging
 import webbrowser
 
 import validators
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextListFormat, QKeySequence, \
-    QKeyEvent
-from PyQt5.QtWidgets import QColorDialog, QTextEdit, QShortcut
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextListFormat
+from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
-from PyQt5.QtCore import Qt, QEvent, QCoreApplication
 
 from Layout.DocProps import DocProps
 from Utils import DocumentSummarizer
@@ -299,7 +296,7 @@ class Document(QTextEdit):
         cursor = self.textCursor()
         listIn = cursor.currentList()
         # checks if cursor is in a list
-        if cursor.currentList() != None:
+        if cursor.currentList() is not None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
@@ -317,7 +314,7 @@ class Document(QTextEdit):
         cursor = self.textCursor()
         listIn = cursor.currentList()
         # checks if cursor is in a list
-        if cursor.currentList() != None:
+        if cursor.currentList() is not None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
@@ -345,7 +342,7 @@ class Document(QTextEdit):
         cursor = self.textCursor()
         listIn = cursor.currentList()
         # checks if cursor is in a list
-        if cursor.currentList() != None:
+        if cursor.currentList() is not None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
