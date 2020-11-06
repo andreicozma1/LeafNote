@@ -292,6 +292,20 @@ class FileManager:
         if save and self.current_document is not None:
             self.saveDocument(document)
 
+        if self.current_document is None and document.toPlainText() != "":
+            # if the file doesnt exist prompt the user to ask if they want to save it
+            logging.info("File not found")
+            file_not_found_dialog = DialogBuilder.DialogBuilder(self.app,
+                                                                "File not saved",
+                                                                "This file has not been saved. "
+                                                                "Would you like to save it?")
+            button_box = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+            file_not_found_dialog.addButtonBox(button_box)
+
+            if file_not_found_dialog.exec():
+                logging.info("User chose save the current document.")
+                self.newFile(document, data=document.toPlainText())
+
         # if the document is not already open
         if path not in self.open_documents:
 
@@ -484,7 +498,7 @@ class FileManager:
         # open the .lef document and add it to the dict of the open files
         self.openDocument(document, new_path)
 
-    def newFile(self, document):
+    def newFile(self, document, data: str = ""):
         """
         This will create a new unformatted file.
         :return: Returns nothing
@@ -499,7 +513,8 @@ class FileManager:
         path = file_name[0]
         logging.info('Creating NewFile - %s', path)
         # create the file and open it
-        self.writeFileData(path, "")
+        self.writeFileData(path, data)
+        self.current_document = QFileInfo(path)
         self.openDocument(document, path)
 
     def exportToPDF(self, document):
