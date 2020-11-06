@@ -46,7 +46,7 @@ class LayoutProps:
         """
         Returns the default Open Tabs Bar height
         """
-        return 35
+        return 28
 
     @staticmethod
     def getDefTabsBarSpacing():
@@ -82,7 +82,7 @@ class LayoutProps:
         """
         Returns the default Item height
         """
-        return 30
+        return 28
 
     @staticmethod
     def getDefaultHeaderColor():
@@ -117,6 +117,6 @@ class LayoutProps:
         """
         Returns the default bar height (topBar and bottomBar)
         """
-        return 30
+        return 26
 
     # ========= END DEFAULTS SECTION =========

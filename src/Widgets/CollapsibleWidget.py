@@ -21,8 +21,8 @@ class CollapsibleWidget(QWidget):
         layout_main.setContentsMargins(0, 0, 0, 0)
         layout_main.setSpacing(0)
 
-        self.btn_toggle = QToolButton(self)
-        self.btn_toggle.setStyleSheet("QToolButton { border: none; padding-left: 5px; }")
+        self.btn_toggle = QToolButton()
+        self.btn_toggle.setStyleSheet("QToolButton { padding-left: 5px; }")
         self.btn_toggle.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.btn_toggle.setText(title)
         self.btn_toggle.setCheckable(True)
@@ -35,8 +35,8 @@ class CollapsibleWidget(QWidget):
         self.content = QWidget()
         self.content.hide()
         self.layout_content = QVBoxLayout(self.content)
-        self.layout_content.setContentsMargins(13, 0, 13, 0)
-        self.layout_content.setSpacing(0)
+        self.layout_content.setContentsMargins(13, 2, 13, 5)
+        self.layout_content.setSpacing(2)
 
         layout_main.addWidget(self.btn_toggle)
         layout_main.addWidget(self.content)

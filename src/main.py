@@ -75,7 +75,8 @@ class App(QMainWindow):
         last_path = self.settings.value("workspacePath")
         self.left_menu = DirectoryViewer(self.layout_props, self.document,
                                          self.file_manager, last_path)
-        self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager, self.layout_props)
+        self.bar_open_tabs = OpenTabsBar(self.document, self.file_manager)
+
         self.search_and_replace = SearchAndReplace(self.app_props.path_res, self.document)
         self.right_menu = ContextMenu(self, self.layout_props, self.document)
         self.documents_view = self.layout.makeHSplitterLayout(self.left_menu, self.bar_open_tabs,
@@ -85,7 +86,7 @@ class App(QMainWindow):
         layout_main.addWidget(self.documents_view)
 
         # Create BottomBar, depends on document
-        self.bottom_bar = BottomBar(self, self.document, self.settings, self.app_props.path_res)
+        self.bottom_bar = BottomBar(self, self.document, self.settings)
         self.bottom_bar.setFixedHeight(self.layout_props.getDefaultBarHeight())
 
         layout_main.addWidget(self.bottom_bar)
