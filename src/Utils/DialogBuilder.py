@@ -3,8 +3,7 @@ This module holds a customizable dialog prompt
 """
 import logging
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QLabel, QDialogButtonBox, QProgressBar
 
 
@@ -135,25 +134,3 @@ class DialogBuilder(QDialog):
         # add the progress_bar to the dialog box and return the created object
         self.layout_vertical.addWidget(progress_bar)
         return progress_bar
-
-    def setCloseOnUnfocused(self, state: bool):
-        """
-        This will sets the behavior of the widget when it is clicked out of
-        :param state: whether of not the window will close
-        :return: returns nothing
-        """
-        self.close_on_unfocused = state
-
-    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
-        """
-        This handles any event the dialogue could have raised
-        :param a0: the object whose events the function catching
-        :param a1: the event that is caught
-        :return: returns boolean value
-        """
-        if a0 is not None:
-            if a1.type() == QEvent.WindowDeactivate and self.close_on_unfocused:
-                logging.info("User clicked out of dialog")
-                self.close()
-
-        return False

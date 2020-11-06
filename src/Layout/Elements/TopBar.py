@@ -1,14 +1,13 @@
 """
 all properties of the top bar
 """
-
+import html
 import logging
-import os
 from functools import partial
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QIcon, QBrush, QColor, QStandardItem, QKeySequence
+from PyQt5.QtGui import QFont, QBrush, QColor, QStandardItem, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QPushButton, QFontComboBox, \
     QSizePolicy, QListView, QShortcut
 
@@ -245,14 +244,12 @@ class TopBar(QWidget):
         Create Clear Formatting Button
         """
         # Button to Clear Formatting
-        path_clear_icon = os.path.join(self.path_res, "clear_formatting.ico")
-        self.button_clear = QPushButton(self)
-        self.button_clear.setIcon(QIcon(path_clear_icon))
-        self.button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
-        self.button_clear.setFixedWidth(33)
-        self.button_clear.setFocusPolicy(Qt.NoFocus)
-        self.button_clear.clicked.connect(self.document.clearSelectionFormatting)
-        return self.button_clear
+        button_clear = QPushButton(html.unescape('&#574;'))
+        button_clear.setToolTip('Clear Formatting. "Ctrl+0"')
+        button_clear.setFixedWidth(33)
+        button_clear.setFocusPolicy(Qt.NoFocus)
+        button_clear.clicked.connect(self.document.clearSelectionFormatting)
+        return button_clear
 
     def makeComboTextAlign(self) -> QComboBox:
         """

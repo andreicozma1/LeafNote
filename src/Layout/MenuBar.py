@@ -157,7 +157,7 @@ class MenuBar(QMenuBar):
             if not state_search:
                 app.search_and_replace.search.search_bar.setFocus()
 
-        def onFindAllBtn():
+        def onFindAllBtn(replace=False):
             """
             """
             logging.info("Clicked Find All Action")
@@ -167,11 +167,11 @@ class MenuBar(QMenuBar):
             # create search workspace widget
             search_workspace = SearchWorkspace(self.doc, file_manager,
                                                app.left_menu.model.rootPath())
+            search_workspace.toggleReplace(replace)
             search_workspace.setCloseDialogCallback(search_workspace_dialog.close)
 
             # modify the dialog
             search_workspace_dialog.addWidget(search_workspace)
-            # search_workspace_dialog.setCloseOnUnfocused(True)
             search_workspace_dialog.show()
 
         def onFindAndReplaceBtn():
@@ -209,6 +209,7 @@ class MenuBar(QMenuBar):
         menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
         menu_edit.addAction(makeEditAction("Replace", "Ctrl+r", onFindAndReplaceBtn))
+        menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+r", partial(onFindAllBtn, True)))
 
         # ========= END EDIT MENU SECTION =========
         return menu_edit
@@ -343,9 +344,9 @@ class MenuBar(QMenuBar):
             return list(self.doc_props.dict_text_aligns.keys())[index]
 
         # Add alignment options to the group
-        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+L', True))
-        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+R'))
-        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+E'))
+        self.group_align.addAction(makeAlignAction(getName(0), 'Ctrl+Shift+[', True))
+        self.group_align.addAction(makeAlignAction(getName(1), 'Ctrl+Shift+]'))
+        self.group_align.addAction(makeAlignAction(getName(2), 'Ctrl+Shift+\\'))
         self.group_align.addAction(makeAlignAction(getName(3), 'Ctrl+Shift+J'))
         # Add all actions in group to Format Menu
         self.menu_format.addActions(self.group_align.actions())

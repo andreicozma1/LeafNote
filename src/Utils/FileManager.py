@@ -52,8 +52,12 @@ class FileManager:
             data = document.toPlainText()
             file_filter = ""
 
-        # if a file has already been opened write to the file
+        # if the file has not been changed do nothing
+        if self.current_document is not None and data == self.getFileData(
+                self.current_document.absoluteFilePath()):
+            return False
 
+        # if a file has already been opened write to the file
         if self.current_document is not None:
             # check if the file that was being worked on has been moved externally
             file_exists, file_missing = self.checkCurrentFileExists()
@@ -83,6 +87,7 @@ class FileManager:
             return False
 
         path = file_name[0]
+
         # write the text in the document shown to the user to the given file path
         self.writeFileData(path, data)
 
@@ -227,7 +232,6 @@ class FileManager:
         Closes the document with the given path.
         :param document: reference to the document
         :param path: path to the document that needs to be closed
-        :return: Returns whether or not the document is formatted
         """
         # if the path exists in the open docs list remove it
         if path in self.open_documents:
@@ -257,15 +261,14 @@ class FileManager:
                 state = False
 
             self.app.right_menu.updateDetails(self.current_document)
+            self.app.updateFormatBtnsState(state)
+
         # if it does not exist print error messages
         else:
             if path == '':
                 logging.info("No File Path Given")
             else:
                 logging.info("File Is Not Open - %s", path)
-            state = False
-
-        self.app.updateFormatBtnsState(state)
 
     def closeAll(self, document):
         """
@@ -361,6 +364,7 @@ class FileManager:
         # open the file with read only privileges
         logging.debug(path)
         file = open(path, 'r')
+
         # check if the file was opened
         if file.closed:
             logging.info("Could Not Open File - %s", path)

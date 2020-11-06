@@ -1,13 +1,12 @@
 """
 This module contains a widget that gives the user the ability to search through a document
 """
-
+import html
 import logging
-import os
 from functools import partial
 
 from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QTextDocument, QPixmap, QIcon, QTransform, QKeySequence
+from PyQt5.QtGui import QTextDocument, QKeySequence
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QPushButton, QLabel, QShortcut
 
 
@@ -68,7 +67,8 @@ class Search(QWidget):
 
         # -----------------------------------------------------------
 
-        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True):
+        def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True,
+                            extra_on_click_param: bool = False):
             """
             """
             btn = QPushButton(title)
@@ -77,11 +77,15 @@ class Search(QWidget):
             btn.setCheckable(is_checkable)
             btn.setFlat(True)
             btn.setFixedWidth(25)
-            btn.clicked.connect(on_click)
+            if extra_on_click_param:
+                btn.clicked.connect(partial(on_click, False))
+            else:
+                btn.clicked.connect(on_click)
             return btn
 
         # add the case sensitive option
-        self.case_sensitive = createSearchBtn("Aa", "Match Case", self.onCaseSensitiveSearchSelect)
+        self.case_sensitive = createSearchBtn("Aa", "Match Case",
+                                              self.onCaseSensitiveSearchSelect, True, True)
         self.case_sensitive_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_C),
                                                  self.case_sensitive)
         self.case_sensitive_shortcut.activated.connect(
@@ -90,39 +94,32 @@ class Search(QWidget):
         self.horizontal_layout.addWidget(self.case_sensitive, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect)
+        self.whole_word = createSearchBtn("W", "Words", self.onWholeWordSearchSelect, True, True)
         self.whole_word_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_O), self.whole_word)
         self.whole_word_shortcut.activated.connect(partial(self.onWholeWordSearchSelect, True))
         self.horizontal_layout.addWidget(self.whole_word, alignment=Qt.AlignLeft)
 
         # add the case sensitive option
-        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect)
+        self.regex_search = createSearchBtn(".*", "Regex", self.onRegexSearchSelect, True, True)
         self.regex_search_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_X), self.regex_search)
         self.regex_search_shortcut.activated.connect(partial(self.onRegexSearchSelect, True))
         self.horizontal_layout.addWidget(self.regex_search, alignment=Qt.AlignLeft)
 
         # -----------------------------------------------------------
 
-        # get required images
-        path = os.path.join(self.path_res, "arrow.ico")
-        pixmap = QPixmap(path)
-        down_arrow = QIcon(pixmap)
-        up_arrow = QIcon(pixmap.transformed(QTransform().rotate(180)))
         # add the previous occurrence option
-        self.previous_occurrence = createSearchBtn("", "Previous Occurrence",
+        self.previous_occurrence = createSearchBtn(html.unescape('&#8593;'), "Previous Occurrence",
                                                    self.onPreviousOccurrenceSelect, False)
         self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return),
                                                       self.previous_occurrence)
         self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
-        self.previous_occurrence.setIcon(up_arrow)
         self.horizontal_layout.addWidget(self.previous_occurrence)
 
         # add the next occurrence option
-        self.next_occurrence = createSearchBtn("", "Next Occurrence", self.onNextOccurrenceSelect,
-                                               False)
+        self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence",
+                                               self.onNextOccurrenceSelect, False)
         self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
         self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
-        self.next_occurrence.setIcon(down_arrow)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
         # -----------------------------------------------------------

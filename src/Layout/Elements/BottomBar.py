@@ -63,6 +63,7 @@ class BottomBar(QToolBar):
         font_default.setPointSize(10)
 
         # Create Calendar Button
+
         calendar = QToolButton()
         calendar.setText(html.unescape("&#128197;"))
         calendar.clicked.connect(self.showCalendar)
