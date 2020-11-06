@@ -6,22 +6,20 @@ top bar
 
 import logging
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
-
-from Layout.Elements.TabsBar.Tab import Tab
+from PyQt5.QtCore import QFileInfo
+from PyQt5.QtWidgets import QTabBar, QFileIconProvider
 
 
-class OpenTabsBar(QWidget):
+class OpenTabsBar(QTabBar):
     """
     functionality and look of Tab Bar
     """
 
-    def __init__(self, document, file_manager, layout_props):
+    def __init__(self, document, file_manager):
         """
         sets up the tab bar
+        :param document: doc reference for operations
         :param file_manager: instance of FileManager class - manages all file communication
-        :param layout_props: properties for the layout - dimensions
         :return: returns nothing
         """
         super().__init__()
@@ -29,67 +27,55 @@ class OpenTabsBar(QWidget):
 
         self.document = document
         self.file_manager = file_manager
-        self.layout_props = layout_props
-        self.active_tab = None
+
         self.open_tabs = {}
+        self.setDocumentMode(True)
+        self.setTabsClosable(True)
+        self.currentChanged.connect(self.openTab)
+        self.tabCloseRequested.connect(self.closeTab)
 
-        self.tab_width = self.layout_props.getDefOpenTabWidth()
-        self.tab_height = self.layout_props.getDefOpenTabHeight()
-
-        # crate the horizontal layout
-        self.horizontal_layout = QHBoxLayout()
-        self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
-        self.horizontal_layout.setSpacing(self.layout_props.getDefTabsBarSpacing())
-        self.setLayout(self.horizontal_layout)
-
-        # set the background
-        palette = self.palette()
-        palette.setColor(QtGui.QPalette.Window, QtGui.QColor('grey'))
-        self.setPalette(palette)
-        self.setAutoFillBackground(True)
-
-        # Add filler spacing at the end
-        self.horizontal_layout.addStretch()
-
-    def openTab(self, tab):
+    def openTab(self, index):
         """
         Opens a tab
         """
-        self.active_tab = tab
-        self.file_manager.openDocument(self.document, tab.path)
+        logging.debug("Clicked on tab %d", index)
+        path = self.tabData(index)
+        if path is not None:
+            self.file_manager.openDocument(self.document, path)
 
-    def addTab(self, path: str) -> Tab:
+    def addTab(self, path: str):
         """
         Creates new tab and adds it to the horizontal layout
         :param path: path to file being displayed
         :return: returns the new tab that was open
         """
         logging.info(path)
-        tab = Tab(self, path)
-
-        if self.tab_width is not None:
-            tab.setFixedWidth(self.tab_width)
-
-        tab.setFixedHeight(self.tab_height)
-
-        self.layout().insertWidget(0, tab)
-
+        file_info = QFileInfo(path)
+        # Add new tab and save index
+        index = super().addTab(file_info.fileName())
+        # Set tab data and tooltip
+        self.setTabData(index, path)
+        self.setTabToolTip(index, path)
+        # Set tab icon
+        icon_provider = QFileIconProvider()
+        self.setTabIcon(index, icon_provider.icon(file_info))
+        # Update the current index to the new tab
+        self.blockSignals(True)
+        self.setCurrentIndex(index)
+        self.blockSignals(False)
         # add tab to the dict holding open tabs
-        self.open_tabs[path] = tab
-        self.active_tab = tab
-        return tab
+        self.open_tabs[path] = index
 
-    def closeTab(self, path: str, save: bool = True):
+    def closeTab(self, index, save: bool = True):
         """
         removes object from layout and destroys it
-        :param path: path to file being displayed
+        :param index: index of tab to close
         :param save: if the document is saved
         :return: returns nothing
         """
-        logging.info(path)
-        tab = self.open_tabs[path]
-        self.layout().removeWidget(tab)
-        # if close tab is called with the optional parameter
+        logging.info(index)
+        path = self.tabData(index)
+        self.removeTab(index)
         if save:
             self.file_manager.saveDocument(self.document)
         self.file_manager.closeDocument(self.document, path)
@@ -97,21 +83,16 @@ class OpenTabsBar(QWidget):
         if path in self.open_tabs:
             # pop the closed tab from the open tab dic
             self.open_tabs.pop(path)
-            self.horizontal_layout.removeWidget(tab)
-            tab.deleteLater()
 
-            # set the active tab
-            if self.file_manager.current_document is None:
-                self.active_tab = None
-            else:
-                self.active_tab = self.open_tabs[
-                    self.file_manager.current_document.absoluteFilePath()
-                ]
-
-    def getTabCount(self):
+    def forceCloseTab(self, path: str):
         """
-        gets the number of open tabs
+        removes object from layout and destroys it
+        :param path: path of tab to close
         :return: returns nothing
         """
-        logging.info(str(self.horizontal_layout.count()))
-        return self.layout().count()
+        logging.info(path)
+        self.removeTab(self.open_tabs[path])
+        self.file_manager.closeDocument(self.document, path)
+        if path in self.open_tabs:
+            # pop the closed tab from the open tab dic
+            self.open_tabs.pop(path)

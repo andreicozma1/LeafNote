@@ -62,7 +62,7 @@ class ContextMenu(QScrollArea):
         """
         # Set up sizing
         logging.debug("Setting up layout components")
-        self.vertical_layout.setContentsMargins(10, 0, 10, 0)
+        self.vertical_layout.setContentsMargins(3, 0, 3, 0)
         self.vertical_layout.setSpacing(3)
         # Set up all the collapsible widget contents
 
@@ -195,13 +195,14 @@ class ContextMenu(QScrollArea):
         Retrieves the CSS Style used for the right menu
         Collapsible Widgets
         """
-        prop_header_height = str(self.layout_props.getDefaultLeftMenuItemHeight())
-        prop_header_color = str(self.layout_props.getDefaultLeftMenuHeaderColorLight())
-        prop_header_color_select = str(self.layout_props.getDefaultLeftMenuHeaderColor())
+        prop_header_height = str(self.layout_props.getDefaultItemHeight())
+        prop_header_color = str(self.layout_props.getDefaultHeaderColorLight())
+        prop_header_color_select = str(self.layout_props.getDefaultHeaderColor())
 
         return "QToolButton { background-color: " + prop_header_color + ";" + \
                "color: white;" \
-               "height: " + prop_header_height + "; }" + \
+               "height: " + prop_header_height + "; " + \
+               "border-radius: 3px; }" + \
                "QToolButton:hover, QToolButton:checked:hover { color: white;" \
                "background-color: " + prop_header_color_select + "; }" + \
                "QToolButton:checked {" + \

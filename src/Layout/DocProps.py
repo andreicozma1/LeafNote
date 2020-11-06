@@ -18,14 +18,17 @@ class DocProps:
         :return: returns nothing
         """
         logging.debug("Setting up Doc Props")
+        self.def_background_color = "white"
+        self.def_placeholder_text = "Start typing here..."
 
         # Font sizes available in the TopBar
-        self.font_size_default = 12
         self.list_font_sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
-                                "14", "15", "16",
-                                "17", "18", "19", "20", "22", "24", "26", "28", "36", "48", "72"]
+                                "14", "15", "16", "17", "18", "19", "20", "22", "24", "26", "28",
+                                "36", "48", "72"]
+        self.def_font_size_index = self.list_font_sizes.index("12")  # default index
 
         # Colors available in the TopBar
+        self.def_text_color_key = "black"
         self.dict_colors = {
             'black': '#000000',
             'red': '#ff0000',
@@ -40,6 +43,7 @@ class DocProps:
         }
 
         # Alignment options available in the TopBar and MenuBar
+        self.def_text_align_key = "Left"
         self.dict_text_aligns = {
             'Left': Qt.AlignLeft,
             'Right': Qt.AlignRight,
@@ -51,10 +55,9 @@ class DocProps:
         self.format_url.setFontUnderline(True)
         self.format_url.setForeground(QColor('blue'))
 
-        # code works with makeTitleStyleBox in TopBar.py
-
+        # Title styles for TopBar ComboBox
         # Default style for normal text
-        self.normal = QTextCharFormat()
+        self.default = QTextCharFormat()
         # Default style for title
         self.title = QTextCharFormat()
         self.title.setFontPointSize(26)
@@ -80,7 +83,7 @@ class DocProps:
         self.text_reset_title = "Reset to Default"
         # creates dictionary to set the text format to the selected title style in the QComboBox
         self.dict_title_styles = {
-            "Normal Text": self.normal,
+            "Normal Text": self.default,
             self.text_update_title + "Normal Text": None,
             "Title": self.title,
             self.text_update_title + "Title": None,

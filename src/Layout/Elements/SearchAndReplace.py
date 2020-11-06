@@ -7,7 +7,7 @@ import logging
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from Layout.Utils.Replace import Replace
+from Layout.Utils.ReplaceDoc import Replace
 from Layout.Utils.SearchDoc import Search
 
 
