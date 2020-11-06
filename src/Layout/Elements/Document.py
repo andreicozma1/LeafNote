@@ -286,62 +286,94 @@ class Document(QTextEdit):
         self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
 
     def keyPressEvent(self, event):
+        """
+        intercepts key press to check for bullet list
+        :return: returns nothing
+        """
+        # checks for enter
         if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
             self.pressedReturn()
             super().keyPressEvent(event)
+        # checks for tab
         elif event.key() == QtCore.Qt.Key_Tab:
             super().keyPressEvent(event)
             self.pressedTab()
+        # checks for shift tab
         elif event.key() == QtCore.Qt.Key_Backtab:
-            print("shift tab")
             super().keyPressEvent(event)
             self.pressedShiftTab()
+        # calls normal functionality of key
         else:
             super().keyPressEvent(event)
 
     def pressedReturn(self):
+        """
+        enter or return key is pressed
+        :return: returns nothing
+        """
         cursor = self.textCursor()
         listIn = cursor.currentList()
+        # checks if cursor is in a list
         if cursor.currentList() != None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
+            # checks if the bullet on the list is blank
             if text == "":
-                print("delete")
+                logging.info("bullet list: removed last bullet")
+                # removes bullet
                 listIn.removeItem(listIn.count() - 1)
 
     def pressedTab(self):
+        """
+        tab key is pressed
+        :return: returns nothing
+        """
         cursor = self.textCursor()
         listIn = cursor.currentList()
+        # checks if cursor is in a list
         if cursor.currentList() != None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
+            # checks if the bullet on the list is blank
             if text == "":
+                logging.info("bullet list: tabbed")
                 currlist = listIn.format()
                 style = currlist.style()
+                # updates style to next bullet
                 if style == -3:
                     style = -1
                 else:
                     style -= 1
                 listFormat2 = QTextListFormat()
+                # adds indent
                 listFormat2.setIndent(currlist.indent() + 1)
                 listFormat2.setStyle(style)
                 cursor.insertList(listFormat2)
 
     def pressedShiftTab(self):
+        """
+        shift + tab keys are pressed
+        :return: returns nothing
+        """
         cursor = self.textCursor()
         listIn = cursor.currentList()
+        # checks if cursor is in a list
         if cursor.currentList() != None:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
+            # checks if the bullet on the list is blank
             if text == "":
+                logging.info("bullet list: back-tabbed")
                 currlist = listIn.format()
                 indent = currlist.indent()
                 style = currlist.style()
+                # checks if indent can be removed then removes
                 if indent != 1:
                     indent -= 1
+                    # if indent can be removed get previous bullet style
                     if style == -1:
                         style = -3
                     else:
@@ -352,12 +384,16 @@ class Document(QTextEdit):
                 cursor.insertList(listFormat2)
 
     def bulletList(self):
+        """
+        bullet list created on cursor location
+        :return: returns nothing
+        """
+        logging.info("bullet list: created")
         style = QTextListFormat.ListDisc
         cursor = self.textCursor()
         listFormat = QTextListFormat()
         listFormat.setStyle(style)
         cursor.createList(listFormat)
-        print("here")
 
     def setFormatText(self, text: str, formatting: bool):
         """
