@@ -267,10 +267,6 @@ def ensureDirectory(app, path: str):
                 return False
         return True
 
-        logging.info("Found directory. Keeping contents %s", path)
-        return True
-
-
 def dependencyDialogHandler(app, button, document=None):
     """
     This will handle the users choice for the Download prompt the user will select where they
