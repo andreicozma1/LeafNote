@@ -199,8 +199,8 @@ class App(QMainWindow):
                                            "Would you like to convert this file?",
                                            "This file will be converted to plain "
                                            "text formatting\n"
-                                           "Selecting 'Yes' will PERMANENTLY remove any existing "
-                                           "formatting.")
+                                           "Selecting 'Yes' will PERMANENTLY remove "
+                                           "any existing formatting.")
             button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             convert_dialog.addButtonBox(button_box)
             if convert_dialog.exec():
