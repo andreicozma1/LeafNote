@@ -169,6 +169,7 @@ class App(QMainWindow):
         self.btn_mode_switch.setChecked(state)
         self.top_bar.setFormattingButtonsEnabled(state)
         self.menu_bar.setFormattingButtonsEnabled(state)
+        self.document.enableFormatting(state)
 
     def setFormattingMode(self, state: bool):
         """
