@@ -354,8 +354,8 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-            _thread.start_new_thread(getWordEmbeddings,
-                                     (app, path_child, should_download, progress_bar, document))
+        _thread.start_new_thread(getWordEmbeddings,
+                                 (app, path_child, should_download, progress_bar, document))
 
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
