@@ -5,7 +5,7 @@ if [ -f "$FILE" ]; then
     source "$FILE"
   echo "" &&
     echo "## Starting Application:" &&
-    python3 src/main.py
+    python3 src/LeafNote/main.py
 else
   echo "## ERROR: Python Virtual Environment missing!"
   echo " # Please run the setup script first!"
