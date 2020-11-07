@@ -5,7 +5,7 @@ import unittest
 
 from PyQt5.QtWidgets import QApplication, QComboBox, QFontComboBox, QAbstractButton
 
-from main import App
+from LeafNote.app import App
 
 
 class TestTopBar(unittest.TestCase):
