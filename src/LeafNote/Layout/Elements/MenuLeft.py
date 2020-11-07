@@ -7,7 +7,7 @@ import os
 from PyQt5.QtCore import Qt, QDir, QModelIndex
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QAbstractItemView, QShortcut
 
-from LeafNote.Utils import Encryptor
+from LeafNote.Utils.Encryptor import Encryptor
 
 
 class MenuLeft(QTreeView):
