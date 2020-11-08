@@ -240,7 +240,10 @@ class FileManager:
 
             # if the open documents is NOT empty change the current document to another open file
             if bool(self.open_documents):
-                self.current_document = self.open_documents[next(iter(self.open_documents))]
+                # get the current tab and open its respective file
+                index = self.app.bar_open_tabs.currentIndex()
+                path = self.app.bar_open_tabs.tabData(index)
+                self.current_document = self.open_documents[path]
 
                 # get File data will never return None here because the document
                 # had to already be opened to get to this point
