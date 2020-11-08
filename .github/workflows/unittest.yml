@@ -15,9 +15,10 @@ jobs:
         python-version: 3.8
     - name: Install Deps
       run: |
+        sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
         python3 -m pip install --upgrade pip
         pip install pytest
         pip install -r requirements.txt
     - name: Run UnitTests
       run: |
-        python3 -m pytest
+        xvfb-run `which coverage` run -m pytest
