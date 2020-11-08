@@ -14,7 +14,6 @@ import nltk
 import numpy as np
 import pandas as pd
 import wget
-from appdirs import user_data_dir
 from PyQt5.QtCore import QStandardPaths
 from PyQt5.QtWidgets import QDialogButtonBox
 from nltk.corpus import stopwords
@@ -284,28 +283,28 @@ def dependencyDialogHandler(app, button, document=None):
         return
 
     # get app data location for respective OS
-    # app_data_locations = QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)
+    path_parent = QStandardPaths.standardLocations(QStandardPaths.DocumentsLocation)
 
-    # if not app_data_locations:
-    #     logging.info("App data location not found")
-    #     return
+    if not path_parent:
+        logging.warning("Document directory not found")
+        return
 
-    path_parent = user_data_dir()
-    print(path_parent)
+    path_parent = path_parent[0]
+
+    # clean path (for Windows)
+    if "python" in path_parent.lower():
+        path_parent = path_parent[:path_parent.rfind('/')]
+
     if not os.path.exists(path_parent):
-        logging.info("WHAT THE F***")
+        logging.warning("Document directory not found")
         return
 
     # create application folder in the app data directory if needed
     path_parent = os.path.abspath(os.path.join(path_parent, 'LeafNote'))
-    print(path_parent)
-    print(os.path.exists(path_parent))
+
     if not os.path.exists(path_parent):
-        print("HELLO")
         logging.info("Creating directory %s", path_parent)
         os.mkdir(path_parent)
-
-    return
 
     path_child = os.path.abspath(os.path.join(path_parent, 'WordEmbeddings'))
 
