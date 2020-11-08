@@ -250,10 +250,11 @@ class SearchWorkspace(QWidget):
         self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
         replace_layout.addWidget(self.replace_bar)
 
-        spacer1 = QSpacerItem(28, 0)
-        replace_layout.addSpacerItem(spacer1)
-        replace_layout.addSpacerItem(spacer1)
-        replace_layout.addSpacerItem(spacer1)
+        # add spacing to make the replace bar the same size as the search bar
+        spacer = QSpacerItem(28, 0)
+        replace_layout.addSpacerItem(spacer)
+        replace_layout.addSpacerItem(spacer)
+        replace_layout.addSpacerItem(spacer)
         vertical_layout.addWidget(widget)
 
         # -------------------------------------------------------------------
