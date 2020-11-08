@@ -14,12 +14,12 @@ jobs:
       with:
         python-version: 3.8
     - name: Install Deps
-      env:
-        QT_DEBUG_PLUGINS: 1
       run: |
         sudo apt install libxcb-xinerama0
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run UnitTests
+      env:
+        QT_DEBUG_PLUGINS: 1
       run: |
         ./test.sh
