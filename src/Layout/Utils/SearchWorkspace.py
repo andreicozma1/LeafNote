@@ -6,11 +6,11 @@ import logging
 import os
 from functools import partial
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QFileInfo, QRegExp
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeySequence, QTextDocument
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QTextEdit, QSplitter, \
-    QTreeView, QAbstractItemView, QShortcut, QPushButton, QHBoxLayout, QSizePolicy
+    QTreeView, QAbstractItemView, QShortcut, QPushButton, QHBoxLayout, QSizePolicy, QSpacerItem
 
 
 class Item(QStandardItem):
@@ -238,13 +238,23 @@ class SearchWorkspace(QWidget):
         vertical_layout.addWidget(widget)
 
         # -------------------------------------------------------------------
+        widget = QWidget()
+
+        replace_layout = QHBoxLayout(widget)
+        replace_layout.setContentsMargins(0, 0, 0, 0)
+        replace_layout.setAlignment(Qt.AlignLeft)
 
         # add the qLineEdit as a search bar
         self.replace_bar = QLineEdit()
         self.replace_bar.setContentsMargins(0, 0, 0, 0)
         self.replace_bar.setStyleSheet("QLineEdit {background: rgb(218, 218, 218)}")
+        replace_layout.addWidget(self.replace_bar)
 
-        vertical_layout.addWidget(self.replace_bar)
+        spacer1 = QSpacerItem(28, 0)
+        replace_layout.addSpacerItem(spacer1)
+        replace_layout.addSpacerItem(spacer1)
+        replace_layout.addSpacerItem(spacer1)
+        vertical_layout.addWidget(widget)
 
         # -------------------------------------------------------------------
 
@@ -305,14 +315,6 @@ class SearchWorkspace(QWidget):
         shortcut.activated.connect(partial(self.toggleReplace, True))
         shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
         shortcut.activated.connect(self.closeWidget)
-
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        """
-        when the widget is resized set the length of the replace bar to the length
-        of the search bar.
-        """
-        if a0.size() != a0.oldSize():
-            self.replace_bar.setFixedWidth(self.search_bar.width())
 
     def toggleReplace(self, state: bool = None) -> bool:
         """
