@@ -1,16 +1,14 @@
 # LeafNote
 
-
-## Download the Source Code
-
-1. Clone the Repository 
+## 1. Setup
+1. Clone Repository 
 ```
 git clone https://github.com/UTK-CS340-Fall-2020/0x432d2d.git
 cd 0x432d2d
 ```
 
-## Install Dependencies
--  Recommended: Use the *setup.sh* script (Linux and macOS only)!   
+- Ensure your current directory is the one that contains the *requirements.txt* file
+- Recommended: Use the *setup.sh* script (Linux and macOS only)!   
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
@@ -22,41 +20,23 @@ source .venv/bin/activate (Linux/macOS)
 .venv\Scripts\activate.bat (Windows)
 ```
 
-4. Install the Dependencies
-Recommended: Use the run script (Linux and macOS only)!
+4. Install Dependencies
 ```
 pip3 install -r requirements.txt
 ```
 
-## Run Program Directly
-If you want to run the application directly from the command line, first follow the previous steps then run this command.
--  Recommended: Use the *run.sh* script (Linux and macOS only)!   
+## 2. Run LeafNote
+- Requirements: Run all Setup steps
+- Recommended: Use the *run.sh* script (Linux and macOS only)!   
 ```
 python3 src/main.py (Linux/macOS)
 python3 src\main.py (Windows)
 ```
 
-## Create Standalone Installer - Temporarily Unavailable
-If you would like to download the application, first follow the previous steps then run this command to create the installer package. 
+## 3. Run Tests
+- Requirements: Run all Setup steps
+- Recommended: Use the *test.sh* script (Linux and macOS only)!   
 ```
-fbs freeze && fbs installer 
-```
-This will create the packages and save them into the target folder.
-
-## Install - Temporarily Unavailable
-In order to install the application onto your system use the following commands depending on your operating system.
-
-- Linux 
-```
-sudo dpkg -i target/LeafNote.deb
-```
-
-- Mac
-```
-open target/LeafNote.dmg
-```
-
-- Windows
-```
-start target\LeafNote.exe
+cd src
+python3 -m unittest
 ```
