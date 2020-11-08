@@ -73,6 +73,31 @@ class TestDocument(unittest.TestCase):
         act_is_ital = self.document.fontItalic()
         self.assertEqual(False, act_is_ital)
 
+    def testFontStrike(self):
+        """
+        Test the onFontStrikeChanged function
+        """
+        string: str = "This is a test."
+        self.document.setPlainText(string)
+
+        # set the document text to strikethrough
+        cursor = self.document.textCursor()
+        cursor.select(cursor.Document)
+        self.document.onFontStrikeChanged(True)
+
+        # check if the text is actually strikethrough
+        act_is_strike = self.document.fontStrike()
+        self.assertEqual(True, act_is_strike)
+
+        # set the document text to NOT strikethrough
+        cursor = self.document.textCursor()
+        cursor.select(cursor.Document)
+        self.document.onFontStrikeChanged(False)
+
+        # check if the text is actually NOT strikethrough
+        act_is_strike = self.document.fontStrike()
+        self.assertEqual(False, act_is_strike)
+
     def testFontUnder(self):
         """
         Test the onFontUnderChanged function
@@ -97,3 +122,24 @@ class TestDocument(unittest.TestCase):
         # check if the text is actually NOT italicized
         act_is_under = self.document.fontUnderline()
         self.assertEqual(False, act_is_under)
+
+    def testClearAllFormat(self):
+        """
+        Test the clearAllFormatting function
+        """
+        string: str = "This is a test."
+        self.document.setPlainText(string)
+        exp_html = self.document.toHtml()
+
+        # set the document text to italicized
+        cursor = self.document.textCursor()
+        cursor.select(cursor.Document)
+
+        self.document.onFontStrikeChanged(True)
+        self.document.onFontUnderChanged(True)
+        self.document.onFontBoldChanged(True)
+        self.document.onFontItalChanged(True)
+
+        self.document.clearAllFormatting()
+        act_html = self.document.toHtml()
+        self.assertEqual(exp_html, act_html)
