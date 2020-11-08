@@ -22,4 +22,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run UnitTests
       run: |
-        python3 -m unittest
+        ./test.sh
