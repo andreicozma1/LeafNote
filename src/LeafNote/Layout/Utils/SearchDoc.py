@@ -70,6 +70,7 @@ class SearchDoc(QWidget):
         def createSearchBtn(title, tool_tip, on_click, is_checkable: bool = True,
                             extra_on_click_param: bool = False):
             """
+            Creates buttons for the search bar
             """
             btn = QPushButton(title)
             btn.setContentsMargins(0, 0, 0, 0)
@@ -129,7 +130,7 @@ class SearchDoc(QWidget):
         # -----------------------------------------------------------
 
         # exit button
-        self.close_search = createSearchBtn("x", "Close Search Bar",
+        self.close_search = createSearchBtn(html.unescape("&times;"), "Close Search Bar",
                                             self.search_and_replace.closeSearchAndReplace)
         self.close_search_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self.close_search)
         self.close_search_shortcut.activated.connect(self.search_and_replace.closeSearchAndReplace)
