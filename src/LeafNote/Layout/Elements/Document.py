@@ -213,7 +213,7 @@ class Document(QTextEdit):
         logging.debug("")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
-        cursor.setCharFormat(self.doc_props.default)
+        cursor.setCharFormat(QTextCharFormat())
         cursor.clearSelection()
         self.setTextCursor(cursor)
 
@@ -270,11 +270,24 @@ class Document(QTextEdit):
         """
         Sets formatted or not text
         """
-        self.setAcceptRichText(formatting)
-        self.setAutoFormatting(self.AutoAll if formatting else self.AutoNone)
+        self.enableFormatting(formatting)
         self.setText(text)
         if not formatting:
             self.clearAllFormatting()
+
+    def enableFormatting(self, enable: bool = True):
+        """
+        Sets formatting enabled or disabled
+        """
+        self.setAcceptRichText(enable)
+        self.setAutoFormatting(self.AutoAll if enable else self.AutoNone)
+
+    def pastePlain(self):
+        """
+        Pastes from clipboard as plain text
+        """
+        clipboard = self.app.ctx.clipboard()
+        self.insertPlainText(clipboard.text())
 
     def onTextChanged(self):
         """

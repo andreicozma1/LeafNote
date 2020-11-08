@@ -200,6 +200,7 @@ class MenuBar(QMenuBar):
         menu_edit.addAction(makeEditAction("Cut", "Ctrl+x", self.doc.cut))
         menu_edit.addAction(makeEditAction("Copy", "Ctrl+c", self.doc.copy))
         menu_edit.addAction(makeEditAction("Paste", "Ctrl+v", self.doc.paste))
+        menu_edit.addAction(makeEditAction("Paste Plain", "Ctrl+Shift+v", self.doc.pastePlain))
         menu_edit.addSeparator()
         menu_edit.addAction(makeEditAction("Find", "Ctrl+f", onFindBtn))
         menu_edit.addAction(makeEditAction("Find All", "Ctrl+Shift+f", onFindAllBtn))
