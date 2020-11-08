@@ -23,7 +23,5 @@ jobs:
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run UnitTests
-      env:
-        QT_DEBUG_PLUGINS: 1
       run: |
         xvfb-run --auto-servernum ./test.sh
