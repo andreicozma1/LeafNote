@@ -67,8 +67,9 @@ class Document(QTextEdit):
         if valid:
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
-        else:
-            super().mouseDoubleClickEvent(e)
+            return
+
+        super().mouseDoubleClickEvent(e)
 
     def _getWordFromPos(self, pos):
         """
