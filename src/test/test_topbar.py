@@ -1,27 +1,28 @@
 """
-Tests Top Bar default behavior
+test Top Bar default behavior
 """
 import unittest
 
 from PyQt5.QtWidgets import QApplication, QComboBox, QFontComboBox, QAbstractButton
 
-from LeafNote.app import App
+from LeafNote import App
+
+ctx = QApplication([])
+app = App(ctx)
 
 
 class TestTopBar(unittest.TestCase):
     """
-    Unit Tests for all Top Bar functionality
+    Unit test for all Top Bar functionality
     """
 
     def setUp(self):
         """
         Set up environment
         """
-        ctx = QApplication([])
-        self.app = App(ctx)
-        self.top_bar = self.app.top_bar
-        self.doc_props = self.app.doc_props
-        self.layout_props = self.app.layout_props
+        self.top_bar = app.top_bar
+        self.doc_props = app.doc_props
+        self.layout_props = app.layout_props
 
     def testBarHeight(self):
         """
