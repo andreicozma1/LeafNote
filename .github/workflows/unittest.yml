@@ -26,4 +26,4 @@ jobs:
       env:
         QT_DEBUG_PLUGINS: 1
       run: |
-        xvfb-run --auto-servernum npm test.sh
+        xvfb-run --auto-servernum test.sh
