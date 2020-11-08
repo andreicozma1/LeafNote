@@ -189,7 +189,6 @@ class Document(QTextEdit):
         palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color_str))
 
         self.setPalette(palette)
-        # self.setBackgroundVisible(False)
 
     def fontBold(self) -> bool:
         """
