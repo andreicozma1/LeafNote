@@ -4,8 +4,9 @@ this module holds a class containing a reminder for the user
 import logging
 import time
 
-from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit
+from PyQt5 import Qt
+from PyQt5.QtCore import QDate, QDateTime, QTimer, QTime
+from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit, QLabel
 
 from LeafNote.Utils import DialogBuilder
 from LeafNote.Widgets.CalendarWidget import CalendarWidget
@@ -22,6 +23,7 @@ class Reminders:
         self.app = app
         self.settings = settings
         self.rem_list: dict = dict()
+        self.label_time = QLabel()
         self.restoreReminders()  # Recalls old reminders and sets them
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
@@ -86,6 +88,14 @@ class Reminders:
         # ------------------------------#
 
         dialog = DialogBuilder(block, "Add reminder")
+
+        dialog.addWidget(self.label_time)
+        timer = QTimer()
+        timer.timeout.connect(self.updateTime)
+        timer.start(1000)
+        self.label_time.setStyleSheet("font: 18pt")
+        self.updateTime()
+
         dialog.addWidget(input_title)
         dialog.addWidget(input_description)
 
@@ -198,3 +208,17 @@ class Reminders:
 
         # add 12 to hours and remove PM
         return str(int(str1[:2]) + 12) + str1[2:6]
+
+    def updateTime(self):
+
+        """
+        Updates current time displayed on current_time label
+        :return: returns current time
+        """
+        # datetime = QDateTime.currentDateTime()
+        time = QTime.currentTime()
+        text = time.toString('hh:mm:ss')
+
+        self.label_time.setText(text)
+
+
