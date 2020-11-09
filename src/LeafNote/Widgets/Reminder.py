@@ -1,6 +1,7 @@
 """
 this module holds a class containing a reminder for the user
 """
+import html
 from functools import partial
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
@@ -29,7 +30,7 @@ class Reminder(QWidget):
         lbl_title.setWordWrap(True)
         horizontal_layout.addWidget(lbl_title)
 
-        btn_exit = QPushButton("x")
+        btn_exit = QPushButton(html.unescape("&times;"))
         btn_exit.setFixedWidth(33)
         btn_exit.clicked.connect(partial(on_delete, key))
         horizontal_layout.addWidget(btn_exit)
