@@ -116,9 +116,9 @@ class Reminders:
                 self.addReminder(date, input_time.text(), input_title.text(),
                                  input_description.toPlainText())
             else:
-                dialog_rem_error = DialogBuilder(block, "ERROR")
-                dialog_rem_error.setTitleText("Unable to set reminder.")
-                dialog_rem_error.setMsgText("Reminder must consist of a title.")
+                dialog_rem_error = DialogBuilder(block, "Error")
+                dialog_rem_error.setTitleText("This reminder does not have a title")
+                dialog_rem_error.setMsgText("Reminder must contain a title.")
                 dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
                 dialog_rem_error.addButtonBox(dialog_buttons)
                 dialog_rem_error.show()
@@ -173,14 +173,13 @@ class Reminders:
         self.app.right_menu.updateReminders()
 
 
-    def deleteReminder(self,block, key):
+    def deleteReminder(self, key):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
-        dialog = DialogBuilder(block, "Delete Reminder")
-        dialog.setTitleText("Would you like to delete your reminder?")
-        dialog.setMsgText("This will permanently delete your reminder.")
+        dialog = DialogBuilder(self.app, "Delete Reminder")
+        dialog.setTitleText("This will permanently remove 'Reminder Title' from the reminders list")
         dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
         dialog.addButtonBox(dialog_but)
         if dialog.exec():
@@ -190,7 +189,13 @@ class Reminders:
                 self.app.right_menu.updateReminders()
             else:
                 logging.error("Could not remove reminder key %s", key)
-
+                dialog_rem_error = DialogBuilder(self.app, "Error")
+                dialog_rem_error.setTitleText("Failed to remove reminder")
+                dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+                dialog_rem_error.addButtonBox(dialog_buttons)
+                dialog_rem_error.show()
+        else:
+            logging.error("User chose to not delete the reminder")
     # Converts time to 24 hours time.
     @staticmethod
     def convert24(str1):
