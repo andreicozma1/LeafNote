@@ -121,7 +121,10 @@ class Reminders:
                 dialog_rem_error.setMsgText("Reminder must contain a title.")
                 dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
                 dialog_rem_error.addButtonBox(dialog_buttons)
-                dialog_rem_error.show()
+                # dialog_rem_error.show()
+                if dialog_rem_error.exec():
+                    self.showDialog(None, None, None)
+
 
         else:
             logging.info("Clicked cancel")
@@ -173,13 +176,14 @@ class Reminders:
         self.app.right_menu.updateReminders()
 
 
-    def deleteReminder(self, key):
+    def deleteReminder(self, key, title):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
         dialog = DialogBuilder(self.app, "Delete Reminder")
-        dialog.setTitleText("This will permanently remove 'Reminder Title' from the reminders list")
+        dialog.setTitleText("Remove '" + title + "'")
+        dialog.setMsgText("This will permanently remove it from your reminders list")
         dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
         dialog.addButtonBox(dialog_but)
         if dialog.exec():
