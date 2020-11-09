@@ -144,13 +144,13 @@ class Document(QTextEdit):
         logging.debug(point_size_str)
         self.setFontPointSize(int(point_size_str))
 
-    def onTextAlignmentChanged(self, align_str):
+    def onTextAlignmentChanged(self, align_index: int):
         """
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.debug(list(self.doc_props.dict_text_aligns.keys())[align_str])
-        self.setAlignment(list(self.doc_props.dict_text_aligns.values())[align_str])
+        logging.debug(list(self.doc_props.dict_text_aligns.keys())[align_index])
+        self.setAlignment(list(self.doc_props.dict_text_aligns.values())[align_index])
         self.currentCharFormatChanged.emit(self.currentCharFormat())
 
     def openColorDialog(self):

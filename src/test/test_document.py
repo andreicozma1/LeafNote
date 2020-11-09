@@ -3,7 +3,6 @@ test Document default behavior
 """
 import unittest
 
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication
 
 from LeafNote import App
@@ -22,6 +21,7 @@ class TestDocument(unittest.TestCase):
         Set up environment
         """
         self.document = app.document
+        self.doc_props = app.doc_props
 
     def testFontBold(self):
         """
@@ -131,7 +131,7 @@ class TestDocument(unittest.TestCase):
         self.document.setPlainText(string)
         exp_html = self.document.toHtml()
 
-        # set the document text to italicized
+        # change the text style
         cursor = self.document.textCursor()
         cursor.select(cursor.Document)
 
@@ -140,6 +140,25 @@ class TestDocument(unittest.TestCase):
         self.document.onFontBoldChanged(True)
         self.document.onFontItalChanged(True)
 
+        # clear all formatting and check
         self.document.clearAllFormatting()
         act_html = self.document.toHtml()
         self.assertEqual(exp_html, act_html)
+
+    def testTextAlignment(self):
+        """
+        this function will test the paste plain
+        """
+        string: str = "This is a test."
+        self.document.setPlainText(string)
+
+        # set the cursor to the beginning of the document
+        cursor = self.document.textCursor()
+        cursor.setPosition(0)
+
+        # check each alignment
+        alignments = list(self.doc_props.dict_text_aligns.values())
+        for i, exp_align in enumerate(alignments):
+            self.document.onTextAlignmentChanged(i)
+            act_align = self.document.alignment()
+            self.assertEqual(exp_align, act_align)
