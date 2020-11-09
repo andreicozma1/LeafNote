@@ -160,17 +160,23 @@ class Reminders:
         self.settings.setValue("reminders_dict", self.rem_list)
         self.app.right_menu.updateReminders()
 
-    def deleteReminder(self, key):
+    def deleteReminder(self,block, key):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
-        if self.rem_list.pop(key, None) is not None:
-            logging.info("Removing reminder key %s", key)
-            self.settings.setValue("reminders_dict", self.rem_list)
-            self.app.right_menu.updateReminders()
-        else:
-            logging.error("Could not remove reminder key %s", key)
+        dialog = DialogBuilder(block, "Delete Reminder")
+        dialog.setTitleText("Would you like to delete your reminder?")
+        dialog.setMsgText("This will permanently delete your reminder.")
+        dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+        dialog.addButtonBox(dialog_but)
+        if dialog.exec():
+            if self.rem_list.pop(key, None) is not None:
+                logging.info("Removing reminder key %s", key)
+                self.settings.setValue("reminders_dict", self.rem_list)
+                self.app.right_menu.updateReminders()
+            else:
+                logging.error("Could not remove reminder key %s", key)
 
     # Converts time to 24 hours time.
     @staticmethod

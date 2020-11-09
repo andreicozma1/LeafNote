@@ -181,7 +181,7 @@ class MenuRight(QScrollArea):
         reminders_list.sort(key=lambda t: t['sort'])
 
         def onDelete(key):
-            self.app.reminders.deleteReminder(key)
+            self.app.reminders.deleteReminder(self,key)
 
         for rem in reminders_list:
             wid = Reminder(rem['key'], rem['date'], rem['time'],
