@@ -215,7 +215,6 @@ class Reminders:
         Updates current time displayed on current_time label
         :return: returns current time
         """
-        # datetime = QDateTime.currentDateTime()
         time = QTime.currentTime()
         text = time.toString('hh:mm:ss')
 
