@@ -112,7 +112,7 @@ class SearchDoc(QWidget):
         # add the previous occurrence option
         self.previous_occurrence = createSearchBtn(html.unescape('&#8593;'), "Previous Occurrence",
                                                    self.onPreviousOccurrenceSelect, False)
-        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Enter),
+        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return),
                                                       self.previous_occurrence)
         self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
         self.horizontal_layout.addWidget(self.previous_occurrence)
@@ -120,7 +120,7 @@ class SearchDoc(QWidget):
         # add the next occurrence option
         self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence",
                                                self.onNextOccurrenceSelect, False)
-        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Enter), self.next_occurrence)
+        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
         self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
