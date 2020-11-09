@@ -159,8 +159,8 @@ class BarBottom(QToolBar):
         Counts number of characters and updates number on bottom bar
         :return: returns nothing
         """
-        char_count = len(self.document.toPlainText()) - len(
-            self.document.toPlainText().split(" ")) + 1
+
+        char_count = len(self.document.toPlainText())
         self.label_cc.setText(str(char_count) + " Characters")
 
     def onZoomInClicked(self):
