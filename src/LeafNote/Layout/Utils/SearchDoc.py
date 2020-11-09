@@ -204,6 +204,11 @@ class SearchDoc(QWidget):
         """
         self.search = search
 
+        # check for empty search
+        if self.search == "":
+            self.occurances.setText(str(0) + '/' + str(0))
+            return
+
         # update the number of occurrences of the search
         self.total = self.document.toPlainText().count(search)
         if self.total == 0:
