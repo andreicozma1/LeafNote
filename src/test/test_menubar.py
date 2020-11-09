@@ -50,6 +50,7 @@ class TestMenuBar(unittest.TestCase):
         element = self.menu_bar.makeFileMenu(app, self.file_manager)
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&File")
 
     # ========= END FILE TAB SECTION =========
 
@@ -62,6 +63,7 @@ class TestMenuBar(unittest.TestCase):
         element = self.menu_bar.makeEditMenu(app, self.file_manager)
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Edit")
 
     # ========= END EDIT TAB SECTION =========
 
@@ -74,6 +76,7 @@ class TestMenuBar(unittest.TestCase):
         element = self.menu_bar.makeViewMenu(app, self.bottom_bar, self.left_menu)
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&View")
 
     # ========= END VIEW TAB SECTION =========
 
@@ -86,6 +89,17 @@ class TestMenuBar(unittest.TestCase):
         element = self.menu_bar.makeFormatMenu(app)
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Format")
+
+    # def testFormattingMode(self):
+    #     """
+    #     Test default format mode btn behavior
+    #     """
+    #     element: QAbstractButton = self.top_bar.button_mode_switch
+    #     self.assertTrue(element.isCheckable())
+    #     self.assertFalse(element.isChecked())
+    #     # Test is in layout
+    #     self.assertIn(element, self.top_bar.children())
 
     # ========= END FORMAT TAB SECTION =========
 
@@ -98,5 +112,6 @@ class TestMenuBar(unittest.TestCase):
         element = self.menu_bar.makeToolsMenu(app, self.document)
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Tools")
 
     # ========= END TOOLS TAB SECTION =========
