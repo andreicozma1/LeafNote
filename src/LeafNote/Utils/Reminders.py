@@ -182,8 +182,8 @@ class Reminders:
         :param key: key to delete
         """
         dialog = DialogBuilder(self.app, "Delete Reminder")
-        dialog.setTitleText("Remove '" + title + "'")
-        dialog.setMsgText("This will permanently remove it from your reminders list")
+        dialog.setTitleText("Remove '" + title + "'?")
+        dialog.setMsgText("This will permanently remove it from your reminders list.")
         dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
         dialog.addButtonBox(dialog_but)
         if dialog.exec():
