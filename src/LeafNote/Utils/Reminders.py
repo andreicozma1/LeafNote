@@ -46,7 +46,6 @@ class Reminders:
         input_description = QPlainTextEdit()
         input_description.setMaximumHeight(120)
 
-
         def limitCharCount():
             # Limits the number of characters in input_description box
             text_content = input_description.toPlainText()
@@ -80,8 +79,6 @@ class Reminders:
             str_date: str = new_date.toString(format_date_def)
             logging.debug("Update input_title %s", str_date)
             dialog.setTitleText(str_date)
-
-
 
         input_calendar.setFixedHeight(300)
         input_calendar.selectionChanged.connect(updateTitle)
@@ -129,8 +126,6 @@ class Reminders:
         else:
             logging.info("Clicked cancel")
 
-
-
     def restoreReminders(self):
         """
         Restore saved reminders from persistent settings
@@ -175,7 +170,6 @@ class Reminders:
         self.settings.setValue("reminders_dict", self.rem_list)
         self.app.right_menu.updateReminders()
 
-
     def deleteReminder(self, key, title):
         """
         Deletes a reminder from the dictionary based on key.
@@ -200,6 +194,7 @@ class Reminders:
                 dialog_rem_error.show()
         else:
             logging.error("User chose to not delete the reminder")
+
     # Converts time to 24 hours time.
     @staticmethod
     def convert24(str1):
