@@ -30,7 +30,7 @@ class SearchDoc(QWidget):
         self.current = 0
         self.total = 0
         self.flags = QTextDocument.FindFlag(0)
-
+        self.txt_no_results = "0 results"
         self.initUI()
         self.hide()
 
@@ -59,7 +59,7 @@ class SearchDoc(QWidget):
         # -----------------------------------------------------------
 
         # add label to count occurrences
-        self.occurances = QLabel("0/0")
+        self.occurances = QLabel(self.txt_no_results)
         self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
         self.occurances.setContentsMargins(10, 0, 0, 0)
         self.occurances.setContentsMargins(10, 0, 0, 0)
@@ -111,7 +111,7 @@ class SearchDoc(QWidget):
         # add the previous occurrence option
         self.previous_occurrence = createSearchBtn(html.unescape('&#8593;'), "Previous Occurrence",
                                                    self.onPreviousOccurrenceSelect, False)
-        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Return),
+        self.previous_occurrence_shortcut = QShortcut(QKeySequence(Qt.SHIFT + Qt.Key_Enter),
                                                       self.previous_occurrence)
         self.previous_occurrence_shortcut.activated.connect(self.onPreviousOccurrenceSelect)
         self.horizontal_layout.addWidget(self.previous_occurrence)
@@ -119,7 +119,7 @@ class SearchDoc(QWidget):
         # add the next occurrence option
         self.next_occurrence = createSearchBtn(html.unescape('&#8595;'), "Next Occurrence",
                                                self.onNextOccurrenceSelect, False)
-        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Return), self.next_occurrence)
+        self.next_occurrence_shortcut = QShortcut(QKeySequence(Qt.Key_Enter), self.next_occurrence)
         self.next_occurrence_shortcut.activated.connect(self.search_and_replace.nextOccurrence)
         self.horizontal_layout.addWidget(self.next_occurrence)
 
@@ -175,8 +175,7 @@ class SearchDoc(QWidget):
         handles the button click for the previous occurrence search
         """
         logging.info("Clicked Previous")
-        self.document.find(self.search, self.flags | QTextDocument.FindBackward)
-        if self.current - 1 >= 1:
+        if self.document.find(self.search, self.flags | QTextDocument.FindBackward):
             self.current -= 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
@@ -185,8 +184,7 @@ class SearchDoc(QWidget):
         handles the button click for the next occurrence search
         """
         logging.info("Clicked Next")
-        self.document.find(self.search, self.flags)
-        if self.current + 1 <= self.total:
+        if self.document.find(self.search, self.flags):
             self.current += 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
@@ -204,33 +202,32 @@ class SearchDoc(QWidget):
         """
         self.search = search
 
-        # check for empty search
-        if self.search == "":
-            self.occurances.setText(str(0) + '/' + str(0))
-            return
-
         # update the number of occurrences of the search
-        self.total = self.document.toPlainText().count(search)
-        if self.total == 0:
+        if self.case_sensitive.isChecked():
+            self.total = self.document.toPlainText().count(search)
+        else:
+            self.total = self.document.toPlainText().lower().count(search.lower())
+
+        if self.total == 0 or len(self.search) == 0:
             self.current = 0
+            self.occurances.setText(self.txt_no_results)
         else:
             self.current = 1
+            self.occurances.setText(str(self.current) + '/' + str(self.total))
 
-        self.occurances.setText(str(self.current) + '/' + str(self.total))
-
-        # set the cursor to the beginning of the document
-        cursor = self.document.textCursor()
-        cursor.setPosition(0)
-        self.document.setTextCursor(cursor)
-        # set up the default search flags
-        self.flags = QTextDocument.FindFlag(0)
-        # if search is case sensitive
-        if self.case_sensitive.isChecked():
-            self.flags = self.flags | QTextDocument.FindCaseSensitively
-        # if search is whole word sensitive
-        if self.whole_word.isChecked():
-            self.flags = self.flags | QTextDocument.FindWholeWords
-        # if the user IS searching for regex
-        if self.regex_search.isChecked():
-            self.search = QRegExp(self.search)
-        self.document.find(self.search, self.flags)
+            # set the cursor to the beginning of the document
+            cursor = self.document.textCursor()
+            cursor.setPosition(0)
+            self.document.setTextCursor(cursor)
+            # set up the default search flags
+            self.flags = QTextDocument.FindFlag(0)
+            # if search is case sensitive
+            if self.case_sensitive.isChecked():
+                self.flags = self.flags | QTextDocument.FindCaseSensitively
+            # if search is whole word sensitive
+            if self.whole_word.isChecked():
+                self.flags = self.flags | QTextDocument.FindWholeWords
+            # if the user IS searching for regex
+            if self.regex_search.isChecked():
+                self.search = QRegExp(self.search)
+            self.document.find(self.search, self.flags)
