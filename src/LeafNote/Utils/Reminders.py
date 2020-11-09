@@ -46,6 +46,7 @@ class Reminders:
         input_description = QPlainTextEdit()
         input_description.setMaximumHeight(120)
 
+
         def limitCharCount():
             # Limits the number of characters in input_description box
             text_content = input_description.toPlainText()
@@ -80,6 +81,8 @@ class Reminders:
             logging.debug("Update input_title %s", str_date)
             dialog.setTitleText(str_date)
 
+
+
         input_calendar.setFixedHeight(300)
         input_calendar.selectionChanged.connect(updateTitle)
 
@@ -112,9 +115,18 @@ class Reminders:
 
                 self.addReminder(date, input_time.text(), input_title.text(),
                                  input_description.toPlainText())
+            else:
+                dialog_rem_error = DialogBuilder(block, "ERROR")
+                dialog_rem_error.setTitleText("Unable to set reminder.")
+                dialog_rem_error.setMsgText("Reminder must consist of a title.")
+                dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+                dialog_rem_error.addButtonBox(dialog_buttons)
+                dialog_rem_error.show()
 
         else:
             logging.info("Clicked cancel")
+
+
 
     def restoreReminders(self):
         """
@@ -159,6 +171,7 @@ class Reminders:
         # Save the updated dictionary to persistent settings and update menu
         self.settings.setValue("reminders_dict", self.rem_list)
         self.app.right_menu.updateReminders()
+
 
     def deleteReminder(self,block, key):
         """
