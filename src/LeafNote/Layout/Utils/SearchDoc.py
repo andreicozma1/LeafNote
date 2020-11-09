@@ -31,6 +31,7 @@ class SearchDoc(QWidget):
         self.total = 0
         self.flags = QTextDocument.FindFlag(0)
         self.txt_no_results = "0 results"
+        self.last_pos = 0
         self.initUI()
         self.hide()
 
@@ -175,18 +176,30 @@ class SearchDoc(QWidget):
         handles the button click for the previous occurrence search
         """
         logging.info("Clicked Previous")
+        cursor = self.document.textCursor()
+        if cursor.position() != self.last_pos:
+            cursor.setPosition(self.last_pos)
+            self.document.setTextCursor(cursor)
+
         if self.document.find(self.search, self.flags | QTextDocument.FindBackward):
             self.current -= 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.last_pos = self.document.textCursor().position()
 
     def onNextOccurrenceSelect(self):
         """
         handles the button click for the next occurrence search
         """
         logging.info("Clicked Next")
+        cursor = self.document.textCursor()
+        if cursor.position() != self.last_pos:
+            cursor.setPosition(self.last_pos)
+            self.document.setTextCursor(cursor)
+
         if self.document.find(self.search, self.flags):
             self.current += 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.last_pos = self.document.textCursor().position()
 
     def onCloseSearch(self):
         """
@@ -204,9 +217,15 @@ class SearchDoc(QWidget):
 
         # update the number of occurrences of the search
         if self.case_sensitive.isChecked():
-            self.total = self.document.toPlainText().count(search)
+            list_search = self.document.toPlainText()
+            if self.whole_word.isChecked():
+                list_search = list_search.split()
+            self.total = list_search.count(search)
         else:
-            self.total = self.document.toPlainText().lower().count(search.lower())
+            list_search = self.document.toPlainText().lower()
+            if self.whole_word.isChecked():
+                list_search = list_search.split()
+            self.total = list_search.count(search.lower())
 
         if self.total == 0 or len(self.search) == 0:
             self.current = 0
@@ -215,19 +234,20 @@ class SearchDoc(QWidget):
             self.current = 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
 
-            # set the cursor to the beginning of the document
-            cursor = self.document.textCursor()
-            cursor.setPosition(0)
-            self.document.setTextCursor(cursor)
-            # set up the default search flags
-            self.flags = QTextDocument.FindFlag(0)
-            # if search is case sensitive
-            if self.case_sensitive.isChecked():
-                self.flags = self.flags | QTextDocument.FindCaseSensitively
-            # if search is whole word sensitive
-            if self.whole_word.isChecked():
-                self.flags = self.flags | QTextDocument.FindWholeWords
-            # if the user IS searching for regex
-            if self.regex_search.isChecked():
-                self.search = QRegExp(self.search)
-            self.document.find(self.search, self.flags)
+        # set the cursor to the beginning of the document
+        cursor = self.document.textCursor()
+        cursor.setPosition(0)
+        self.document.setTextCursor(cursor)
+        # set up the default search flags
+        self.flags = QTextDocument.FindFlag(0)
+        # if search is case sensitive
+        if self.case_sensitive.isChecked():
+            self.flags = self.flags | QTextDocument.FindCaseSensitively
+        # if search is whole word sensitive
+        if self.whole_word.isChecked():
+            self.flags = self.flags | QTextDocument.FindWholeWords
+        # if the user IS searching for regex
+        if self.regex_search.isChecked():
+            self.search = QRegExp(self.search)
+        self.document.find(self.search, self.flags)
+        self.last_pos = self.document.textCursor().position()
