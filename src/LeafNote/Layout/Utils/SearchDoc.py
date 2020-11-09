@@ -30,7 +30,8 @@ class SearchDoc(QWidget):
         self.current = 0
         self.total = 0
         self.flags = QTextDocument.FindFlag(0)
-
+        self.txt_no_results = "0 results"
+        self.last_pos = 0
         self.initUI()
         self.hide()
 
@@ -59,7 +60,7 @@ class SearchDoc(QWidget):
         # -----------------------------------------------------------
 
         # add label to count occurrences
-        self.occurances = QLabel("0/0")
+        self.occurances = QLabel(self.txt_no_results)
         self.occurances.setStyleSheet("QLabel {color: rgba(0,0,0,.5)}")
         self.occurances.setContentsMargins(10, 0, 0, 0)
         self.occurances.setContentsMargins(10, 0, 0, 0)
@@ -175,20 +176,30 @@ class SearchDoc(QWidget):
         handles the button click for the previous occurrence search
         """
         logging.info("Clicked Previous")
-        self.document.find(self.search, self.flags | QTextDocument.FindBackward)
-        if self.current - 1 >= 1:
+        cursor = self.document.textCursor()
+        if cursor.position() != self.last_pos:
+            cursor.setPosition(self.last_pos)
+            self.document.setTextCursor(cursor)
+
+        if self.document.find(self.search, self.flags | QTextDocument.FindBackward):
             self.current -= 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.last_pos = self.document.textCursor().position()
 
     def onNextOccurrenceSelect(self):
         """
         handles the button click for the next occurrence search
         """
         logging.info("Clicked Next")
-        self.document.find(self.search, self.flags)
-        if self.current + 1 <= self.total:
+        cursor = self.document.textCursor()
+        if cursor.position() != self.last_pos:
+            cursor.setPosition(self.last_pos)
+            self.document.setTextCursor(cursor)
+
+        if self.document.find(self.search, self.flags):
             self.current += 1
             self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.last_pos = self.document.textCursor().position()
 
     def onCloseSearch(self):
         """
@@ -205,13 +216,23 @@ class SearchDoc(QWidget):
         self.search = search
 
         # update the number of occurrences of the search
-        self.total = self.document.toPlainText().count(search)
-        if self.total == 0:
+        if self.case_sensitive.isChecked():
+            list_search = self.document.toPlainText()
+            if self.whole_word.isChecked():
+                list_search = list_search.split()
+            self.total = list_search.count(search)
+        else:
+            list_search = self.document.toPlainText().lower()
+            if self.whole_word.isChecked():
+                list_search = list_search.split()
+            self.total = list_search.count(search.lower())
+
+        if self.total == 0 or len(self.search) == 0:
             self.current = 0
+            self.occurances.setText(self.txt_no_results)
         else:
             self.current = 1
-
-        self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.occurances.setText(str(self.current) + '/' + str(self.total))
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()
@@ -229,3 +250,4 @@ class SearchDoc(QWidget):
         if self.regex_search.isChecked():
             self.search = QRegExp(self.search)
         self.document.find(self.search, self.flags)
+        self.last_pos = self.document.textCursor().position()
