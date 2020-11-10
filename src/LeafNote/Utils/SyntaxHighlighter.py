@@ -20,7 +20,8 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         self.err_format = QTextCharFormat()
 
         self.spell_checker = SpellChecker()
-        self.misspelled_words = {}
+        # Set of misspelled words
+        self.misspelled_words = set()
 
         self.setupRules()
 
@@ -64,28 +65,34 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 # Check if the given word is correct
                 correct = self.spell_checker[last_word]
                 if not correct:
-                    logging.debug("Misspelled word: %s", last_word)
-                    self.misspelled_words[last_word] = None
+                    self.misspelled_words.add(last_word)
+                    logging.debug("Misspelled word: %s - total: %d",
+                                  last_word, len(self.misspelled_words))
 
             if self.misspelled_words:
                 # Loop through each misspelled word
-                for word in list(self.misspelled_words.keys()):
+                for word in self.misspelled_words:
                     expression = QRegExp("\\b" + word + "\\b")
                     index = expression.indexIn(text)
-                    count = 0
 
                     # Keep looking for misspelled word in block
                     while index >= 0:
                         length = expression.matchedLength()
                         self.setFormat(index, length, self.err_format)
                         index = expression.indexIn(text, index + length)
-                        count += 1
 
-                    # Misspelled word can no longer be found in text, remove
-                    if count == 0:
-                        self.misspelled_words.pop(word)
         elif self.misspelled_words:
             logging.debug("Spellcheck is disabled - clearing mispelled word dictionary")
+            logging.debug(self.misspelled_words)
             self.misspelled_words.clear()
 
         self.setCurrentBlockState(0)
+
+    def addAllMisspelledWords(self):
+        """
+        Re-checks the entire document and adds all misspelled words
+        """
+        logging.debug("Re-checking entire document to re-construct mispelled words dictionary")
+        all_words = self.document.toPlainText().split()
+        self.misspelled_words = self.spell_checker.unknown(all_words)
+        logging.debug(self.misspelled_words)

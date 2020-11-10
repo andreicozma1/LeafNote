@@ -300,7 +300,11 @@ class Document(QTextEdit):
         Disables or Enables spellcheck
         """
         logging.debug("setting: %s", str(enabled))
+        # If previously disabled, and re-enabling
+        if not self.spellcheck_enabled and enabled:
+            # Re-add all misspelled words back in misspelled dictionary
+            self.highlighter.addAllMisspelledWords()
+        # Set the new state
         self.spellcheck_enabled = enabled
-        # If disabling, recalculate all highlights
-        if not enabled:
-            self.highlighter.rehighlight()
+        # Re-highlight entire document after change
+        self.highlighter.rehighlight()
