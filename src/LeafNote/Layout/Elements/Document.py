@@ -10,7 +10,6 @@ import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
-from spellchecker import SpellChecker
 
 from LeafNote.Props import DocProps
 from LeafNote.Utils import SyntaxHighlighter, Summarizer
@@ -289,4 +288,3 @@ class Document(QTextEdit):
         """
         clipboard = self.app.ctx.clipboard()
         self.insertPlainText(clipboard.text())
-
