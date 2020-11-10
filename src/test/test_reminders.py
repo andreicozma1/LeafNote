@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication, QComboBox, QFontComboBox, QAbstractBut
 from LeafNote import Utils
 from LeafNote import App
 from PyQt5.QtCore import QDate
+import time
 
 ctx = QApplication([])
 app = App(ctx)
@@ -33,10 +34,11 @@ class TestReminders(unittest.TestCase):
     def testAddReminder(self):
         date: QDate = QDate.currentDate()
         title = "Test Reminders"
-        description = "Test description"
+        description = "Testing addition"
         time_r = "13:00"
 
         self.assertEqual(self.reminders.addReminder(date, time_r, title, description), True)
+        key_est = int(round(time.time() * 1000))
 
         dictionary = self.reminders.rem_list
         reminders_list = list(dictionary.values())
@@ -44,5 +46,23 @@ class TestReminders(unittest.TestCase):
 
         for rem in reminders_list:
             self.key = rem['key']
+            if key_est - 30 <= self.key <= key_est + 30:
+                self.reminders.deleteReminder(self.key)
 
-        self.reminders.deleteReminder(self.key)
+    def testDeleteReminder(self):
+        date: QDate = QDate.currentDate()
+        title = "Test Reminders"
+        description = "Testing deletion"
+        time_r = "13:00"
+
+        self.reminders.addReminder(date, time_r, title, description)
+        key_est = int(round(time.time() * 1000))
+
+        dictionary = self.reminders.rem_list
+        reminders_list = list(dictionary.values())
+        reminders_list.sort(key=lambda t: t['sort'])
+
+        for rem in reminders_list:
+            self.key = rem['key']
+            if key_est - 30 <= self.key <= key_est + 30:
+                self.assertEqual(self.reminders.deleteReminder(self.key), True)
