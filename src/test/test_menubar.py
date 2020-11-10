@@ -28,8 +28,16 @@ class TestMenuBar(unittest.TestCase):
         self.bottom_bar = app.bottom_bar
         self.left_menu = app.left_menu
         self.document = app.document
+        self.menu_bar_list = list(self.menu_bar.children())
 
     # ========= START GENERAL SECTION =========
+
+    def testMenuBar(self):
+        """
+        Test menu_bar isEnable isVisible
+        """
+        self.assertEqual(self.menu_bar.isEnabled(), True)
+        self.assertEqual(self.menu_bar.isVisible(), False)
 
     def testMenuFormat(self):
         """
@@ -60,7 +68,7 @@ class TestMenuBar(unittest.TestCase):
         """
         Test File Tab
         """
-        element = self.menu_bar.makeFileMenu(app, self.file_manager)
+        element = self.menu_bar_list[1]
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&File")
@@ -75,7 +83,7 @@ class TestMenuBar(unittest.TestCase):
         """
         Test Edit Tab
         """
-        element = self.menu_bar.makeEditMenu(app, self.file_manager)
+        element = self.menu_bar_list[2]
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Edit")
@@ -90,7 +98,7 @@ class TestMenuBar(unittest.TestCase):
         """
         Test View Tab
         """
-        element = self.menu_bar.makeViewMenu(app, self.bottom_bar, self.left_menu)
+        element = self.menu_bar_list[3]
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&View")
@@ -105,7 +113,7 @@ class TestMenuBar(unittest.TestCase):
         """
         Test Format Tab
         """
-        element = self.menu_bar.makeFormatMenu(app)
+        element = self.menu_bar_list[4]
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Format")
@@ -120,7 +128,7 @@ class TestMenuBar(unittest.TestCase):
         """
         Test Tools Tab
         """
-        element = self.menu_bar.makeToolsMenu(app, self.document)
+        element = self.menu_bar_list[5]
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Tools")
