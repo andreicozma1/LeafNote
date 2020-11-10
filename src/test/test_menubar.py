@@ -65,75 +65,75 @@ class TestMenuBar(unittest.TestCase):
 
     # ========= START FILE TAB SECTION =========
 
-    # def testFileTab(self):
-    #     """
-    #     Test File Tab
-    #     """
-    #     element = self.menu_bar.makeFileMenu(app, self.file_manager)
-    #     # Test is in layout
-    #     self.assertIn(element, self.menu_bar.children())
-    #     self.assertEqual(element.title(), "&File")
-    #     self.assertEqual(element.isEnabled(), True)
-    #     self.assertEqual(element.isVisible(), False)
-    #
-    # # ========= END FILE TAB SECTION =========
-    #
-    # # ========= START EDIT TAB SECTION =========
-    #
-    # def testEditTab(self):
-    #     """
-    #     Test Edit Tab
-    #     """
-    #     element = self.menu_bar.makeEditMenu(app, self.file_manager)
-    #     # Test is in layout
-    #     self.assertIn(element, self.menu_bar.children())
-    #     self.assertEqual(element.title(), "&Edit")
-    #     self.assertEqual(element.isEnabled(), True)
-    #     self.assertEqual(element.isVisible(), False)
-    #
-    # # ========= END EDIT TAB SECTION =========
-    #
-    # # ========= START VIEW TAB SECTION =========
-    #
-    # def testViewTab(self):
-    #     """
-    #     Test View Tab
-    #     """
-    #     element = self.menu_bar.makeViewMenu(app, self.bottom_bar, self.left_menu)
-    #     # Test is in layout
-    #     self.assertIn(element, self.menu_bar.children())
-    #     self.assertEqual(element.title(), "&View")
-    #     self.assertEqual(element.isEnabled(), True)
-    #     self.assertEqual(element.isVisible(), False)
-    #
-    # # ========= END VIEW TAB SECTION =========
-    #
-    # # ========= START FORMAT TAB SECTION =========
-    #
-    # def testFormatTab(self):
-    #     """
-    #     Test Format Tab
-    #     """
-    #     element = self.menu_bar.makeFormatMenu(app)
-    #     # Test is in layout
-    #     self.assertIn(element, self.menu_bar.children())
-    #     self.assertEqual(element.title(), "&Format")
-    #     self.assertEqual(element.isEnabled(), True)
-    #     self.assertEqual(element.isVisible(), False)
-    #
-    # # ========= END FORMAT TAB SECTION =========
-    #
-    # # ========= START TOOLS TAB SECTION =========
-    #
-    # def testToolsTab(self):
-    #     """
-    #     Test Tools Tab
-    #     """
-    #     element = self.menu_bar.makeToolsMenu(app, self.document)
-    #     # Test is in layout
-    #     self.assertIn(element, self.menu_bar.children())
-    #     self.assertEqual(element.title(), "&Tools")
-    #     self.assertEqual(element.isEnabled(), True)
-    #     self.assertEqual(element.isVisible(), False)
-    #
-    # # ========= END TOOLS TAB SECTION =========
+    def testFileTab(self):
+        """
+        Test File Tab
+        """
+        element = self.menu_bar.makeFileMenu(app, self.file_manager)
+        # Test is in layout
+        self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&File")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
+
+    # ========= END FILE TAB SECTION =========
+
+    # ========= START EDIT TAB SECTION =========
+
+    def testEditTab(self):
+        """
+        Test Edit Tab
+        """
+        element = self.menu_bar.makeEditMenu(app, self.file_manager)
+        # Test is in layout
+        self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Edit")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
+
+    # ========= END EDIT TAB SECTION =========
+
+    # ========= START VIEW TAB SECTION =========
+
+    def testViewTab(self):
+        """
+        Test View Tab
+        """
+        element = self.menu_bar.makeViewMenu(app, self.bottom_bar, self.left_menu)
+        # Test is in layout
+        self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&View")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
+
+    # ========= END VIEW TAB SECTION =========
+
+    # ========= START FORMAT TAB SECTION =========
+
+    def testFormatTab(self):
+        """
+        Test Format Tab
+        """
+        element = self.menu_bar.makeFormatMenu(app)
+        # Test is in layout
+        self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Format")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
+
+    # ========= END FORMAT TAB SECTION =========
+
+    # ========= START TOOLS TAB SECTION =========
+
+    def testToolsTab(self):
+        """
+        Test Tools Tab
+        """
+        element = self.menu_bar.makeToolsMenu(app, self.document)
+        # Test is in layout
+        self.assertIn(element, self.menu_bar.children())
+        self.assertEqual(element.title(), "&Tools")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
+
+    # ========= END TOOLS TAB SECTION =========
