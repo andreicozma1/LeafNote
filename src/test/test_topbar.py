@@ -1,11 +1,10 @@
 """
 test Top Bar default behavior
 """
+import test
 import unittest
 
 from PyQt5.QtWidgets import QComboBox, QFontComboBox, QAbstractButton
-
-from test import app
 
 
 class TestTopBar(unittest.TestCase):
@@ -17,9 +16,9 @@ class TestTopBar(unittest.TestCase):
         """
         Set up environment
         """
-        self.top_bar = app.top_bar
-        self.doc_props = app.doc_props
-        self.layout_props = app.layout_props
+        self.top_bar = test.app.top_bar
+        self.doc_props = test.app.doc_props
+        self.layout_props = test.app.layout_props
 
     def testBarHeight(self):
         """

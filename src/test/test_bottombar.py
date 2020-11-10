@@ -3,7 +3,7 @@ test Bottom Bar default behavior
 """
 import unittest
 
-from test import app
+import test
 
 
 class TestBottomBar(unittest.TestCase):
@@ -15,10 +15,10 @@ class TestBottomBar(unittest.TestCase):
         """
         Set up environment
         """
-        self.bottom_bar = app.bottom_bar
-        self.document = app.document
-        self.doc_props = app.doc_props
-        self.layout_props = app.layout_props
+        self.bottom_bar = test.app.bottom_bar
+        self.document = test.app.document
+        self.doc_props = test.app.doc_props
+        self.layout_props = test.app.layout_props
 
     def testBarHeight(self):
         """

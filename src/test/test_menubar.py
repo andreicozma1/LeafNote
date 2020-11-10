@@ -3,7 +3,7 @@ test Menu Bar default behavior
 """
 import unittest
 
-from test import app
+import test
 
 
 class TestMenuBar(unittest.TestCase):
@@ -16,8 +16,8 @@ class TestMenuBar(unittest.TestCase):
         """
         Set up environment
         """
-        self.menu_bar = app.menu_bar
-        self.document = app.document
+        self.menu_bar = test.app.menu_bar
+        self.document = test.app.document
         self.menu_bar_list = list(self.menu_bar.children())
 
     # ========= START GENERAL SECTION =========
