@@ -7,7 +7,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
 from LeafNote import App
-from LeafNote.Layout.Elements import BarTop, MenuBar, Document
+from LeafNote.Layout.Elements import BarTop, Document
 from LeafNote.Props import DocProps
 
 ctx = QApplication([])
