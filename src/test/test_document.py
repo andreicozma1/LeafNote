@@ -1,18 +1,13 @@
 """
 test Document default behavior
 """
+import test
+
 import unittest
 
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QApplication
-
-from LeafNote import App
 from LeafNote.Layout.Elements import BarTop, Document
 from LeafNote.Props import DocProps
-
-ctx = QApplication([])
-app = App(ctx)
-string: str = "This is a test."
 
 
 class TestDocument(unittest.TestCase):
@@ -24,9 +19,9 @@ class TestDocument(unittest.TestCase):
         """
         Set up environment
         """
-        self.document: Document = app.document
-        self.top_bar: BarTop = app.top_bar
-        self.doc_props: DocProps = app.doc_props
+        self.document: Document = test.app.document
+        self.top_bar: BarTop = test.app.top_bar
+        self.doc_props: DocProps = test.app.doc_props
 
     def testFontBold(self):
         """
