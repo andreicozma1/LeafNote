@@ -50,6 +50,7 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index + length)
 
+        self.document.onTextChanged()
         # Loop through each misspelled word
         for word in self.document.misspelled_words:
             expression = QRegExp("\\b" + word + "\\b")

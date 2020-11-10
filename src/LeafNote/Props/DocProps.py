@@ -19,6 +19,7 @@ class DocProps:
         """
         logging.debug("Setting up Doc Props")
         self.def_background_color = "white"
+        self.def_text_color = "black"
         self.def_placeholder_text = "Start typing here..."
 
         self.def_enable_spellcheck = True
