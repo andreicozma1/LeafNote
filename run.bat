@@ -8,6 +8,5 @@ CALL %SOURCE%
 :: run the application
 ECHO ## Starting Application:
 SET SCRIPTPATH=%CD%\src\main.py
-CALL python3 %SCRIPTPATH%
+CALL python %SCRIPTPATH%
 
-PAUSE
