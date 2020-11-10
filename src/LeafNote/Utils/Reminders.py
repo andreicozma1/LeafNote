@@ -188,6 +188,7 @@ class Reminders:
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
+
         if self.rem_list.pop(key, None) is not None:
             logging.info("Removing reminder key %s", key)
             self.settings.setValue("reminders_dict", self.rem_list)
