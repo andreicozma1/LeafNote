@@ -33,8 +33,6 @@ class Document(QTextEdit):
         self.doc_props: DocProps = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
-        self.spell_checker = SpellChecker()
-        self.textChanged.connect(self.onTextChanged)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -292,27 +290,3 @@ class Document(QTextEdit):
         clipboard = self.app.ctx.clipboard()
         self.insertPlainText(clipboard.text())
 
-    def onTextChanged(self):
-        """
-        grabs current word in text document and runs a spell checker
-        :return: returns nothing
-        """
-        cursor = self.textCursor()
-        pos = cursor.position()
-        _, _, word = self._getWordFromPos(pos)
-
-        if word == "":
-            _, _, word_temp = self._getWordFromPos(pos - 1)
-            self.spellChecker(word_temp)
-
-    def spellChecker(self, word_t):
-        """
-        runs word_t through a spell checker
-        :param word_t: The word itself
-        :return: returns nothing
-        """
-        if word_t != '':
-            misspelled = self.spell_checker.unknown([word_t])
-
-            for word in misspelled:
-                self.highlighter.misspelled_words[word] = None
