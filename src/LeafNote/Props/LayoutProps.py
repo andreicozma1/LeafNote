@@ -119,11 +119,4 @@ class LayoutProps:
         """
         return 26
 
-    @staticmethod
-    def getDefaultMenuBarHeight():
-        """
-        Returns the default menu bar height
-        """
-        return 19
-
     # ========= END DEFAULTS SECTION =========

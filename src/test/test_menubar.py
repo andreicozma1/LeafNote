@@ -31,15 +31,6 @@ class TestMenuBar(unittest.TestCase):
 
     # ========= START GENERAL SECTION =========
 
-    # def testBarHeight(self):
-    #     """
-    #     Test default height
-    #     """
-    #     #=========== THIS TEST IS SET FOR WINDOWS OS ===========
-    #     exp_height = self.layout_props.getDefaultMenuBarHeight()
-    #     act_height = self.menu_bar.height()
-    #     self.assertEqual(exp_height, act_height)
-
     def testMenuFormat(self):
         """
         Test menu_format isEnable isVisible
