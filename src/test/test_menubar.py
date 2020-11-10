@@ -3,7 +3,7 @@ test Menu Bar default behavior
 """
 import unittest
 
-from PyQt5.QtWidgets import QApplication, QComboBox, QFontComboBox, QAbstractButton
+from PyQt5.QtWidgets import QApplication
 
 from LeafNote import App
 
