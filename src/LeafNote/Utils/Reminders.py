@@ -23,7 +23,6 @@ class Reminders:
         self.app = app
         self.settings = settings
         self.rem_list: dict = dict()
-        self.label_time = QLabel()
         self.restoreReminders()  # Recalls old reminders and sets them
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
@@ -89,13 +88,11 @@ class Reminders:
 
         dialog = DialogBuilder(block, "Add reminder")
 
-        dialog.addWidget(self.label_time)
-        timer = QTimer()
-        timer.timeout.connect(self.updateTime)
-        timer.start(1000)
-        self.label_time.setStyleSheet("font: 18pt")
-        self.updateTime()
+        time = QLabel()
+        time.setText("12:00 AM")
+        time.setStyleSheet("font: 18pt")
 
+        dialog.addWidget(time)
         dialog.addWidget(input_title)
         dialog.addWidget(input_description)
 
@@ -106,8 +103,20 @@ class Reminders:
         else:
             dialog.setTitleText(date.toString(format_date_def))
 
+
         input_time = QTimeEdit()
+
+        def updateTime():
+
+            new_time: QTimeEdit = input_time
+            new_time_str = new_time.time().toString("HH:mm:ss")
+            new_12_time = self.convert12(new_time_str)
+            time.setText(str(new_12_time))
+
+
+        input_time.timeChanged.connect(updateTime)
         dialog.addWidget(input_time)
+
 
         button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         dialog.addButtonBox(button_box)
@@ -119,6 +128,7 @@ class Reminders:
 
                 if date is None:
                     date = input_calendar.selectedDate()
+
 
                 self.addReminder(date, input_time.text(), input_title.text(),
                                  input_description.toPlainText())
@@ -209,15 +219,41 @@ class Reminders:
         # add 12 to hours and remove PM
         return str(int(str1[:2]) + 12) + str1[2:6]
 
-    def updateTime(self):
-
+    @staticmethod
+    def convert12(str1):
         """
-        Updates current time displayed on current_time label
-        :return: returns current time
+        :param str1: This is a time that we are converting from 24 time to 12 hour time
+        :return: returns a string of the time
         """
-        time = QTime.currentTime()
-        text = time.toString('hh:mm:ss')
+        time = ""
+        # Get Hours
+        h1 = ord(str1[0]) - ord('0')
+        h2 = ord(str1[1]) - ord('0')
 
-        self.label_time.setText(text)
+        hh = h1 * 10 + h2
+
+        # Finding out the Meridien of time
+        # ie. AM or PM
+        Meridien = ""
+        if (hh < 12):
+            Meridien = "AM"
+        else:
+            Meridien = "PM"
+
+        hh %= 12
+        # Handle 00 and 12 case separately
+        if (hh == 0):
+            time = "12"
+            # Printing minutes and seconds
+            for i in range(2, 5):
+                time = time + str1[i]
+        else:
+            time = time + str(hh)
+            # Printing minutes and seconds
+            for i in range(2, 5):
+                 time = time + str1[i]
+
+        return time + " " + Meridien
+
 
 
