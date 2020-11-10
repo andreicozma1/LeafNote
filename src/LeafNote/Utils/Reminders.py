@@ -170,11 +170,17 @@ class Reminders:
         self.settings.setValue("reminders_dict", self.rem_list)
         self.app.right_menu.updateReminders()
 
-    def deleteReminder(self, key, title):
+    def deleteReminder(self, key):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
+        # get the title of the reminder
+        if key not in self.rem_list:
+            logging.error("%s not in reminders list", key)
+            return
+        title = self.rem_list[key]['title']
+
         dialog = DialogBuilder(self.app, "Delete Reminder")
         dialog.setTitleText("Remove '" + title + "'?")
         dialog.setMsgText("This will permanently remove it from your reminders list.")
