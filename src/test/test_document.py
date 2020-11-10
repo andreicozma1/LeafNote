@@ -26,7 +26,6 @@ class TestDocument(unittest.TestCase):
         """
         self.document: Document = app.document
         self.top_bar: BarTop = app.top_bar
-        self.menu_bar: MenuBar = app.menu_bar
         self.doc_props: DocProps = app.doc_props
 
     def testFontBold(self):
