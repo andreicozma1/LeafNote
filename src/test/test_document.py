@@ -3,12 +3,16 @@ test Document default behavior
 """
 import unittest
 
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
 from LeafNote import App
+from LeafNote.Layout.Elements import BarTop, MenuBar, Document
+from LeafNote.Props import DocProps
 
 ctx = QApplication([])
 app = App(ctx)
+string: str = "This is a test."
 
 
 class TestDocument(unittest.TestCase):
@@ -20,14 +24,15 @@ class TestDocument(unittest.TestCase):
         """
         Set up environment
         """
-        self.document = app.document
-        self.doc_props = app.doc_props
+        self.document: Document = app.document
+        self.top_bar: BarTop = app.top_bar
+        self.menu_bar: MenuBar = app.menu_bar
+        self.doc_props: DocProps = app.doc_props
 
     def testFontBold(self):
         """
         Test the onFontBoldChanged function
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
 
         # set the document text to bold
@@ -39,6 +44,10 @@ class TestDocument(unittest.TestCase):
         act_is_bold = self.document.fontBold()
         self.assertEqual(True, act_is_bold)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_bold.isChecked()
+        self.assertEqual(True, act_is_checked)
+
         # set the document text to NOT bolded
         cursor = self.document.textCursor()
         cursor.select(cursor.Document)
@@ -48,11 +57,14 @@ class TestDocument(unittest.TestCase):
         act_is_bold = self.document.fontBold()
         self.assertEqual(False, act_is_bold)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_bold.isChecked()
+        self.assertEqual(False, act_is_checked)
+
     def testFontItal(self):
         """
         Test the onFontItalChanged function
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
 
         # set the document text to italicized
@@ -64,6 +76,10 @@ class TestDocument(unittest.TestCase):
         act_is_ital = self.document.fontItalic()
         self.assertEqual(True, act_is_ital)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_ital.isChecked()
+        self.assertEqual(True, act_is_checked)
+
         # set the document text to NOT italicized
         cursor = self.document.textCursor()
         cursor.select(cursor.Document)
@@ -73,11 +89,14 @@ class TestDocument(unittest.TestCase):
         act_is_ital = self.document.fontItalic()
         self.assertEqual(False, act_is_ital)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_ital.isChecked()
+        self.assertEqual(False, act_is_checked)
+
     def testFontStrike(self):
         """
         Test the onFontStrikeChanged function
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
 
         # set the document text to strikethrough
@@ -89,6 +108,10 @@ class TestDocument(unittest.TestCase):
         act_is_strike = self.document.fontStrike()
         self.assertEqual(True, act_is_strike)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_strike.isChecked()
+        self.assertEqual(True, act_is_checked)
+
         # set the document text to NOT strikethrough
         cursor = self.document.textCursor()
         cursor.select(cursor.Document)
@@ -98,11 +121,14 @@ class TestDocument(unittest.TestCase):
         act_is_strike = self.document.fontStrike()
         self.assertEqual(False, act_is_strike)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_strike.isChecked()
+        self.assertEqual(False, act_is_checked)
+
     def testFontUnder(self):
         """
         Test the onFontUnderChanged function
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
 
         # set the document text to italicized
@@ -114,6 +140,10 @@ class TestDocument(unittest.TestCase):
         act_is_under = self.document.fontUnderline()
         self.assertEqual(True, act_is_under)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_under.isChecked()
+        self.assertEqual(True, act_is_checked)
+
         # set the document text to NOT italicized
         cursor = self.document.textCursor()
         cursor.select(cursor.Document)
@@ -123,11 +153,14 @@ class TestDocument(unittest.TestCase):
         act_is_under = self.document.fontUnderline()
         self.assertEqual(False, act_is_under)
 
+        # check if the corresponding button is checked
+        act_is_checked = self.top_bar.button_under.isChecked()
+        self.assertEqual(False, act_is_checked)
+
     def testClearAllFormat(self):
         """
         Test the clearAllFormatting function
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
         exp_html = self.document.toHtml()
 
@@ -149,7 +182,6 @@ class TestDocument(unittest.TestCase):
         """
         this function will test the paste plain
         """
-        string: str = "This is a test."
         self.document.setPlainText(string)
 
         # set the cursor to the beginning of the document
@@ -162,3 +194,39 @@ class TestDocument(unittest.TestCase):
             self.document.onTextAlignmentChanged(i)
             act_align = self.document.alignment()
             self.assertEqual(exp_align, act_align)
+
+    def testFontSize(self):
+        """
+        Test the onFontSizeChanged function
+        """
+        self.document.setPlainText(string)
+
+        for exp_font_size in range(5, 25, 5):
+
+            # set the documents font size
+            cursor = self.document.textCursor()
+            cursor.select(cursor.Document)
+            self.document.onFontSizeChanged(str(exp_font_size))
+
+            # get the actual font size and test
+            act_font_size = self.document.fontPointSize()
+            self.assertEqual(exp_font_size, act_font_size)
+
+    def testTextColorChange(self):
+        """
+        Test the onTextColorChanged function
+        """
+        self.document.setPlainText(string)
+        color_list: list = list(self.doc_props.dict_colors.values())
+        for i, color in enumerate(color_list):
+            # get expected color
+            exp_color = QColor(color)
+
+            # set the documents font size
+            cursor = self.document.textCursor()
+            cursor.select(cursor.Document)
+            self.document.onTextColorChanged(i)
+
+            # get the actual color and test
+            act_color = self.document.textColor()
+            self.assertEqual(exp_color, act_color)

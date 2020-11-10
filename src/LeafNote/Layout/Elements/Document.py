@@ -42,8 +42,6 @@ class Document(QTextEdit):
             path = app.settings.value("dictionaryPath")
             Summarizer.initializeSummarizer(path, app, self)
 
-        self.textColor = "black"
-
         self.setAutoFillBackground(True)
         self.setBackgroundColor(self.doc_props.def_background_color)
         self.setPlaceholderText(self.doc_props.def_placeholder_text)
