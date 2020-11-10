@@ -3,12 +3,7 @@ test Menu Bar default behavior
 """
 import unittest
 
-from PyQt5.QtWidgets import QApplication
-
-from LeafNote import App
-
-ctx = QApplication([])
-app = App(ctx)
+import test
 
 
 class TestMenuBar(unittest.TestCase):
@@ -21,7 +16,8 @@ class TestMenuBar(unittest.TestCase):
         """
         Set up environment
         """
-        self.menu_bar = app.menu_bar
+        self.menu_bar = test.app.menu_bar
+        self.document = test.app.document
         self.menu_bar_list = list(self.menu_bar.children())
 
     # ========= START GENERAL SECTION =========
