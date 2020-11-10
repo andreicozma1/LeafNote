@@ -44,7 +44,7 @@ class TestBottomBar(unittest.TestCase):
         """
         string = "This is a test."
 
-        exp_count = str(len(string.replace(" ", ""))) + " Characters"
+        exp_count = str(len(string)) + " Characters"
 
         self.document.setPlainText(string)
         act_count = self.bottom_bar.label_cc.text()
