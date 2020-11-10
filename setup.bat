@@ -40,7 +40,7 @@ CALL pip3 install -r %REQS%
 
 ECHO ## All done!
 PAUSE
-
+EXIT
 
 :SHOWINSTALL
 ECHO # To proceed, please install Python3 and Pip3.
