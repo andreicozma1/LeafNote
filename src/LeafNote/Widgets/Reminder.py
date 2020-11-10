@@ -1,8 +1,10 @@
 """
 this module holds a class containing a reminder for the user
 """
+import html
 from functools import partial
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 
 
@@ -15,32 +17,35 @@ class Reminder(QWidget):
     def __init__(self, key, date_str, time_str, title_str, desc_str, on_delete):
         # noinspection PyCompatibility
         super().__init__()
-        self.key = key
-        self.vertical_layout = QVBoxLayout(self)
-        self.vertical_layout.setContentsMargins(0, 0, 0, 0)
-        self.vertical_layout.setSpacing(0)
+        vertical_layout = QVBoxLayout(self)
+        vertical_layout.setContentsMargins(0, 0, 0, 0)
+        vertical_layout.setSpacing(0)
 
         widget_title = QWidget()
         horizontal_layout = QHBoxLayout(widget_title)
         horizontal_layout.setContentsMargins(0, 0, 0, 0)
 
-        lbl_title = QLabel(title_str)
-        lbl_title.setStyleSheet("font-style: bold;")
+        lbl_title = QLabel(html.unescape("&#8226;") + " " + title_str)
+        lbl_title.setStyleSheet("font-weight: bold;")
         lbl_title.setWordWrap(True)
+        lbl_title.setTextInteractionFlags(Qt.TextSelectableByMouse)
         horizontal_layout.addWidget(lbl_title)
 
-        btn_exit = QPushButton("x")
+        btn_exit = QPushButton(html.unescape("&times;"))
         btn_exit.setFixedWidth(33)
         btn_exit.clicked.connect(partial(on_delete, key))
         horizontal_layout.addWidget(btn_exit)
 
-        self.vertical_layout.addWidget(widget_title)
+        vertical_layout.addWidget(widget_title)
 
-        self.show_date = QLabel(date_str + " at " + time_str)
-        lbl_title.setStyleSheet("font-style: italic;")
-        self.show_date.setWordWrap(True)
-        self.vertical_layout.addWidget(self.show_date)
+        show_date = QLabel(date_str + " at " + time_str)
+        show_date.setStyleSheet("font-style: italic; margin-left: 5px;")
+        show_date.setWordWrap(True)
+        show_date.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        vertical_layout.addWidget(show_date)
 
-        self.show_desc = QLabel(desc_str)
-        self.show_desc.setWordWrap(True)
-        self.vertical_layout.addWidget(self.show_desc)
+        show_desc = QLabel(desc_str)
+        show_desc.setStyleSheet("margin-left: 5px;")
+        show_desc.setWordWrap(True)
+        show_desc.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        vertical_layout.addWidget(show_desc)
