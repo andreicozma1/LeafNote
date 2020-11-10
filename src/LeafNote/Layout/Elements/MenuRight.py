@@ -183,9 +183,8 @@ class MenuRight(QScrollArea):
 
         def onDelete(key):
             title = ""
-            for rem in reminders_list:
-                if key == rem['key']:
-                    title = rem['title']
+            if key in dictionary:
+                title = dictionary[key]['title']
 
             self.app.reminders.deleteReminder(key, title)
 
