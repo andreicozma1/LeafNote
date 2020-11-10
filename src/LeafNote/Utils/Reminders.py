@@ -4,7 +4,7 @@ this module holds a class containing a reminder for the user
 import logging
 import time
 
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, QTime
 from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit
 
 from LeafNote.Utils import DialogBuilder
@@ -28,13 +28,13 @@ class Reminders:
         """
         this will show the user a dialog of the the reminders
         :param block: Element to block by dialog
-        :show_calendar: Whether to include calendar or not
-        :date: Pre-defined date if calendar is not shown
+        :param show_calendar: Whether to include calendar or not
+        :param date: Pre-defined date if calendar is not shown
         """
         logging.info("showDialog: displays reminders dialog")
 
         # Set the default date format
-        # noinspection PyCompatibility
+
         format_date_def: str = "yyyy-MM-dd"
         # ------------------------------#
         input_title = QLineEdit()
@@ -47,6 +47,9 @@ class Reminders:
         input_description.setMaximumHeight(120)
 
         def limitCharCount():
+            """
+            Limits the maximum number of characters allowed in description box
+            """
             # Limits the number of characters in input_description box
             text_content = input_description.toPlainText()
             length = len(text_content)
@@ -70,34 +73,40 @@ class Reminders:
 
         # ------------------------------#
         input_calendar = CalendarWidget()
+        input_time = QTimeEdit()
 
         def updateTitle():
-
-            # noinspection PyCompatibility
+            """
+            Updates title of the dialog box to selected date and time
+            """
             new_date: QDate = input_calendar.selectedDate()
-            # noinspection PyCompatibility
-            str_date: str = new_date.toString(format_date_def)
-            logging.debug("Update input_title %s", str_date)
-            dialog.setTitleText(str_date)
+            formatted_date = new_date.toString(format_date_def)
+            new_time: QTime = input_time.time()
+            formatted_time = new_time.toString("h:mm ap")
+            new_title = formatted_date + " at " + formatted_time
+
+            logging.debug("Update input_title %s", new_title)
+            dialog.setTitleText(new_title)
 
         input_calendar.setFixedHeight(300)
         input_calendar.selectionChanged.connect(updateTitle)
+        input_time.timeChanged.connect(updateTitle)
+        # initial update of title with default values
 
         # ------------------------------#
 
         dialog = DialogBuilder(block, "Add reminder")
+
         dialog.addWidget(input_title)
         dialog.addWidget(input_description)
 
         # Determine whether to use calendar in dialog or not
         if show_calendar is True or date is None:
             dialog.addWidget(input_calendar)
-            dialog.setTitleText(input_calendar.selectedDate().toString(format_date_def))
         else:
-            dialog.setTitleText(date.toString(format_date_def))
-
-        input_time = QTimeEdit()
+            input_calendar.setSelectedDate(date)
         dialog.addWidget(input_time)
+        updateTitle()
 
         button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         dialog.addButtonBox(button_box)
@@ -112,6 +121,16 @@ class Reminders:
 
                 self.addReminder(date, input_time.text(), input_title.text(),
                                  input_description.toPlainText())
+            else:
+                dialog_rem_error = DialogBuilder(block, "Error")
+                dialog_rem_error.setTitleText("This reminder does not have a title")
+                dialog_rem_error.setMsgText("Reminder must contain a title.")
+                dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+                dialog_rem_error.addButtonBox(dialog_buttons)
+                # dialog_rem_error.show()
+                if dialog_rem_error.exec():
+                    self.showDialog(None, None, None)
+
 
         else:
             logging.info("Clicked cancel")
@@ -176,7 +195,32 @@ class Reminders:
             return True
         else:
             logging.error("Could not remove reminder key %s", key)
-            return False
+
+        # get the title of the reminder
+        if key not in self.rem_list:
+            logging.error("%s not in reminders list", key)
+            return
+        title = self.rem_list[key]['title']
+
+        dialog = DialogBuilder(self.app, "Delete Reminder")
+        dialog.setTitleText("Remove '" + title + "'?")
+        dialog.setMsgText("This will permanently remove it from your reminders list.")
+        dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+        dialog.addButtonBox(dialog_but)
+        if dialog.exec():
+            if self.rem_list.pop(key, None) is not None:
+                logging.info("Removing reminder key %s", key)
+                self.settings.setValue("reminders_dict", self.rem_list)
+                self.app.right_menu.updateReminders()
+            else:
+                logging.error("Could not remove reminder key %s", key)
+                dialog_rem_error = DialogBuilder(self.app, "Error")
+                dialog_rem_error.setTitleText("Failed to remove reminder")
+                dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+                dialog_rem_error.addButtonBox(dialog_buttons)
+                dialog_rem_error.show()
+        else:
+            logging.error("User chose to not delete the reminder")
 
     # Converts time to 24 hours time.
     @staticmethod
