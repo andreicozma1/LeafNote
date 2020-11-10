@@ -449,6 +449,9 @@ class MenuBar(QMenuBar):
         menu_tools.addAction(makeToolsToggle("Spell Check", "",
                                              self.doc.toggle_spellcheck, True,
                                              self.doc_props.def_enable_spellcheck))
+        menu_tools.addAction(makeToolsToggle("Auto Correct", "",
+                                             self.doc.toggle_autocorrect, True,
+                                             self.doc_props.def_enable_autocorrect))
         menu_tools.addSeparator()
         menu_tools.addAction(makeToolsAction("Summarize", "", onSummaryAction))
         menu_tools.addAction(
