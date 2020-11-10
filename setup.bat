@@ -1,7 +1,7 @@
 @ECHO OFF
 
 
-echo ## Checking Python Version:
+echo ## Checking Python Version (MUST BE VERSION 3.8 OR UNDER):
 set COMMAND=where python3 2> nul
 for /f %%i in ('%COMMAND%') do @set LOCATION=%%i
 if %LOCATION%=="" (
