@@ -7,7 +7,7 @@ that displays information including but not limited to:
 """
 import logging
 
-from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QFileInfo, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from LeafNote.Utils import Summarizer
@@ -83,6 +83,7 @@ class MenuRight(QScrollArea):
         label = QLabel()
         label.setWordWrap(True)
         label.setProperty("prop", prop)
+        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         return label
 
     def setupDetails(self):

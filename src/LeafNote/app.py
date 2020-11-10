@@ -182,8 +182,20 @@ class App(QMainWindow):
                 self.updateFormatBtnsState(False)
         else:
             # Don't allow converted file to be converted back to Plain Text
-            self.file_manager.lefToExt(self.document)
-            logging.info("Convert back to a txt file")
+            convert_dialog = Utils.DialogBuilder(self, "Disable Formatting",
+                                            "Would you like to convert this file?",
+                                            "This file will be converted to plain "
+                                            "text formatting\n"
+                                            "Selecting 'Yes' will PERMANENTLY remove "
+                                            "any existing formatting.")
+            button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            convert_dialog.addButtonBox(button_box)
+            if convert_dialog.exec():
+                self.file_manager.lefToExt(self.document)
+                logging.info("Convert back to a txt file")
+            else:
+                logging.info("User DID NOT convert file to Plain Text")
+                self.updateFormatBtnsState(True)
 
     def centerWindow(self, app_geom):
         """
