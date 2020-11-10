@@ -362,6 +362,7 @@ class MenuBar(QMenuBar):
 
         def onSummaryAction():
             """
+            Called on clicking summary action
             """
             logging.info("Clicked Summary Action")
             if document.summarizer is None:
@@ -378,12 +379,14 @@ class MenuBar(QMenuBar):
 
         def onEncryptionAction():
             """
+            Called on clicking encryptor action
             """
             logging.info("Clicked Encryptor Action")
             Utils.Encryptor.onEncryptionAction(app, app.file_manager)
 
         def onCalculatorAction():
             """
+            Called on clicking calculator action
             """
             logging.info("Clicked Calculator Action")
             dialog = Utils.DialogBuilder(text_window="Calculator")
@@ -393,18 +396,21 @@ class MenuBar(QMenuBar):
 
         def onRemindersAction():
             """
+            Called on clicking reminders action
             """
             logging.info("Clicked Reminders Action")
             app.reminders.showDialog(app)
 
         def onEquationEditorAction():
             """
+            Called on clicking equation editor action
             """
             logging.info("Clicked Equation Editor Action")
             Widgets.EquationEditorWidget(document)
 
         def onDictionaryAction():
             """
+            Called on clicking dictionary action
             """
             logging.info("Clicked Dictionary Action")
             dictionary = Widgets.DictionaryWidget()
@@ -418,12 +424,35 @@ class MenuBar(QMenuBar):
 
         def makeToolsAction(name: str, shortcut: str, signal) -> QAction:
             """
+            Makes a Tools action
             """
             tools_action = QAction(name, app)
             tools_action.setShortcut(shortcut)
             tools_action.triggered.connect(signal)
+
             return tools_action
 
+        def makeToolsToggle(name: str, shortcut: str, signal,
+                            checkable: bool = False,
+                            checked: bool = False) -> QAction:
+            """
+            Makes a Tools action
+            """
+            tools_action = QAction(name, app)
+            tools_action.setShortcut(shortcut)
+            tools_action.setCheckable(checkable)
+            tools_action.setChecked(checked)
+            tools_action.toggled.connect(signal)
+
+            return tools_action
+
+        menu_tools.addAction(makeToolsToggle("Spell Check", "",
+                                             self.doc.toggle_spellcheck, True,
+                                             self.doc_props.def_enable_spellcheck))
+        menu_tools.addAction(makeToolsToggle("Auto Correct", "",
+                                             self.doc.toggle_autocorrect, True,
+                                             self.doc_props.def_enable_autocorrect))
+        menu_tools.addSeparator()
         menu_tools.addAction(makeToolsAction("Summarize", "", onSummaryAction))
         menu_tools.addAction(
             makeToolsAction("Encrypt/Decrypt", "", onEncryptionAction))

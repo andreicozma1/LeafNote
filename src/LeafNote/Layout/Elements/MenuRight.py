@@ -7,7 +7,7 @@ that displays information including but not limited to:
 """
 import logging
 
-from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QFileInfo, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 from LeafNote.Utils import Summarizer
@@ -83,6 +83,7 @@ class MenuRight(QScrollArea):
         label = QLabel()
         label.setWordWrap(True)
         label.setProperty("prop", prop)
+        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         return label
 
     def setupDetails(self):
@@ -180,12 +181,9 @@ class MenuRight(QScrollArea):
         reminders_list = list(dictionary.values())
         reminders_list.sort(key=lambda t: t['sort'])
 
-        def onDelete(key):
-            self.app.reminders.deleteReminder(key)
-
         for rem in reminders_list:
             wid = Reminder(rem['key'], rem['date'], rem['time'],
-                           rem['title'], rem['text'], onDelete)
+                           rem['title'], rem['text'], self.app.reminders.deleteReminder)
 
             self.col_reminders_main.addElement(wid)
 
