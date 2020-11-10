@@ -323,19 +323,15 @@ class Document(QTextEdit):
                 cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
                 self.setTextCursor(cursor)
                 if cursortemp == self.textCursor():
-                    print("equal")
                     listIn.removeItem(listIn.count() - 1)
                     return False
                 else:
-                    print("not equal")
                     if cursor.currentList() is None:
-                        print("not in list")
                         listIn.removeItem(listIn.count() - 1)
                         cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
                         self.setTextCursor(cursor)
                         return False
                     else:
-                        print("in list")
                         cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
                         self.setTextCursor(cursor)
         return True
