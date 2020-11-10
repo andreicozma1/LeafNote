@@ -287,8 +287,8 @@ class Document(QTextEdit):
         """
         # checks for enter
         if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
-            self.pressedReturn()
-            super().keyPressEvent(event)
+            if self.pressedReturn():
+                super().keyPressEvent(event)
         # checks for tab
         elif event.key() == QtCore.Qt.Key_Tab:
             super().keyPressEvent(event)
@@ -317,7 +317,28 @@ class Document(QTextEdit):
             if text == "":
                 logging.info("bullet list: removed last bullet")
                 # removes bullet
-                listIn.removeItem(listIn.count() - 1)
+                # listIn.removeItem(listIn.count() - 1)
+                cursor = self.textCursor()
+                cursortemp = self.textCursor()
+                cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
+                self.setTextCursor(cursor)
+                if cursortemp == self.textCursor():
+                    print("equal")
+                    listIn.removeItem(listIn.count() - 1)
+                    return False
+                else:
+                    print("not equal")
+                    if cursor.currentList() is None:
+                        print("not in list")
+                        listIn.removeItem(listIn.count() - 1)
+                        cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
+                        self.setTextCursor(cursor)
+                        return False
+                    else:
+                        print("in list")
+                        cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
+                        self.setTextCursor(cursor)
+        return True
 
     def pressedTab(self):
         """
