@@ -1,10 +1,12 @@
 """
 test Document default behavior
 """
+
 import test
 
 import unittest
 
+from PyQt5 import QtGui
 from PyQt5.QtGui import QColor
 from LeafNote.Layout.Elements import BarTop, Document
 from LeafNote.Props import DocProps
@@ -157,6 +159,13 @@ class TestDocument(unittest.TestCase):
         """
         Test the clearAllFormatting function
         """
+        # reset the doc text style
+        cursor = self.document.textCursor()
+        cursor.select(cursor.Document)
+        cursor.setCharFormat(QtGui.QTextCharFormat())
+        cursor.clearSelection()
+        self.document.setTextCursor(cursor)
+
         self.document.setPlainText(string)
         exp_html = self.document.toHtml()
 
@@ -172,6 +181,7 @@ class TestDocument(unittest.TestCase):
         # clear all formatting and check
         self.document.clearAllFormatting()
         act_html = self.document.toHtml()
+
         self.assertEqual(exp_html, act_html)
 
     def testTextAlignment(self):
