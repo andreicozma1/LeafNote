@@ -4,8 +4,8 @@ this module holds a class containing a reminder for the user
 import logging
 import time
 
-from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit, QLabel
+from PyQt5.QtCore import QDate, QTime
+from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit
 
 from LeafNote.Utils import DialogBuilder
 from LeafNote.Widgets.CalendarWidget import CalendarWidget
@@ -28,13 +28,13 @@ class Reminders:
         """
         this will show the user a dialog of the the reminders
         :param block: Element to block by dialog
-        :show_calendar: Whether to include calendar or not
-        :date: Pre-defined date if calendar is not shown
+        :param show_calendar: Whether to include calendar or not
+        :param date: Pre-defined date if calendar is not shown
         """
         logging.info("showDialog: displays reminders dialog")
 
         # Set the default date format
-        # noinspection PyCompatibility
+
         format_date_def: str = "yyyy-MM-dd"
         # ------------------------------#
         input_title = QLineEdit()
@@ -47,6 +47,9 @@ class Reminders:
         input_description.setMaximumHeight(120)
 
         def limitCharCount():
+            """
+            Limits the maximum number of characters allowed in description box
+            """
             # Limits the number of characters in input_description box
             text_content = input_description.toPlainText()
             length = len(text_content)
@@ -70,49 +73,40 @@ class Reminders:
 
         # ------------------------------#
         input_calendar = CalendarWidget()
+        input_time = QTimeEdit()
 
         def updateTitle():
-
-            # noinspection PyCompatibility
+            """
+            Updates title of the dialog box to selected date and time
+            """
             new_date: QDate = input_calendar.selectedDate()
-            # noinspection PyCompatibility
-            str_date: str = new_date.toString(format_date_def)
-            logging.debug("Update input_title %s", str_date)
-            dialog.setTitleText(str_date)
+            formatted_date = new_date.toString(format_date_def)
+            new_time: QTime = input_time.time()
+            formatted_time = new_time.toString("h:mm ap")
+            new_title = formatted_date + " at " + formatted_time
+
+            logging.debug("Update input_title %s", new_title)
+            dialog.setTitleText(new_title)
 
         input_calendar.setFixedHeight(300)
         input_calendar.selectionChanged.connect(updateTitle)
+        input_time.timeChanged.connect(updateTitle)
+        # initial update of title with default values
 
         # ------------------------------#
 
         dialog = DialogBuilder(block, "Add reminder")
 
-        time_l = QLabel()
-        time_l.setText("12:00 AM")
-        time_l.setStyleSheet("font: 18pt")
-
-        dialog.addWidget(time_l)
         dialog.addWidget(input_title)
         dialog.addWidget(input_description)
 
         # Determine whether to use calendar in dialog or not
         if show_calendar is True or date is None:
             dialog.addWidget(input_calendar)
-            dialog.setTitleText(input_calendar.selectedDate().toString(format_date_def))
         else:
-            dialog.setTitleText(date.toString(format_date_def))
-
-        input_time = QTimeEdit()
-
-        def updateTime():
-
-            new_time: QTimeEdit = input_time
-            new_time_str = new_time.time().toString("HH:mm:ss")
-            new_12_time = self.convert12(new_time_str)
-            time_l.setText(str(new_12_time))
-
-        input_time.timeChanged.connect(updateTime)
+            input_calendar.setSelectedDate(date)
         dialog.addWidget(input_time)
+        updateTitle()
 
         button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         dialog.addButtonBox(button_box)
@@ -213,39 +207,3 @@ class Reminders:
 
         # add 12 to hours and remove PM
         return str(int(str1[:2]) + 12) + str1[2:6]
-
-    @staticmethod
-    def convert12(str1):
-        """
-        :param str1: This is a time that we are converting from 24 time to 12 hour time
-        :return: returns a string of the time
-        """
-        time_12 = ""
-        # Get Hours
-        h1 = ord(str1[0]) - ord('0')
-        h2 = ord(str1[1]) - ord('0')
-
-        hh = h1 * 10 + h2
-
-        # Finding out the Meridien of time
-        # ie. AM or PM
-        Meridien = ""
-        if hh < 12:
-            Meridien = "AM"
-        else:
-            Meridien = "PM"
-
-        hh %= 12
-        # Handle 00 and 12 case separately
-        if hh == 0:
-            time_12 = "12"
-            # Printing minutes and seconds
-            for i in range(2, 5):
-                time_12 = time_12 + str1[i]
-        else:
-            time_12 = time_12 + str(hh)
-            # Printing minutes and seconds
-            for i in range(2, 5):
-                time_12 = time_12 + str1[i]
-
-        return time_12 + " " + Meridien
