@@ -5,6 +5,7 @@ that displays information including but not limited to:
 - Document Summary contents.
 - Reminders List.
 """
+import html
 import logging
 
 from PyQt5.QtCore import QFileInfo, Qt
@@ -36,14 +37,14 @@ class MenuRight(QScrollArea):
         # Init File Details
         self.col_metadata_main = CollapsibleWidget("File Details:")
         self.col_metadata_main.setStyleSheet(self.getCollapsibleMenuStyle())
-        self.col_metadata_contents = ["Name", "Path", "Size", "Owner",
-                                      "Viewed", "Modified"]
+        self.col_metadata_contents = self.makePropLabel("Properties")
+
         # Init Summary Components
         self.col_summary_main = CollapsibleWidget("Summary:")
         self.col_summary_main.setStyleSheet(self.getCollapsibleMenuStyle())
-
         self.col_summary_enable = QPushButton("Enable Summarizer")
         self.col_summary_body = self.makePropLabel("Summary")
+
         # Init Reminders Components
         self.col_reminders_main = CollapsibleWidget("Reminders:")
         self.col_reminders_main.setStyleSheet(self.getCollapsibleMenuStyle())
@@ -75,14 +76,13 @@ class MenuRight(QScrollArea):
         self.setWidgetResizable(True)
 
     @staticmethod
-    def makePropLabel(prop: str):
+    def makePropLabel(name: str):
         """
         Constructor function for a label
         :prop prop: Property name to reference
         """
-        label = QLabel()
+        label = QLabel(name)
         label.setWordWrap(True)
-        label.setProperty("prop", prop)
         label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         return label
 
@@ -94,8 +94,7 @@ class MenuRight(QScrollArea):
         logging.debug("Setting up layout component details")
 
         # Add all metadata menu properties from list
-        for elem in self.col_metadata_contents:
-            self.col_metadata_main.addElement(self.makePropLabel(elem))
+        self.col_metadata_main.addElement(self.col_metadata_contents)
 
         def onSummaryAction():
             """
@@ -125,34 +124,33 @@ class MenuRight(QScrollArea):
         :return: nothing
         """
         info = QFileInfo(path)
+        bullet = html.unescape("&#8226;")
+
+        value: str = bullet + " File not saved!"
         # Get the file info and update all the respective fields
+        if info is not None and path is not None:
+            value = ""
+            i_s = "<i>"
+            i_e = "</i>"
+            br = "<br>"
 
-        # Iterate through all properties and fill in metadata labels
-        for i in range(self.col_metadata_main.layout_content.count()):
-            label = self.col_metadata_main.layout_content.itemAt(i).widget()
-            prop = label.property("prop")
-            # noinspection PyCompatibility
-            value: str
-            if path is None:
-                value = "?"
-            elif prop == "Name":
-                value = info.fileName()
-            elif prop == "Path":
-                value = info.path()
-            elif prop == "Size":
-                value = ((str(round(info.size() / 1000000.0, 2))) + "MB")
-            elif prop == "Owner":
-                value = (str(info.owner()))
-            elif prop == "Viewed":
-                value = (info.lastRead().toString(self.format_time))
-            elif prop == "Modified":
-                value = (info.lastModified().toString(self.format_time))
-            else:
-                value = "?"
-            if len(value) == 0:
-                value = "?"
-            label.setText(label.property("prop") + ": " + value)
+            size = info.size()
+            units = ['Bytes', 'KB', 'MB', 'GB']
+            unit = 0
+            while len(str(round(size, 0))) > 3:
+                size /= 1000
+                unit += 1
 
+            value += bullet + " Name: " + i_s + info.fileName() + i_e + br
+            value += bullet + " Path: " + i_s + info.path() + i_e + br
+            value += bullet + " Size: " + i_s + str(size) + " " + units[unit] + i_e + br
+            value += bullet + " Owner: " + i_s + (str(info.owner())) + i_e + br
+            value += bullet + " Viewed: " + i_s + \
+                     (info.lastRead().toString(self.format_time)) + i_e + br
+            value += bullet + " Modified: " + i_s + \
+                     (info.lastModified().toString(self.format_time)) + i_e
+
+        self.col_metadata_contents.setText(value)
         # Update the summary from file
         self.updateSummary()
 
