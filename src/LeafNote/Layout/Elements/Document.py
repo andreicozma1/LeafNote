@@ -315,9 +315,8 @@ class Document(QTextEdit):
             text = text.strip()
             # checks if the bullet on the list is blank
             if text == "":
-                logging.info("bullet list: removed last bullet")
+                logging.info("bullet list: Return on blank bullet")
                 # removes bullet
-                # listIn.removeItem(listIn.count() - 1)
                 cursor = self.textCursor()
                 cursortemp = self.textCursor()
                 cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
