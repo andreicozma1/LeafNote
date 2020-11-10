@@ -1,20 +1,20 @@
 """
 This is the libraries used in this module
 """
+
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor
 
 
 class SyntaxHighlighter(QSyntaxHighlighter):
     """
-    SyntaxHighlighter is an instance of QSyntaxHighlighter that allows us the modify the docuemnt
+    SyntaxHighlighter is an instance of QSyntaxHighlighter that allows us the modify the document
     """
 
     def __init__(self, document):
         super().__init__(document)
         self.document = document
         self.highlighting_rules = []
-        self.misspelled_words = {}
         self.err_format = QTextCharFormat()
 
         self.setupRules()
@@ -37,7 +37,7 @@ class SyntaxHighlighter(QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         """
-        Will highlight current text
+        Runs automatically when the current text block is changed
         :param text: current word in the file
         :return: returns nothing
         """
@@ -49,18 +49,16 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index + length)
 
-        if self.misspelled_words:
-            for word in list(self.misspelled_words.keys()):
-                expression = QRegExp("\\b" + word + "\\b")
-                index = expression.indexIn(text)
-                count = 0
+        self.document.onTextChanged()
+        # Loop through each misspelled word
+        for word in self.document.misspelled_words:
+            expression = QRegExp("\\b" + word + "\\b")
+            index = expression.indexIn(text)
 
-                while index >= 0:
-                    length = expression.matchedLength()
-                    self.setFormat(index, length, self.err_format)
-                    index = expression.indexIn(text, index + length)
-                    count = count + 1
+            # Keep looking for misspelled word in block
+            while index >= 0:
+                length = expression.matchedLength()
+                self.setFormat(index, length, self.err_format)
+                index = expression.indexIn(text, index + length)
 
-                if count == 0:
-                    self.misspelled_words.pop(word)
         self.setCurrentBlockState(0)
