@@ -4,8 +4,7 @@ this module holds a class containing a reminder for the user
 import logging
 import time
 
-from PyQt5 import Qt
-from PyQt5.QtCore import QDate, QDateTime, QTimer, QTime
+from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QLineEdit, QTimeEdit, QDialogButtonBox, QPlainTextEdit, QLabel
 
 from LeafNote.Utils import DialogBuilder
@@ -88,11 +87,11 @@ class Reminders:
 
         dialog = DialogBuilder(block, "Add reminder")
 
-        time = QLabel()
-        time.setText("12:00 AM")
-        time.setStyleSheet("font: 18pt")
+        time_l = QLabel()
+        time_l.setText("12:00 AM")
+        time_l.setStyleSheet("font: 18pt")
 
-        dialog.addWidget(time)
+        dialog.addWidget(time_l)
         dialog.addWidget(input_title)
         dialog.addWidget(input_description)
 
@@ -103,7 +102,6 @@ class Reminders:
         else:
             dialog.setTitleText(date.toString(format_date_def))
 
-
         input_time = QTimeEdit()
 
         def updateTime():
@@ -111,12 +109,10 @@ class Reminders:
             new_time: QTimeEdit = input_time
             new_time_str = new_time.time().toString("HH:mm:ss")
             new_12_time = self.convert12(new_time_str)
-            time.setText(str(new_12_time))
-
+            time_l.setText(str(new_12_time))
 
         input_time.timeChanged.connect(updateTime)
         dialog.addWidget(input_time)
-
 
         button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         dialog.addButtonBox(button_box)
@@ -128,7 +124,6 @@ class Reminders:
 
                 if date is None:
                     date = input_calendar.selectedDate()
-
 
                 self.addReminder(date, input_time.text(), input_title.text(),
                                  input_description.toPlainText())
@@ -225,7 +220,7 @@ class Reminders:
         :param str1: This is a time that we are converting from 24 time to 12 hour time
         :return: returns a string of the time
         """
-        time = ""
+        time_12 = ""
         # Get Hours
         h1 = ord(str1[0]) - ord('0')
         h2 = ord(str1[1]) - ord('0')
@@ -235,25 +230,22 @@ class Reminders:
         # Finding out the Meridien of time
         # ie. AM or PM
         Meridien = ""
-        if (hh < 12):
+        if hh < 12:
             Meridien = "AM"
         else:
             Meridien = "PM"
 
         hh %= 12
         # Handle 00 and 12 case separately
-        if (hh == 0):
-            time = "12"
+        if hh == 0:
+            time_12 = "12"
             # Printing minutes and seconds
             for i in range(2, 5):
-                time = time + str1[i]
+                time_12 = time_12 + str1[i]
         else:
-            time = time + str(hh)
+            time_12 = time_12 + str(hh)
             # Printing minutes and seconds
             for i in range(2, 5):
-                 time = time + str1[i]
+                time_12 = time_12 + str1[i]
 
-        return time + " " + Meridien
-
-
-
+        return time_12 + " " + Meridien
