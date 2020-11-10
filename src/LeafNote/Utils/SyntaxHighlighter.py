@@ -1,7 +1,6 @@
 """
 This is the libraries used in this module
 """
-import logging
 
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor
@@ -63,8 +62,3 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 index = expression.indexIn(text, index + length)
 
         self.setCurrentBlockState(0)
-
-
-
-
-
