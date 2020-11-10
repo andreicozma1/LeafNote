@@ -9,6 +9,8 @@ from PyQt5.QtGui import QColor
 from LeafNote.Layout.Elements import BarTop, Document
 from LeafNote.Props import DocProps
 
+string: str = "This is a test."
+
 
 class TestDocument(unittest.TestCase):
     """
