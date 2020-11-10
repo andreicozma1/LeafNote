@@ -21,6 +21,8 @@ class DocProps:
         self.def_background_color = "white"
         self.def_placeholder_text = "Start typing here..."
 
+        self.def_enable_spellcheck = True
+
         # Font sizes available in the TopBar
         self.list_font_sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
                                 "14", "15", "16", "17", "18", "19", "20", "22", "24", "26", "28",

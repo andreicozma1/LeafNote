@@ -10,7 +10,6 @@ import validators
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
-from spellchecker import SpellChecker
 
 from LeafNote.Props import DocProps
 from LeafNote.Utils import SyntaxHighlighter, Summarizer
@@ -33,8 +32,7 @@ class Document(QTextEdit):
         self.doc_props: DocProps = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
-        self.spell_checker = SpellChecker()
-        self.textChanged.connect(self.onTextChanged)
+        self.spellcheck_enabled = self.doc_props.def_enable_spellcheck
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -53,6 +51,7 @@ class Document(QTextEdit):
         if the double clicked word is a link open it
         :return: returns nothing
         """
+        logging.debug("User double-clicked in document")
         # get the cursor where the user double clicked
         cursor = self.cursorForPosition(e.pos())
         pos = cursor.position()
@@ -213,7 +212,7 @@ class Document(QTextEdit):
         Clears formatting on all text
         :return: returns nothing
         """
-        logging.debug("")
+        logging.debug("Clearing all formatting")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
         cursor.setCharFormat(QTextCharFormat())
@@ -225,6 +224,7 @@ class Document(QTextEdit):
         Clears formatting on selected text
         :return: returns nothing
         """
+        logging.debug("Clearing selection formatting")
         cursor = self.textCursor()
         if cursor.hasSelection() is False:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
@@ -261,6 +261,7 @@ class Document(QTextEdit):
         resets title styles to default style
         :return: returns nothing
         """
+        logging.debug("Resetting all title styles")
         self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.default
         self.doc_props.dict_title_styles["Title"] = self.doc_props.title
         self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
@@ -282,6 +283,7 @@ class Document(QTextEdit):
         """
         Sets formatting enabled or disabled
         """
+        logging.debug("Enable formatting: %s", str(enable))
         self.setAcceptRichText(enable)
         self.setAutoFormatting(self.AutoAll if enable else self.AutoNone)
 
@@ -289,30 +291,20 @@ class Document(QTextEdit):
         """
         Pastes from clipboard as plain text
         """
+        logging.debug("Pasting as Plain Text")
         clipboard = self.app.ctx.clipboard()
         self.insertPlainText(clipboard.text())
 
-    def onTextChanged(self):
+    def toggle_spellcheck(self, enabled: bool):
         """
-        grabs current word in text document and runs a spell checker
-        :return: returns nothing
+        Disables or Enables spellcheck
         """
-        cursor = self.textCursor()
-        pos = cursor.position()
-        _, _, word = self._getWordFromPos(pos)
-
-        if word == "":
-            _, _, word_temp = self._getWordFromPos(pos - 1)
-            self.spellChecker(word_temp)
-
-    def spellChecker(self, word_t):
-        """
-        runs word_t through a spell checker
-        :param word_t: The word itself
-        :return: returns nothing
-        """
-        if word_t != '':
-            misspelled = self.spell_checker.unknown([word_t])
-
-            for word in misspelled:
-                self.highlighter.misspelled_words[word] = None
+        logging.debug("setting: %s", str(enabled))
+        # If previously disabled, and re-enabling
+        if not self.spellcheck_enabled and enabled:
+            # Re-add all misspelled words back in misspelled dictionary
+            self.highlighter.addAllMisspelledWords()
+        # Set the new state
+        self.spellcheck_enabled = enabled
+        # Re-highlight entire document after change
+        self.highlighter.rehighlight()
