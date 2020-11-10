@@ -8,8 +8,9 @@ import webbrowser
 
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
+from spellchecker import SpellChecker
 
 from LeafNote.Props import DocProps
 from LeafNote.Utils import SyntaxHighlighter, Summarizer
@@ -32,7 +33,14 @@ class Document(QTextEdit):
         self.doc_props: DocProps = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
+
+        # Spellchecker and set of misspelled_words
+        self.spell_checker = SpellChecker()
+        self.misspelled_words = set()
+        # Defining whether features are enabled
         self.spellcheck_enabled = self.doc_props.def_enable_spellcheck
+        self.autocorrect_enabled = self.doc_props.def_enable_autocorrect
+        self.textChanged.connect(self.onTextChanged)
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -294,6 +302,15 @@ class Document(QTextEdit):
         logging.debug("Pasting as Plain Text")
         clipboard = self.app.ctx.clipboard()
         self.insertPlainText(clipboard.text())
+        self.spellCheckAll()
+
+    def undo(self):
+        """
+        Overload undo to be able to undo autocorrect
+        """
+        self.blockSignals(True)
+        super().undo()
+        self.blockSignals(False)
 
     def toggle_spellcheck(self, enabled: bool):
         """
@@ -303,8 +320,79 @@ class Document(QTextEdit):
         # If previously disabled, and re-enabling
         if not self.spellcheck_enabled and enabled:
             # Re-add all misspelled words back in misspelled dictionary
-            self.highlighter.addAllMisspelledWords()
+            self.spellCheckAll()
         # Set the new state
         self.spellcheck_enabled = enabled
+
+    def toggle_autocorrect(self, enabled: bool):
+        """
+        Disables or Enables Autocorrect
+        """
+        logging.debug("setting: %s", str(enabled))
+        # Sets new state
+        self.autocorrect_enabled = enabled
+
+    def onTextChanged(self):
+        """
+        grabs current word in text document and runs a spell checker
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        pos = cursor.position()
+        _, _, tmp = self._getWordFromPos(pos)
+
+        # if typed space there is no word found
+        if tmp == "":
+            _, _, last_word = self._getWordFromPos(pos - 1)
+            self._spellCheck(last_word)
+
+    def _spellCheck(self, word: str):
+        """
+        Spell check functionality also calls autocorrect
+        :param word: word to spell check
+        """
+        if self.spellcheck_enabled or self.autocorrect_enabled:
+            if word:
+                correct = self.spell_checker[word]
+                if not correct and not self._autoCorrect(word):
+                    self.misspelled_words.add(word)
+                    logging.debug("Added misspelled word to highlighter set: %s", word)
+        else:
+            logging.debug("Spellcheck is disabled - clearing misspelled word dictionary")
+            logging.debug(self.misspelled_words)
+            self.misspelled_words.clear()
+
+    def _autoCorrect(self, word: str) -> bool:
+        """
+        Autocorrect functionality
+        :param word: word to autocorrect
+        """
+        if self.autocorrect_enabled and word:
+            # Find the most likely corrected word
+            corrected = self.spell_checker.correction(word)
+            # Select the incorrect word
+            self.find(word, QTextDocument.FindBackward)
+            cursor = self.textCursor()
+            # If selected, replace it
+            if cursor.hasSelection():
+                # Replace the word with the correct one and re-add the space
+                self.blockSignals(True)
+                cursor.insertText(corrected + " ")
+                self.blockSignals(False)
+                logging.debug("Autocorrected misspelled word: %s to %s", word, corrected)
+            else:
+                logging.error("Failed to autocorrect word")
+            return True
+        else:
+            return False
+
+    def spellCheckAll(self):
+        """
+        Re-checks the entire document and adds all misspelled words
+        """
+        logging.debug("Re-checking entire document to re-construct misspelled words dictionary")
+        all_words = self.toPlainText().split()
+        self.misspelled_words = self.spell_checker.unknown(all_words)
+        logging.debug(self.misspelled_words)
         # Re-highlight entire document after change
         self.highlighter.rehighlight()

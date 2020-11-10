@@ -22,6 +22,7 @@ class DocProps:
         self.def_placeholder_text = "Start typing here..."
 
         self.def_enable_spellcheck = True
+        self.def_enable_autocorrect = True
 
         # Font sizes available in the TopBar
         self.list_font_sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
