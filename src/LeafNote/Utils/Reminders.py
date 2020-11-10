@@ -145,6 +145,7 @@ class Reminders:
         sort_key_string = date_txt + "-" + self.convert24(time_str)
         sort_key_string = sort_key_string.replace(" ", "").replace("-", "").replace(":", "")
 
+
         reminder = {
             "key": milliseconds,
             "sort": sort_key_string,
@@ -159,6 +160,7 @@ class Reminders:
         # Save the updated dictionary to persistent settings and update menu
         self.settings.setValue("reminders_dict", self.rem_list)
         self.app.right_menu.updateReminders()
+        return True
 
     def deleteReminder(self, key):
         """
