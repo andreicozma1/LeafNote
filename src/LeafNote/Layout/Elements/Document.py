@@ -32,6 +32,7 @@ class Document(QTextEdit):
         self.doc_props: DocProps = doc_props
 
         self.highlighter = SyntaxHighlighter(self)
+        self.spellcheck_enabled = self.doc_props.def_enable_spellcheck
 
         # If the dictionaries have been downloaded previously, check persistent settings
         self.summarizer = None
@@ -50,6 +51,7 @@ class Document(QTextEdit):
         if the double clicked word is a link open it
         :return: returns nothing
         """
+        logging.debug("User double-clicked in document")
         # get the cursor where the user double clicked
         cursor = self.cursorForPosition(e.pos())
         pos = cursor.position()
@@ -210,7 +212,7 @@ class Document(QTextEdit):
         Clears formatting on all text
         :return: returns nothing
         """
-        logging.debug("")
+        logging.debug("Clearing all formatting")
         cursor = self.textCursor()
         cursor.select(QtGui.QTextCursor.Document)
         cursor.setCharFormat(QTextCharFormat())
@@ -222,6 +224,7 @@ class Document(QTextEdit):
         Clears formatting on selected text
         :return: returns nothing
         """
+        logging.debug("Clearing selection formatting")
         cursor = self.textCursor()
         if cursor.hasSelection() is False:
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
@@ -258,6 +261,7 @@ class Document(QTextEdit):
         resets title styles to default style
         :return: returns nothing
         """
+        logging.debug("Resetting all title styles")
         self.doc_props.dict_title_styles["Normal Text"] = self.doc_props.default
         self.doc_props.dict_title_styles["Title"] = self.doc_props.title
         self.doc_props.dict_title_styles["Subtitle"] = self.doc_props.subtitle
@@ -279,6 +283,7 @@ class Document(QTextEdit):
         """
         Sets formatting enabled or disabled
         """
+        logging.debug("Enable formatting: %s", str(enable))
         self.setAcceptRichText(enable)
         self.setAutoFormatting(self.AutoAll if enable else self.AutoNone)
 
@@ -286,5 +291,16 @@ class Document(QTextEdit):
         """
         Pastes from clipboard as plain text
         """
+        logging.debug("Pasting as Plain Text")
         clipboard = self.app.ctx.clipboard()
         self.insertPlainText(clipboard.text())
+
+    def toggle_spellcheck(self, enabled: bool):
+        """
+        Disables or Enables spellcheck
+        """
+        logging.debug("setting: %s", str(enabled))
+        self.spellcheck_enabled = enabled
+        # If disabling, recalculate all highlights
+        if not enabled:
+            self.highlighter.rehighlight()

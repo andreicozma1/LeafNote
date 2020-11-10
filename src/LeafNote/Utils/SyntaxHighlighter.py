@@ -17,9 +17,10 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         super().__init__(document)
         self.document = document
         self.highlighting_rules = []
-        self.misspelled_words = {}
         self.err_format = QTextCharFormat()
+
         self.spell_checker = SpellChecker()
+        self.misspelled_words = {}
 
         self.setupRules()
 
@@ -46,17 +47,6 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         :return: returns nothing
         """
 
-        all_words = text.split()
-        # If there is at least one word and the last character typed is space
-        if len(all_words) >= 1 and text[len(text) - 1] == " ":
-            # Gets the last word from list
-            last_word = all_words[len(all_words) - 1]
-            # Check if the given word is correct
-            correct = self.spell_checker[last_word]
-            if not correct:
-                logging.debug("Misspelled word: %s", last_word)
-                self.misspelled_words[last_word] = None
-
         for rule in self.highlighting_rules:
             expression = rule[0]
             index = expression.indexIn(text)
@@ -65,21 +55,37 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, rule[1])
                 index = expression.indexIn(text, index + length)
 
-        if self.misspelled_words:
-            # Loop through each misspelled word
-            for word in list(self.misspelled_words.keys()):
-                expression = QRegExp("\\b" + word + "\\b")
-                index = expression.indexIn(text)
-                count = 0
+        if self.document.spellcheck_enabled:
+            all_words = text.split()
+            # If there is at least one word and the last character typed is space
+            if len(all_words) >= 1 and text[len(text) - 1] == " ":
+                # Gets the last word from list
+                last_word = all_words[len(all_words) - 1]
+                # Check if the given word is correct
+                correct = self.spell_checker[last_word]
+                if not correct:
+                    logging.debug("Misspelled word: %s", last_word)
+                    self.misspelled_words[last_word] = None
 
-                # Keep looking for misspelled word in block
-                while index >= 0:
-                    length = expression.matchedLength()
-                    self.setFormat(index, length, self.err_format)
-                    index = expression.indexIn(text, index + length)
-                    count += 1
+            if self.misspelled_words:
+                # Loop through each misspelled word
+                for word in list(self.misspelled_words.keys()):
+                    expression = QRegExp("\\b" + word + "\\b")
+                    index = expression.indexIn(text)
+                    count = 0
 
-                # Misspelled word can no longer be found in text, remove
-                if count == 0:
-                    self.misspelled_words.pop(word)
+                    # Keep looking for misspelled word in block
+                    while index >= 0:
+                        length = expression.matchedLength()
+                        self.setFormat(index, length, self.err_format)
+                        index = expression.indexIn(text, index + length)
+                        count += 1
+
+                    # Misspelled word can no longer be found in text, remove
+                    if count == 0:
+                        self.misspelled_words.pop(word)
+        elif self.misspelled_words:
+            logging.debug("Spellcheck is disabled - clearing mispelled word dictionary")
+            self.misspelled_words.clear()
+
         self.setCurrentBlockState(0)
