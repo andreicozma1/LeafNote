@@ -25,6 +25,14 @@ class TestBottomBar(unittest.TestCase):
         self.doc_props = app.doc_props
         self.layout_props = app.layout_props
 
+    def testBarHeight(self):
+        """
+        Test default height
+        """
+        exp_height = self.layout_props.getDefaultBarHeight()
+        act_height = self.bottom_bar.height()
+        self.assertEqual(exp_height, act_height)
+
     def testWordCount(self):
         """
         Test the word count label
