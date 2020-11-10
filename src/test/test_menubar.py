@@ -124,3 +124,5 @@ class TestMenuBar(unittest.TestCase):
         self.assertEqual(element.title(), "&Tools")
         self.assertEqual(element.isEnabled(), True)
         self.assertEqual(element.isVisible(), False)
+
+    # ========= END TOOLS TAB SECTION =========
