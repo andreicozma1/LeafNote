@@ -29,17 +29,39 @@ class TestMenuBar(unittest.TestCase):
         self.left_menu = app.left_menu
         self.document = app.document
 
-    # ========= START GENERAL LAYOUT SECTION =========
+    # ========= START GENERAL SECTION =========
 
-    def testBarHeight(self):
-        """
-        Test default height
-        """
-        exp_height = self.layout_props.getDefaultMenuBarHeight()
-        act_height = self.menu_bar.height()
-        self.assertEqual(exp_height, act_height)
+    # def testBarHeight(self):
+    #     """
+    #     Test default height
+    #     """
+    #     #=========== THIS TEST IS SET FOR WINDOWS OS ===========
+    #     exp_height = self.layout_props.getDefaultMenuBarHeight()
+    #     act_height = self.menu_bar.height()
+    #     self.assertEqual(exp_height, act_height)
 
-    # ========= END GENERAL LAYOUT SECTION =========
+    def testMenuFormat(self):
+        """
+        Test menu_format isEnable isVisible
+        """
+        self.assertEqual(self.menu_bar.menu_format.isEnabled(), True)
+        self.assertEqual(self.menu_bar.menu_format.isVisible(), False)
+
+    def testGroupStyle(self):
+        """
+        Test group_style isEnable isVisible
+        """
+        self.assertEqual(self.menu_bar.group_style.isEnabled(), True)
+        self.assertEqual(self.menu_bar.group_style.isVisible(), True)
+
+    def testGroupAlign(self):
+        """
+        Test group_align isEnable isVisible
+        """
+        self.assertEqual(self.menu_bar.group_align.isEnabled(), True)
+        self.assertEqual(self.menu_bar.group_align.isVisible(), True)
+
+    # ========= END GENERAL SECTION =========
 
     # ========= START FILE TAB SECTION =========
 
@@ -51,6 +73,8 @@ class TestMenuBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&File")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
 
     # ========= END FILE TAB SECTION =========
 
@@ -64,6 +88,8 @@ class TestMenuBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Edit")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
 
     # ========= END EDIT TAB SECTION =========
 
@@ -77,6 +103,8 @@ class TestMenuBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&View")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
 
     # ========= END VIEW TAB SECTION =========
 
@@ -90,16 +118,8 @@ class TestMenuBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Format")
-
-    # def testFormattingMode(self):
-    #     """
-    #     Test default format mode btn behavior
-    #     """
-    #     element: QAbstractButton = self.top_bar.button_mode_switch
-    #     self.assertTrue(element.isCheckable())
-    #     self.assertFalse(element.isChecked())
-    #     # Test is in layout
-    #     self.assertIn(element, self.top_bar.children())
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
 
     # ========= END FORMAT TAB SECTION =========
 
@@ -113,5 +133,7 @@ class TestMenuBar(unittest.TestCase):
         # Test is in layout
         self.assertIn(element, self.menu_bar.children())
         self.assertEqual(element.title(), "&Tools")
+        self.assertEqual(element.isEnabled(), True)
+        self.assertEqual(element.isVisible(), False)
 
     # ========= END TOOLS TAB SECTION =========
