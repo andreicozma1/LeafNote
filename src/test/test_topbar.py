@@ -3,12 +3,9 @@ test Top Bar default behavior
 """
 import unittest
 
-from PyQt5.QtWidgets import QApplication, QComboBox, QFontComboBox, QAbstractButton
+from PyQt5.QtWidgets import QComboBox, QFontComboBox, QAbstractButton
 
-from LeafNote import App
-
-ctx = QApplication([])
-app = App(ctx)
+from test import app
 
 
 class TestTopBar(unittest.TestCase):

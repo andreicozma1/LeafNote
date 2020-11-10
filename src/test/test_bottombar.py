@@ -3,12 +3,7 @@ test Bottom Bar default behavior
 """
 import unittest
 
-from PyQt5.QtWidgets import QApplication
-
-from LeafNote import App
-
-ctx = QApplication([])
-app = App(ctx)
+from test import app
 
 
 class TestBottomBar(unittest.TestCase):
