@@ -390,7 +390,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
 
     # uncompress the files
     logging.info("Started unzipping")
-    with zipfile.ZipFile(os.path.abspath(os.path.join(path, zip_file))) as zip_ref:
+    with zipfile.ZipFile(os.path.abspath(os.path.join(path, zip_file)), mode='r', allowZip64=True) as zip_ref:
         zip_ref.extractall(path)
     logging.info("Finished unzipping")
 
