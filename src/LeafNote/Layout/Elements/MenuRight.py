@@ -133,12 +133,18 @@ class MenuRight(QScrollArea):
             i_s = "<i>"
             i_e = "</i>"
             br = "<br>"
+
+            size = info.size()
+            units = ['Bytes', 'KB', 'MB', 'GB']
+            unit = 0
+            while len(str(round(size, 0))) > 3:
+                size /= 1000
+                unit += 1
+
             value += bullet + " Name: " + i_s + info.fileName() + i_e + br
             value += bullet + " Path: " + i_s + info.path() + i_e + br
-            value += bullet + " Size: " + i_s + \
-                     ((str(round(info.size() / 1000000.0, 2))) + "MB") + i_e + br
-            value += bullet + " Owner: " + i_s + \
-                     (str(info.owner())) + i_e + br
+            value += bullet + " Size: " + i_s + str(size) + " " + units[unit] + i_e + br
+            value += bullet + " Owner: " + i_s + (str(info.owner())) + i_e + br
             value += bullet + " Viewed: " + i_s + \
                      (info.lastRead().toString(self.format_time)) + i_e + br
             value += bullet + " Modified: " + i_s + \
