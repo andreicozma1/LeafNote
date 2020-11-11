@@ -2,6 +2,7 @@
 test Top Bar default behavior
 """
 import test
+
 import unittest
 
 from PyQt5.QtWidgets import QComboBox, QFontComboBox, QAbstractButton

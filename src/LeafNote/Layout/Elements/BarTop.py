@@ -303,7 +303,7 @@ class BarTop(QWidget):
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
-        # noinspection PyCompatibility
+
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -315,7 +315,7 @@ class BarTop(QWidget):
         :return: returns nothing
         """
         # Block signals
-        # noinspection PyCompatibility
+
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):
@@ -367,7 +367,7 @@ class BarTop(QWidget):
                 align_index = align_list.index(align)
                 self.combo_text_align.setCurrentIndex(align_index)
         # Unblock signals
-        # noinspection PyCompatibility
+
         a: QWidget
         for a in self.children():
             if not a.property("persistent"):

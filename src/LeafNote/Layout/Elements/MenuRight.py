@@ -124,6 +124,7 @@ class MenuRight(QScrollArea):
         :return: nothing
         """
         info = QFileInfo(path)
+
         bullet = html.unescape("&#8226;")
 
         value: str = bullet + " File not saved!"

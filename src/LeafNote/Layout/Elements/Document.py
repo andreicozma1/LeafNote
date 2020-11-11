@@ -47,8 +47,6 @@ class Document(QTextEdit):
             path = app.settings.value("dictionaryPath")
             Summarizer.initializeSummarizer(path, app, self)
 
-        self.textColor = "black"
-
         self.setAutoFillBackground(True)
         self.setBackgroundColor(self.doc_props.def_background_color)
         self.onTextColorChanged(list(self.doc_props.dict_colors.keys())
@@ -155,13 +153,13 @@ class Document(QTextEdit):
         logging.debug(point_size_str)
         self.setFontPointSize(int(point_size_str))
 
-    def onTextAlignmentChanged(self, align_str):
+    def onTextAlignmentChanged(self, align_index: int):
         """
         Sets the current text alignment to  the ComboBox
         :return: Returns nothing
         """
-        logging.debug(list(self.doc_props.dict_text_aligns.keys())[align_str])
-        self.setAlignment(list(self.doc_props.dict_text_aligns.values())[align_str])
+        logging.debug(list(self.doc_props.dict_text_aligns.keys())[align_index])
+        self.setAlignment(list(self.doc_props.dict_text_aligns.values())[align_index])
         self.currentCharFormatChanged.emit(self.currentCharFormat())
 
     def openColorDialog(self):
@@ -182,7 +180,7 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         logging.debug(color_index)
-        # noinspection PyCompatibility
+
         color_list: list = list(self.doc_props.dict_colors.values())
         self.setTextColor(QColor(color_list[color_index]))
 
@@ -200,7 +198,6 @@ class Document(QTextEdit):
         palette.setColor(QPalette.Inactive, QPalette.Base, QColor(color_str))
 
         self.setPalette(palette)
-        # self.setBackgroundVisible(False)
 
     def fontBold(self) -> bool:
         """

@@ -20,7 +20,6 @@ class Layout(QWidget):
         :param layout_props: reference to the layout properties
         :return: returns nothing
         """
-        # noinspection PyCompatibility
         super().__init__()
         logging.info("Creating Main Application Layout")
 
