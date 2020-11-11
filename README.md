@@ -8,7 +8,7 @@ cd 0x432d2d
 ```
 
 - Ensure your current directory is the one that contains the *requirements.txt* file
-- Recommended: Use the *setup.sh* script (Linux and macOS only)!   
+- Recommended: Use the *setup.sh* script (Linux and macOS) or *setup.bat* (Windows)!   
 2. Create a Virtual Environment
 ```
 python3 -m virtualenv .venv
@@ -27,7 +27,7 @@ pip3 install -r requirements.txt
 
 ## 2. Run LeafNote
 - Requirements: Run all Setup steps
-- Recommended: Use the *run.sh* script (Linux and macOS only)!   
+- Recommended: Use the *run.sh* script (Linux and macOS) or *run.bat* (Windows)!   
 ```
 python3 src/main.py (Linux/macOS)
 python3 src\main.py (Windows)
@@ -35,7 +35,7 @@ python3 src\main.py (Windows)
 
 ## 3. Run Tests
 - Requirements: Run all Setup steps
-- Recommended: Use the *test.sh* script (Linux and macOS only)!   
+- Recommended: Use the *test.sh* script (Linux and macOS)  or *test.bat* (Windows)!
 ```
 cd src
 python3 -m unittest
