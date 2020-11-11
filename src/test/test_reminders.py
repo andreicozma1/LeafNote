@@ -37,21 +37,9 @@ class TestReminders(unittest.TestCase):
         time_r = "13:00"
 
         # Adds the reminder into the list
-        self.assertEqual(self.reminders.addReminder(date, time_r, title, description), True)
-
-        # Creates an estemate key
-        key_est = int(round(time.time() * 1000))
-
-        # Grabs all the reminders stored
-        dictionary = self.reminders.rem_list
-        reminders_list = list(dictionary.values())
-        reminders_list.sort(key=lambda t: t['sort'])
-
-        # Deletes the only key created in the last 30 miliseconds
-        for rem in reminders_list:
-            key = rem['key']
-            if key_est - 30 <= key <= key_est + 30:
-                self.reminders.deleteReminder(key, True)
+        key = self.reminders.addReminder(date, time_r, title, description)
+        self.assertNotEqual(key, None)
+        self.reminders.deleteReminder(key, True)
 
     def testDeleteReminder(self):
         """
@@ -63,26 +51,7 @@ class TestReminders(unittest.TestCase):
         title = "Test Reminders"
         description = "Testing deletion"
         time_r = "13:00"
-        key = 1
 
         # Adds the reminder into the list
-        self.reminders.addReminder(date, time_r, title, description)
-
-        # Creates an estemate key
-        key_est = int(round(time.time() * 1000))
-
-        # Grabs all the reminders stored
-        dictionary = self.reminders.rem_list
-        reminders_list = list(dictionary.values())
-        reminders_list.sort(key=lambda t: t['sort'])
-
-        # Deletes the only key created in the last 30 miliseconds
-        for rem in reminders_list:
-            key = rem['key']
-            if key_est - 30 <= key <= key_est + 30:
-                self.assertEqual(self.reminders.deleteReminder(key, True), True)
-                key = 1
-
-        # if key is not 1 then the test has failed to delete the reminder
-        if key != 1:
-            self.assertEqual(key, 1)
+        key = self.reminders.addReminder(date, time_r, title, description)
+        self.assertEqual(self.reminders.deleteReminder(key, True), key)

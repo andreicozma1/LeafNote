@@ -165,39 +165,41 @@ class Reminders:
         sort_key_string = sort_key_string.replace(" ", "").replace("-", "").replace(":", "")
 
         if title_str == "":
-            return False
+            return None
 
-        reminder = {
-            "key": milliseconds,
-            "sort": sort_key_string,
-            "title": title_str,
-            "text": desc_str,
-            "date": date_txt,
-            "time": time_str
-        }
-        logging.debug(reminder)
-        # Add the reminder to the ReminderS dictionary
-        self.rem_list[milliseconds] = reminder
-        # Save the updated dictionary to persistent settings and update menu
-        self.settings.setValue("reminders_dict", self.rem_list)
-        self.app.right_menu.updateReminders()
-        return True
+        else:
+            reminder = {
+                "key": milliseconds,
+                "sort": sort_key_string,
+                "title": title_str,
+                "text": desc_str,
+                "date": date_txt,
+                "time": time_str
+            }
+            logging.debug(reminder)
+            # Add the reminder to the ReminderS dictionary
+            self.rem_list[milliseconds] = reminder
+            # Save the updated dictionary to persistent settings and update menu
+            self.settings.setValue("reminders_dict", self.rem_list)
+            self.app.right_menu.updateReminders()
+            return milliseconds
+
 
     def deleteReminder(self, key, boolean):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
-
         # This if statement is for running unit tests without popping up a dialog
-        if boolean == True:
+        if boolean:
             if self.rem_list.pop(key, None) is not None:
                 logging.info("Removing reminder key %s", key)
                 self.settings.setValue("reminders_dict", self.rem_list)
                 self.app.right_menu.updateReminders()
-                return True
+                return key
             else:
                 logging.error("Could not remove reminder key %s", key)
+                return None
         else:
             # get the title of the reminder
             if key not in self.rem_list:
