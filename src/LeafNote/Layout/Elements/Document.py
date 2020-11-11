@@ -390,8 +390,8 @@ class Document(QTextEdit):
             else:
                 logging.error("Failed to autocorrect word")
             return True
-        else:
-            return False
+
+        return False
 
     def spellCheckAll(self):
         """
