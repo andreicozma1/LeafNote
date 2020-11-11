@@ -28,7 +28,6 @@ class TestReminders(unittest.TestCase):
         """
         Tests the addReminder function
         """
-
         # Creates fake reminder
         date: QDate = QDate.currentDate()
         title = "Test Reminders"
@@ -38,13 +37,15 @@ class TestReminders(unittest.TestCase):
         # Adds the reminder into the list
         key = self.reminders.addReminder(date, time_r, title, description)
         self.assertNotEqual(key, None)
-        self.reminders.deleteReminder(key, True)
+        self.assertIn(key, self.reminders.rem_list)
+
+        # Clean-up
+        self.reminders.deleteReminder(key)
 
     def testDeleteReminder(self):
         """
         Tests the addReminder function
         """
-
         # Creates fake reminder
         date: QDate = QDate.currentDate()
         title = "Test Reminders"
@@ -53,4 +54,5 @@ class TestReminders(unittest.TestCase):
 
         # Adds the reminder into the list
         key = self.reminders.addReminder(date, time_r, title, description)
-        self.assertEqual(self.reminders.deleteReminder(key, True), key)
+        self.assertTrue(self.reminders.deleteReminder(key))
+        self.assertNotIn(key, self.reminders.rem_list)
