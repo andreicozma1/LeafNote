@@ -96,22 +96,37 @@ class BarTop(QWidget):
         self.combo_title_style.setFocusPolicy(Qt.NoFocus)
         self.combo_title_style.setMaxVisibleItems(view.model().rowCount())
         self.combo_title_style.setItemData(0, "test", QtCore.Qt.ToolTipRole)
-        numKey = 49
+        numKey = Qt.Key_1
         index = 0
         title_list = list(self.doc_props.dict_title_styles.keys())
         for key in range(0, 13, 2):
             shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + numKey), self)
-            shortcut.activated.connect(partial(self.document.onTitleStyleChanged, title_list[key]))
-            self.combo_title_style.setItemData(index, "Ctrl+Alt+" + str(numKey - 48),
+            shortcut.activated.connect(partial(self.titleStyleHelper, title_list[key]))
+            self.combo_title_style.setItemData(index, "Ctrl+Alt+" + str(numKey - Qt.Key_1 + 1),
                                                QtCore.Qt.ToolTipRole)
             index += 3
             numKey += 1
         shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.ALT + Qt.Key_0), self)
         shortcut.activated.connect(
-            partial(self.document.onTitleStyleChanged, self.document.doc_props.text_reset_title))
+            partial(self.titleStyleHelper, self.document.doc_props.text_reset_title))
         self.combo_title_style.setItemData(index, "Ctrl+Alt+0", QtCore.Qt.ToolTipRole)
-        self.combo_title_style.textActivated.connect(self.document.onTitleStyleChanged)
+        self.combo_title_style.textActivated.connect(self.titleStyleHelper)
         return self.combo_title_style
+
+    def titleStyleHelper(self, state):
+        """
+        Helper function for title style
+        calls function for selected title style type
+        :return: returns nothing
+        """
+        if self.doc_props.text_update_title not in state and \
+                self.doc_props.text_reset_title not in state:
+            self.document.changeTitleStyle(state)
+        elif self.doc_props.text_update_title in state:
+            self.document.updateTitleStyle(state)
+        else:
+            self.document.resetTitleStyle()
+            self.combo_title_style.setCurrentIndex(0)
 
     def makeComboFontStyleBox(self) -> QFontComboBox:
         """
