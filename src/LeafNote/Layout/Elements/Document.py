@@ -358,6 +358,7 @@ class Document(QTextEdit):
         :param word: word to spell check
         """
         if (self.spellcheck_enabled or self.autocorrect_enabled) and word:
+            word = word.replace('.', '')
             correct = self.spell_checker[word]
             if not correct:
                 self.misspelled_words.add(word)
@@ -387,8 +388,8 @@ class Document(QTextEdit):
             else:
                 logging.error("Failed to autocorrect word")
             return True
-        else:
-            return False
+
+        return False
 
     def spellCheckAll(self):
         """
