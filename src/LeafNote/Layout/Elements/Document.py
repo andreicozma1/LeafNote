@@ -180,7 +180,7 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         logging.debug(color_index)
-        # noinspection PyCompatibility
+
         color_list: list = list(self.doc_props.dict_colors.values())
         self.setTextColor(QColor(color_list[color_index]))
 

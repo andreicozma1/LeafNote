@@ -183,11 +183,11 @@ class App(QMainWindow):
         else:
             # Don't allow converted file to be converted back to Plain Text
             convert_dialog = Utils.DialogBuilder(self, "Disable Formatting",
-                                            "Would you like to convert this file?",
-                                            "This file will be converted to plain "
-                                            "text formatting\n"
-                                            "Selecting 'Yes' will PERMANENTLY remove "
-                                            "any existing formatting.")
+                                                 "Would you like to convert this file?",
+                                                 "This file will be converted to plain "
+                                                 "text formatting\n"
+                                                 "Selecting 'Yes' will PERMANENTLY remove "
+                                                 "any existing formatting.")
             button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
             convert_dialog.addButtonBox(button_box)
             if convert_dialog.exec():

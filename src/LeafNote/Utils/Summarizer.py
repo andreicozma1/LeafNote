@@ -1,7 +1,7 @@
 """
 this module holds a class to summarize any given class
 """
-# noinspection PyCompatibility
+
 import _thread
 import codecs
 import glob

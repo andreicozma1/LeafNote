@@ -15,7 +15,6 @@ class Reminder(QWidget):
     """
 
     def __init__(self, key, date_str, time_str, title_str, desc_str, on_delete):
-        # noinspection PyCompatibility
         super().__init__()
         vertical_layout = QVBoxLayout(self)
         vertical_layout.setContentsMargins(0, 0, 0, 0)

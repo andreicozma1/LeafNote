@@ -475,7 +475,7 @@ class MenuBar(QMenuBar):
         """
         # Toggle the state of all buttons in the menu
         logging.info(str(state))
-        # noinspection PyCompatibility
+
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -487,7 +487,7 @@ class MenuBar(QMenuBar):
         :return: returns nothing
         """
         # Block signals
-        # noinspection PyCompatibility
+
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):
@@ -506,7 +506,7 @@ class MenuBar(QMenuBar):
                 if action.text() == list(self.doc_props.dict_text_aligns.keys())[index]:
                     action.setChecked(True)
         # Unblock signals
-        # noinspection PyCompatibility
+
         a: QAction
         for a in self.menu_format.actions():
             if not a.property("persistent"):

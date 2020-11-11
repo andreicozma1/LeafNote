@@ -1,13 +1,13 @@
 """
 test Document default behavior
 """
-
 import test
 
 import unittest
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QColor
+
 from LeafNote.Layout.Elements import BarTop, Document
 from LeafNote.Props import DocProps
 
@@ -40,11 +40,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually bold
         act_is_bold = self.document.fontBold()
-        self.assertEqual(True, act_is_bold)
+        self.assertTrue(act_is_bold)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_bold.isChecked()
-        self.assertEqual(True, act_is_checked)
+        self.assertTrue(act_is_checked)
 
         # set the document text to NOT bolded
         cursor = self.document.textCursor()
@@ -53,11 +53,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually NOT bolded
         act_is_bold = self.document.fontBold()
-        self.assertEqual(False, act_is_bold)
+        self.assertFalse(act_is_bold)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_bold.isChecked()
-        self.assertEqual(False, act_is_checked)
+        self.assertFalse(act_is_checked)
 
     def testFontItal(self):
         """
@@ -72,11 +72,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually italicized
         act_is_ital = self.document.fontItalic()
-        self.assertEqual(True, act_is_ital)
+        self.assertTrue(act_is_ital)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_ital.isChecked()
-        self.assertEqual(True, act_is_checked)
+        self.assertTrue(act_is_checked)
 
         # set the document text to NOT italicized
         cursor = self.document.textCursor()
@@ -85,11 +85,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually NOT italicized
         act_is_ital = self.document.fontItalic()
-        self.assertEqual(False, act_is_ital)
+        self.assertFalse(act_is_ital)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_ital.isChecked()
-        self.assertEqual(False, act_is_checked)
+        self.assertFalse(act_is_checked)
 
     def testFontStrike(self):
         """
@@ -104,11 +104,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually strikethrough
         act_is_strike = self.document.fontStrike()
-        self.assertEqual(True, act_is_strike)
+        self.assertTrue(act_is_strike)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_strike.isChecked()
-        self.assertEqual(True, act_is_checked)
+        self.assertTrue(act_is_checked)
 
         # set the document text to NOT strikethrough
         cursor = self.document.textCursor()
@@ -117,11 +117,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually NOT strikethrough
         act_is_strike = self.document.fontStrike()
-        self.assertEqual(False, act_is_strike)
+        self.assertFalse(act_is_strike)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_strike.isChecked()
-        self.assertEqual(False, act_is_checked)
+        self.assertFalse(act_is_checked)
 
     def testFontUnder(self):
         """
@@ -136,11 +136,11 @@ class TestDocument(unittest.TestCase):
 
         # check if the text is actually italicized
         act_is_under = self.document.fontUnderline()
-        self.assertEqual(True, act_is_under)
+        self.assertTrue(act_is_under)
 
         # check if the corresponding button is checked
         act_is_checked = self.top_bar.button_under.isChecked()
-        self.assertEqual(True, act_is_checked)
+        self.assertTrue(act_is_checked)
 
         # set the document text to NOT italicized
         cursor = self.document.textCursor()
@@ -208,7 +208,6 @@ class TestDocument(unittest.TestCase):
         self.document.setPlainText(string)
 
         for exp_font_size in range(5, 25, 5):
-
             # set the documents font size
             cursor = self.document.textCursor()
             cursor.select(cursor.Document)

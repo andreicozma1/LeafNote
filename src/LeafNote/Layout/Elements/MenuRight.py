@@ -131,7 +131,7 @@ class MenuRight(QScrollArea):
         for i in range(self.col_metadata_main.layout_content.count()):
             label = self.col_metadata_main.layout_content.itemAt(i).widget()
             prop = label.property("prop")
-            # noinspection PyCompatibility
+
             value: str
             if path is None:
                 value = "?"
