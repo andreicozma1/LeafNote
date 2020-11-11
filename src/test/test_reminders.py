@@ -2,7 +2,6 @@
 test Reminders behaviors.
 """
 import unittest
-import time
 import test
 from PyQt5.QtCore import QDate
 

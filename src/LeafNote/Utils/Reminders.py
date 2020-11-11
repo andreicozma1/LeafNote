@@ -184,7 +184,6 @@ class Reminders:
             self.app.right_menu.updateReminders()
             return milliseconds
 
-
     def deleteReminder(self, key, boolean):
         """
         Deletes a reminder from the dictionary based on key.
