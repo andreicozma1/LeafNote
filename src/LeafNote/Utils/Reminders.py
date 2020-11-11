@@ -164,51 +164,39 @@ class Reminders:
         sort_key_string = date_txt + "-" + self.convert24(time_str)
         sort_key_string = sort_key_string.replace(" ", "").replace("-", "").replace(":", "")
 
-        reminder = {
-            "key": milliseconds,
-            "sort": sort_key_string,
-            "title": title_str,
-            "text": desc_str,
-            "date": date_txt,
-            "time": time_str
-        }
-        logging.debug(reminder)
-        # Add the reminder to the ReminderS dictionary
-        self.rem_list[milliseconds] = reminder
-        # Save the updated dictionary to persistent settings and update menu
-        self.settings.setValue("reminders_dict", self.rem_list)
-        self.app.right_menu.updateReminders()
+        if title_str == "":
+            return None
+
+        else:
+            reminder = {
+                "key": milliseconds,
+                "sort": sort_key_string,
+                "title": title_str,
+                "text": desc_str,
+                "date": date_txt,
+                "time": time_str
+            }
+            logging.debug(reminder)
+            # Add the reminder to the ReminderS dictionary
+            self.rem_list[milliseconds] = reminder
+            # Save the updated dictionary to persistent settings and update menu
+            self.settings.setValue("reminders_dict", self.rem_list)
+            self.app.right_menu.updateReminders()
+            return milliseconds
 
     def deleteReminder(self, key):
         """
         Deletes a reminder from the dictionary based on key.
         :param key: key to delete
         """
-        # get the title of the reminder
-        if key not in self.rem_list:
-            logging.error("%s not in reminders list", key)
-            return
-        title = self.rem_list[key]['title']
-
-        dialog = DialogBuilder(self.app, "Delete Reminder")
-        dialog.setTitleText("Remove '" + title + "'?")
-        dialog.setMsgText("This will permanently remove it from your reminders list.")
-        dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
-        dialog.addButtonBox(dialog_but)
-        if dialog.exec():
-            if self.rem_list.pop(key, None) is not None:
-                logging.info("Removing reminder key %s", key)
-                self.settings.setValue("reminders_dict", self.rem_list)
-                self.app.right_menu.updateReminders()
-            else:
-                logging.error("Could not remove reminder key %s", key)
-                dialog_rem_error = DialogBuilder(self.app, "Error")
-                dialog_rem_error.setTitleText("Failed to remove reminder")
-                dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
-                dialog_rem_error.addButtonBox(dialog_buttons)
-                dialog_rem_error.show()
+        if self.rem_list.pop(key, None) is not None:
+            logging.info("Removing reminder key %s", key)
+            self.settings.setValue("reminders_dict", self.rem_list)
+            self.app.right_menu.updateReminders()
+            return True
         else:
-            logging.error("User chose to not delete the reminder")
+            logging.error("Could not remove reminder key %s", key)
+            return False
 
     # Converts time to 24 hours time.
     @staticmethod

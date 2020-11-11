@@ -9,9 +9,9 @@ import html
 import logging
 
 from PyQt5.QtCore import QFileInfo, Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QDialogButtonBox
 
-from LeafNote.Utils import Summarizer
+from LeafNote.Utils import Summarizer, DialogBuilder
 from LeafNote.Widgets import CollapsibleWidget, Reminder
 
 
@@ -179,9 +179,41 @@ class MenuRight(QScrollArea):
         reminders_list = list(dictionary.values())
         reminders_list.sort(key=lambda t: t['sort'])
 
+        def fail():
+            """
+            Failure pop-up for reminder
+            """
+            dialog_rem_error = DialogBuilder(self.app, "Error")
+            dialog_rem_error.setTitleText("Failed to remove reminder")
+            dialog_buttons = QDialogButtonBox(QDialogButtonBox.Ok)
+            dialog_rem_error.addButtonBox(dialog_buttons)
+            dialog_rem_error.show()
+
+        def deleteReminder(key):
+            """
+            Delete pop-up for reminder
+            """
+            if key not in self.app.reminders.rem_list:
+                logging.error("%s not in reminders list", key)
+                fail()
+                return
+            title = self.app.reminders.rem_list[key]['title']
+
+            dialog = DialogBuilder(self.app, "Delete Reminder")
+            dialog.setTitleText("Remove '" + title + "'?")
+            dialog.setMsgText("This will permanently remove it from your reminders list.")
+            dialog_but = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Yes)
+            dialog.addButtonBox(dialog_but)
+            if dialog.exec():
+                if not self.app.reminders.deleteReminder(key):
+                    logging.error("Could not remove reminder key %s", key)
+                    fail()
+            else:
+                logging.info("User chose to not delete the reminder")
+
         for rem in reminders_list:
             wid = Reminder(rem['key'], rem['date'], rem['time'],
-                           rem['title'], rem['text'], self.app.reminders.deleteReminder)
+                           rem['title'], rem['text'], deleteReminder)
 
             self.col_reminders_main.addElement(wid)
 
