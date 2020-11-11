@@ -6,6 +6,7 @@ import logging
 import os
 
 from PyQt5.QtCore import QSettings
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QDialogButtonBox, QApplication
 
 from LeafNote import Layout
@@ -129,6 +130,7 @@ class App(QMainWindow):
         """
         logging.info("Setting up Main Window Geometry")
         self.setWindowTitle(self.app_props.title)
+        self.setWindowIcon(QIcon(self.app_props.app_icon))
         if self.settings.contains("windowSize"):
             self.resize(self.settings.value("windowSize"))
         else:

@@ -29,5 +29,6 @@ class AppProps:
         self.resizable = True
 
         # Defines the default path the program opens to
-        self.default_path = QDir.currentPath()  # Default to current directory
         self.path_res = os.path.join(script_path, "Resources")
+
+        self.app_icon = os.path.join(self.path_res, "app_icons", "512.png")

@@ -8,7 +8,7 @@ import webbrowser
 
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument, QTextBlockFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
 
@@ -236,10 +236,10 @@ class Document(QTextEdit):
         logging.debug("Clearing selection formatting")
         cursor = self.textCursor()
         if cursor.hasSelection() is False:
-            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-            cursor.setCharFormat(QTextCharFormat())
+            logging.warning("Nothing selected")
         else:
-            self.setCurrentCharFormat(QTextCharFormat())
+            logging.debug("With selection")
+            cursor.setCharFormat(QTextCharFormat())
 
     def changeTitleStyle(self, state):
         """
