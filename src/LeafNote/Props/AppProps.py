@@ -6,8 +6,6 @@ application.
 import logging
 import os
 
-from PyQt5.QtCore import QDir
-
 
 class AppProps:
     """
