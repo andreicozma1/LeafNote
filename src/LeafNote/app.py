@@ -239,6 +239,8 @@ class App(QMainWindow):
         path_workspace = self.left_menu.model.rootPath()
         self.settings.setValue("workspacePath", path_workspace)
 
+        self.file_manager.saveDocument(self.document)
+
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
         if self.file_manager.encryptor is not None and not os.path.exists(path_key):
             dialog_encryptor = Utils.DialogBuilder(self, "Crypto - WARNING",
