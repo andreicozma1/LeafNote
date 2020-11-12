@@ -1,20 +1,27 @@
-from functools import partial
-
 from PyQt5.QtCore import QThread
 
 
 class ExecuteThread(QThread):
-    def __init__(self, target, args: tuple = (), callback=None):
+    def __init__(self, target, args: tuple = ()):
         super().__init__()
         self.target = target
         self.args = args
-        self.callback = callback
         self.return_value = None
 
     def run(self):
+        """
+        Called after thread start
+        """
         self.return_value = self.target(*self.args)
-        if self.callback:
-            self.finished.connect(partial(self.callback, self.return_value))
 
+    def setCallback(self, callback):
+        """
+        Sets callback for thread
+        """
+        self.finished.connect(callback)
 
-
+    def getReturn(self):
+        """
+        Gets the thread return value
+        """
+        return self.return_value
