@@ -167,22 +167,22 @@ class Reminders:
         if title_str == "":
             return None
 
-        else:
-            reminder = {
-                "key": milliseconds,
-                "sort": sort_key_string,
-                "title": title_str,
-                "text": desc_str,
-                "date": date_txt,
-                "time": time_str
-            }
-            logging.debug(reminder)
-            # Add the reminder to the ReminderS dictionary
-            self.rem_list[milliseconds] = reminder
-            # Save the updated dictionary to persistent settings and update menu
-            self.settings.setValue("reminders_dict", self.rem_list)
-            self.app.right_menu.updateReminders()
-            return milliseconds
+
+        reminder = {
+            "key": milliseconds,
+            "sort": sort_key_string,
+            "title": title_str,
+            "text": desc_str,
+            "date": date_txt,
+            "time": time_str
+        }
+        logging.debug(reminder)
+        # Add the reminder to the ReminderS dictionary
+        self.rem_list[milliseconds] = reminder
+        # Save the updated dictionary to persistent settings and update menu
+        self.settings.setValue("reminders_dict", self.rem_list)
+        self.app.right_menu.updateReminders()
+        return milliseconds
 
     def deleteReminder(self, key):
         """
@@ -194,9 +194,9 @@ class Reminders:
             self.settings.setValue("reminders_dict", self.rem_list)
             self.app.right_menu.updateReminders()
             return True
-        else:
-            logging.error("Could not remove reminder key %s", key)
-            return False
+
+        logging.error("Could not remove reminder key %s", key)
+        return False
 
     # Converts time to 24 hours time.
     @staticmethod

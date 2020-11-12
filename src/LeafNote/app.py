@@ -116,7 +116,7 @@ class App(QMainWindow):
         """
         self.menu_bar.makeFileMenu(self, self.file_manager)
         self.menu_bar.makeEditMenu(self, self.file_manager)
-        self.menu_bar.makeViewMenu(self, self.bottom_bar, self.left_menu)
+        self.menu_bar.makeViewMenu(self, self.left_menu)
         self.menu_bar.makeFormatMenu(self)
         self.menu_bar.makeToolsMenu(self, self.document)
         self.document.selectionChanged.connect(self.menu_bar.updateFormatOnSelectionChange)

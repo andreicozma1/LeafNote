@@ -211,7 +211,7 @@ class MenuBar(QMenuBar):
         return menu_edit
 
     # =====================================================================================
-    def makeViewMenu(self, app, bottom_bar, left_menu) -> QMenu:
+    def makeViewMenu(self, app, left_menu) -> QMenu:
         """
         Create View Menu
         :return: the menu created
@@ -231,13 +231,6 @@ class MenuBar(QMenuBar):
             view_action.setShortcut(shortcut)
             view_action.triggered.connect(signal)
             return view_action
-
-        menu_view.addAction(
-            makeViewAction("Zoom In", "ctrl+=", bottom_bar.onZoomInClicked))
-        menu_view.addAction(
-            makeViewAction("Zoom Out", "ctrl+-", bottom_bar.onZoomOutClicked))
-        menu_view.addAction(
-            makeViewAction("Zoom Reset", "", bottom_bar.resetZoom))
 
         # ========= START LEFT MENU OPTIONS SECTION =========
         menu_view.addSeparator()
