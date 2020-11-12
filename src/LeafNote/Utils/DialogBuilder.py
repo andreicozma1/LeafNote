@@ -47,7 +47,6 @@ class DialogBuilder(QDialog):
         this sets up the initial layout of the dialog builder
         :return: Returns nothing
         """
-        logging.info("")
 
         font = self.label_title.font()
         font.setPointSize(18)
@@ -82,7 +81,6 @@ class DialogBuilder(QDialog):
         this adds a widget to the QDialog
         :return: Returns nothing
         """
-        logging.info("")
         self.layout_vertical.addWidget(widget)
 
     def deleteWidget(self, widget: QWidget):
@@ -90,7 +88,6 @@ class DialogBuilder(QDialog):
         Deletes a widget from the layout
         :param widget: Widget to delete
         """
-        logging.info("Deleted")
         self.layout_vertical.removeWidget(widget)
 
     def addButtonBox(self, button_box: QDialogButtonBox):
@@ -98,7 +95,6 @@ class DialogBuilder(QDialog):
         this adds a button box to the QDialog
         :return: Returns nothing
         """
-        logging.info("")
         self.layout_vertical.addWidget(button_box)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
@@ -117,6 +113,9 @@ class DialogBuilder(QDialog):
 
         # closes the dialog if the progress bar is full
         def checkFinished(value):
+            """
+            Check whether progressbar is finished
+            """
             if value >= progress_bar.maximum():
                 logging.info("Progress bar filled - Closing dialog")
                 self.close()
