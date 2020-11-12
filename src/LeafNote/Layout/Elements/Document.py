@@ -8,7 +8,7 @@ import webbrowser
 
 import validators
 from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument, QTextBlockFormat
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
 
