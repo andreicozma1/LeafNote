@@ -363,10 +363,8 @@ class Document(QTextEdit):
                 listFormat2.setStyle(style)
                 cursor.insertList(listFormat2)
             else:
-                print("here")
                 cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                 if cursor.selectionStart() + 1 == self.textCursor().position():
-                    print("beginning of sentence")
                     logging.info("bullet list: tabbed")
                     cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                     text = cursor.selectedText()
@@ -419,10 +417,8 @@ class Document(QTextEdit):
                 listFormat2.setStyle(style)
                 cursor.insertList(listFormat2)
             else:
-                print("here")
                 cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                 if cursor.selectionStart() + 1 == self.textCursor().position():
-                    print("beginning of sentence")
                     logging.info("bullet list: back-tabbed")
                     cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                     text = cursor.selectedText()
