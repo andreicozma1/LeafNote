@@ -239,8 +239,29 @@ class App(QMainWindow):
         path_workspace = self.left_menu.model.rootPath()
         self.settings.setValue("workspacePath", path_workspace)
 
+        # check if the document is out of date
+        will_save = False
         if self.file_manager.current_document is not None:
-            self.file_manager.saveDocument(self.document)
+            path = self.file_manager.current_document.absoluteFilePath()
+            saved_data = self.file_manager.getFileData(path)
+            if self.file_manager.current_document.suffix() == "lef":
+                curr_data = self.document.toHtml()
+            else:
+                curr_data = self.document.toPlainText()
+
+            if saved_data != curr_data:
+                will_save = True
+        elif self.document.toPlainText() != "":
+            will_save = True
+
+        if will_save:
+            save_dialog = Utils.DialogBuilder(self, "File Not Saved",
+                                              "Would you like to save "
+                                              "your changes?")
+            buttons = QDialogButtonBox(QDialogButtonBox.No | QDialogButtonBox.Yes)
+            save_dialog.addButtonBox(buttons)
+            if save_dialog.exec():
+                self.file_manager.saveDocument(self.document)
 
         path_key = os.path.join(path_workspace, '.leafCryptoKey')
         if self.file_manager.encryptor is not None and not os.path.exists(path_key):
