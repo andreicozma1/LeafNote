@@ -291,12 +291,12 @@ class Document(QTextEdit):
                 super().keyPressEvent(event)
         # checks for tab
         elif event.key() == QtCore.Qt.Key_Tab:
-            super().keyPressEvent(event)
-            self.pressedTab()
+            if self.pressedTab():
+                super().keyPressEvent(event)
         # checks for shift tab
         elif event.key() == QtCore.Qt.Key_Backtab:
-            super().keyPressEvent(event)
-            self.pressedShiftTab()
+            if self.pressedShiftTab():
+                super().keyPressEvent(event)
         # calls normal functionality of key
         else:
             super().keyPressEvent(event)
@@ -313,26 +313,18 @@ class Document(QTextEdit):
             cursor.select(QtGui.QTextCursor.BlockUnderCursor)
             text = cursor.selectedText()
             text = text.strip()
-            # checks if the bullet on the list is blank
             if text == "":
-                logging.info("bullet list: Return on blank bullet")
-                # removes bullet
-                cursor = self.textCursor()
-                cursortemp = self.textCursor()
-                cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
-                self.setTextCursor(cursor)
-                if cursortemp == self.textCursor():
-                    listIn.removeItem(listIn.count() - 1)
-                    return False
-                else:
-                    if cursor.currentList() is None:
-                        listIn.removeItem(listIn.count() - 1)
-                        cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
-                        self.setTextCursor(cursor)
-                        return False
-                    else:
-                        cursor.movePosition(cursor.Up, cursor.MoveAnchor, 1)
-                        self.setTextCursor(cursor)
+                listIn.removeItem(listIn.count() - 1)
+                return False
+            currlist = listIn.format()
+            style = currlist.style()
+            cursor = self.textCursor()
+            cursor.insertText("\n")
+            listFormat = QTextListFormat()
+            listFormat.setStyle(style)
+            listFormat.setIndent(currlist.indent())
+            cursor.createList(listFormat)
+            return False
         return True
 
     def pressedTab(self):
@@ -361,15 +353,12 @@ class Document(QTextEdit):
                 # adds indent
                 listFormat2.setIndent(currlist.indent() + 1)
                 listFormat2.setStyle(style)
-                cursor.insertList(listFormat2)
+                listIn.setFormat(listFormat2)
+                return False
             else:
                 cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
-                if cursor.selectionStart() + 1 == self.textCursor().position():
+                if cursor.selectionStart() == self.textCursor().position():
                     logging.info("bullet list: tabbed")
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
-                    text = cursor.selectedText()
-                    text = text.strip()
-                    # print(listIn.itemNumber(text))
                     currlist = listIn.format()
                     style = currlist.style()
                     # updates style to next bullet
@@ -381,12 +370,9 @@ class Document(QTextEdit):
                     # adds indent
                     listFormat2.setIndent(currlist.indent() + 1)
                     listFormat2.setStyle(style)
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-                    cursor.insertList(listFormat2)
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
-                    cursor.insertText(text)
-                    cursor.movePosition(cursor.StartOfLine, cursor.MoveAnchor, 1)
-                    self.setTextCursor(cursor)
+                    listIn.setFormat(listFormat2)
+                    return False
+        return True
 
     def pressedShiftTab(self):
         """
@@ -397,7 +383,7 @@ class Document(QTextEdit):
         listIn = cursor.currentList()
         # checks if cursor is in a list
         if cursor.currentList() is not None:
-            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor - 2)
             text = cursor.selectedText()
             text = text.strip()
             # checks if the bullet on the list is blank
@@ -417,14 +403,12 @@ class Document(QTextEdit):
                 listFormat2 = QTextListFormat()
                 listFormat2.setIndent(indent)
                 listFormat2.setStyle(style)
-                cursor.insertList(listFormat2)
+                listIn.setFormat(listFormat2)
+                return False
             else:
-                cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                cursor.select(QtGui.QTextCursor.BlockUnderCursor)
                 if cursor.selectionStart() + 1 == self.textCursor().position():
                     logging.info("bullet list: back-tabbed")
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
-                    text = cursor.selectedText()
-                    text = text.strip()
                     currlist = listIn.format()
                     indent = currlist.indent()
                     style = currlist.style()
@@ -439,12 +423,9 @@ class Document(QTextEdit):
                     listFormat2 = QTextListFormat()
                     listFormat2.setIndent(indent)
                     listFormat2.setStyle(style)
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-                    cursor.insertList(listFormat2)
-                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
-                    cursor.insertText(text)
-                    cursor.movePosition(cursor.StartOfLine, cursor.MoveAnchor, 1)
-                    self.setTextCursor(cursor)
+                    listIn.setFormat(listFormat2)
+                    return False
+        return True
 
     def bulletList(self):
         """
