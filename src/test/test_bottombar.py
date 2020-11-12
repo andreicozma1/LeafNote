@@ -53,15 +53,3 @@ class TestBottomBar(unittest.TestCase):
         act_count = self.bottom_bar.label_cc.text()
 
         self.assertEqual(exp_count, act_count)
-
-    def testResetZoom(self):
-        """
-        Test the reset zoom button
-        """
-        act_slider_start = self.bottom_bar.slider_start
-
-        self.bottom_bar.onZoomOutClicked()
-        self.bottom_bar.resetZoom()
-        exp_slider_start = self.bottom_bar.zoom_slider.value()
-
-        self.assertEqual(exp_slider_start, act_slider_start)

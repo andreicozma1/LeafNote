@@ -8,7 +8,7 @@ import logging
 from PyQt5.Qt import Qt, QTimer
 from PyQt5.QtCore import QDateTime, QSettings, QDate
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QLabel, QSlider, QDialogButtonBox, \
+from PyQt5.QtWidgets import QWidget, QLabel, QDialogButtonBox, \
     QSizePolicy, QToolButton, QToolBar
 
 from LeafNote.Utils import DialogBuilder
@@ -39,11 +39,6 @@ class BarBottom(QToolBar):
         self.label_time = None
         self.label_wc = None
         self.label_cc = None
-        self.zoom_slider = None
-
-        # set the defaults for the zoom slider
-        self.default_font_size = self.document.font().pointSize()
-        self.slider_start = 0
 
         # set up the layout
         self.initUI()
@@ -98,43 +93,6 @@ class BarBottom(QToolBar):
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
 
-        def createZoomPushButton(title, signal, tool_tip):
-            btn = QToolButton()
-            btn.setText(title)
-            btn.setToolTip(tool_tip)
-            btn.clicked.connect(signal)
-            return btn
-
-        # Zoom reset button
-        button_zoom_reset = createZoomPushButton("100%", self.resetZoom,
-                                                 'Reset zoom to default 100%')
-        button_zoom_reset.setFont(font_default)
-        self.addWidget(button_zoom_reset)
-
-        # Zoom Out button
-        button_zoom_out = createZoomPushButton(html.unescape("&minus;"), self.onZoomOutClicked,
-                                               'Zoom out (Ctrl+-)')
-        button_zoom_out.setAutoRepeat(True)
-        self.addWidget(button_zoom_out)
-
-        # Zoom Slider
-        self.zoom_slider = QSlider(Qt.Horizontal, self)
-        self.zoom_slider.setFixedWidth(240)
-        self.zoom_slider.setMinimum(-50)
-        self.zoom_slider.setMaximum(50)
-
-        # Set the default position to the middle of the slider
-        self.zoom_slider.setValue(self.slider_start)
-
-        self.zoom_slider.valueChanged[int].connect(self.changeValue)
-        self.addWidget(self.zoom_slider)
-
-        # Zoom in button
-        button_zoom_in = createZoomPushButton(html.unescape("&plus;"), self.onZoomInClicked,
-                                              'Zoom in (Ctrl+=)')
-        button_zoom_in.setAutoRepeat(True)
-        self.addWidget(button_zoom_in)
-
     def addSpacer(self):
         """
         Creates an expanding spacer in the layout
@@ -161,58 +119,6 @@ class BarBottom(QToolBar):
         """
         char_count = len(self.document.toPlainText())
         self.label_cc.setText(str(char_count) + " Characters")
-
-    def onZoomInClicked(self):
-        """
-        Setting the value of the slider calls the changeValue
-        function to perform the appropriate calculations
-        :return: returns nothing
-        """
-        logging.info("On Zoom In")
-        self.zoom_slider.setValue(self.zoom_slider.value() + 5)
-        self.changeValue()
-
-    def onZoomOutClicked(self):
-        """
-        Setting the value of the slider calls the changeValue
-         function to perform the appropriate calculations
-        :return: returns nothing
-        """
-        logging.info("On Zoom Out")
-        self.zoom_slider.setValue(self.zoom_slider.value() - 5)
-        self.changeValue()
-
-    def changeValue(self):
-        """
-        changes the font size of the document to match the desired zoom preference
-        :return: returns nothing
-        """
-        min_rel_font_size = 2
-        max_rel_font_size = 150
-        default_rel_font_size = self.default_font_size
-
-        # reset zoom to default
-        self.document.zoomIn(self.default_font_size - self.document.font().pointSize())
-        curr_val = self.zoom_slider.value()
-        max_zoom = self.zoom_slider.maximum()
-
-        # if the zoom bar is on the negative side:
-        if curr_val < 0:
-            delta_zoom = (curr_val / max_zoom) * (default_rel_font_size - min_rel_font_size)
-
-        # if the zoom bar is on the positive side
-        else:
-            delta_zoom = (curr_val / max_zoom) * (max_rel_font_size - default_rel_font_size)
-
-        self.document.zoomIn(int(delta_zoom))
-
-    def resetZoom(self):
-        """
-        resets the zoom slider when zoom is reset
-        :return: returns nothing
-        """
-        logging.info("On Reset Zoom")
-        self.zoom_slider.setValue(self.slider_start)
 
     def updateTime(self):
         """
