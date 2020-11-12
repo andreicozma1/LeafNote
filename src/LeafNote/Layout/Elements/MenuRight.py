@@ -107,7 +107,7 @@ class MenuRight(QScrollArea):
         self.col_summary_enable.clicked.connect(onSummaryAction)
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
-        self.col_summary_main.clicked.connect(onSummaryAction)
+        self.col_summary_main.btn_toggle.pressed.connect(onSummaryAction)
 
         def onRemindersAction():
             """
