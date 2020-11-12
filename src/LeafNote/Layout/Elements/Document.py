@@ -385,6 +385,8 @@ class Document(QTextEdit):
                     cursor.insertList(listFormat2)
                     cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                     cursor.insertText(text)
+                    cursor.movePosition(cursor.StartOfLine, cursor.MoveAnchor, 1)
+                    self.setTextCursor(cursor)
 
     def pressedShiftTab(self):
         """
@@ -441,6 +443,8 @@ class Document(QTextEdit):
                     cursor.insertList(listFormat2)
                     cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
                     cursor.insertText(text)
+                    cursor.movePosition(cursor.StartOfLine, cursor.MoveAnchor, 1)
+                    self.setTextCursor(cursor)
 
     def bulletList(self):
         """
