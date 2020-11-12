@@ -7,8 +7,9 @@ import logging
 import webbrowser
 
 import validators
-from PyQt5 import QtGui
-from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument
+
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QFont, QColor, QPalette, QTextCharFormat, QTextDocument, QTextListFormat
 from PyQt5.QtWidgets import QColorDialog, QTextEdit
 from spellchecker import SpellChecker
 
@@ -273,6 +274,157 @@ class Document(QTextEdit):
         self.doc_props.dict_title_styles["Header 2"] = self.doc_props.heading2
         self.doc_props.dict_title_styles["Header 3"] = self.doc_props.heading3
         self.doc_props.dict_title_styles["Header 4"] = self.doc_props.heading4
+
+    def keyPressEvent(self, event):
+        """
+        intercepts key press to check for bullet list
+        :return: returns nothing
+        """
+        # checks for enter
+        if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
+            if self.pressedReturn():
+                super().keyPressEvent(event)
+        # checks for tab
+        elif event.key() == QtCore.Qt.Key_Tab:
+            if self.pressedTab():
+                super().keyPressEvent(event)
+        # checks for shift tab
+        elif event.key() == QtCore.Qt.Key_Backtab:
+            if self.pressedShiftTab():
+                super().keyPressEvent(event)
+        # calls normal functionality of key
+        else:
+            super().keyPressEvent(event)
+
+    def moveListForward(self):
+        """
+        helper function when tab is pressed in bullet list
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        listIn = cursor.currentList()
+        currlist = listIn.format()
+        style = currlist.style()
+        # updates style to next bullet
+        if style == -3:
+            style = -1
+        else:
+            style -= 1
+        listFormat = QTextListFormat()
+        # adds indent
+        listFormat.setIndent(currlist.indent() + 1)
+        listFormat.setStyle(style)
+        listIn.setFormat(listFormat)
+
+    def moveListBackward(self):
+        """
+        helper function when shift-tab is pressed in bullet list
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        listIn = cursor.currentList()
+        currlist = listIn.format()
+        indent = currlist.indent()
+        style = currlist.style()
+        # checks if indent can be removed then removes
+        if indent != 1:
+            indent -= 1
+            # if indent can be removed get previous bullet style
+            if style == -1:
+                style = -3
+            else:
+                style += 1
+        listFormat = QTextListFormat()
+        listFormat.setIndent(indent)
+        listFormat.setStyle(style)
+        listIn.setFormat(listFormat)
+
+    def pressedReturn(self):
+        """
+        enter or return key is pressed
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        listIn = cursor.currentList()
+        # checks if cursor is in a list
+        if cursor.currentList() is not None:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            text = cursor.selectedText()
+            text = text.strip()
+            if text == "":
+                listIn.removeItem(listIn.count() - 1)
+                return False
+            currlist = listIn.format()
+            style = currlist.style()
+            cursor = self.textCursor()
+            cursor.insertText("\n")
+            listFormat = QTextListFormat()
+            listFormat.setStyle(style)
+            listFormat.setIndent(currlist.indent())
+            cursor.createList(listFormat)
+            return False
+        return True
+
+    def pressedTab(self):
+        """
+        tab key is pressed
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        # checks if cursor is in a list
+        if cursor.currentList() is not None:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+            text = cursor.selectedText()
+            text = text.strip()
+            # checks if the bullet on the list is blank
+            if text == "":
+                logging.info("bullet list: tabbed")
+                self.moveListForward()
+                return False
+            else:
+                cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                if cursor.selectionStart() == self.textCursor().position():
+                    logging.info("bullet list: tabbed")
+                    self.moveListForward()
+                    return False
+        return True
+
+    def pressedShiftTab(self):
+        """
+        shift + tab keys are pressed
+        :return: returns nothing
+        """
+        cursor = self.textCursor()
+        # checks if cursor is in a list
+        if cursor.currentList() is not None:
+            cursor.select(QtGui.QTextCursor.BlockUnderCursor - 2)
+            text = cursor.selectedText()
+            text = text.strip()
+            # checks if the bullet on the list is blank
+            if text == "":
+                logging.info("bullet list: back-tabbed")
+                self.moveListBackward()
+                return False
+            else:
+                cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+                if cursor.selectionStart() + 1 == self.textCursor().position():
+                    logging.info("bullet list: back-tabbed")
+                    self.moveListBackward()
+                    return False
+        return True
+
+    def bulletList(self):
+        """
+        bullet list created on cursor location
+        :return: returns nothing
+        """
+        logging.info("bullet list: created")
+        style = QTextListFormat.ListDisc
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.LineUnderCursor)
+        listFormat = QTextListFormat()
+        listFormat.setStyle(style)
+        cursor.createList(listFormat)
 
     def setFormatText(self, text: str, formatting: bool):
         """
