@@ -188,7 +188,7 @@ class BarTop(QWidget):
         """
         # Button press to make text strikethrough
         self.button_strike = QPushButton("S", self)
-        self.button_strike.setToolTip('Strikeout your text. "Ctrl+S"')
+        self.button_strike.setToolTip('Strikeout your text. "Ctrl+Shift+5"')
         self.button_strike.setFixedWidth(33)
         f = self.button_strike.font()
         f.setStrikeOut(True)
