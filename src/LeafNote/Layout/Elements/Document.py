@@ -233,10 +233,10 @@ class Document(QTextEdit):
         logging.debug("Clearing selection formatting")
         cursor = self.textCursor()
         if cursor.hasSelection() is False:
-            cursor.select(QtGui.QTextCursor.BlockUnderCursor)
-            cursor.setCharFormat(QTextCharFormat())
+            logging.warning("Nothing selected")
         else:
-            self.setCurrentCharFormat(QTextCharFormat())
+            logging.debug("With selection")
+            cursor.setCharFormat(QTextCharFormat())
 
     def changeTitleStyle(self, state):
         """
