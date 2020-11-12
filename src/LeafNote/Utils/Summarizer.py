@@ -356,8 +356,7 @@ def dependencyDialogHandler(app, button, document=None):
 
         if app.thread_placeholder is None:
             app.thread_placeholder = ExecuteThread(getWordEmbeddings,
-                                                   (app, path_child, should_download, progress_bar,
-                                                    document))
+                                                   (path_child, should_download, progress_bar))
 
             def callback():
                 """
@@ -383,17 +382,15 @@ def dependencyDialogHandler(app, button, document=None):
         initializeSummarizer(existing_path, app, document, True)
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True,
-                      progress_bar=None, document=None):
+def getWordEmbeddings(path: str, should_download: bool = True,
+                      progress_bar=None):
     """
     This will download the necessary files for Summarizer
     then create the word embedding model and create
     an instance of the summarizer
-    :param app: A reference to the application
     :param path: A path to where the files are or are to be downloaded
     :param should_download: Whether or not to re-download zip
     :param progress_bar: A reference to the progress bar
-    :param document: Optionally summarize text at the end of procedure
     :return:
     """
     zip_file = 'glove.6B.100d.zip'
