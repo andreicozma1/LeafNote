@@ -368,7 +368,7 @@ class MenuBar(QMenuBar):
                 else:
                     app.right_menu.col_summary_body.setText(
                         document.summarizer.summarize(document.toPlainText()))
-            app.right_menu.col_summary_main.collapse()
+            app.right_menu.col_summary_main.expand()
 
         def onEncryptionAction():
             """

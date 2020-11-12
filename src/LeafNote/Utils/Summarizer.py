@@ -4,10 +4,13 @@ this module holds a class to summarize any given class
 
 import _thread
 import codecs
+import concurrent
 import glob
 import logging
 import os
+import threading
 import zipfile
+from multiprocessing.pool import ThreadPool
 
 import networkx as nx
 import nltk
@@ -20,6 +23,7 @@ from nltk.tokenize import sent_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
 from LeafNote.Utils import DialogBuilder
+from LeafNote.Utils.ThreadBuilder import ExecuteThread
 
 
 class Summarizer:
@@ -354,9 +358,22 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-        _thread.start_new_thread(getWordEmbeddings,
-                                 (app, path_child, should_download, progress_bar, document))
-        app.right_menu.col_summary_main.collapse()
+        if app.thread_placeholder is None:
+            def callback(return_value):
+                print(return_value)
+                logging.debug("Summarizer Thread Finished")
+                # initializeSummarizer(path, app, document, False)
+                app.thread_placeholder = None
+                app.right_menu.updateSummary()
+
+            app.thread_placeholder = ExecuteThread(getWordEmbeddings,
+                                                   (app, path_child, should_download, progress_bar,
+                                                    document),
+                                                    callback=callback)
+            # app.thread_placeholder.finished.connect(onThreadFinished)
+            app.thread_placeholder.start()
+        else:
+            logging.warning("Thread placeholder already in use")
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
 
@@ -383,7 +400,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
         logging.info("Started Downloading Word Embeddings")
         if progress_bar is None:
             logging.error("Progress bar is None")
-            return
+            return None
 
         # function to update the progress bar
         def progressBarSignal(current, total, width):
@@ -414,7 +431,8 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
         logging.exception(e)
         logging.warning("Failed to remove leftover ZIP file")
 
-    initializeSummarizer(path, app, document)
+    initializeSummarizer(path, app, document, False)
+    return path
 
 
 def initializeSummarizer(path, app, document, update_right_menu=False):
