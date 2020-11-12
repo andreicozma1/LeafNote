@@ -362,6 +362,31 @@ class Document(QTextEdit):
                 listFormat2.setIndent(currlist.indent() + 1)
                 listFormat2.setStyle(style)
                 cursor.insertList(listFormat2)
+            else:
+                print("here")
+                cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                if cursor.selectionStart() + 1 == self.textCursor().position():
+                    print("beginning of sentence")
+                    logging.info("bullet list: tabbed")
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                    text = cursor.selectedText()
+                    text = text.strip()
+                    # print(listIn.itemNumber(text))
+                    currlist = listIn.format()
+                    style = currlist.style()
+                    # updates style to next bullet
+                    if style == -3:
+                        style = -1
+                    else:
+                        style -= 1
+                    listFormat2 = QTextListFormat()
+                    # adds indent
+                    listFormat2.setIndent(currlist.indent() + 1)
+                    listFormat2.setStyle(style)
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+                    cursor.insertList(listFormat2)
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                    cursor.insertText(text)
 
     def pressedShiftTab(self):
         """
@@ -393,6 +418,33 @@ class Document(QTextEdit):
                 listFormat2.setIndent(indent)
                 listFormat2.setStyle(style)
                 cursor.insertList(listFormat2)
+            else:
+                print("here")
+                cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                if cursor.selectionStart() + 1 == self.textCursor().position():
+                    print("beginning of sentence")
+                    logging.info("bullet list: back-tabbed")
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                    text = cursor.selectedText()
+                    text = text.strip()
+                    currlist = listIn.format()
+                    indent = currlist.indent()
+                    style = currlist.style()
+                    # checks if indent can be removed then removes
+                    if indent != 1:
+                        indent -= 1
+                        # if indent can be removed get previous bullet style
+                        if style == -1:
+                            style = -3
+                        else:
+                            style += 1
+                    listFormat2 = QTextListFormat()
+                    listFormat2.setIndent(indent)
+                    listFormat2.setStyle(style)
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor)
+                    cursor.insertList(listFormat2)
+                    cursor.select(QtGui.QTextCursor.BlockUnderCursor - 1)
+                    cursor.insertText(text)
 
     def bulletList(self):
         """
