@@ -356,9 +356,10 @@ def dependencyDialogHandler(app, button, document=None):
 
         _thread.start_new_thread(getWordEmbeddings,
                                  (app, path_child, should_download, progress_bar, document))
-
+        app.right_menu.col_reminders_main.collapse()
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
+
         # fill the dictionary with the word embeddings
         initializeSummarizer(existing_path, app, document, True)
 
@@ -413,7 +414,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
         logging.exception(e)
         logging.warning("Failed to remove leftover ZIP file")
 
-    initializeSummarizer(path, app, document, True)
+    # initializeSummarizer(path, app, document, True)
 
 
 def initializeSummarizer(path, app, document, update_right_menu=False):
