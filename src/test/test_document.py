@@ -207,15 +207,19 @@ class TestDocument(unittest.TestCase):
         """
         self.document.setPlainText(string)
 
-        for exp_font_size in range(5, 25, 5):
+        default = self.top_bar.combo_font_size.currentIndex()
+
+        for i, size in enumerate(self.doc_props.list_font_sizes):
             # set the documents font size
             cursor = self.document.textCursor()
             cursor.select(cursor.Document)
-            self.document.onFontSizeChanged(str(exp_font_size))
+            self.top_bar.combo_font_size.setCurrentIndex(i)
 
             # get the actual font size and test
             act_font_size = self.document.fontPointSize()
-            self.assertEqual(exp_font_size, act_font_size)
+            self.assertEqual(int(size), act_font_size)
+
+        self.top_bar.combo_font_size.setCurrentIndex(default)
 
     def testTextColorChange(self):
         """
@@ -223,6 +227,7 @@ class TestDocument(unittest.TestCase):
         """
         self.document.setPlainText(string)
         color_list: list = list(self.doc_props.dict_colors.values())
+        default = self.top_bar.combo_text_color.currentIndex()
         for i, color in enumerate(color_list):
             # get expected color
             exp_color = QColor(color)
@@ -230,8 +235,10 @@ class TestDocument(unittest.TestCase):
             # set the documents font size
             cursor = self.document.textCursor()
             cursor.select(cursor.Document)
-            self.document.onTextColorChanged(i)
+            self.top_bar.combo_text_color.setCurrentIndex(i)
 
             # get the actual color and test
             act_color = self.document.textColor()
             self.assertEqual(exp_color, act_color)
+
+        self.top_bar.combo_text_color.setCurrentIndex(default)
