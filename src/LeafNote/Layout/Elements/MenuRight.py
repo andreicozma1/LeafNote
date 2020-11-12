@@ -107,6 +107,7 @@ class MenuRight(QScrollArea):
         self.col_summary_enable.clicked.connect(onSummaryAction)
         self.col_summary_main.addElement(self.col_summary_enable)
         self.col_summary_main.addElement(self.col_summary_body)
+        # self.col_summary_main.btn_toggle.pressed.connect(self.updateSummary)
 
         def onRemindersAction():
             """
@@ -159,6 +160,7 @@ class MenuRight(QScrollArea):
         """
         Updates and expands the right menu summary section
         """
+        logging.debug("Updating Summary")
         if self.document.summarizer is not None:
             self.col_summary_body.show()
             self.col_summary_enable.hide()

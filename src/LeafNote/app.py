@@ -44,6 +44,7 @@ class App(QMainWindow):
         self.file_manager = Utils.FileManager(self)
         self.reminders = Utils.Reminders(self, self.settings)
         self.btn_mode_switch = None
+        self.thread_placeholder = None
 
         # Setup Layout Class and Main Vertical Layout
         self.layout = Layout.Layout(self.app_props, self.layout_props)

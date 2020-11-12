@@ -2,7 +2,6 @@
 this module holds a class to summarize any given class
 """
 
-import _thread
 import codecs
 import glob
 import logging
@@ -20,6 +19,7 @@ from nltk.tokenize import sent_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
 from LeafNote.Utils import DialogBuilder
+from LeafNote.Utils.ThreadBuilder import ExecuteThread
 
 
 class Summarizer:
@@ -211,6 +211,7 @@ def onSummaryAction(app, document):
     # The action that gets called when the user selects a button on the prompt
     def onDialogButtonClicked(button):
         """
+        Handler for button click in dialog
         """
         dependencyDialogHandler(app, button, document)
 
@@ -312,14 +313,13 @@ def dependencyDialogHandler(app, button, document=None):
         Checks if the files exist within any of the 2 directories
         """
         if os.path.exists(
-                os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and os.path.exists(
-            os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
+                os.path.abspath(os.path.join(path1, 'glove.6B.100d.vocab'))) and\
+                os.path.exists(os.path.abspath(os.path.join(path1, 'glove.6B.100d.npy'))):
             return path1
         if os.path.exists(
-                os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and os.path.exists(
-            os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
+                os.path.abspath(os.path.join(path2, 'glove.6B.100d.vocab'))) and \
+                os.path.exists(os.path.abspath(os.path.join(path2, 'glove.6B.100d.npy'))):
             return path2
-
         return None
 
     existing_path = files_exist(path_parent, path_child)
@@ -354,26 +354,43 @@ def dependencyDialogHandler(app, button, document=None):
             should_download = False
             progress_bar = None
 
-        _thread.start_new_thread(getWordEmbeddings,
-                                 (app, path_child, should_download, progress_bar, document))
+        if app.thread_placeholder is None:
+            app.thread_placeholder = ExecuteThread(getWordEmbeddings,
+                                                   (path_child, should_download, progress_bar))
 
+            def callback():
+                """
+                Callback for our thread
+                """
+                result = app.thread_placeholder.getReturn()
+                if result is True:
+                    logging.debug("Summarizer Thread Finished")
+                    initializeSummarizer(path_child, app, document)
+                    app.thread_placeholder = None
+                    app.right_menu.updateSummary()
+                else:
+                    logging.error("Thread finished unsuccessfully")
+
+            app.thread_placeholder.setCallback(callback)
+            app.thread_placeholder.start()
+        else:
+            logging.warning("Thread placeholder already in use")
     else:
         logging.info("Found glove.6B.100d.vocab and glove.6B.100d.npy")
+
         # fill the dictionary with the word embeddings
         initializeSummarizer(existing_path, app, document, True)
 
 
-def getWordEmbeddings(app, path: str, should_download: bool = True,
-                      progress_bar=None, document=None):
+def getWordEmbeddings(path: str, should_download: bool = True,
+                      progress_bar=None):
     """
     This will download the necessary files for Summarizer
     then create the word embedding model and create
     an instance of the summarizer
-    :param app: A reference to the application
     :param path: A path to where the files are or are to be downloaded
     :param should_download: Whether or not to re-download zip
     :param progress_bar: A reference to the progress bar
-    :param document: Optionally summarize text at the end of procedure
     :return:
     """
     zip_file = 'glove.6B.100d.zip'
@@ -382,7 +399,7 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
         logging.info("Started Downloading Word Embeddings")
         if progress_bar is None:
             logging.error("Progress bar is None")
-            return
+            return False
 
         # function to update the progress bar
         def progressBarSignal(current, total, width):
@@ -412,8 +429,9 @@ def getWordEmbeddings(app, path: str, should_download: bool = True,
     except OSError as e:
         logging.exception(e)
         logging.warning("Failed to remove leftover ZIP file")
+        return False
 
-    initializeSummarizer(path, app, document, True)
+    return True
 
 
 def initializeSummarizer(path, app, document, update_right_menu=False):
