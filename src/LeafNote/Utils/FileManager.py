@@ -440,6 +440,9 @@ class FileManager:
         if self.current_document is None:
             self.saveDocument(document)
 
+        if self.current_document is None:
+            return
+
         old_path = self.current_document.absoluteFilePath()
 
         # grab the index of the last period or if no period get the length of the string
@@ -476,6 +479,9 @@ class FileManager:
         if self.current_document is None:
             is_new_file = True
             self.saveDocument(document)
+
+        if self.current_document is None:
+            return
 
         # get the old file path
         old_path = self.current_document.filePath()
