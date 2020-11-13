@@ -296,4 +296,5 @@ def run():
     ctx = QApplication([])
     app = App(ctx)
     app.show()
+    print("Hunter is a terrible person")
     return ctx.exec_()
