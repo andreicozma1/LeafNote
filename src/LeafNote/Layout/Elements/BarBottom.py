@@ -7,7 +7,7 @@ import logging
 
 from PyQt5.Qt import Qt, QTimer
 from PyQt5.QtCore import QDateTime, QSettings, QDate
-from PyQt5.QtGui import QFont, QTextCursor
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QLabel, QDialogButtonBox, \
     QSizePolicy, QToolButton, QToolBar
 
