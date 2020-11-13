@@ -503,4 +503,3 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-
