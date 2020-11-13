@@ -438,6 +438,7 @@ class FileManager:
 
         # if the current file is none make the user save the file
         if self.current_document is None:
+            self.app.btn_mode_switch.setChecked(False)
             self.saveDocument(document)
 
         if self.current_document is None:
@@ -481,6 +482,7 @@ class FileManager:
             self.saveDocument(document)
 
         if self.current_document is None:
+            self.app.btn_mode_switch.setChecked(False)
             return
 
         # get the old file path
