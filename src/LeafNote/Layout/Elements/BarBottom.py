@@ -7,7 +7,7 @@ import logging
 
 from PyQt5.Qt import Qt, QTimer
 from PyQt5.QtCore import QDateTime, QSettings, QDate
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QTextCursor
 from PyQt5.QtWidgets import QWidget, QLabel, QDialogButtonBox, \
     QSizePolicy, QToolButton, QToolBar
 
@@ -87,11 +87,14 @@ class BarBottom(QToolBar):
         self.label_cc = createBottomBarLabel('0 Characters', font_default)
         self.addWidget(self.label_cc)
 
-        self.addSpacer()
+        # Create Line Counter
+        self.label_lc = createBottomBarLabel('Line 0', font_default)
+        self.addWidget(self.label_lc)
 
         # functionality of word and character count
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
+        self.document.textChanged.connect(self.updateLineCount)
 
     def addSpacer(self):
         """
@@ -119,6 +122,15 @@ class BarBottom(QToolBar):
         """
         char_count = len(self.document.toPlainText())
         self.label_cc.setText(str(char_count) + " Characters")
+
+    def updateLineCount(self):
+        """
+        Updates the current line the user is on
+        :return: returns nothing
+        """
+        cursor: QTextCursor = self.document.textCursor()
+        line_num = cursor.blockNumber()
+        self.label_lc.setText("Line " + str(line_num + 1))
 
     def updateTime(self):
         """
