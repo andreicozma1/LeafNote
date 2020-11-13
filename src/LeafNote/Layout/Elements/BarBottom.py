@@ -39,6 +39,7 @@ class BarBottom(QToolBar):
         self.label_time = None
         self.label_wc = None
         self.label_cc = None
+        self.label_pc = None
 
         # set up the layout
         self.initUI()
@@ -87,11 +88,14 @@ class BarBottom(QToolBar):
         self.label_cc = createBottomBarLabel('0 Characters', font_default)
         self.addWidget(self.label_cc)
 
-        self.addSpacer()
+        # Create Line Counter
+        self.label_pc = createBottomBarLabel('0 Paragraphs', font_default)
+        self.addWidget(self.label_pc)
 
         # functionality of word and character count
         self.document.textChanged.connect(self.updateWordCount)
         self.document.textChanged.connect(self.updateCharCount)
+        self.document.textChanged.connect(self.updateParagraphCount)
 
     def addSpacer(self):
         """
@@ -119,6 +123,15 @@ class BarBottom(QToolBar):
         """
         char_count = len(self.document.toPlainText())
         self.label_cc.setText(str(char_count) + " Characters")
+
+    def updateParagraphCount(self):
+        """
+        Updates the number of paragraphs
+        :return: returns nothing
+        """
+        text: str = self.document.toPlainText()
+        par_count = len(list(filter(None, text.strip().split('\n'))))
+        self.label_pc.setText(str(par_count) + " Paragraphs")
 
     def updateTime(self):
         """
