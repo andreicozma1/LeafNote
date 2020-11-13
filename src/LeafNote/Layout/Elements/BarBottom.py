@@ -126,11 +126,11 @@ class BarBottom(QToolBar):
 
     def updateParagraphCount(self):
         """
-        Updates the current line the user is on
+        Updates the number of paragraphs
         :return: returns nothing
         """
         text: str = self.document.toPlainText()
-        par_count = len(text.split('\n'))
+        par_count = len(list(filter(None, text.strip().split('\n'))))
         self.label_pc.setText(str(par_count) + " Paragraphs")
 
     def updateTime(self):
