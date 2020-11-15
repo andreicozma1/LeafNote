@@ -36,7 +36,6 @@ class MenuBar(QMenuBar):
         self.group_style = None
         self.group_align = None
 
-        self.updateAppearance()
 
     # =====================================================================================
     def makeFileMenu(self, app, file_manager):
@@ -504,11 +503,3 @@ class MenuBar(QMenuBar):
         for a in self.menu_format.actions():
             if not a.property("persistent"):
                 a.blockSignals(False)
-
-    def updateAppearance(self):
-        """
-        Updates appearance of MenuBar according to styles
-        """
-        prop_select_color = self.layout_props.getDefaultHeaderColorLight()
-        style = "QMenu::item:selected { background-color: " + prop_select_color + ";}"
-        self.setStyleSheet(style)
