@@ -293,6 +293,7 @@ def run():
     """
     Runs main application
     """
+    # test comment
     ctx = QApplication([])
     app = App(ctx)
     app.show()
