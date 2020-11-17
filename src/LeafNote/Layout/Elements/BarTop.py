@@ -280,6 +280,18 @@ class BarTop(QWidget):
         self.combo_text_align.setCurrentIndex(def_index)
         return self.combo_text_align
 
+    def makeBulletList(self) -> QPushButton:
+        """
+        Create Bullet List Dropdown
+        """
+        # Adds ability to change alignment of text
+        button_bullet_list = QPushButton(html.unescape('&#8226;'), self)
+        button_bullet_list.setToolTip('Bulleted List')
+        button_bullet_list.setFixedWidth(33)
+        button_bullet_list.setFocusPolicy(Qt.NoFocus)
+        button_bullet_list.clicked.connect(self.document.bulletList)
+        return button_bullet_list
+
     def makeBtnFormatMode(self, callback) -> QPushButton:
         """
         Create Enable Format Mode Button

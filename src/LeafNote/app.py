@@ -104,6 +104,7 @@ class App(QMainWindow):
         top_bar_layout.addWidget(self.top_bar.makeBtnUnder())
         top_bar_layout.addWidget(self.top_bar.makeComboFontColor())
         top_bar_layout.addWidget(self.top_bar.makeClearFormatting())
+        top_bar_layout.addWidget(self.top_bar.makeBulletList())
         top_bar_layout.addWidget(self.top_bar.makeComboTextAlign())
         top_bar_layout.addStretch()
         top_bar_layout.addWidget(self.btn_mode_switch)
