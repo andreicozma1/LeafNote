@@ -266,12 +266,10 @@ class FileManager:
             self.app.right_menu.updateDetails(self.current_document)
             self.app.updateFormatBtnsState(state)
 
-        # if it does not exist print error messages
+        elif path == '':
+            logging.info("No File Path Given")
         else:
-            if path == '':
-                logging.info("No File Path Given")
-            else:
-                logging.info("File Is Not Open - %s", path)
+            logging.info("File Is Not Open - %s", path)
 
     def closeAll(self, document):
         """
@@ -316,7 +314,7 @@ class FileManager:
         if path not in self.open_documents:
 
             # if the user clicks out of the open file prompt do nothing
-            if path == '':
+            if not path:
                 logging.info("No File Path Given")
                 return False
 
@@ -336,7 +334,6 @@ class FileManager:
 
             logging.info("Opened Document - %s", path)
 
-        # if the document has already been opened in this session
         else:
             # get the data from the file and set the current document
             data = self.getFileData(path)
@@ -366,31 +363,28 @@ class FileManager:
         """
         # open the file with read only privileges
         logging.debug(path)
-        file = open(path, 'r')
-
-        # check if the file was opened
-        if file.closed:
-            logging.info("Could Not Open File - %s", path)
-            return None
-
-        # read all data then close file
-        with file:
-            try:
-                data = file.read()
-
-            except (ValueError, OSError) as e:
-                corrupted_file = DialogBuilder(self.app,
-                                               "File Corrupted",
-                                               "Could not open the selected file.",
-                                               "")
-                button_box = QDialogButtonBox(QDialogButtonBox.Ok)
-                corrupted_file.addButtonBox(button_box)
-                corrupted_file.exec()
-                logging.exception(e)
-                logging.error("File could not be opened!")
+        with open(path, 'r') as file:
+            # check if the file was opened
+            if file.closed:
+                logging.info("Could Not Open File - %s", path)
                 return None
-        file.close()
 
+            # read all data then close file
+            with file:
+                try:
+                    data = file.read()
+
+                except (ValueError, OSError) as e:
+                    corrupted_file = DialogBuilder(self.app,
+                                                   "File Corrupted",
+                                                   "Could not open the selected file.",
+                                                   "")
+                    button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+                    corrupted_file.addButtonBox(button_box)
+                    corrupted_file.exec()
+                    logging.exception(e)
+                    logging.error("File could not be opened!")
+                    return None
         try:
             if self.encryptor is not None:
                 data = self.encryptor.decrypt(data.encode()).decode()
@@ -506,7 +500,7 @@ class FileManager:
         logging.info("Deleted - %s", old_path)
 
         # create the file with the .lef extension holding the formatted data
-        new_path = old_path[:period_index] + ".lef"
+        new_path = f'{old_path[:period_index]}.lef'
         self.writeFileData(new_path, formatted_file)
 
         # open the .lef document and add it to the dict of the open files
@@ -555,7 +549,7 @@ class FileManager:
             if file_name.find('.') != -1:
                 file_name = file_name[:file_name.rindex('.')] + ".pdf"
             else:
-                file_name = file_name + ".pdf"
+                file_name = f'{file_name}.pdf'
 
         # create the qprinter object
         printer = QPrinter(QPrinter.HighResolution)

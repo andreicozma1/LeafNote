@@ -37,7 +37,7 @@ class Reminder(QWidget):
 
         vertical_layout.addWidget(widget_title)
 
-        show_date = QLabel(date_str + " at " + time_str)
+        show_date = QLabel(f'{date_str} at {time_str}')
         show_date.setStyleSheet("font-style: italic; margin-left: 5px;")
         show_date.setWordWrap(True)
         show_date.setTextInteractionFlags(Qt.TextSelectableByMouse)

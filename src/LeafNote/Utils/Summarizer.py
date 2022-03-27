@@ -126,8 +126,11 @@ class Summarizer:
         logging.debug("")
         for i in clean_sentences:
             if len(i) != 0:
-                v = sum([self.word_embeddings.get(w, np.zeros((100,)))
-                         for w in i.split()]) / (len(i.split()) + 0.001)
+                v = sum(
+                    self.word_embeddings.get(w, np.zeros((100,)))
+                    for w in i.split()
+                ) / (len(i.split()) + 0.001)
+
             else:
                 v = np.zeros((100,))
             self.sentence_vectors.append(v)
@@ -161,10 +164,7 @@ def sentToText(text, separator=' '):
     :param separator: the separator between the sentences
     :return: returns a string holding the concatenated sentences.
     """
-    sentence = ""
-    for s in text:
-        sentence += str(s) + str(separator)
-    return sentence
+    return "".join(str(s) + str(separator) for s in text)
 
 
 def handlePackageDownloads():
@@ -193,8 +193,7 @@ def removeStopwords(sen, stop_words):
     :param stop_words: the list of stopwords to remove
     :return: Returns the cleaned sentence
     """
-    new_sent = " ".join([i for i in sen if i not in stop_words])
-    return new_sent
+    return " ".join([i for i in sen if i not in stop_words])
 
 
 #################################################################
@@ -479,8 +478,6 @@ def createModel(path):
     with codecs.open(path_vocab, encoding='utf-8') as f_in:
         index2word = [line.strip() for line in f_in]
     wv = np.load(path_npy)
-    model = {}
-    for i, w in enumerate(index2word):
-        model[w] = wv[i]
+    model = {w: wv[i] for i, w in enumerate(index2word)}
     logging.debug("Finished reading dictionary contents")
     return model

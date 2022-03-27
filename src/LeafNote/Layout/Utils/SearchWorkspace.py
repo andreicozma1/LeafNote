@@ -454,11 +454,11 @@ class SearchWorkspace(QWidget):
         # for each file in the list open it and look for the search word
         for f in files:
             # if the file is a file and it can be opened
-            if os.path.isfile(f):
-                # if the search phrase is in the file add a button to the scroll area
-                if self.searchFile(f, search) or str(search) in f:
-                    self.files.append(f)
-                    self.file_viewer.insertFile(f)
+            if os.path.isfile(f) and (
+                self.searchFile(f, search) or str(search) in f
+            ):
+                self.files.append(f)
+                self.file_viewer.insertFile(f)
 
         # set the focus on the first search result
         # index = self.file_viewer.indexBelow(self.file_viewer.rootIndex())

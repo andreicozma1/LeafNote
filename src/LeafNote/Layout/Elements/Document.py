@@ -67,11 +67,7 @@ class Document(QTextEdit):
         # get the selected words position and full word
         _, _, url = self._getWordFromPos(pos)
 
-        # check if the url is valid
-        valid = validators.url(url)
-
-        # if the link is valid open it
-        if valid:
+        if valid := validators.url(url):
             webbrowser.open(url)
             logging.info("User opened link - %s", url)
             return
@@ -281,18 +277,15 @@ class Document(QTextEdit):
         :return: returns nothing
         """
         # checks for enter
-        if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
+        if event.key() in [QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter]:
             if self.pressedReturn():
                 super().keyPressEvent(event)
-        # checks for tab
         elif event.key() == QtCore.Qt.Key_Tab:
             if self.pressedTab():
                 super().keyPressEvent(event)
-        # checks for shift tab
         elif event.key() == QtCore.Qt.Key_Backtab:
             if self.pressedShiftTab():
                 super().keyPressEvent(event)
-        # calls normal functionality of key
         else:
             super().keyPressEvent(event)
 
@@ -530,7 +523,7 @@ class Document(QTextEdit):
             if cursor.hasSelection():
                 # Replace the word with the correct one and re-add the space
                 self.blockSignals(True)
-                cursor.insertText(corrected + " ")
+                cursor.insertText(f'{corrected} ')
                 self.blockSignals(False)
                 self.misspelled_words.remove(word)
                 logging.debug("Autocorrected misspelled word: %s to %s", word, corrected)

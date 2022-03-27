@@ -21,7 +21,7 @@ class Reminders:
         logging.info("Creating Reminders")
         self.app = app
         self.settings = settings
-        self.rem_list: dict = dict()
+        self.rem_list: dict = {}
         self.restoreReminders()  # Recalls old reminders and sets them
 
     def showDialog(self, block, show_calendar: bool = True, date: QDate = None):
@@ -83,7 +83,7 @@ class Reminders:
             formatted_date = new_date.toString(format_date_def)
             new_time: QTime = input_time.time()
             formatted_time = new_time.toString("h:mm ap")
-            new_title = formatted_date + " at " + formatted_time
+            new_title = f'{formatted_date} at {formatted_time}'
 
             logging.debug("Update input_title %s", new_title)
             dialog.setTitleText(new_title)
@@ -164,7 +164,7 @@ class Reminders:
         sort_key_string = date_txt + "-" + self.convert24(time_str)
         sort_key_string = sort_key_string.replace(" ", "").replace("-", "").replace(":", "")
 
-        if title_str == "":
+        if not title_str:
             return None
 
 
@@ -206,18 +206,10 @@ class Reminders:
         :return: returns a string of the time
         """
         if str1[1] == ":":
-            str1 = "0" + str1
+            str1 = f"0{str1}"
 
-        # Checking if last two elements of time
-        # is AM and first two elements are 12
-        if str1[-2:] == "AM" and str1[:2] == "12":
-            return "00" + str1[2:-2]
-
-            # remove the AM
         if str1[-2:] == "AM":
-            return str1[:-2]
-
-            # Checking if last two elements of time
+            return f"00{str1[2:-2]}" if str1[:2] == "12" else str1[:-2]
         # is PM and first two elements are 12
         if str1[-2:] == "PM" and str1[:2] == "12":
             return str1[:-2]

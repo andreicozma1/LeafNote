@@ -114,7 +114,7 @@ class BarBottom(QToolBar):
         if self.document.toPlainText() != '':
             word_count = len(self.document.toPlainText().split())
 
-        self.label_wc.setText(str(word_count) + " Words")
+        self.label_wc.setText(f'{word_count} Words')
 
     def updateCharCount(self):
         """
@@ -122,7 +122,7 @@ class BarBottom(QToolBar):
         :return: returns nothing
         """
         char_count = len(self.document.toPlainText())
-        self.label_cc.setText(str(char_count) + " Characters")
+        self.label_cc.setText(f'{char_count} Characters')
 
     def updateParagraphCount(self):
         """
@@ -131,7 +131,7 @@ class BarBottom(QToolBar):
         """
         text: str = self.document.toPlainText()
         par_count = len(list(filter(None, text.strip().split('\n'))))
-        self.label_pc.setText(str(par_count) + " Paragraphs")
+        self.label_pc.setText(f'{par_count} Paragraphs')
 
     def updateTime(self):
         """

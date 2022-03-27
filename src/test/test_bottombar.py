@@ -34,7 +34,7 @@ class TestBottomBar(unittest.TestCase):
         """
         string = "This is a test."
 
-        exp_count = str(len(string.split())) + " Words"
+        exp_count = f'{len(string.split())} Words'
 
         self.document.setPlainText(string)
         act_count = self.bottom_bar.label_wc.text()
@@ -47,7 +47,7 @@ class TestBottomBar(unittest.TestCase):
         """
         string = "This is a test."
 
-        exp_count = str(len(string)) + " Characters"
+        exp_count = f'{len(string)} Characters'
 
         self.document.setPlainText(string)
         act_count = self.bottom_bar.label_cc.text()
