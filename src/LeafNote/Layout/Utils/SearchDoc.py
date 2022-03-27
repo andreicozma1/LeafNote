@@ -183,7 +183,7 @@ class SearchDoc(QWidget):
 
         if self.document.find(self.search, self.flags | QTextDocument.FindBackward):
             self.current -= 1
-            self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.occurances.setText(f'{self.current}/{str(self.total)}')
             self.last_pos = self.document.textCursor().position()
 
     def onNextOccurrenceSelect(self):
@@ -198,7 +198,7 @@ class SearchDoc(QWidget):
 
         if self.document.find(self.search, self.flags):
             self.current += 1
-            self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.occurances.setText(f'{self.current}/{str(self.total)}')
             self.last_pos = self.document.textCursor().position()
 
     def onCloseSearch(self):
@@ -232,7 +232,7 @@ class SearchDoc(QWidget):
             self.occurances.setText(self.txt_no_results)
         else:
             self.current = 1
-            self.occurances.setText(str(self.current) + '/' + str(self.total))
+            self.occurances.setText(f'{self.current}/{str(self.total)}')
 
         # set the cursor to the beginning of the document
         cursor = self.document.textCursor()

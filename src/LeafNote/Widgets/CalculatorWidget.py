@@ -110,7 +110,7 @@ class CalculatorWidget(QWidget):
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
                 text = self.screen.text()
-            self.screen.setText(text + " " + operator + " ")
+            self.screen.setText(f'{text} {operator} ')
         self.equ = False
 
     def action_decimal(self):
@@ -142,7 +142,7 @@ class CalculatorWidget(QWidget):
                     text += "0"
             else:
                 text += "0"
-            self.screen.setText(text + ".")
+            self.screen.setText(f'{text}.')
         self.equ = False
 
     def actionNum(self, num):
@@ -187,11 +187,10 @@ class CalculatorWidget(QWidget):
         if text != "":
             if text[len(text) - 1] == ' ':
                 self.screen.setText(text[:len(text) - 3])
+            elif text[len(text) - 2] == "-":
+                self.screen.setText(text[:len(text) - 2])
             else:
-                if text[len(text) - 2] == "-":
-                    self.screen.setText(text[:len(text) - 2])
-                else:
-                    self.screen.setText(text[:len(text) - 1])
+                self.screen.setText(text[:-1])
         self.equ = False
 
     def action_neg(self):
@@ -213,7 +212,7 @@ class CalculatorWidget(QWidget):
                     if x == len(text) - 1:
                         return
                     x += 1
-                    text = text[:x] + '-' + text[x:]
+                    text = f'{text[:x]}-{text[x:]}'
                     self.screen.setText(text)
                     return
                 if text[x] == '-':
@@ -222,5 +221,5 @@ class CalculatorWidget(QWidget):
                     return
                 if text == "0":
                     return
-            text = '-' + text
+            text = f'-{text}'
             self.screen.setText(text)

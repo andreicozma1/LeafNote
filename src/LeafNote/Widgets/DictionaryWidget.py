@@ -19,9 +19,9 @@ class Definition(QWidget):
     def __init__(self, def_type: str, def_text: str, def_example: str):
         super().__init__()
         # Create elements
-        self.lbl_type = QLabel("Type: " + def_type)
-        self.lbl_definition = QLabel("Definition: " + def_text)
-        self.lbl_example = QLabel("Example: " + def_example)
+        self.lbl_type = QLabel(f"Type: {def_type}")
+        self.lbl_definition = QLabel(f"Definition: {def_text}")
+        self.lbl_example = QLabel(f"Example: {def_example}")
         self.initUI()
 
     def initUI(self):
@@ -180,7 +180,7 @@ class DictionaryWidget(QWidget):
                 self.widget_definitions.setVisible(True)
                 # Set text for first 2 fields
                 self.lbl_word.setText(word)
-                self.lbl_pronunciation.setText("Pronunciation: " + pronunciation)
+                self.lbl_pronunciation.setText(f"Pronunciation: {pronunciation}")
                 # Loop through definitions and add to parent widget
                 for definition in definitions_list:
                     logging.debug(definition)
@@ -191,7 +191,7 @@ class DictionaryWidget(QWidget):
                     self.definitions_layout.addWidget(widget)
                 logging.info("Definitions found!")
             else:
-                error_msg = "Error " + str(response.status_code) + ": " + response.reason
+                error_msg = f"Error {str(response.status_code)}: {response.reason}"
                 logging.error(error_msg)
                 logging.error("Response: %s", response.text)
                 self.lbl_word.setVisible(True)

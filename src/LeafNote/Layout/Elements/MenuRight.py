@@ -128,7 +128,7 @@ class MenuRight(QScrollArea):
 
         bullet = html.unescape("&#8226;")
 
-        value: str = bullet + " File not saved!"
+        value: str = f'{bullet} File not saved!'
         # Get the file info and update all the respective fields
         if info is not None and path is not None:
             value = ""
@@ -143,14 +143,23 @@ class MenuRight(QScrollArea):
                 size /= 1000
                 unit += 1
 
-            value += bullet + " Name: " + i_s + info.fileName() + i_e + br
-            value += bullet + " Path: " + i_s + info.path() + i_e + br
-            value += bullet + " Size: " + i_s + str(size) + " " + units[unit] + i_e + br
-            value += bullet + " Owner: " + i_s + (str(info.owner())) + i_e + br
-            value += bullet + " Viewed: " + i_s + \
-                     (info.lastRead().toString(self.format_time)) + i_e + br
-            value += bullet + " Modified: " + i_s + \
-                     (info.lastModified().toString(self.format_time)) + i_e
+            value += f'{bullet} Name: {i_s}{info.fileName()}{i_e}{br}'
+            value += f'{bullet} Path: {i_s}{info.path()}{i_e}{br}'
+            value += f'{bullet} Size: {i_s}{str(size)} {units[unit]}{i_e}{br}'
+            value += f'{bullet} Owner: {i_s}{str(info.owner())}{i_e}{br}'
+            value += (
+                (
+                    f'{bullet} Viewed: {i_s}'
+                    + (info.lastRead().toString(self.format_time))
+                )
+                + i_e
+            ) + br
+
+            value += (
+                f'{bullet} Modified: {i_s}'
+                + (info.lastModified().toString(self.format_time))
+            ) + i_e
+
 
         self.col_metadata_contents.setText(value)
         # Update the summary from file

@@ -72,14 +72,13 @@ class BarTop(QWidget):
         self.combo_title_style.addItems(self.doc_props.dict_title_styles)
         # traverses through combo_title_style items index
         for x in range(view.model().rowCount()):
+            font = QFont()
             # mods by two to get the index with titles else gives "update" titles index
             # changes font to be bold for if and italic for else
             if x % 2 == 0:
-                font = QFont()
                 font.setWeight(QFont.Bold)
                 self.combo_title_style.setItemData(x, font, Qt.FontRole)
             else:
-                font = QFont()
                 color = QBrush()
                 font.setItalic(True)
                 color.setColor(QColor("gray"))
@@ -365,10 +364,8 @@ class BarTop(QWidget):
         # update the text color
         if self.combo_text_color is not None:
             color = self.document.currentCharFormat().foreground().color().name()
-            index = 0
             color_list = list(self.doc_props.dict_colors.values())
-            if color in color_list:
-                index = color_list.index(color)
+            index = color_list.index(color) if color in color_list else 0
             self.updateTextColor(index)
 
         # Update the text alignment

@@ -169,7 +169,7 @@ class App(QMainWindow):
         """
         logging.info(str(state))
 
-        if state is True:
+        if state:
             convert_dialog = Utils.DialogBuilder(self, "Enable Formatting",
                                                  "Would you like to convert this file?",
                                                  "This file needs to be converted to use"
