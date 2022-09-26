@@ -2,7 +2,7 @@ cffi==1.14.3
 click==7.1.2
 cryptography==3.2.1
 decorator==4.4.2
-joblib==0.17.0
+joblib==1.2.0
 networkx==2.5
 nltk==3.5
 numpy==1.19.2
