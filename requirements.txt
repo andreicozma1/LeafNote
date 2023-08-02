@@ -1,6 +1,6 @@
 cffi==1.14.3
 click==7.1.2
-cryptography==3.2.1
+cryptography==41.0.3
 decorator==4.4.2
 joblib==0.17.0
 networkx==2.5
